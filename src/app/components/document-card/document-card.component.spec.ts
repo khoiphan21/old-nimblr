@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DocumentCardComponent } from './document-card.component';
+import { DocumentOptionsComponent } from './document-options/document-options.component';
 
 describe('DocumentCardComponent', () => {
   let component: DocumentCardComponent;
@@ -8,7 +9,10 @@ describe('DocumentCardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DocumentCardComponent ]
+      declarations: [
+        DocumentCardComponent,
+        DocumentOptionsComponent
+       ]
     })
     .compileComponents();
   }));

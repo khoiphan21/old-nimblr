@@ -29,7 +29,8 @@
             }
         }
         &:hover {
-            box-shadow: 0 0 8px 0 rgba(0, 145, 255, 0.66);
+            transform: translateY('5px');
+            box-shadow: 6px 6px 2px 0 #BBB;
         }
     }
 }

@@ -1,0 +1,51 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+@include media(lg) {
+    $horizontal-padding: 10px;
+    section.container {
+        width: 100%;
+        position: absolute;
+        right: -177px;
+        top: 200px;
+        height: 165px;
+        width: 177px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+        box-shadow: 0 4px 11px 0 #A9A9A9;
+        z-index: 2;
+        font-family: $font-roboto;
+        padding: 0;
+        color: $color-mid-grey;
+        font-size: 0.8rem;
+        @include column-center;
+        justify-content: space-between;
+        .title {
+            width: 100%;
+            font-weight: normal;
+            padding: 5px $horizontal-padding;
+            border-bottom: 1px solid #DDD;
+        }
+        .document-options {
+            width: 100%;
+            padding: 5px $horizontal-padding;
+            border-bottom: 1px solid #DDD;
+            .option {
+                font-size: 0.75rem;
+                width: 100%;
+                padding: 3.5px 0;
+                span {
+                    margin-left: 5px;
+                }
+            }
+        }
+        .document-details {
+            width: 100%;
+            @include column-center;
+            align-items: flex-start;
+            font-size: 0.7rem;
+            padding: 5px $horizontal-padding;
+            color: #A9A9A9;
+        }
+    }
+}

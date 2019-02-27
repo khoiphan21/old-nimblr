@@ -10,6 +10,7 @@ import { HeaderComponent } from 'src/app/components/header/header.component';
 import { NavigationBarComponent } from '../../components/navigation-bar/navigation-bar.component';
 import { BlockHeaderComponent } from '../../components/block/block-header/block-header.component';
 import { BlockTextComponent } from '../../components/block/block-text/block-text.component';
+import { DocumentOptionsComponent } from '../../components/document-card/document-options/document-options.component';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
@@ -24,7 +25,8 @@ describe('DocumentPageComponent', () => {
         HeaderComponent,
         NavigationBarComponent,
         BlockHeaderComponent,
-        BlockTextComponent
+        BlockTextComponent,
+        DocumentOptionsComponent
       ],
       imports: [
         ServicesModule,
