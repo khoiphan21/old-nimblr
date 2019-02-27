@@ -8,6 +8,8 @@ import { BlockOptionComponent } from '../../components/block/block-option/block-
 import { BlockComponent } from '../../components/block/block.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { NavigationBarComponent } from '../../components/navigation-bar/navigation-bar.component';
+import { BlockHeaderComponent } from '../../components/block/block-header/block-header.component';
+import { BlockTextComponent } from '../../components/block/block-text/block-text.component';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
@@ -20,7 +22,9 @@ describe('DocumentPageComponent', () => {
         BlockOptionComponent,
         BlockComponent,
         HeaderComponent,
-        NavigationBarComponent
+        NavigationBarComponent,
+        BlockHeaderComponent,
+        BlockTextComponent
       ],
       imports: [
         ServicesModule,

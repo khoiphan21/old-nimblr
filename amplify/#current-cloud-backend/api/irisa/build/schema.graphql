@@ -1,5 +1,6 @@
 type User {
   id: ID!
+  username: String!
   email: String!
   firstName: String
   lastName: String
@@ -122,6 +123,7 @@ input ModelBooleanFilterInput {
 
 input ModelUserFilterInput {
   id: ModelIDFilterInput
+  username: ModelStringFilterInput
   email: ModelStringFilterInput
   firstName: ModelStringFilterInput
   lastName: ModelStringFilterInput
@@ -133,6 +135,7 @@ input ModelUserFilterInput {
 
 input CreateUserInput {
   id: ID
+  username: String!
   email: String!
   firstName: String
   lastName: String
@@ -141,6 +144,7 @@ input CreateUserInput {
 
 input UpdateUserInput {
   id: ID!
+  username: String
   email: String
   firstName: String
   lastName: String

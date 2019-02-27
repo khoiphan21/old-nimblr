@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockHeaderComponent } from './block-header.component';
+import { BlockOptionComponent } from '../block-option/block-option.component';
 
 describe('BlockHeaderComponent', () => {
   let component: BlockHeaderComponent;
@@ -8,9 +9,12 @@ describe('BlockHeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockHeaderComponent ]
+      declarations: [
+        BlockHeaderComponent,
+        BlockOptionComponent,
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

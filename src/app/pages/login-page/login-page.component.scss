@@ -1,87 +1,99 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
-div.fluid-container {
-    height: 100vh;
-    font-family: $font-roboto;
-    div.row {
-        section.register-background {
-            height: 100vh;
-            background: transparentize($color: $color-blue, $amount: 0.7);
-        }
-        section.register-container {
-            height: 100vh;
-            @include column-center;
-            align-items: flex-start;
-            padding: 0 15rem;
-            section.heading {
-                margin-bottom: 2rem;
-                h1 {
-                    font-size: 1.5rem;
-                    color: $color-dark-blue;
-                    font-weight: normal;
-                    letter-spacing: 0.1rem;
-                }
-                h3 {
-                    font-size: 1.15rem;
-                    color: $color-grey;
-                    font-weight: normal;
-                }
+@include media(lg) {
+    div.fluid-container {
+        height: 100vh;
+        font-family: $font-roboto;
+        div.row {
+            section.login-background {
+                height: 100vh;
+                background: transparentize($color: $color-blue, $amount: 0.7);
             }
-            form {
-                width: 100%;
+            section.login-container {
+                height: 100vh;
                 @include column-center;
                 align-items: flex-start;
-                input[type=email],
-                [type=text],
-                [type=password] {
-                    width: 100%;
-                    border: 1px solid $color-light-grey;
-                    border-radius: 5px;
-                    height: 47px;
-                    padding: 0 1rem;
-                }
-                .row {
-                    width: 100%;
-                }
-                .form-input {
-                    width: 100%;
-                    position: relative;
-                    .input-label {
-                        font-size: 0.65rem;
-                        text-transform: uppercase;
+                padding: 0 10rem;
+                section.heading {
+                    margin-bottom: 2rem;
+                    h1 {
+                        font-size: 1.5rem;
+                        color: $color-dark-blue;
+                        font-weight: normal;
+                        letter-spacing: 0.1rem;
                     }
-                    .password-label {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        .forgot-password {
-                            font-size: 0.6rem;
-                            color: #989898;
+                    h3 {
+                        font-size: 1.15rem;
+                        color: $color-grey;
+                        font-weight: normal;
+                    }
+                }
+                form {
+                    width: 100%;
+                    @include column-center;
+                    align-items: flex-start;
+                    input[type=email],
+                    [type=text],
+                    [type=password] {
+                        width: 100%;
+                        border: 1px solid $color-light-grey;
+                        border-radius: 5px;
+                        height: 47px;
+                        padding: 0 1rem;
+                    }
+                    .row {
+                        width: 100%;
+                    }
+                    .form-input {
+                        width: 100%;
+                        position: relative;
+                        .input-label {
+                            font-size: 0.65rem;
+                            text-transform: uppercase;
+                        }
+                        .password-label {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            .forgot-password {
+                                font-size: 0.6rem;
+                                color: #989898;
+                                cursor: pointer;
+                            }
+                        }
+                        .password-toggle {
+                            position: absolute;
+                            top: 35%;
+                            font-size: 1.5rem;
+                            color: $color-grey;
+                            right: 1.25rem;
                             cursor: pointer;
                         }
                     }
-                    .password-toggle {
-                        position: absolute;
-                        top: 35%;
-                        font-size: 1.5rem;
-                        color: $color-grey;
-                        right: 1.25rem;
+                }
+                div.sign-up {
+                    font-size: 0.85rem;
+                    position: absolute;
+                    bottom: 2rem;
+                    left: 0;
+                    width: 100%;
+                    text-align: center;
+                    span {
+                        color: $color-blue;
                         cursor: pointer;
                     }
                 }
             }
-            div.sign-up {
-                font-size: 0.85rem;
-                position: absolute;
-                bottom: 2rem;
-                left: 0;
-                width: 100%;
-                text-align: center;
-                span {
-                    color: $color-blue;
-                    cursor: pointer;
-                }
+        }
+    }
+}
+
+@include media(xl) {
+    div.fluid-container {
+        div.row {
+            section.login-container {
+                padding: 0 15rem;
             }
         }
     }

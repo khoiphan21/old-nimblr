@@ -18,9 +18,9 @@ export class DocumentPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.documentService.getCurrentDocument$().subscribe(document => {
-    //   this.currentDocument = document;
-    // });
+    this.documentService.getCurrentDocument$().subscribe(document => {
+      this.currentDocument = document;
+    });
   }
 
 }

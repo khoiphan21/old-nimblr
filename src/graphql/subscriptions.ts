@@ -4,6 +4,7 @@
 export const onCreateUser = `subscription OnCreateUser {
   onCreateUser {
     id
+    username
     email
     firstName
     lastName
@@ -14,6 +15,7 @@ export const onCreateUser = `subscription OnCreateUser {
 export const onUpdateUser = `subscription OnUpdateUser {
   onUpdateUser {
     id
+    username
     email
     firstName
     lastName
@@ -24,6 +26,7 @@ export const onUpdateUser = `subscription OnUpdateUser {
 export const onDeleteUser = `subscription OnDeleteUser {
   onDeleteUser {
     id
+    username
     email
     firstName
     lastName
