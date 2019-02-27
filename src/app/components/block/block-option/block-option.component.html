@@ -4,23 +4,23 @@
             <img src="./assets/icons/add-block.png" alt="plus icon">
         </div>
         <div class="add-basic-blocks" *ngIf="isAddBlockContainerShown">
-            <div class="title">BASIC BLOCKS</div>
-            <div class="block-type block-type-text" (click)="createContainer('TEXT')">
-                <div class="block-image">
-                    <img class="text" src="./assets/icons/text-block.png" alt="">
+            <div class="title basic">BASIC BLOCKS</div>
+            <div class="block-type" (click)="createBlock('TEXT')">
+                <div class="block-image text">
+                    <!-- <img class="text" src="./assets/icons/text-block.png" alt=""> -->
                 </div>
                 <div class="block-text">
                     <div class="type">Text</div>
-                    <div class="description">Just start writing with plain text</div>
+                    <div class="description">Just plain text</div>
                 </div>
             </div>
-            <div class="block-type block-type-image" (click)="createContainer('IMAGE')">
-                <div class="block-image">
-                    <img class="image" src="./assets/icons/image-block.png" alt="">
+            <div class="title form">FORM BLOCKS</div>
+            <div class="block-type" (click)="createBlock('TEXT')">
+                <div class="block-image text">
                 </div>
                 <div class="block-text">
-                    <div class="type">Image</div>
-                    <div class="description">Upload an image with a caption</div>
+                    <div class="type">Question block</div>
+                    <div class="description">Question and input fields</div>
                 </div>
             </div>
         </div>
@@ -36,7 +36,6 @@
                 </div>
                 <div class="selection-text">
                     <div class="type">Delete</div>
-                    <div class="key">Del</div>
                 </div>
             </div>
         </div>
