@@ -16,6 +16,7 @@ import { DocumentPageComponent } from './pages/document-page/document-page.compo
 import { NavigationBarComponent } from './components/navigation-bar/navigation-bar.component';
 import { BlockComponent } from './components/block/block.component';
 import { BlockOptionComponent } from './components/block/block-option/block-option.component';
+import { BlockTextComponent } from './components/block/block-text/block-text.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { BlockOptionComponent } from './components/block/block-option/block-opti
     NavigationBarComponent,
     BlockComponent,
     BlockOptionComponent,
+    BlockTextComponent,
   ],
   imports: [
     BrowserModule,
