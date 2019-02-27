@@ -40,11 +40,6 @@ export class AccountServiceImpl implements AccountService {
       });
   }
 
-  register(user: User): Observable<boolean> {
-
-    return null;
-  }
-
   async registerCognitoUser(user: User, password: string): Promise<any> {
     // TODO: code works!!! Just need to configure a bit and test
     // Step 1: register user into the pool
@@ -143,33 +138,44 @@ export class AccountServiceImpl implements AccountService {
   }
 
   logout(): void {
+    // Change state of Auth class and class vairable
     Auth.signOut()
-      .then(data => this.user$.next(null))
+      .then(data => {
+        this.user$.next(null);
+        console.log('Auth logged out successfully');
+      })
       .catch(err => console.log(err));
   }
 
   async update(user: User): Promise<any> {
-
-    // session variable?
     // Purpose: update the details of a user who have already been registered
+    // Case: Auth already signed in
+    // Otherwise shoudl throw error saying that user not signin
 
-    console.log(this.user$.value);
+    try {
+      console.log(this.user$.value);
 
-    // Update user in App DB
-    const userDB = {
-      input: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName
+      // Update user in App DB
+      const userDB = {
+        input: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
       }
+
+      const response = API.graphql(
+        graphqlOperation(updateUser, userDB)
+      );
+
+      console.log('graphql: ', response);
+      return Promise.resolve('ok');
+
+    } catch (err) {
+      return Promise.reject(err);
+
     }
-
-    const response = API.graphql(
-      graphqlOperation(updateUser, userDB)
-    );
-
-    console.log('graphql: ', response);
   }
 
   getUser$(): Observable<User> {

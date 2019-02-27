@@ -81,6 +81,36 @@ describe('AccountImplService', () => {
     });
   });
 
+  describe('RegisterService', () => {
+    // const email = 'testing' + Math.random() + '@testmail.au';
+    const email = "brunocyh@gmail.com";
+    const user = {
+      id: email,
+      firstName: 'bruno',
+      lastName: 'testheng',
+      email: email
+    };
+    const password = "Qwerty123";
+
+    console.log('user info: ', user);
+
+    it('should register a user in cognito', done => {
+      service.registerCognitoUser(user, password).then(data => {
+        console.log('Registered a cognitor user: ', data);
+        done();
+      });
+
+    });
+
+    fit('should verify the user and then register them in dynamodb', done => {
+      const verificationCode = '049540';
+      service.registerAppUser(user, password, verificationCode).then(data => {
+        console.log('Register a App user: ', data);
+        done();
+      });
+    });
+  });
+
   describe('Logout', () => {
     const user: User = {
       id: "abc123",
@@ -90,25 +120,28 @@ describe('AccountImplService', () => {
     };
 
     it('should throw error when a private operation is perform after logout', done => {
-      service.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
-        service.logout();
+      service.login(TEST_EMAIL, TEST_PASSWORD)
+        .then(() => {
+          console.log('step 1');
+          return service.logout();
 
-        // then performs a private operation:
-        try {
-          service.update(user);
-          fail('private operation shouldnt be performing when logged out');
-          done();
-        } catch (err) {
-          console.log(err);
-          done();
-        }
-      });
+        })
+        .then(() => {
+          try {
+            console.log('step 2');
+            // then performs a private operation:
+            console.log(service.update(user));
+            fail('private operation shouldnt be performing when logged out');
+            done();
+          } catch (err) {
+            console.log(err);
+            done();
+          }
+        });
     });
-
   });
 
-  describe('update', () => {
-
+  describe('update()', () => {
     const user: User = {
       id: "abc123",
       firstName: "tester",
@@ -116,9 +149,16 @@ describe('AccountImplService', () => {
       email: "changed@test.com"
     };
 
+    beforeEach(() => {
+      // Login before everything
+      service.login(TEST_EMAIL, TEST_PASSWORD).then(
+        data => console.log(data));
+    });
+
     it('should update the attributes on dynamodb', done => {
       service.update(user);
-    })
+    });
+
   });
 
   describe('getUser$()', () => {
