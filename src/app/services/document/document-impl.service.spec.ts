@@ -78,31 +78,37 @@ describe('DocumentService', () => {
   it('should subscribe to the list of backend documents', done => {
     accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
       let count = 0;
+      let documentCount = 0;
       // let documentCount;
       const newDocumentId = new BehaviorSubject<string>(null);
       accountService.login(TEST_USERNAME, TEST_PASSWORD);
 
-      // First simulate getting some documents
-      service.getUserDocuments$().pipe(skip(1)).pipe(take(1)).subscribe(documents => {
-        count = documents.length;
-        service.createFormDocument().then(document => {
-          newDocumentId.next(document.id);
-        });
-      });
-
-      // Then test if the subscription is called properly
-      service.getUserDocuments$().pipe(skip(2)).pipe(take(1)).subscribe(documents => {
-        expect(count + 1).toBe(documents.length);
-        newDocumentId.subscribe(id => {
-          if (id) {
-            service.deleteDocument(id).then(deletedDoc => {
-              done();
+      service.getUserDocuments$().subscribe(documents => {
+        switch (count) {
+          case 0: // First value should be []
+            return count++;
+          case 1: // Get the first array of documents
+            documentCount = documents.length;
+            service.createFormDocument().then(document => {
+              newDocumentId.next(document.id);
             });
-          }
-        });
+            return count++;
+          case 2: // After a new document is created
+            expect(documentCount + 1).toBe(documents.length);
+            newDocumentId.subscribe(id => {
+              if (id) {
+                service.deleteDocument(id).then(deletedDoc => {
+                  done();
+                });
+              }
+            });
+            return count++;
+          default:
+            return;
+        }
       });
     });
-  });
+  }, 10000);
 });
 
 describe('DocumentFactory', () => {

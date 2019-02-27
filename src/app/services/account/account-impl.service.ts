@@ -53,7 +53,6 @@ export class AccountServiceImpl implements AccountService {
         graphqlOperation(queries.getUser, userDetails)
       );
 
-      console.log(response);
       const rawUser = response.data.getUser;
       // convert the raw user object to the app's format
       const user: User = this.userFactory.createUser(

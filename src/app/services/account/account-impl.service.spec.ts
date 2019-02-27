@@ -47,7 +47,7 @@ describe('AccountImplService', () => {
       // should resolve
       done();
     }).catch(error => {
-      console.log(error);
+      console.error(error);
       fail(error);
       done();
     });
