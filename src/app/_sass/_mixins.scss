@@ -1,0 +1,85 @@
+@import '_variables';
+
+/*
+ * MEDIA QUERIES MIXINS - MOBILE FIRST
+ * Arguments: retina, large, small, tablet
+ */
+
+@mixin media($type) {
+    $mobile-size: "(max-width: 768px)";
+    $tablet-size: "(min-width: 768px) and (max-width: 1024px)";
+    $small-screen-size: "(min-width: 1024px) and (orientation: landscape)";
+    $large-screen-size: "(min-width: 1440px)";
+    $retina-screen-size: "(min-width: 2500px)";
+    @if $type==mobile {
+        @media #{$mobile-size} {
+            @content;
+        }
+    }
+    @else if $type==tablet {
+        @media #{$tablet-size} {
+            @content;
+        }
+    }
+    @else if $type==small {
+        @media #{$small-screen-size} {
+            @content;
+        }
+    }
+    @else if $type==large {
+        @media #{$large-screen-size} {
+            @content;
+        }
+    }
+    @else if $type==retina {
+        @media #{$retina-screen-size} {
+            @content;
+        }
+    }
+}
+
+
+/*
+ * COMMON ALIGNMENT STYLING
+ */
+
+@mixin column-center() {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin column-left() {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+@mixin column-right() {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+@mixin row-center() {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    @include media(mobile-screen) {
+        flex-direction: column;
+    }
+}
+
+@mixin row-left() {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    @include media(mobile-screen) {
+        flex-direction: column;
+    }
+}
