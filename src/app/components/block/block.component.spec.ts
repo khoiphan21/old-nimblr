@@ -2,6 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockComponent } from './block.component';
 import { BlockOptionComponent } from './block-option/block-option.component';
+import { BlockTextComponent } from './block-text/block-text.component';
+import { BlockHeaderComponent } from './block-header/block-header.component';
 
 describe('BlockComponent', () => {
   let component: BlockComponent;
@@ -11,7 +13,9 @@ describe('BlockComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         BlockComponent,
-        BlockOptionComponent
+        BlockOptionComponent,
+        BlockTextComponent,
+        BlockHeaderComponent
       ]
     })
     .compileComponents();
