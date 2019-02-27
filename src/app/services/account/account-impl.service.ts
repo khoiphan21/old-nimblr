@@ -53,8 +53,8 @@ export class AccountServiceImpl implements AccountService {
         graphqlOperation(queries.getUser, userDetails)
       );
 
+      console.log(response);
       const rawUser = response.data.getUser;
-
       // convert the raw user object to the app's format
       const user: User = this.userFactory.createUser(
         rawUser.id,
@@ -64,19 +64,22 @@ export class AccountServiceImpl implements AccountService {
       );
 
       return Promise.resolve(user);
-    } catch (error) { Promise.reject(error); }
+    } catch (error) { return Promise.reject(error); }
   }
 
 
   // Bruno
-  async login(email: string, password: string): Promise<any> {
+  async login(username: string, password: string): Promise<any> {
 
     return new Promise((resolve, reject) => {
-      Auth.signIn(email, password).then(
+      Auth.signIn(username, password).then(
         cognitoUser => {
-          this.getAppUser(cognitoUser.username).then(user => {
+          const userId = cognitoUser.signInUserSession.idToken.payload.sub;
+          this.getAppUser(userId).then(user => {
             this.user$.next(user);
             resolve();
+          }).catch(error => {
+            reject(error);
           });
         }
       ).catch(error => reject(error));
@@ -111,15 +114,15 @@ export class AccountServiceImpl implements AccountService {
   async isUserReady(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.getUser$()
-      .pipe(timeout(2500))
-      .subscribe((user: User) => {
-        if (user) {
-          resolve(user);
-        }
-      }, error => {
-        reject(error);
+        .pipe(timeout(2500))
+        .subscribe((user: User) => {
+          if (user) {
+            resolve(user);
+          }
+        }, error => {
+          reject(error);
 
-      });
+        });
     });
   }
 

@@ -38,7 +38,7 @@ describe('UserFactoryService', () => {
       users.map(user => expect(user instanceof UserImpl).toBe(true));
       expect(users.length).toBe(2);
       done();
-    }, error => {
+    }).catch(error => {
       fail(error);
       done();
     });
@@ -49,7 +49,7 @@ describe('UserFactoryService', () => {
     factory.getUserFromIds(ids).then(users => {
       expect(users.length).toBe(0);
       done();
-    }, error => {
+    }).catch(error => {
       fail(error);
       done();
     });
@@ -60,7 +60,7 @@ describe('UserFactoryService', () => {
     factory.getUserFromIds(ids).then(users => {
       expect(users.length).toBe(0);
       done();
-    }, error => {
+    }).catch(error => {
       fail(error);
       done();
     });

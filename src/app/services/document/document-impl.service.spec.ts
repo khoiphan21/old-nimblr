@@ -4,7 +4,7 @@ import { DocumentServiceImpl, DocumentFactory } from './document-impl.service';
 import { AccountService } from '../account/account.service';
 import { ServicesModule } from 'src/app/modules/services.module';
 
-import { TEST_EMAIL, TEST_PASSWORD, TEST_USER_ID, BlankComponent } from '../account/account-impl.service.spec';
+import { TEST_USERNAME, TEST_PASSWORD, TEST_USER_ID, BlankComponent } from '../account/account-impl.service.spec';
 import { UserFactoryService } from '../user/user-factory.service';
 import { DocumentImpl } from 'src/app/classes/document-impl';
 import { UserImpl } from '../../classes/user-impl';
@@ -47,7 +47,7 @@ describe('DocumentService', () => {
   });
 
   it('should emit a new document object upon successful creation', done => {
-    accountService.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+    accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
       service.getCurrentDocument$().subscribe(document => {
         if (!document) { return; }
         // some result is returned. success.
@@ -65,7 +65,7 @@ describe('DocumentService', () => {
   });
 
   it('should retrieve all documents for a user', done => {
-    accountService.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+    accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
       const subscription = service.getUserDocuments$();
       subscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {
         expect(documents.length).toBeGreaterThan(0);
@@ -76,11 +76,11 @@ describe('DocumentService', () => {
   });
 
   it('should subscribe to the list of backend documents', done => {
-    accountService.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+    accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
       let count = 0;
       // let documentCount;
       const newDocumentId = new BehaviorSubject<string>(null);
-      accountService.login(TEST_EMAIL, TEST_PASSWORD);
+      accountService.login(TEST_USERNAME, TEST_PASSWORD);
 
       // First simulate getting some documents
       service.getUserDocuments$().pipe(skip(1)).pipe(take(1)).subscribe(documents => {
