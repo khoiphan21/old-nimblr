@@ -1,0 +1,13 @@
+{
+    "AppSyncApiName": "irisa",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authirisa",
+            "Outputs.UserPoolId"
+        ]
+    },
+    "schemaGraphql": "s3://irisa-20190227103613-deployment/amplify-appsync-files/schema.graphql.1551227909764",
+    "ResolverBucket": "irisa-20190227103613-deployment",
+    "ResolverRootKey": "amplify-appsync-files",
+    "DeploymentTimestamp": "1551227909764"
+}

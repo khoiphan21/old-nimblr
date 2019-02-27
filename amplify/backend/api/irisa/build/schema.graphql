@@ -1,0 +1,261 @@
+type User {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  documentIds: [String]
+}
+
+type Document {
+  id: ID!
+  type: DocumentType!
+  title: String
+  ownerId: String
+  editorIds: [String]
+  viewerIds: [String]
+  order: [String]
+  blockIds: [String]
+}
+
+enum DocumentType {
+  GENERIC
+  FORM
+}
+
+interface Block {
+  id: ID!
+  version: String
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String
+  timestamp: Int
+}
+
+enum BlockType {
+  TEXT
+}
+
+type TextBlock implements Block {
+  id: ID!
+  version: String
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String
+  timestamp: Int
+  value: String
+}
+
+type Query {
+  getBlocksFromDocument(documentId: ID!): [Block]
+  getUser(id: ID!): User
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
+  getDocument(id: ID!): Document
+  listDocuments(filter: ModelDocumentFilterInput, limit: Int, nextToken: String): ModelDocumentConnection
+  getTextBlock(id: ID!): TextBlock
+  listTextBlocks(filter: ModelTextBlockFilterInput, limit: Int, nextToken: String): ModelTextBlockConnection
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelUserConnection {
+  items: [User]
+  nextToken: String
+}
+
+input ModelStringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+input ModelIDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input ModelIntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+input ModelFloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input ModelBooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelUserFilterInput {
+  id: ModelIDFilterInput
+  email: ModelStringFilterInput
+  firstName: ModelStringFilterInput
+  lastName: ModelStringFilterInput
+  documentIds: ModelStringFilterInput
+  and: [ModelUserFilterInput]
+  or: [ModelUserFilterInput]
+  not: ModelUserFilterInput
+}
+
+input CreateUserInput {
+  id: ID
+  email: String!
+  firstName: String
+  lastName: String
+  documentIds: [String]
+}
+
+input UpdateUserInput {
+  id: ID!
+  email: String
+  firstName: String
+  lastName: String
+  documentIds: [String]
+}
+
+input DeleteUserInput {
+  id: ID
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User
+  updateUser(input: UpdateUserInput!): User
+  deleteUser(input: DeleteUserInput!): User
+  createDocument(input: CreateDocumentInput!): Document
+  updateDocument(input: UpdateDocumentInput!): Document
+  deleteDocument(input: DeleteDocumentInput!): Document
+  createTextBlock(input: CreateTextBlockInput!): TextBlock
+  updateTextBlock(input: UpdateTextBlockInput!): TextBlock
+  deleteTextBlock(input: DeleteTextBlockInput!): TextBlock
+}
+
+type Subscription {
+  onCreateUser: User @aws_subscribe(mutations: ["createUser"])
+  onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
+  onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])
+  onCreateDocument: Document @aws_subscribe(mutations: ["createDocument"])
+  onUpdateDocument: Document @aws_subscribe(mutations: ["updateDocument"])
+  onDeleteDocument: Document @aws_subscribe(mutations: ["deleteDocument"])
+  onCreateTextBlock: TextBlock @aws_subscribe(mutations: ["createTextBlock"])
+  onUpdateTextBlock: TextBlock @aws_subscribe(mutations: ["updateTextBlock"])
+  onDeleteTextBlock: TextBlock @aws_subscribe(mutations: ["deleteTextBlock"])
+}
+
+type ModelDocumentConnection {
+  items: [Document]
+  nextToken: String
+}
+
+input ModelDocumentFilterInput {
+  id: ModelIDFilterInput
+  title: ModelStringFilterInput
+  ownerId: ModelStringFilterInput
+  editorIds: ModelStringFilterInput
+  viewerIds: ModelStringFilterInput
+  order: ModelStringFilterInput
+  blockIds: ModelStringFilterInput
+  and: [ModelDocumentFilterInput]
+  or: [ModelDocumentFilterInput]
+  not: ModelDocumentFilterInput
+}
+
+input CreateDocumentInput {
+  id: ID
+  type: DocumentType!
+  title: String
+  ownerId: String
+  editorIds: [String]
+  viewerIds: [String]
+  order: [String]
+  blockIds: [String]
+}
+
+input UpdateDocumentInput {
+  id: ID!
+  type: DocumentType
+  title: String
+  ownerId: String
+  editorIds: [String]
+  viewerIds: [String]
+  order: [String]
+  blockIds: [String]
+}
+
+input DeleteDocumentInput {
+  id: ID
+}
+
+type ModelTextBlockConnection {
+  items: [TextBlock]
+  nextToken: String
+}
+
+input ModelTextBlockFilterInput {
+  id: ModelIDFilterInput
+  version: ModelStringFilterInput
+  documentId: ModelStringFilterInput
+  lastUpdatedBy: ModelStringFilterInput
+  timestamp: ModelIntFilterInput
+  value: ModelStringFilterInput
+  and: [ModelTextBlockFilterInput]
+  or: [ModelTextBlockFilterInput]
+  not: ModelTextBlockFilterInput
+}
+
+input CreateTextBlockInput {
+  id: ID
+  version: String
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String
+  timestamp: Int
+  value: String
+}
+
+input UpdateTextBlockInput {
+  id: ID!
+  version: String
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String
+  timestamp: Int
+  value: String
+}
+
+input DeleteTextBlockInput {
+  id: ID
+}

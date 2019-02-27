@@ -1,0 +1,56 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "irisa-20190227103613-authRole",
+			"UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190227103613-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190227103613-authRole",
+			"Region": "ap-southeast-2",
+			"DeploymentBucketName": "irisa-20190227103613-deployment",
+			"UnauthRoleName": "irisa-20190227103613-unauthRole",
+			"StackName": "irisa-20190227103613",
+			"StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190227103613/b57b8f20-3a27-11e9-abf8-0613a29612d8"
+		}
+	},
+	"auth": {
+		"irisa": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/irisa-20190227103613-deployment/amplify-cfn-templates/auth/irisa-cloudformation-template.yml",
+				"logicalId": "authirisa"
+			},
+			"lastPushTimeStamp": "2019-02-27T00:43:19.403Z",
+			"output": {
+				"AppClientSecret": "fj6chvr0vn8ageh6bs672dbk222pqdbk7e3sq8e3rs89fm4mn42",
+				"UserPoolId": "ap-southeast-2_d6cypRasd",
+				"AppClientIDWeb": "30aaqa11def8pv48lbg18iu8f9",
+				"AppClientID": "1oc7m67r070c5c32ismgu7797u",
+				"IdentityPoolId": "ap-southeast-2:6ee302a4-8036-47fd-90c0-6455f4cd75b7",
+				"IdentityPoolName": "irisa_identity_pool",
+				"UserPoolName": "irisa_user_pool"
+			},
+			"lastPushDirHash": "6HarWvmjh0OS0+jcze7oStZS+i0="
+		}
+	},
+	"api": {
+		"irisa": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "AMAZON_COGNITO_USER_POOLS",
+				"GraphQLAPIIdOutput": "cojacjzofjgtvkrcx6p2eh2wca",
+				"GraphQLAPIEndpointOutput": "https://a7rqkgkj4fhtbjxdfjrdmqgj34.appsync-api.ap-southeast-2.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-ylrvojetpzaulian3jdlymwcba",
+				"AuthCognitoUserPoolIdOutput": "ap-southeast-2_d6cypRasd",
+				"AuthCognitoUserPoolNativeClientId": "See UserPool: ap-southeast-2_d6cypRasd",
+				"AuthCognitoUserPoolJSClientId": "See UserPool: ap-southeast-2_d6cypRasd"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/irisa-20190227103613-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apiirisa"
+			},
+			"lastPushTimeStamp": "2019-02-27T00:43:19.403Z",
+			"lastPushDirHash": "1qQExJiRiqQC4V1mO3quq3cNE04="
+		}
+	}
+}

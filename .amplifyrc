@@ -1,0 +1,14 @@
+{
+    "providers": {
+        "awscloudformation": {
+            "AuthRoleName": "irisa-20190227103613-authRole",
+            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190227103613-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190227103613-authRole",
+            "Region": "ap-southeast-2",
+            "DeploymentBucketName": "irisa-20190227103613-deployment",
+            "UnauthRoleName": "irisa-20190227103613-unauthRole",
+            "StackName": "irisa-20190227103613",
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190227103613/b57b8f20-3a27-11e9-abf8-0613a29612d8"
+        }
+    }
+}

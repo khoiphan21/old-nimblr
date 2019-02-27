@@ -1,0 +1,56 @@
+{
+    "identityPoolName": "irisa_identity_pool",
+    "allowUnauthenticatedIdentities": false,
+    "thirdPartyAuth": false,
+    "lambdaLogPolicy": "irisa_lambda_log_policy",
+    "openIdLambdaRoleName": "irisa_openid_lambda_role",
+    "openIdRolePolicy": "irisa_openid_pass_role_policy",
+    "openIdLambdaIAMPolicy": "irisa_openid_lambda_iam_policy",
+    "openIdLogPolicy": "irisa_openid_lambda_log_policy",
+    "userPoolName": "irisa_user_pool",
+    "autoVerifiedAttributes": [
+        "email"
+    ],
+    "mfaConfiguration": "OFF",
+    "mfaTypes": [
+        "SMS Text Message"
+    ],
+    "roleName": "irisa_sns-role",
+    "roleExternalId": "irisa_role_external_id",
+    "policyName": "irisa-sns-policy",
+    "smsAuthenticationMessage": "Your authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": true,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [
+        "Requires Lowercase",
+        "Requires Uppercase",
+        "Requires Numbers"
+    ],
+    "requiredAttributes": [
+        "email"
+    ],
+    "userpoolClientName": "irisa_app_client",
+    "userpoolClientGenerateSecret": true,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientReadAttributes": [
+        "email"
+    ],
+    "mfaLambdaRole": "irisa_totp_lambda_role",
+    "mfaLambdaLogPolicy": "irisa_totp_lambda_log_policy",
+    "mfaPassRolePolicy": "irisa_totp_pass_role_policy",
+    "mfaLambdaIAMPolicy": "irisa_totp_lambda_iam_policy",
+    "userpoolClientLambdaRole": "irisa_userpoolclient_lambda_role",
+    "userpoolClientLogPolicy": "irisa_userpoolclient_lambda_log_policy",
+    "userpoolClientLambdaPolicy": "irisa_userpoolclient_lambda_iam_policy",
+    "userpoolClientSetAttributes": false,
+    "useDefault": "manual",
+    "authSelections": "identityPoolAndUserPool",
+    "resourceName": "irisa",
+    "unAuthRoleName": "irisa-20190227103613-unauthRole",
+    "authRoleName": "irisa-20190227103613-authRole",
+    "unAuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190227103613-unauthRole",
+    "authRoleArn": "arn:aws:iam::981403287850:role/irisa-20190227103613-authRole"
+}

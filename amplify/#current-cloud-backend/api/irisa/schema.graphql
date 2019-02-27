@@ -1,0 +1,50 @@
+type User @model {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String 
+  documentIds: [String]
+}
+
+type Document @model {
+  id: ID!
+  type: DocumentType!
+  title: String
+  ownerId: String
+  editorIds: [String]
+  viewerIds: [String]
+  order: [String]
+  blockIds: [String]
+}
+
+enum DocumentType {
+  GENERIC
+  FORM
+}
+
+interface Block {
+  id: ID!
+  version: String
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String
+  timestamp: Int
+}
+
+enum BlockType {
+  TEXT
+}
+
+type TextBlock implements Block @model {
+  id: ID!
+  version: String
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String
+  timestamp: Int
+  value: String
+}
+
+type Query {
+  getBlocksFromDocument(documentId: ID!): [Block]
+}
