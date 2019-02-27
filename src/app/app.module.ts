@@ -17,6 +17,7 @@ import { NavigationBarComponent } from './components/navigation-bar/navigation-b
 import { BlockComponent } from './components/block/block.component';
 import { BlockOptionComponent } from './components/block/block-option/block-option.component';
 import { BlockTextComponent } from './components/block/block-text/block-text.component';
+import { BlockHeaderComponent } from './components/block/block-header/block-header.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { BlockTextComponent } from './components/block/block-text/block-text.com
     BlockComponent,
     BlockOptionComponent,
     BlockTextComponent,
+    BlockHeaderComponent,
   ],
   imports: [
     BrowserModule,
