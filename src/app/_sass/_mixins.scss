@@ -6,33 +6,27 @@
  */
 
 @mixin media($type) {
-    $mobile-size: "(max-width: 768px)";
-    $tablet-size: "(min-width: 768px) and (max-width: 1024px)";
-    $small-screen-size: "(min-width: 1024px) and (orientation: landscape)";
-    $large-screen-size: "(min-width: 1440px)";
-    $retina-screen-size: "(min-width: 2500px)";
-    @if $type==mobile {
-        @media #{$mobile-size} {
+    $small-size: "(min-width: 576px)";
+    $medium-size: "(min-width: 768px)";
+    $large-size: "(min-width: 992px)";
+    $extra-large-size: "(min-width: 1200px)";
+    @if $type==sm {
+        @media #{$small-size} {
             @content;
         }
     }
-    @else if $type==tablet {
-        @media #{$tablet-size} {
+    @else if $type==md {
+        @media #{$medium-size} {
             @content;
         }
     }
-    @else if $type==small {
-        @media #{$small-screen-size} {
+    @else if $type==lg {
+        @media #{$large-size} {
             @content;
         }
     }
-    @else if $type==large {
-        @media #{$large-screen-size} {
-            @content;
-        }
-    }
-    @else if $type==retina {
-        @media #{$retina-screen-size} {
+    @else if $type==xl {
+        @media #{$extra-large-size} {
             @content;
         }
     }
