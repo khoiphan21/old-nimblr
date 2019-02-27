@@ -1,33 +1,49 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
-$dashboard-document-height: 289px;
-$dashboard-document-footer-height: 44px;
-div.fluid-container {
-    height: $dashboard-document-height;
-    font-family: $font-roboto;
-    background: #FFFFFF;
-    border-radius: 3px;
-    box-shadow: 3px 3px 2px 0 #DDDDDD;
-    @include column-center;
-    justify-content: space-between;
-    section.snapshot {
-        width: 100%;
-        height: $dashboard-document-height - $dashboard-document-footer-height;
-    }
-    .document-card-footer {
-        width: 100%;
-        height: $dashboard-document-footer-height;
-        @include row-center;
+@include media(lg) {
+    $dashboard-document-height: 289px;
+    $dashboard-document-footer-height: 44px;
+    div.fluid-container {
+        height: $dashboard-document-height;
+        font-family: $font-roboto;
+        background: #FFFFFF;
+        border-radius: 3px;
+        box-shadow: 3px 3px 2px 0 #DDDDDD;
+        @include column-center;
         justify-content: space-between;
-        background: #DDD;
-        padding: 0 1rem;
-        color: $color-grey;
-        .title {
-            font-size: 0.8rem;
+        section.snapshot {
+            width: 100%;
+            height: $dashboard-document-height - $dashboard-document-footer-height;
+        }
+        .document-card-footer {
+            width: 100%;
+            height: $dashboard-document-footer-height;
+            @include row-center;
+            justify-content: space-between;
+            background: #DDD;
+            padding: 0 1rem;
+            color: $color-grey;
+            .title {
+                font-size: 0.8rem;
+            }
+        }
+        &:hover {
+            box-shadow: 0 0 8px 0 rgba(0, 145, 255, 0.66);
         }
     }
-    &:hover {
-        box-shadow: 0 0 8px 0 rgba(0, 145, 255, 0.66);
+}
+
+@include media(xl) {
+    $dashboard-document-height: 318px;
+    $dashboard-document-footer-height: 49px;
+    div.fluid-container {
+        height: $dashboard-document-height;
+        section.snapshot {
+            height: $dashboard-document-height - $dashboard-document-footer-height;
+        }
+        .document-card-footer {
+            height: $dashboard-document-footer-height;
+        }
     }
 }
