@@ -1,0 +1,184 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+$input-gap: 7.5px;
+section.block-option {
+    width: auto;
+    height: auto;
+    position: absolute;
+    left: 100px - 52.5px - $input-gap;
+    @include row-center;
+    align-items: flex-start;
+    font-family: $font-roboto;
+    z-index: 5;
+    .add-button-container,
+    .menu-drag-container {
+        width: 22.5px;
+        height: 22.55px;
+        cursor: pointer;
+        transition: 0.3s;
+        @include row-center;
+        position: relative;
+        .add-button,
+        .menu-drag {
+            position: relative;
+            @include row-center;
+            &:hover {
+                border-radius: 3px;
+                background-color: #E5E5E5;
+                div.tooltiptext {
+                    visibility: visible;
+                }
+            }
+            div.tooltiptext {
+                width: max-content;
+                height: auto;
+                visibility: hidden;
+                background: black;
+                color: $color-light-grey;
+                position: absolute;
+                font-size: 13px;
+                top: 135%;
+                left: -100%;
+                padding: 4px 6px;
+                text-align: center;
+                line-height: 125%;
+                z-index: 1;
+                .instruction {
+                    color: white;
+                }
+            }
+        }
+    }
+    .add-button-container {
+        .add-button {
+            width: 100%;
+            height: 100%;
+            img {
+                height: 16.92px;
+                width: 16.92px;
+                pointer-events: none;
+            }
+        }
+        .add-basic-blocks {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 251px;
+            height: auto;
+            box-shadow: 0 2px 11px 0 rgba(97, 97, 97, 0.5);
+            background: white;
+            z-index: 1;
+            .title {
+                margin-top: 1.5vh;
+                padding: 0 8.5px;
+                font-size: 12px;
+                color: #9E9E9E;
+                margin-bottom: 2vh;
+            }
+            .block-type {
+                width: 100%;
+                height: auto;
+                @include row-center;
+                justify-content: flex-start;
+                padding: 1.5vh 8.5px;
+                cursor: pointer;
+                transition: 0.3s;
+                &:hover {
+                    background: #F2F2F2;
+                }
+                .block-image {
+                    width: 39px;
+                    height: 39px;
+                    border: 0.5px solid #7E7E7E;
+                    border-radius: 2px;
+                    margin-right: 0.5vw;
+                    @include row-center;
+                    background: white;
+                    img.text {
+                        width: 30px;
+                        height: 17px;
+                    }
+                    img.image {
+                        width: 21px;
+                        height: 21px;
+                    }
+                }
+                .block-text {
+                    width: 80%;
+                    height: 39px;
+                    @include column-center;
+                    align-items: flex-start;
+                    justify-content: space-around;
+                    .type {
+                        font-size: 15px;
+                        color: #3C3C3C;
+                    }
+                    .description {
+                        font-size: 11px;
+                        color: #A0A0A0;
+                    }
+                }
+            }
+        }
+    }
+    .menu-drag-container {
+        margin-left: $input-gap;
+        .menu-drag {
+            width: 100%;
+            height: 100%;
+            img {
+                height: 19.33px;
+                width: 12.08px;
+                pointer-events: none;
+            }
+        }
+        .menu-blocks {
+            $menu-block-width: 156px;
+            position: absolute;
+            top: -3px;
+            left: -$menu-block-width - 10px;
+            width: $menu-block-width;
+            height: auto;
+            box-shadow: 0 2px 11px 0 rgba(97, 97, 97, 0.5);
+            background: white;
+            z-index: 1;
+            .menu-selection {
+                width: 100%;
+                height: 31px;
+                @include row-center;
+                justify-content: space-between;
+                padding: 1.5vh 12px;
+                cursor: pointer;
+                transition: 0.3s;
+                background: white;
+                &:hover {
+                    background: #F2F2F2;
+                }
+                .selection-image {
+                    width: auto;
+                    height: auto;
+                    margin-right: 1vw;
+                    img.delete-item {
+                        width: 12px;
+                        height: 14px;
+                    }
+                }
+                .selection-text {
+                    width: 85%;
+                    height: 100%;
+                    @include row-center;
+                    justify-content: space-between;
+                    .type {
+                        font-size: 13px;
+                        color: #494949;
+                    }
+                    .key {
+                        font-size: 10px;
+                        color: #BEBEBE;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+@import '../../_sass/interface';
+@import '../../_sass/variables';
+@import '../../_sass/base';
+$navigation-background: #D8D8D8;
+section.fluid-container {
+    width: 100%;
+    height: 100%;
+    font-family: $font-roboto;
+    background-color: $navigation-background;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    color: $color-mid-grey;
+}

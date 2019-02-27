@@ -1,0 +1,38 @@
+<div class="fluid-container">
+    <div class="row">
+        <section class="col-3 register-background"></section>
+        <section class="col-7 register-container">
+            <section class="heading">
+                <h1 *ngIf="steps === 'one'">Enter your work email to get started</h1>
+                <h3 *ngIf="steps === 'one'">It’s as simple as that.</h3>
+                <h1 *ngIf="steps === 'two'">We just need a few more details</h1>
+            </section>
+            <form [formGroup]="registerForm">
+                <!-- Step 1  -->
+                <input *ngIf="steps === 'one'" class="mb-4" formControlName="email" type="email" required>
+                <button [disabled]="registerForm.controls.email.invalid" *ngIf="steps === 'one'" class="filled-button-primary ml-auto mr-auto" (click)="steps = 'two'">Continue</button>
+                <!-- End of Step 1  -->
+                <!-- Step 2  -->
+                <div class="row no-pad">
+                    <div class="form-input col-6 pl-0 " *ngIf="steps === 'two'">
+                        <div class="input-label mb-1">First Name</div>
+                        <input class="mb-4" formControlName="firstName" type="text" required>
+                    </div>
+                    <div class="form-input col-6 pr-0" *ngIf="steps === 'two'">
+                        <div class="input-label  mb-1">Last Name</div>
+                        <input class="mb-4" formControlName="lastName" type="text" required>
+                    </div>
+                </div>
+                <div class="form-input" *ngIf="steps === 'two'">
+                    <div class="input-label  mb-1">Password</div>
+                    <input class="mb-4" formControlName="password" type="{{passwordType}}" required>
+                    <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
+                    <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
+                </div>
+                <button *ngIf="steps === 'two'" class="filled-button-primary ml-auto mr-auto" [disabled]="registerForm.invalid" (click)="registerAccount()">GET STARTED</button>
+                <!-- End of Step 2  -->
+            </form>
+            <div class="sign-in">Already have an account? <span routerLink="/login">Sign in</span></div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+@import '../../_sass/interface';
+@import '../../_sass/variables';
+@import '../../_sass/base';
+$header-background: #D8D8D8;
+$header-text-size: 0.8rem;
+div.row {
+    width: 100%;
+    height: 31px;
+    font-family: $font-roboto;
+    background-color: $header-background;
+    @include row-center;
+    justify-content: space-between;
+    section.user-profile {
+        height: 100%;
+        @include row-center;
+        justify-content: flex-start;
+        .user-icon {
+            @include row-center;
+            width: 20px;
+            height: 20px;
+            background: $color-blue;
+            color: white;
+            border-radius: 50px;
+            font-size: 0.575rem;
+        }
+        .user-name {
+            color: $color-mid-grey;
+            font-size: $header-text-size;
+        }
+    }
+    section.document-tab {
+        color: $color-mid-grey;
+        @include row-center;
+        justify-content: flex-end;
+        .share {
+            font-size: $header-text-size;
+            margin: 0 1.5rem;
+            font-weight: normal;
+        }
+    }
+}
