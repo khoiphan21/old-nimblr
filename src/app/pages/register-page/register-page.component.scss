@@ -80,7 +80,11 @@
 }
 
 @include media(xl) {
-    section.register-container {
-        padding: 0 15rem;
+    div.fluid-container {
+        div.row {
+            section.register-container {
+                padding: 0 15rem;
+            }
+        }
     }
 }

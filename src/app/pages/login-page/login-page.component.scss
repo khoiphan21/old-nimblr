@@ -90,7 +90,11 @@
 }
 
 @include media(xl) {
-    section.login-container {
-        padding: 0 15rem;
+    div.fluid-container {
+        div.row {
+            section.login-container {
+                padding: 0 15rem;
+            }
+        }
     }
 }
