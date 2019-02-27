@@ -62,19 +62,24 @@ section.block-option {
         }
         .add-basic-blocks {
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
-            width: 251px;
+            width: 200px;
             height: auto;
             box-shadow: 0 2px 11px 0 rgba(97, 97, 97, 0.5);
-            background: white;
             z-index: 1;
+            background: white;
+            border-radius: 5px;
             .title {
-                margin-top: 1.5vh;
                 padding: 0 8.5px;
-                font-size: 12px;
-                color: #9E9E9E;
-                margin-bottom: 2vh;
+                padding-top: 7.5px;
+                font-size: 0.7rem;
+                color: #A9A9A9;
+                letter-spacing: 0.5px;
+                font-weight: normal;
+            }
+            .title.form {
+                border-top: 1px solid #DDDDDD;
             }
             .block-type {
                 width: 100%;
@@ -87,22 +92,20 @@ section.block-option {
                 &:hover {
                     background: #F2F2F2;
                 }
+                .block-image.text {
+                    background: {
+                        image: url('/assets/icons/text-block.png');
+                        size: contain;
+                        repeat: no-repeat;
+                        position: center;
+                    }
+                }
                 .block-image {
                     width: 39px;
                     height: 39px;
-                    border: 0.5px solid #7E7E7E;
+                    border: 0.5px solid transparentize($color: #7E7E7E, $amount: 0.5);
                     border-radius: 2px;
                     margin-right: 0.5vw;
-                    @include row-center;
-                    background: white;
-                    img.text {
-                        width: 30px;
-                        height: 17px;
-                    }
-                    img.image {
-                        width: 21px;
-                        height: 21px;
-                    }
                 }
                 .block-text {
                     width: 80%;
@@ -111,13 +114,22 @@ section.block-option {
                     align-items: flex-start;
                     justify-content: space-around;
                     .type {
-                        font-size: 15px;
-                        color: #3C3C3C;
+                        font-size: 0.85rem;
+                        font-weight: normal;
+                        color: $color-mid-grey;
                     }
                     .description {
-                        font-size: 11px;
-                        color: #A0A0A0;
+                        font-size: 0.7rem;
+                        color: #A9A9A9;
                     }
+                }
+                &:nth-child(1) {
+                    border-top-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                }
+                &:nth-last-child(1) {
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
                 }
             }
         }
@@ -134,21 +146,20 @@ section.block-option {
             }
         }
         .menu-blocks {
-            $menu-block-width: 156px;
+            $menu-block-width: 135px;
             position: absolute;
             top: -3px;
             left: -$menu-block-width - 10px;
             width: $menu-block-width;
             height: auto;
             box-shadow: 0 2px 11px 0 rgba(97, 97, 97, 0.5);
-            background: white;
             z-index: 1;
+            border-radius: 5px;
             .menu-selection {
                 width: 100%;
-                height: 31px;
                 @include row-center;
                 justify-content: space-between;
-                padding: 1.5vh 12px;
+                padding: 5px 12px;
                 cursor: pointer;
                 transition: 0.3s;
                 background: white;
@@ -171,12 +182,20 @@ section.block-option {
                     justify-content: space-between;
                     .type {
                         font-size: 13px;
-                        color: #494949;
+                        color: #767676;
                     }
                     .key {
                         font-size: 10px;
                         color: #BEBEBE;
                     }
+                }
+                &:nth-child(1) {
+                    border-top-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                }
+                &:nth-last-child(1) {
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
                 }
             }
         }
