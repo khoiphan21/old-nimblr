@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AccountService } from './account.service';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { User } from '../../classes/user';
+import { User, CognitoSignUpUser } from '../../classes/user';
 
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { take, timeout, catchError } from 'rxjs/operators';
@@ -40,18 +40,13 @@ export class AccountServiceImpl implements AccountService {
       });
   }
 
-  async registerCognitoUser(user: User, password: string): Promise<any> {
-    // TODO: code works!!! Just need to configure a bit and test
-    // Step 1: register user into the pool
-    const newUser = {
-      username: user.email,
-      password: password,
-      attributes: { email: user.email }
-    };
+  async registerCognitoUser(user: CognitoSignUpUser): Promise<any> {
 
-    Auth.signUp(newUser).then(data => {
-      console.log('1 signup: ', data);
-    })
+    return new Promise((resolve, reject) => {
+      Auth.signUp(user).then(data => {
+        resolve(data);
+      }).catch(error => reject(error));
+    });
   }
 
   async registerAppUser(user: User, password: string, verificationCode: string): Promise<any> {
@@ -195,7 +190,6 @@ export class AccountServiceImpl implements AccountService {
     return this.user$;
   }
 
-  // NEED TEST
   async isUserReady(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.getUser$()

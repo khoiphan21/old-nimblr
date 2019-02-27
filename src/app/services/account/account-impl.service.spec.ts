@@ -8,7 +8,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
 import { User } from 'src/app/classes/user';
+import { CognitoSignUpUser } from '../../classes/user';
+import awsmobile from 'src/aws-exports';
+import { environment } from '../../../environments/environment';
 
+const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
+const AWS = require('aws-sdk');
 
 export const TEST_USERNAME = 'khoi-test';
 export const TEST_PASSWORD = 'Khoi1234';
@@ -84,41 +89,144 @@ describe('AccountImplService', () => {
   });
 
   describe('RegisterService', () => {
-    // const email = 'testing' + Math.random() + '@testmail.au';
-    const email = "brunocyh@gmail.com";
+    const poolData = {
+      UserPoolId: 'ap-southeast-2_d6cypRasd',
+      ClientId: '30aaqa11def8pv48lbg18iu8f9'
+    };
+    let userPool;
+
     const user = {
-      id: email,
+      username: 'bruno-test',
       firstName: 'bruno',
       lastName: 'testheng',
-      email: email
+      email: 'brunocyh@gmail.com'
     };
-    const password = "Qwerty123";
+    // const password = 'Qwerty123';
 
-    console.log('user info: ', user);
+    beforeEach(() => {
+      userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-    it('should register a user in cognito', done => {
-      service.registerCognitoUser(user, password).then(data => {
-        console.log('Registered a cognitor user: ', data);
+      // logout of any existing user
+      const currentUser = userPool.getCurrentUser();
+      if (currentUser !== null) {
+        currentUser.signOut();
+      }
+    });
+
+    fit('should register a user in cognito successfully and then delete it', done => {
+      const newCognitoUser: CognitoSignUpUser = {
+        username: 'khoi-test-2',
+        password: 'Test1234',
+        attributes: {
+          email: 'success@simulator.amazonses.com', // for email to be sent successfully
+          given_name: 'Test',
+          family_name: 'Account'
+        }
+      };
+
+      service.registerCognitoUser(newCognitoUser).then(data => {
+        return adminConfirmUser(newCognitoUser.username);
+      }).then(() => {
+        return adminDeleteCognitoUser(newCognitoUser);
+      }).then(() => {
         done();
-      });
+      }).catch(error => { fail(error); done(); });
 
     });
 
-    fit('should verify the user and then register them in dynamodb', done => {
+    function adminConfirmUser(username): Promise<any> {
+
+      return new Promise((resolve, reject) => {
+        // configure cognito identity service provider
+        const options = {
+          accessKeyId: environment.AWS_ACCESS_KEY_ID,
+          secretAccessKey: environment.AWS_SECRET_ACCESS_KEY,
+          region: awsmobile.aws_cognito_region
+        };
+        const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider(options);
+
+        const params = {
+          UserPoolId: awsmobile.aws_user_pools_id, /* required */
+          Username: username /* required */
+        };
+
+        // set the status of the user to 'CONFIRMED'
+        cognitoidentityserviceprovider.adminConfirmSignUp(params, (err, data) => {
+          if (err) { reject(err); } else { resolve(data); }      // successful response
+        });
+      });
+    }
+
+    function adminDeleteCognitoUser(newCognitoUser): Promise<any> {
+
+      return new Promise((resolve, reject) => {
+        const userData = {
+          Username: newCognitoUser.username,
+          Pool: userPool
+        };
+        const authenticationData = {
+          Username: newCognitoUser.username,
+          Password: newCognitoUser.password
+        };
+        const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        cognitoUser.authenticateUser(authenticationDetails, {
+          onSuccess: result => {
+            cognitoUser.deleteUser((err, result) => {
+              if (err) { reject(err); return; }
+              resolve('delete call result: ' + result);
+            });
+          },
+          onFailure: error => reject(error)
+        });
+      });
+    }
+
+    it('should verify the user and then register them in dynamodb', done => {
       const verificationCode = '049540';
-      service.registerAppUser(user, password, verificationCode).then(data => {
-        console.log('Register a App user: ', data);
-        done();
-      });
+      // service.registerAppUser(user, password, verificationCode).then(data => {
+      //   console.log('Register a App user: ', data);
+      //   done();
+      // });
     });
+
+    it('should delete a user in cognito', done => {
+      const userData = {
+        Username: 'khoi-test-2',
+        Pool: userPool
+      };
+      const authenticationData = {
+        Username: 'khoi-test-2',
+        Password: 'Khoi1234'
+      };
+      const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+      cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: result => {
+          console.log(result);
+          console.log('deleting user')
+          cognitoUser.deleteUser((err, result) => {
+            if (err) {
+              alert(err);
+              return;
+            }
+            console.log('call result: ' + result);
+          });
+        },
+        onFailure: error => console.error(error)
+
+      });
+      fail('final step');
+      done();
+    })
   });
 
   describe('Logout', () => {
     const user: User = {
-      id: "abc123",
-      firstName: "tester",
-      lastName: "tesla",
-      email: "notshownindb@test.com"
+      id: 'abc123',
+      firstName: 'tester',
+      lastName: 'tesla',
+      email: 'notshownindb@test.com'
     };
 
     it('should throw error when a private operation is perform after logout', done => {
@@ -145,10 +253,10 @@ describe('AccountImplService', () => {
 
   describe('update()', () => {
     const user: User = {
-      id: "abc123",
-      firstName: "tester",
-      lastName: "telstra",
-      email: "changed@test.com"
+      id: 'abc123',
+      firstName: 'tester',
+      lastName: 'telstra',
+      email: 'changed@test.com'
     };
 
     beforeEach(() => {
@@ -175,7 +283,7 @@ describe('AccountImplService', () => {
       });
     });
 
-    it(`should reroute to "login" if a session doesn't exist`, done => {
+    it(`should reroute to 'login' if a session doesn't exist`, done => {
       const routerSpy = spyOn(router, 'navigate');
       Auth.signOut()
         .then(() => {
