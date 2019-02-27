@@ -7,17 +7,12 @@ import { UserImpl } from 'src/app/classes/user-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
-<<<<<<< HEAD
 import { User } from 'src/app/classes/user';
-export const TEST_EMAIL = 'test';
-export const TEST_PASSWORD = 'Password1234';
-export const TEST_USER_ID = '338fc0ff-80be-460a-b255-3cf39383b770';
-=======
+
 
 export const TEST_USERNAME = 'khoi-test';
 export const TEST_PASSWORD = 'Khoi1234';
 export const TEST_USER_ID = '85a705f1-7485-4efd-9e4a-d196ff8c9219';
->>>>>>> d1dfc6f3f836b8170936d30f34165610189f599e
 
 @Component({
   selector: 'app-header',
@@ -127,7 +122,7 @@ describe('AccountImplService', () => {
     };
 
     it('should throw error when a private operation is perform after logout', done => {
-      service.login(TEST_EMAIL, TEST_PASSWORD)
+      service.login(TEST_USERNAME, TEST_PASSWORD)
         .then(() => {
           console.log('step 1');
           return service.logout();
@@ -158,7 +153,7 @@ describe('AccountImplService', () => {
 
     beforeEach(() => {
       // Login before everything
-      service.login(TEST_EMAIL, TEST_PASSWORD).then(
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(
         data => console.log(data));
     });
 
