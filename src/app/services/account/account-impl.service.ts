@@ -120,8 +120,6 @@ export class AccountServiceImpl implements AccountService {
     } catch (error) { return Promise.reject(error); }
   }
 
-
-  // Bruno
   async login(username: string, password: string): Promise<any> {
 
     return new Promise((resolve, reject) => {
@@ -139,14 +137,20 @@ export class AccountServiceImpl implements AccountService {
     });
   }
 
-  logout(): void {
+  async logout(): Promise<any> {
     // Change state of Auth class and class vairable
+    // Has to return a promise, because it gives feedback to user
+    // about whether they are actually logged out safely.
     Auth.signOut()
       .then(data => {
         this.user$.next(null);
         console.log('Auth logged out successfully');
+        return Promise.resolve(true);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        return Promise.resolve(false);
+      });
   }
 
   async update(user: User): Promise<any> {
@@ -172,9 +176,10 @@ export class AccountServiceImpl implements AccountService {
       );
 
       console.log('graphql: ', response);
-      return Promise.resolve('ok');
+      return Promise.resolve('ok'); // not sure why cant i return resposne directly
 
     } catch (err) {
+      console.log('Some random error: ', err);
       return Promise.reject(err);
 
     }

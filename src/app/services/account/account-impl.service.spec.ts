@@ -104,7 +104,7 @@ describe('AccountImplService', () => {
 
     });
 
-    fit('should verify the user and then register them in dynamodb', done => {
+    it('should verify the user and then register them in dynamodb', done => {
       const verificationCode = '049540';
       service.registerAppUser(user, password, verificationCode).then(data => {
         console.log('Register a App user: ', data);
@@ -113,7 +113,7 @@ describe('AccountImplService', () => {
     });
   });
 
-  describe('Logout', () => {
+  describe('Logout()', () => {
     const user: User = {
       id: "abc123",
       firstName: "tester",
@@ -121,25 +121,28 @@ describe('AccountImplService', () => {
       email: "notshownindb@test.com"
     };
 
-    it('should throw error when a private operation is perform after logout', done => {
+    it('should throw error when a private operation is perform after loggout', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD)
         .then(() => {
           console.log('step 1');
-          return service.logout();
-
-        })
-        .then(() => {
+          // let spam =  await service.logout(); // await only allowed in async
+          return service.logout(); // i just want it to wait until its actually logged out...
+        }).then(() => {
           try {
             console.log('step 2');
-            // then performs a private operation:
-            console.log(service.update(user));
-            fail('private operation shouldnt be performing when logged out');
-            done();
+            service.update(user).then(() => {
+              fail('private operation shouldnt be performing when logged out');
+              done();
+            })
           } catch (err) {
-            console.log(err);
-            done();
+            err.then(err => {
+              console.log('This error is returned by AWS: ', err);
+              done();
+            });
           }
-        });
+        }
+
+        );
     });
   });
 
