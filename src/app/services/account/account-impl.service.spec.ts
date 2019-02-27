@@ -7,6 +7,7 @@ import { UserImpl } from 'src/app/classes/user-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
+import { User } from 'src/app/classes/user';
 export const TEST_EMAIL = 'test';
 export const TEST_PASSWORD = 'Password1234';
 export const TEST_USER_ID = '338fc0ff-80be-460a-b255-3cf39383b770';
@@ -78,6 +79,46 @@ describe('AccountImplService', () => {
       fail(error);
       done();
     });
+  });
+
+  describe('Logout', () => {
+    const user: User = {
+      id: "abc123",
+      firstName: "tester",
+      lastName: "tesla",
+      email: "notshownindb@test.com"
+    };
+
+    it('should throw error when a private operation is perform after logout', done => {
+      service.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+        service.logout();
+
+        // then performs a private operation:
+        try {
+          service.update(user);
+          fail('private operation shouldnt be performing when logged out');
+          done();
+        } catch (err) {
+          console.log(err);
+          done();
+        }
+      });
+    });
+
+  });
+
+  describe('update', () => {
+
+    const user: User = {
+      id: "abc123",
+      firstName: "tester",
+      lastName: "telstra",
+      email: "changed@test.com"
+    };
+
+    it('should update the attributes on dynamodb', done => {
+      service.update(user);
+    })
   });
 
   describe('getUser$()', () => {

@@ -10,6 +10,8 @@ import * as queries from '../../../graphql/queries';
 import { UserFactoryService } from '../user/user-factory.service';
 import { Router } from '@angular/router';
 
+import { createUser, updateUser } from '../../../graphql/mutations';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,6 +43,63 @@ export class AccountServiceImpl implements AccountService {
   register(user: User): Observable<boolean> {
 
     return null;
+  }
+
+  async registerCognitoUser(user: User, password: string): Promise<any> {
+    // TODO: code works!!! Just need to configure a bit and test
+    // Step 1: register user into the pool
+    const newUser = {
+      username: user.email,
+      password: password,
+      attributes: { email: user.email }
+    };
+
+    Auth.signUp(newUser).then(data => {
+      console.log('1 signup: ', data);
+    })
+  }
+
+  async registerAppUser(user: User, password: string, verificationCode: string): Promise<any> {
+
+    // 1. Confirm code with aws
+    Auth.confirmSignUp(user.email, verificationCode, {
+      forceAliasCreation: true
+    }).then(data => {
+      console.log(data);
+      return data;
+    }).then(data => {
+
+      // 2. Sign in to Cognito to perform graphql
+      Auth.signIn(user.email, password).then(
+        cognitoUser => {
+          this.getAppUser(cognitoUser.username).then
+            (usercog => {
+              this.user$.next(usercog);
+            })
+          return cognitoUser;
+        })
+    }).then(data => {
+
+      // 3. Register in App DB
+      const userDB = {
+        input: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          documentIds: 0
+        }
+      };
+
+      const response = API.graphql(
+        graphqlOperation(createUser, userDB)
+      );
+
+      console.log('graphql: ', response);
+
+    }).catch(
+      err => console.log('signup failed: ', err)
+    );
   }
 
   private async getAppUser(cognitoUserId: string): Promise<User> {
@@ -84,12 +143,33 @@ export class AccountServiceImpl implements AccountService {
   }
 
   logout(): void {
-
+    Auth.signOut()
+      .then(data => this.user$.next(null))
+      .catch(err => console.log(err));
   }
 
-  update(user: User): Promise<any> {
+  async update(user: User): Promise<any> {
 
-    return;
+    // session variable?
+    // Purpose: update the details of a user who have already been registered
+
+    console.log(this.user$.value);
+
+    // Update user in App DB
+    const userDB = {
+      input: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
+    }
+
+    const response = API.graphql(
+      graphqlOperation(updateUser, userDB)
+    );
+
+    console.log('graphql: ', response);
   }
 
   getUser$(): Observable<User> {
@@ -111,15 +191,15 @@ export class AccountServiceImpl implements AccountService {
   async isUserReady(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.getUser$()
-      .pipe(timeout(2500))
-      .subscribe((user: User) => {
-        if (user) {
-          resolve(user);
-        }
-      }, error => {
-        reject(error);
+        .pipe(timeout(2500))
+        .subscribe((user: User) => {
+          if (user) {
+            resolve(user);
+          }
+        }, error => {
+          reject(error);
 
-      });
+        });
     });
   }
 
