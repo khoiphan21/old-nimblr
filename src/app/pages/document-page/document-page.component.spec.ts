@@ -11,6 +11,7 @@ import { NavigationBarComponent } from '../../components/navigation-bar/navigati
 import { BlockHeaderComponent } from '../../components/block/block-header/block-header.component';
 import { BlockTextComponent } from '../../components/block/block-text/block-text.component';
 import { DocumentOptionsComponent } from '../../components/document-card/document-options/document-options.component';
+import { QuestionBlockComponent } from '../../components/block/question-block/question-block.component';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
@@ -26,7 +27,8 @@ describe('DocumentPageComponent', () => {
         NavigationBarComponent,
         BlockHeaderComponent,
         BlockTextComponent,
-        DocumentOptionsComponent
+        DocumentOptionsComponent,
+        QuestionBlockComponent
       ],
       imports: [
         ServicesModule,

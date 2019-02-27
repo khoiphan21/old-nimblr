@@ -19,6 +19,7 @@ import { BlockOptionComponent } from './components/block/block-option/block-opti
 import { BlockTextComponent } from './components/block/block-text/block-text.component';
 import { BlockHeaderComponent } from './components/block/block-header/block-header.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
+import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { DocumentOptionsComponent } from './components/document-card/document-op
     BlockTextComponent,
     BlockHeaderComponent,
     DocumentOptionsComponent,
+    QuestionBlockComponent,
   ],
   imports: [
     BrowserModule,

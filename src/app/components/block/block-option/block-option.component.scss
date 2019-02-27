@@ -66,10 +66,7 @@ section.block-option {
             left: 0;
             width: 200px;
             height: auto;
-            box-shadow: 0 2px 11px 0 rgba(97, 97, 97, 0.5);
             z-index: 1;
-            background: white;
-            border-radius: 5px;
             .title {
                 padding: 0 8.5px;
                 padding-top: 7.5px;
@@ -152,9 +149,7 @@ section.block-option {
             left: -$menu-block-width - 10px;
             width: $menu-block-width;
             height: auto;
-            box-shadow: 0 2px 11px 0 rgba(97, 97, 97, 0.5);
             z-index: 1;
-            border-radius: 5px;
             .menu-selection {
                 width: 100%;
                 @include row-center;

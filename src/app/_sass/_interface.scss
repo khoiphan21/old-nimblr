@@ -45,6 +45,14 @@
     transition: all 0.3s;
 }
 
+.option-block {
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 11px 0 #A9A9A9;
+    font-family: $font-roboto;
+    color: $color-mid-grey;
+}
+
 .rotating-circle {
     -webkit-animation: spin 4s linear infinite;
     -moz-animation: spin 4s linear infinite;

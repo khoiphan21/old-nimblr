@@ -10,13 +10,8 @@
         top: 200px;
         height: 165px;
         width: 177px;
-        border-radius: 5px;
-        background-color: #FFFFFF;
-        box-shadow: 0 4px 11px 0 #A9A9A9;
         z-index: 2;
-        font-family: $font-roboto;
         padding: 0;
-        color: $color-mid-grey;
         font-size: 0.8rem;
         @include column-center;
         justify-content: space-between;
