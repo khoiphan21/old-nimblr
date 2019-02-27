@@ -7,9 +7,10 @@ import { UserImpl } from 'src/app/classes/user-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
-export const TEST_EMAIL = 'test';
-export const TEST_PASSWORD = 'Password1234';
-export const TEST_USER_ID = '338fc0ff-80be-460a-b255-3cf39383b770';
+
+export const TEST_USERNAME = 'khoi-test';
+export const TEST_PASSWORD = 'Khoi1234';
+export const TEST_USER_ID = '85a705f1-7485-4efd-9e4a-d196ff8c9219';
 
 @Component({
   selector: 'app-header',
@@ -42,12 +43,12 @@ describe('AccountImplService', () => {
   });
 
   it('should login if the credentials are correct', done => {
-    service.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+    service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
       // should resolve
       done();
     }).catch(error => {
       console.error(error);
-      fail('Error occurred');
+      fail(error);
       done();
     });
   });
@@ -55,7 +56,7 @@ describe('AccountImplService', () => {
   it('should fail in the credentials are wrong', done => {
     const password = 'WRONG PASSWORD';
 
-    service.login(TEST_EMAIL, password).then(() => {
+    service.login(TEST_USERNAME, password).then(() => {
       // should have failed
       fail('Promise should be rejected');
       done();
@@ -74,7 +75,7 @@ describe('AccountImplService', () => {
       done();
     });
     // Call login method here
-    service.login(TEST_EMAIL, TEST_PASSWORD).catch(error => {
+    service.login(TEST_USERNAME, TEST_PASSWORD).catch(error => {
       fail(error);
       done();
     });
@@ -82,7 +83,7 @@ describe('AccountImplService', () => {
 
   describe('getUser$()', () => {
     it('should retrieve a user if the user session is still valid', done => {
-      service.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // 'Reset' the observable, pretending that it's empty
         service['user$'].next(null);
         service.getUser$().pipe(skip(1)).subscribe(user => {
@@ -109,7 +110,7 @@ describe('AccountImplService', () => {
   describe('isUserReady()', () => {
 
     it('should resolve if a session exists', (done) => {
-      service.login(TEST_EMAIL, TEST_PASSWORD).then(() => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         service.isUserReady().then(user => {
           expect(user instanceof UserImpl).toBe(true);
           done();

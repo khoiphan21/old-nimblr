@@ -18,6 +18,7 @@ export const getBlocksFromDocument = `query GetBlocksFromDocument($documentId: I
 export const getUser = `query GetUser($id: ID!) {
   getUser(id: $id) {
     id
+    username
     email
     firstName
     lastName
@@ -33,6 +34,7 @@ export const listUsers = `query ListUsers(
   listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      username
       email
       firstName
       lastName

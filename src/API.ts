@@ -3,6 +3,7 @@
 
 export type CreateUserInput = {
   id?: string | null,
+  username: string,
   email: string,
   firstName?: string | null,
   lastName?: string | null,
@@ -11,6 +12,7 @@ export type CreateUserInput = {
 
 export type UpdateUserInput = {
   id: string,
+  username?: string | null,
   email?: string | null,
   firstName?: string | null,
   lastName?: string | null,
@@ -84,6 +86,7 @@ export type DeleteTextBlockInput = {
 
 export type ModelUserFilterInput = {
   id?: ModelIDFilterInput | null,
+  username?: ModelStringFilterInput | null,
   email?: ModelStringFilterInput | null,
   firstName?: ModelStringFilterInput | null,
   lastName?: ModelStringFilterInput | null,
@@ -164,6 +167,7 @@ export type CreateUserMutation = {
   createUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,
@@ -179,6 +183,7 @@ export type UpdateUserMutation = {
   updateUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,
@@ -194,6 +199,7 @@ export type DeleteUserMutation = {
   deleteUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,
@@ -332,6 +338,7 @@ export type GetUserQuery = {
   getUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,
@@ -351,6 +358,7 @@ export type ListUsersQuery = {
     items:  Array< {
       __typename: "User",
       id: string,
+      username: string,
       email: string,
       firstName: string | null,
       lastName: string | null,
@@ -446,6 +454,7 @@ export type OnCreateUserSubscription = {
   onCreateUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,
@@ -457,6 +466,7 @@ export type OnUpdateUserSubscription = {
   onUpdateUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,
@@ -468,6 +478,7 @@ export type OnDeleteUserSubscription = {
   onDeleteUser:  {
     __typename: "User",
     id: string,
+    username: string,
     email: string,
     firstName: string | null,
     lastName: string | null,

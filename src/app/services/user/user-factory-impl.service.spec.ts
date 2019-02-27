@@ -31,14 +31,13 @@ describe('UserFactoryService', () => {
 
   it('should retrieve a list of users from ids', done => {
     const ids = [
-      '338fc0ff-80be-460a-b255-3cf39383b770',
-      'a316da29-4dca-47ba-a771-195cfc07f67b'
+      '85a705f1-7485-4efd-9e4a-d196ff8c9219'
     ];
     factory.getUserFromIds(ids).then(users => {
       users.map(user => expect(user instanceof UserImpl).toBe(true));
-      expect(users.length).toBe(2);
+      expect(users.length).toBe(1);
       done();
-    }, error => {
+    }).catch(error => {
       fail(error);
       done();
     });
@@ -49,7 +48,7 @@ describe('UserFactoryService', () => {
     factory.getUserFromIds(ids).then(users => {
       expect(users.length).toBe(0);
       done();
-    }, error => {
+    }).catch(error => {
       fail(error);
       done();
     });
@@ -60,7 +59,7 @@ describe('UserFactoryService', () => {
     factory.getUserFromIds(ids).then(users => {
       expect(users.length).toBe(0);
       done();
-    }, error => {
+    }).catch(error => {
       fail(error);
       done();
     });
