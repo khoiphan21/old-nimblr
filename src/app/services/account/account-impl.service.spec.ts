@@ -89,7 +89,7 @@ describe('AccountImplService', () => {
     });
   });
 
-  fdescribe('RegisterService', () => {
+  describe('RegisterService', () => {
     const poolData = {
       UserPoolId: 'ap-southeast-2_d6cypRasd',
       ClientId: '30aaqa11def8pv48lbg18iu8f9'
@@ -123,10 +123,9 @@ describe('AccountImplService', () => {
         return adminDeleteCognitoUser(newCognitoUser);
       }).then(message => {
         expect(message).toEqual('SUCCESS');
-
         done();
       }).catch(error => { fail(error); done(); });
-    }, 10000);
+    }, 20000);
 
     async function adminConfirmUser(username: any): Promise<any> {
 
@@ -241,7 +240,7 @@ describe('AccountImplService', () => {
       email: 'notshownindb@test.com'
     };
 
-    fit('should throw error when a private operation is perform after loggout', done => {
+    it('should throw error when a private operation is perform after loggout', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD)
         .then(() => {
           console.log('step 1');

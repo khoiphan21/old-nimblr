@@ -12,6 +12,9 @@ import { BlockHeaderComponent } from '../../components/block/block-header/block-
 import { BlockTextComponent } from '../../components/block/block-text/block-text.component';
 import { DocumentOptionsComponent } from '../../components/document-card/document-options/document-options.component';
 import { QuestionBlockComponent } from '../../components/block/question-block/question-block.component';
+import { DropdownComponent } from '../../components/block/question-block/dropdown/dropdown.component';
+import { CheckboxComponent } from '../../components/block/question-block/checkbox/checkbox.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
@@ -28,10 +31,13 @@ describe('DocumentPageComponent', () => {
         BlockHeaderComponent,
         BlockTextComponent,
         DocumentOptionsComponent,
-        QuestionBlockComponent
+        QuestionBlockComponent,
+        DropdownComponent,
+        CheckboxComponent
       ],
       imports: [
         ServicesModule,
+        ReactiveFormsModule,
         RouterTestingModule.withRoutes([])
       ]
     })

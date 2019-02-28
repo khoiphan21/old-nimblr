@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GraphQLService {
 
   constructor() { }
