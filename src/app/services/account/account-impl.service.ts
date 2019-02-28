@@ -137,20 +137,23 @@ export class AccountServiceImpl implements AccountService {
     });
   }
 
-  async logout(): Promise<any> {
+  async logout(): Promise<boolean> {
     // Change state of Auth class and class vairable
     // Has to return a promise, because it gives feedback to user
     // about whether they are actually logged out safely.
-    Auth.signOut()
-      .then(data => {
-        this.user$.next(null);
-        console.log('Auth logged out successfully');
-        return Promise.resolve(true);
-      })
-      .catch(err => {
-        console.log(err);
-        return Promise.resolve(false);
-      });
+
+    return new Promise((resolve, _) => {
+      Auth.signOut()
+        .then(data => {
+          this.user$.next(null);
+          console.log('Auth logged out successfully');
+          resolve(true);
+        })
+        .catch(err => {
+          console.log(err);
+          resolve(false);
+        });
+    });
   }
 
   async update(user: User): Promise<any> {
@@ -158,31 +161,30 @@ export class AccountServiceImpl implements AccountService {
     // Case: Auth already signed in
     // Otherwise shoudl throw error saying that user not signin
 
-    try {
-      console.log(this.user$.value);
+    // if i want to return promise directly, return a new promise object
 
-      // Update user in App DB
-      const userDB = {
-        input: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName
-        }
+    const userDB = {
+      input: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
       }
-
-      const response = API.graphql(
-        graphqlOperation(updateUser, userDB)
-      );
-
-      console.log('graphql: ', response);
-      return Promise.resolve('ok'); // not sure why cant i return resposne directly
-
-    } catch (err) {
-      console.log('Some random error: ', err);
-      return Promise.reject(err);
-
     }
+
+    return new Promise((resolve, reject) => {
+      API.graphql(
+        graphqlOperation(updateUser, userDB)
+      ).then(data => {
+        console.log('graphql conn: ', data);
+        resolve(true);
+
+      }).catch(err => {
+        console.log('update error');
+        reject(err);
+
+      });
+    })
   }
 
   getUser$(): Observable<User> {

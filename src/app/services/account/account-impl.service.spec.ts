@@ -121,7 +121,7 @@ describe('AccountImplService', () => {
       email: "notshownindb@test.com"
     };
 
-    it('should throw error when a private operation is perform after loggout', done => {
+    fit('should throw error when a private operation is perform after loggout', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD)
         .then(() => {
           console.log('step 1');
