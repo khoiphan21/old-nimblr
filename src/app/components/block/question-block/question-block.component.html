@@ -1,4 +1,4 @@
-<section class="question-block">
+<section class="question-block" (clickOutside)="isQuestionOptionShown = false">
     <div class="row no-pad">
         <input type="text" placeholder="Type your question here" class="col-7">
         <div class="dropdown col-2">
@@ -45,5 +45,8 @@
                 </section>
             </section>
         </div>
+    </div>
+    <div class="row no-pad" [ngSwitch]=currentType>
+        <app-check-box *ngSwitchCase="'checkbox'" style="width: 100%;"></app-check-box>
     </div>
 </section>

@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class QuestionBlockComponent implements OnInit {
 
   isQuestionOptionShown = false;
-  currentType = 'short answer';
+  currentType = 'checkbox';
   constructor() { }
 
   ngOnInit() {

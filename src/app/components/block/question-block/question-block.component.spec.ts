@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionBlockComponent } from './question-block.component';
+import { CheckboxComponent } from 'angular-bootstrap-md';
 
 describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
@@ -8,7 +9,10 @@ describe('QuestionBlockComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ QuestionBlockComponent ]
+      declarations: [
+        QuestionBlockComponent,
+        CheckboxComponent
+      ]
     })
     .compileComponents();
   }));
