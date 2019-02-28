@@ -22,6 +22,7 @@ import { DocumentOptionsComponent } from './components/document-card/document-op
 import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
 import { DropdownComponent } from './components/block/question-block/dropdown/dropdown.component';
 import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
+import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { CheckboxComponent } from './components/block/question-block/checkbox/ch
     QuestionBlockComponent,
     CheckboxComponent,
     DropdownComponent,
+    MultipleChoiceComponent,
   ],
   imports: [
     BrowserModule,

@@ -2,6 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionBlockComponent } from './question-block.component';
 import { CheckboxComponent } from 'angular-bootstrap-md';
+import { DropdownComponent } from './dropdown/dropdown.component';
+import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
 
 describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
@@ -11,7 +13,9 @@ describe('QuestionBlockComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         QuestionBlockComponent,
-        CheckboxComponent
+        CheckboxComponent,
+        DropdownComponent,
+        MultipleChoiceComponent
       ]
     })
     .compileComponents();

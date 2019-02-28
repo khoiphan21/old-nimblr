@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class QuestionBlockComponent implements OnInit {
 
   isQuestionOptionShown = false;
-  currentType = 'dropdown';
+  currentType = 'multiple choice';
   constructor() { }
 
   ngOnInit() {
