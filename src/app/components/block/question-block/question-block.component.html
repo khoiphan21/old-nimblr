@@ -47,6 +47,7 @@
         </div>
     </div>
     <div class="row no-pad" [ngSwitch]=currentType>
-        <app-check-box *ngSwitchCase="'checkbox'" style="width: 100%;"></app-check-box>
+        <app-checkbox *ngSwitchCase="'checkbox'" style="width: 100%;"></app-checkbox>
+        <app-dropdown *ngSwitchCase="'dropdown'" style="width: 100%;"></app-dropdown>
     </div>
 </section>

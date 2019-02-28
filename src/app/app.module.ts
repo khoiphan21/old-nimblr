@@ -20,7 +20,8 @@ import { BlockTextComponent } from './components/block/block-text/block-text.com
 import { BlockHeaderComponent } from './components/block/block-header/block-header.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
 import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
-import { CheckBoxComponent } from './components/block/question-block/check-box/check-box.component';
+import { DropdownComponent } from './components/block/question-block/dropdown/dropdown.component';
+import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { CheckBoxComponent } from './components/block/question-block/check-box/c
     BlockHeaderComponent,
     DocumentOptionsComponent,
     QuestionBlockComponent,
-    CheckBoxComponent,
+    CheckboxComponent,
+    DropdownComponent,
   ],
   imports: [
     BrowserModule,

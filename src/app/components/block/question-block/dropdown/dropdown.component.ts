@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 @Component({
-  selector: 'app-check-box',
-  templateUrl: './check-box.component.html',
-  styleUrls: ['./check-box.component.scss']
+  selector: 'app-dropdown',
+  templateUrl: './dropdown.component.html',
+  styleUrls: ['./dropdown.component.scss']
 })
-export class CheckBoxComponent implements OnInit {
+export class DropdownComponent implements OnInit {
   formGroup: FormGroup;
   data = {
     options: [
@@ -52,3 +52,4 @@ export class CheckBoxComponent implements OnInit {
     });
   }
 }
+
