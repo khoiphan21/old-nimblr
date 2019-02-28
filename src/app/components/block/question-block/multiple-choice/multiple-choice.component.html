@@ -2,12 +2,12 @@
     <div formArrayName="options">
         <div *ngFor="let option of formGroup.get('options').controls; let i=index">
             <div class="option checkbox" [formGroupName]="i">
-                {{i + 1}}.
+                <input type="radio" name="selectedRadio" style="pointer-events: none">
                 <input type="text" formControlName="answer" placeholder="Option {{i + 1}}">
             </div>
         </div>
         <div class="option checkbox clickable" (click)="addNewOption()">
-            {{formGroup.get('options').controls.length + 1}}.
+            <input type="radio" style="pointer-events: none">
             <input type="text" value="Add option" style="pointer-events: none">
         </div>
     </div>
