@@ -7,9 +7,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class QuestionBlockComponent implements OnInit {
 
+  isQuestionOptionShown = false;
+  currentType = 'short answer';
   constructor() { }
 
   ngOnInit() {
   }
 
+  toggleOptions() {
+    this.isQuestionOptionShown = this.isQuestionOptionShown ? false : true;
+  }
+
+  selectType(type: string) {
+    this.currentType = type;
+    this.toggleOptions();
+  }
 }

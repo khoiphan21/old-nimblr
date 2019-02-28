@@ -20,19 +20,54 @@
                     font-size: 18px;
                 }
             }
+            $dropdown-height: 41px;
             .dropdown {
-                height: 41px;
+                height: $dropdown-height;
                 background-color: #F3F3F3;
-                position: relative;
                 cursor: pointer;
-                i {
-                    position: absolute;
-                    right: 0;
-                    width: 41px;
-                    height: 41px;
-                    @include row-center;
+                padding: 0;
+                div.selected-option {
+                    position: relative;
+                    height: 100%;
+                    div {
+                        height: 100%;
+                        @include row-center;
+                        justify-content: flex-start;
+                        padding: 0 10px;
+                        span {
+                            font-size: 0.85rem;
+                            margin-left: 15px;
+                            font-weight: normal;
+                        }
+                    }
+                    i.fa-chevron-down {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        width: $dropdown-height;
+                        height: $dropdown-height;
+                        @include row-center;
+                    }
+                }
+                section.container.options-block {
+                    left: 0px;
+                    top: $dropdown-height;
+                    .title {
+                        border: 0;
+                        font-size: 0.6rem;
+                        color: #A9A9A9;
+                        letter-spacing: 0.5px;
+                        font-weight: normal;
+                    }
+                    .document-options {
+                        border-bottom: 1px solid #DDD;
+                    }
                 }
             }
         }
     }
+}
+
+.flip-arrow {
+    transform: rotate(180deg);
 }
