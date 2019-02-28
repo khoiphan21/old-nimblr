@@ -1,10 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionBlockComponent } from './question-block.component';
-import { CheckboxComponent } from 'angular-bootstrap-md';
 import { DropdownComponent } from './dropdown/dropdown.component';
 import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CheckboxComponent } from './checkbox/checkbox.component';
 
 describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;

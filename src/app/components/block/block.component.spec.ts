@@ -8,6 +8,7 @@ import { QuestionBlockComponent } from './question-block/question-block.componen
 import { CheckboxComponent } from './question-block/checkbox/checkbox.component';
 import { DropdownComponent } from './question-block/dropdown/dropdown.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MultipleChoiceComponent } from './question-block/multiple-choice/multiple-choice.component';
 
 describe('BlockComponent', () => {
   let component: BlockComponent;
@@ -22,7 +23,8 @@ describe('BlockComponent', () => {
         BlockHeaderComponent,
         QuestionBlockComponent,
         CheckboxComponent,
-        DropdownComponent
+        DropdownComponent,
+        MultipleChoiceComponent
       ],
       imports: [
         ReactiveFormsModule
