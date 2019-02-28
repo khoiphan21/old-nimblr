@@ -1,7 +1,7 @@
 <div class="fluid-container">
     <div class="row">
         <section class="col-3 register-background"></section>
-        <section class="col-9 register-container">
+        <section class="col-7 register-container">
             <section class="heading">
                 <h1 *ngIf="steps === 'one'">Enter your work email to get started</h1>
                 <h3 *ngIf="steps === 'one'">It’s as simple as that.</h3>
@@ -9,19 +9,19 @@
                 <h1 *ngIf="steps === 'three'">Please check your email inbox and enter the verification code</h1>
             </section>
             <form [formGroup]="registerForm">
-                <div *ngIf="steps === 'one'">
+                <ng-container *ngIf="steps === 'one'">
                     <!-- Step 1  -->
                     <input class="mb-4" formControlName="email" type="email" required>
                     <button [disabled]="registerForm.controls.email.invalid" class="filled-button-primary ml-auto mr-auto" (click)="steps = 'two'">Continue</button>
-                </div>
-                <div *ngIf="steps === 'two'">
+                </ng-container>
+                <ng-container *ngIf="steps === 'two'">
                     <!-- Step 2  -->
                     <div class="row no-pad">
-                        <div class="form-input col-6 pl-0 ">
+                        <div class="form-input col-5 pl-0 ">
                             <div class="input-label mb-1">First Name</div>
                             <input class="mb-4" formControlName="firstName" type="text" required>
                         </div>
-                        <div class="form-input col-6 pr-0">
+                        <div class="form-input col-5 pr-0">
                             <div class="input-label  mb-1">Last Name</div>
                             <input class="mb-4" formControlName="lastName" type="text" required>
                         </div>
@@ -32,13 +32,17 @@
                         <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                         <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
                     </div>
-                    <button  class="filled-button-primary ml-auto mr-auto" [disabled]="registerForm.invalid" (click)="registerAccount()">GET STARTED</button>
-                </div>
-                <div *ngIf="steps === 'three'">
-                    <!-- Step 1  -->
-                    <!-- <input class="mb-4" formControlName="verificationCode" type="number" required>
-                    <button [disabled]="registerForm.controls.email.invalid" class="filled-button-primary ml-auto mr-auto" (click)="steps = 'two'">Continue</button> -->
-                </div>
+                    <button class="filled-button-primary ml-auto mr-auto" [disabled]="registerForm.invalid" (click)="registerAccount()">GET STARTED</button>
+                </ng-container>
+            </form>
+            <form [formGroup]="verificationForm">
+                <ng-container *ngIf="steps === 'three'">
+                    <div class="form-input">
+                        <div class="input-label mb-1">Verification code</div>
+                        <input class="mb-4" formControlName="verificationCode" type="text" required>
+                    </div>
+                    <button class="filled-button-primary ml-auto mr-auto" [disabled]="verificationForm.invalid" (click)="registerAccount()">Verify Code</button>
+                </ng-container>
             </form>
             <div class="sign-in">Already have an account? <span routerLink="/login">Sign in</span></div>
         </section>
