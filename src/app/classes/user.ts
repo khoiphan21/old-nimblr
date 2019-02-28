@@ -5,13 +5,12 @@ export interface User {
     email: string;
 }
 
-export type CognitoSignUpUser = {
+export interface CognitoSignUpUser {
     username: string;
     password: string;
     attributes: CognitoUserAttributes;
 };
-
-export type CognitoUserAttributes = {
+export interface CognitoUserAttributes {
     email: string;
     given_name: string;
     family_name: string;

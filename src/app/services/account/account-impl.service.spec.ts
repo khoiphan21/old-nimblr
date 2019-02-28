@@ -6,11 +6,12 @@ import { skip } from 'rxjs/operators';
 import { UserImpl } from 'src/app/classes/user-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
-import { Auth } from 'aws-amplify';
+import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { User } from 'src/app/classes/user';
 import { CognitoSignUpUser } from '../../classes/user';
 import awsmobile from 'src/aws-exports';
 import { environment } from '../../../environments/environment';
+import { deleteUser } from '../../../graphql/mutations';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
@@ -88,20 +89,22 @@ describe('AccountImplService', () => {
     });
   });
 
-  describe('RegisterService', () => {
+  fdescribe('RegisterService', () => {
     const poolData = {
       UserPoolId: 'ap-southeast-2_d6cypRasd',
       ClientId: '30aaqa11def8pv48lbg18iu8f9'
     };
     let userPool;
 
-    const user = {
-      username: 'bruno-test',
-      firstName: 'bruno',
-      lastName: 'testheng',
-      email: 'brunocyh@gmail.com'
+    const newCognitoUser: CognitoSignUpUser = {
+      username: 'khoi-test-2',
+      password: 'Test1234',
+      attributes: {
+        email: 'success@simulator.amazonses.com', // for email to be sent successfully
+        given_name: 'Test',
+        family_name: 'Account'
+      }
     };
-    // const password = 'Qwerty123';
 
     beforeEach(() => {
       userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
@@ -113,28 +116,18 @@ describe('AccountImplService', () => {
       }
     });
 
-    fit('should register a user in cognito successfully and then delete it', done => {
-      const newCognitoUser: CognitoSignUpUser = {
-        username: 'khoi-test-2',
-        password: 'Test1234',
-        attributes: {
-          email: 'success@simulator.amazonses.com', // for email to be sent successfully
-          given_name: 'Test',
-          family_name: 'Account'
-        }
-      };
-
-      service.registerCognitoUser(newCognitoUser).then(data => {
+    it('should register a user in cognito successfully and then delete it', done => {
+      service.registerCognitoUser(newCognitoUser).then(() => {
         return adminConfirmUser(newCognitoUser.username);
       }).then(() => {
         return adminDeleteCognitoUser(newCognitoUser);
-      }).then(() => {
+      }).then(message => {
+        expect(message).toEqual('SUCCESS');
         done();
       }).catch(error => { fail(error); done(); });
+    }, 10000);
 
-    });
-
-    function adminConfirmUser(username): Promise<any> {
+    async function adminConfirmUser(username: any): Promise<any> {
 
       return new Promise((resolve, reject) => {
         // configure cognito identity service provider
@@ -152,7 +145,7 @@ describe('AccountImplService', () => {
 
         // set the status of the user to 'CONFIRMED'
         cognitoidentityserviceprovider.adminConfirmSignUp(params, (err, data) => {
-          if (err) { reject(err); } else { resolve(data); }      // successful response
+          if (err) { reject(err); } else { resolve(data); } // successful response
         });
       });
     }
@@ -171,10 +164,10 @@ describe('AccountImplService', () => {
         const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
         const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
         cognitoUser.authenticateUser(authenticationDetails, {
-          onSuccess: result => {
+          onSuccess: () => {
             cognitoUser.deleteUser((err, result) => {
               if (err) { reject(err); return; }
-              resolve('delete call result: ' + result);
+              resolve(result);
             });
           },
           onFailure: error => reject(error)
@@ -182,43 +175,61 @@ describe('AccountImplService', () => {
       });
     }
 
-    it('should verify the user and then register them in dynamodb', done => {
-      const verificationCode = '049540';
-      // service.registerAppUser(user, password, verificationCode).then(data => {
-      //   console.log('Register a App user: ', data);
-      //   done();
-      // });
-    });
+    it('should create then delete a user for the app in DynamoDB', done => {
+      // mock the verification function
+      let cognitoUserId: string;
 
-    it('should delete a user in cognito', done => {
-      const userData = {
-        Username: 'khoi-test-2',
-        Pool: userPool
+      // Mock the function to confirm verification code with AWS
+      service['awsConfirmAccount'] = () => {
+        return Promise.resolve();
       };
-      const authenticationData = {
-        Username: 'khoi-test-2',
-        Password: 'Khoi1234'
-      };
-      const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-      const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-      cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: result => {
-          console.log(result);
-          console.log('deleting user')
-          cognitoUser.deleteUser((err, result) => {
-            if (err) {
-              alert(err);
-              return;
-            }
-            console.log('call result: ' + result);
-          });
-        },
-        onFailure: error => console.error(error)
 
-      });
-      fail('final step');
-      done();
-    })
+      // Start the test
+      service.registerCognitoUser(newCognitoUser).then(() => {
+        return adminConfirmUser(newCognitoUser.username);
+      }).then(() => {
+        // Sign in to get the user id, and authenticate for graphQL queries
+        return Auth.signIn(newCognitoUser.username, newCognitoUser.password);
+      }).then(loggedInUser => {
+        // Now register app user and check if it's registered properly
+        cognitoUserId = loggedInUser.signInUserSession.idToken.payload.sub;
+        return service.registerAppUser(newCognitoUser, cognitoUserId, 'random-code');
+      }).then(response => {
+        // Check that all expected attributes are there, and match with the originals
+        expect(response).toBeTruthy();
+        expect(response.data.createUser.id).toEqual(cognitoUserId);
+        expect(response.data.createUser.email).toEqual(newCognitoUser.attributes.email);
+        expect(response.data.createUser.firstName).toEqual(newCognitoUser.attributes.given_name);
+        expect(response.data.createUser.lastName).toEqual(newCognitoUser.attributes.family_name);
+        expect(response.data.createUser.username).toEqual(newCognitoUser.username);
+        // delete the app user in DynamoDB
+        return deleteAppUser(cognitoUserId);
+      }).then(result => {
+        expect(result).toEqual('app user deleted');
+        return Auth.signOut(); // Sign out
+      }).then(() => {
+        // delete the test user
+        return adminDeleteCognitoUser(newCognitoUser);
+      }).then(message => {
+        // should be okay here
+        expect(message).toEqual('SUCCESS');
+        done();
+      }).catch(error => { fail(error); done(); });
+
+      async function deleteAppUser(id: string): Promise<any> {
+        try {
+          const input = {
+            input: { id }
+          };
+          const response: any = await API.graphql(graphqlOperation(deleteUser, input));
+          expect(response.data.deleteUser.id).toEqual(id);
+          return Promise.resolve('app user deleted');
+        } catch (error) {
+          return Promise.reject(error);
+        }
+      }
+    }, 10000);
+
   });
 
   describe('Logout', () => {
