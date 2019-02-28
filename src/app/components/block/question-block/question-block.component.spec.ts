@@ -4,6 +4,7 @@ import { QuestionBlockComponent } from './question-block.component';
 import { CheckboxComponent } from 'angular-bootstrap-md';
 import { DropdownComponent } from './dropdown/dropdown.component';
 import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
@@ -16,6 +17,9 @@ describe('QuestionBlockComponent', () => {
         CheckboxComponent,
         DropdownComponent,
         MultipleChoiceComponent
+      ],
+      imports: [
+        ReactiveFormsModule
       ]
     })
     .compileComponents();

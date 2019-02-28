@@ -160,17 +160,17 @@ export class AccountServiceImpl implements AccountService {
     }
 
     return new Promise((resolve, reject) => {
-      API.graphql(
-        graphqlOperation(updateUser, userDB)
-      ).then(data => {
-        console.log('graphql conn: ', data);
-        resolve(true);
+      // API.graphql(
+      //   graphqlOperation(updateUser, userDB)
+      // ).then(data => {
+      //   console.log('graphql conn: ', data);
+      //   resolve(true);
 
-      }).catch(err => {
-        console.log('update error');
-        reject(err);
+      // }).catch(err => {
+      //   console.log('update error');
+      //   reject(err);
 
-      });
+      // });
     })
   }
 
