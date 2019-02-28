@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AccountService } from './account.service';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { User } from '../../classes/user';
+import { User, CognitoSignUpUser } from '../../classes/user';
 
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { take, timeout, catchError } from 'rxjs/operators';
@@ -9,6 +9,9 @@ import { take, timeout, catchError } from 'rxjs/operators';
 import * as queries from '../../../graphql/queries';
 import { UserFactoryService } from '../user/user-factory.service';
 import { Router } from '@angular/router';
+
+import { createUser, updateUser } from '../../../graphql/mutations';
+import { GraphQLService } from '../graphQL/graph-ql.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +22,7 @@ export class AccountServiceImpl implements AccountService {
 
   constructor(
     private userFactory: UserFactoryService,
+    private graphQLService: GraphQLService,
     private router: Router
   ) {
   }
@@ -38,9 +42,46 @@ export class AccountServiceImpl implements AccountService {
       });
   }
 
-  register(user: User): Observable<boolean> {
+  async registerCognitoUser(user: CognitoSignUpUser): Promise<any> {
 
-    return null;
+    return new Promise((resolve, reject) => {
+      Auth.signUp(user).then(data => {
+        resolve(data);
+      }).catch(error => reject(error));
+    });
+  }
+
+  private async awsConfirmAccount(email: string, code: string): Promise<any> {
+    // Note: this function can never be automatically tested, as it requires
+    // manual checking of email address, which is a pain to automate for now.
+    return Auth.confirmSignUp(email, code, {
+      forceAliasCreation: true
+    });
+  }
+
+  async registerAppUser(user: CognitoSignUpUser, userId: string, verificationCode: string): Promise<any> {
+    return this.awsConfirmAccount(user.attributes.email, verificationCode).then(() => {
+      // 2. Sign in to Cognito to perform graphql
+      return Auth.signIn(user.username, user.password);
+    }).then(() => {
+      // 3. Register in App DB
+      const userDetails = {
+        input: {
+          id: userId,
+          username: user.username,
+          email: user.attributes.email,
+          firstName: user.attributes.given_name,
+          lastName: user.attributes.family_name,
+          documentIds: []
+        }
+      };
+
+      return this.graphQLService.query(createUser, userDetails);
+    }).then(result => {
+      return Promise.resolve(result);
+    }).catch(err => {
+      return Promise.reject(err);
+    });
   }
 
   private async getAppUser(cognitoUserId: string): Promise<User> {
@@ -66,8 +107,6 @@ export class AccountServiceImpl implements AccountService {
     } catch (error) { return Promise.reject(error); }
   }
 
-
-  // Bruno
   async login(username: string, password: string): Promise<any> {
 
     return new Promise((resolve, reject) => {
@@ -85,13 +124,54 @@ export class AccountServiceImpl implements AccountService {
     });
   }
 
-  logout(): void {
+  async logout(): Promise<boolean> {
+    // Change state of Auth class and class vairable
+    // Has to return a promise, because it gives feedback to user
+    // about whether they are actually logged out safely.
 
+    return new Promise((resolve, _) => {
+      Auth.signOut()
+        .then(data => {
+          this.user$.next(null);
+          console.log('Auth logged out successfully');
+          resolve(true);
+        })
+        .catch(err => {
+          console.log(err);
+          resolve(false);
+        });
+    });
   }
 
-  update(user: User): Promise<any> {
+  async update(user: User): Promise<any> {
+    // Purpose: update the details of a user who have already been registered
+    // Case: Auth already signed in
+    // Otherwise shoudl throw error saying that user not signin
 
-    return;
+    // if i want to return promise directly, return a new promise object
+
+    const userDB = {
+      input: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      API.graphql(
+        graphqlOperation(updateUser, userDB)
+      ).then(data => {
+        console.log('graphql conn: ', data);
+        resolve(true);
+
+      }).catch(err => {
+        console.log('update error');
+        reject(err);
+
+      });
+    })
   }
 
   getUser$(): Observable<User> {
@@ -109,7 +189,6 @@ export class AccountServiceImpl implements AccountService {
     return this.user$;
   }
 
-  // NEED TEST
   async isUserReady(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.getUser$()
@@ -120,7 +199,6 @@ export class AccountServiceImpl implements AccountService {
           }
         }, error => {
           reject(error);
-
         });
     });
   }
