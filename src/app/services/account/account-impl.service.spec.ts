@@ -125,10 +125,9 @@ describe('AccountImplService', () => {
         return adminDeleteCognitoUser(newCognitoUser);
       }).then(message => {
         expect(message).toEqual('SUCCESS');
-
         done();
       }).catch(error => { fail(error); done(); });
-    }, 10000);
+    }, 20000);
 
     async function adminConfirmUser(username: any): Promise<any> {
 
@@ -244,7 +243,6 @@ describe('AccountImplService', () => {
     };
 
     it('should throw error when a private operation is perform after loggout', done => {
-      console.log('login');
       service.login(TEST_USERNAME, TEST_PASSWORD)
         .then(() => {
           console.log('logout now');

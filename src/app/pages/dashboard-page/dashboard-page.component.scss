@@ -1,37 +1,54 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
-$dashboard-document-height: 289px;
-div.fluid-container {
-    height: 100vh;
-    font-family: $font-roboto;
-    background: #F3F3F3;
-    .row {
-        padding: 0 1.5rem;
-        h1 {
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            color: #A9A9A9;
-            margin-top: 2rem;
-            margin-bottom: 1.5rem;
-            height: fit-content;
-        }
-        .document-thumbnails {
-            padding: 0;
-            .create-new-document {
-                .container {
-                    background-color: #EDECEC;
-                    @include column-center;
-                    height: $dashboard-document-height;
-                    font-size: 1rem;
-                    border-radius: 3px;
-                    box-shadow: 3px 3px 2px 0 #DDDDDD;
-                    div.plus {
-                        font-size: 4rem;
-                        color: #767676;
+@include media(lg) {
+    $dashboard-document-height: 289px;
+    div.fluid-container {
+        min-height: 100vh;
+        font-family: $font-roboto;
+        background: #F3F3F3;
+        .row {
+            padding: 0 1.5rem;
+            h1 {
+                text-transform: uppercase;
+                font-size: 0.7rem;
+                color: #A9A9A9;
+                margin-top: 2rem;
+                margin-bottom: 1.5rem;
+                height: fit-content;
+            }
+            .document-thumbnails {
+                padding: 0;
+                .create-new-document {
+                    .container {
+                        background-color: #EDECEC;
+                        @include column-center;
+                        height: $dashboard-document-height;
+                        font-size: 1rem;
+                        border-radius: 3px;
+                        box-shadow: 3px 3px 2px 0 #DDDDDD;
+                        div.plus {
+                            font-size: 4rem;
+                            color: #767676;
+                        }
+                        &:hover {
+                            box-shadow: 0 0 8px 0 rgba(0, 145, 255, 0.66);
+                        }
                     }
-                    &:hover {
-                        box-shadow: 0 0 8px 0 rgba(0, 145, 255, 0.66);
+                }
+            }
+        }
+    }
+}
+
+@include media(xl) {
+    $dashboard-document-height: 318px;
+    div.fluid-container {
+        .row {
+            .document-thumbnails {
+                .create-new-document {
+                    .container {
+                        height: $dashboard-document-height;
                     }
                 }
             }

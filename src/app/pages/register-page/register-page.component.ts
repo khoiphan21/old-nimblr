@@ -8,7 +8,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
-  steps = 'one';
+  verificationForm: FormGroup;
+  steps = 'three';
   passwordType = 'password';
   constructor(
     private formBuilder: FormBuilder
@@ -24,6 +25,9 @@ export class RegisterPageComponent implements OnInit {
       firstName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
       lastName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
       password: this.formBuilder.control('', [Validators.required, Validators.minLength(6)]),
+    });
+    this.verificationForm = this.formBuilder.group({
+      verificationCode: this.formBuilder.control('', [Validators.required, Validators.minLength(6)])
     });
   }
 

@@ -14,7 +14,7 @@
                 height: 100vh;
                 @include column-center;
                 align-items: flex-start;
-                padding: 0 10rem;
+                padding: 0 20%;
                 section.heading {
                     margin-bottom: 2rem;
                     h1 {
@@ -43,6 +43,9 @@
                         padding: 0 1rem;
                     }
                     .row {
+                        width: 100%;
+                    }
+                    ng-container {
                         width: 100%;
                     }
                     .form-input {

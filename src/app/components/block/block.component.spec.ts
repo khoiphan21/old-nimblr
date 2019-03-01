@@ -4,6 +4,10 @@ import { BlockComponent } from './block.component';
 import { BlockOptionComponent } from './block-option/block-option.component';
 import { BlockTextComponent } from './block-text/block-text.component';
 import { BlockHeaderComponent } from './block-header/block-header.component';
+import { QuestionBlockComponent } from './question-block/question-block.component';
+import { CheckboxComponent } from './question-block/checkbox/checkbox.component';
+import { DropdownComponent } from './question-block/dropdown/dropdown.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('BlockComponent', () => {
   let component: BlockComponent;
@@ -15,7 +19,13 @@ describe('BlockComponent', () => {
         BlockComponent,
         BlockOptionComponent,
         BlockTextComponent,
-        BlockHeaderComponent
+        BlockHeaderComponent,
+        QuestionBlockComponent,
+        CheckboxComponent,
+        DropdownComponent
+      ],
+      imports: [
+        ReactiveFormsModule
       ]
     })
     .compileComponents();

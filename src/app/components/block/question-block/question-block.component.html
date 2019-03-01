@@ -1,0 +1,54 @@
+<section class="question-block" (clickOutside)="isQuestionOptionShown = false">
+    <div class="row no-pad">
+        <input type="text" placeholder="Type your question here" class="col-7">
+        <div class="dropdown col-2">
+            <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
+                <div *ngSwitchCase="'short answer'">
+                    <i class="fas fa-grip-lines"></i><span>Short Answer</span>
+                </div>
+                <div *ngSwitchCase="'paragraph'">
+                    <i class="fas fa-bars"></i><span>Paragraph</span>
+                </div>
+                <div *ngSwitchCase="'checkbox'">
+                    <i class="fas fa-check-square"></i><span>Checkbox</span>
+                </div>
+                <div *ngSwitchCase="'multiple choice'">
+                    <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
+                </div>
+                <div *ngSwitchCase="'dropdown'">
+                    <i class="fas fa-sort"></i> <span>Dropdown</span>
+                </div>
+                <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isQuestionOptionShown === true}"></i>
+            </div>
+            <section class="container options-block" *ngIf="isQuestionOptionShown === true">
+                <div class="title">
+                    QUESTION TYPES
+                </div>
+                <section class="document-options">
+                    <div class="option" (click)="selectType('short answer')">
+                        <i class="fas fa-grip-lines"></i><span>Short Answer</span>
+                    </div>
+                    <div class="option" (click)="selectType('paragraph')">
+                        <i class="fas fa-bars"></i><span>Paragraph</span>
+                    </div>
+                </section>
+                <section class="document-options">
+                    <div class="option" (click)="selectType('checkbox')">
+                        <i class="fas fa-check-square"></i><span>Checkbox</span>
+                    </div>
+                    <div class="option" (click)="selectType('multiple choice')">
+                        <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
+                    </div>
+                    <div class="option" (click)="selectType('dropdown')">
+                        <i class="fas fa-sort"></i><span>Dropdown</span>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </div>
+    <div class="row no-pad" [ngSwitch]=currentType>
+        <app-checkbox *ngSwitchCase="'checkbox'" style="width: 100%;"></app-checkbox>
+        <app-dropdown *ngSwitchCase="'dropdown'" style="width: 100%;"></app-dropdown>
+        <app-multiple-choice *ngSwitchCase="'multiple choice'" style="width: 100%;"></app-multiple-choice>
+    </div>
+</section>

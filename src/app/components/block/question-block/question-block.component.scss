@@ -1,0 +1,73 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+@include media(lg) {
+    .question-block {
+        height: auto;
+        width: 100%;
+        border: 1px solid #CECECE;
+        border-radius: 3px;
+        padding: 30px;
+        .row {
+            @include row-center;
+            justify-content: space-between;
+            [type=text] {
+                border: 0;
+                border-bottom: 1px solid #979797;
+                padding-left: 0;
+                &::placeholder {
+                    color: #A9A9A9;
+                    font-size: 18px;
+                }
+            }
+            $dropdown-height: 41px;
+            .dropdown {
+                height: $dropdown-height;
+                background-color: #F3F3F3;
+                cursor: pointer;
+                padding: 0;
+                div.selected-option {
+                    position: relative;
+                    height: 100%;
+                    div {
+                        height: 100%;
+                        @include row-center;
+                        justify-content: flex-start;
+                        padding: 0 10px;
+                        span {
+                            font-size: 0.85rem;
+                            margin-left: 15px;
+                            font-weight: normal;
+                        }
+                    }
+                    i.fa-chevron-down {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        width: $dropdown-height;
+                        height: $dropdown-height;
+                        @include row-center;
+                    }
+                }
+                section.container.options-block {
+                    left: 0px;
+                    top: $dropdown-height;
+                    .title {
+                        border: 0;
+                        font-size: 0.6rem;
+                        color: #A9A9A9;
+                        letter-spacing: 0.5px;
+                        font-weight: normal;
+                    }
+                    .document-options {
+                        border-bottom: 1px solid #DDD;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.flip-arrow {
+    transform: rotate(180deg);
+}

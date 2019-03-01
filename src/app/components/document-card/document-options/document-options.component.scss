@@ -1,0 +1,27 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+@include media(lg) {
+    $horizontal-padding: 10px;
+    section.container {
+        right: -177px;
+        top: 200px;
+        height: 165px;
+        width: 177px;
+        .title {
+            padding: 5px $horizontal-padding;
+        }
+        .document-options {
+            border-bottom: 1px solid #DDD;
+            .option {
+                font-size: 0.75rem;
+                // span {
+                //     margin-left: 5px;
+                // }
+            }
+        }
+        .document-details {
+            font-size: 0.7rem;
+        }
+    }
+}

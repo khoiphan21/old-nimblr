@@ -168,7 +168,7 @@ export class AccountServiceImpl implements AccountService {
       // };
       // var attribute = new AmazonCognitoIdentity.CognitoUserAttribute(attribute);
       // attributeList.push(attribute);
-  
+
       // cognitoUser.updateAttributes(attributeList, function(err, result) {
       //     if (err) {
       //         alert(err);
@@ -184,6 +184,7 @@ export class AccountServiceImpl implements AccountService {
     } catch (err) {
       return Promise.reject(err)
     }
+
   }
 
   getUser$(): Observable<User> {
