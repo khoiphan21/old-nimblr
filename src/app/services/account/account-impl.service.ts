@@ -150,7 +150,7 @@ export class AccountServiceImpl implements AccountService {
 
     // if i want to return promise directly, return a new promise object
 
-    const userDB = {
+    const input = {
       input: {
         id: user.id,
         email: user.email,
@@ -159,19 +159,31 @@ export class AccountServiceImpl implements AccountService {
       }
     }
 
-    return new Promise((resolve, reject) => {
-      API.graphql(
-        graphqlOperation(updateUser, userDB)
-      ).then(data => {
-        console.log('graphql conn: ', data);
-        resolve(true);
+    try {
+      // update info in Cognito
+      // var attributeList = [];
+      // var attribute = {
+      //     Name : 'nickname',
+      //     Value : 'joe'
+      // };
+      // var attribute = new AmazonCognitoIdentity.CognitoUserAttribute(attribute);
+      // attributeList.push(attribute);
+  
+      // cognitoUser.updateAttributes(attributeList, function(err, result) {
+      //     if (err) {
+      //         alert(err);
+      //         return;
+      //     }
+      //     console.log('call result: ' + result);
+      // });
 
-      }).catch(err => {
-        console.log('update error');
-        reject(err);
+      // update info in dynamodb
+      const response = await API.graphql(graphqlOperation(updateUser, input));
+      return Promise.resolve('user updated')
 
-      });
-    })
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 
   getUser$(): Observable<User> {
