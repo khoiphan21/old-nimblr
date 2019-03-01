@@ -161,21 +161,10 @@ export class AccountServiceImpl implements AccountService {
 
     try {
       // update info in Cognito
-      // var attributeList = [];
-      // var attribute = {
-      //     Name : 'nickname',
-      //     Value : 'joe'
-      // };
-      // var attribute = new AmazonCognitoIdentity.CognitoUserAttribute(attribute);
-      // attributeList.push(attribute);
-
-      // cognitoUser.updateAttributes(attributeList, function(err, result) {
-      //     if (err) {
-      //         alert(err);
-      //         return;
-      //     }
-      //     console.log('call result: ' + result);
-      // });
+      let userDB = await Auth.currentAuthenticatedUser();
+      let result = await Auth.updateUserAttributes(userDB, {
+        'email': user.email
+      });
 
       // update info in dynamodb
       const response = await API.graphql(graphqlOperation(updateUser, input));
