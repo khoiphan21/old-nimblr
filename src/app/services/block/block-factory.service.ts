@@ -45,7 +45,6 @@ export class BlockFactoryService {
   createTextBlock({
     version, documentId, lastUpdatedBy, value, id = uuidv5(version, documentId)
   }) {
-    // id = id ?  : id;
     return new TextBlock(id, version, documentId, lastUpdatedBy, value);
 
   }
