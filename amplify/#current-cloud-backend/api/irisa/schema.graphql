@@ -18,7 +18,8 @@ type Document @model {
   order: [String]
   blockIds: [String]
   lastUpdatedBy: String
-  timestamp: String
+  createdAt: String
+  updatedAt: String
 }
 
 enum DocumentType {
@@ -26,29 +27,60 @@ enum DocumentType {
   FORM
 }
 
-interface Block {
+type Block @model {
+  # Note: this type should contain ALL possible attributes from each block type
   id: ID!
   version: String
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: String
+  createdAt: String
+  updatedAt: String
+  # Attributes from TextBlock
+  value: String
 }
 
 enum BlockType {
   TEXT
 }
 
-type TextBlock implements Block @model {
+# This type is only a guide as to what values are relevant to TextBlock
+# It still refers to the Block table with all kinds of blocks in it
+type TextBlock {
   id: ID!
   version: String
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: String
+  createdAt: String
+  updatedAt: String
   value: String
 }
 
-type Query {
-  getBlocksFromDocument(documentId: ID!): [Block]
+type Mutation {
+  createTextBlock(input: CreateTextBlockInput!): TextBlock
+  updateTextBlock(input: UpdateTextBlockInput!): TextBlock
+}
+
+type Subscription {
+  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock"])
+}
+
+
+input CreateTextBlockInput {
+  id: ID
+  version: String!
+  type: BlockType!
+  documentId: String!
+  lastUpdatedBy: String!
+  value: String!
+}
+
+input UpdateTextBlockInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  value: String!
 }

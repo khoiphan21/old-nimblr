@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -16,5 +17,9 @@ export class GraphQLService {
     } catch (error) {
       return Promise.reject(error);
     }
+  }
+
+  subscribe(subscription): Observable<any> {
+    return;
   }
 }

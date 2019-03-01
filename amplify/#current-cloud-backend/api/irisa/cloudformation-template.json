@@ -120,7 +120,7 @@
                         {
                             "Ref": "APIKeyExpirationEpoch"
                         },
-                        1552032521
+                        1552085974
                     ]
                 }
             },
@@ -1332,14 +1332,14 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "TextBlockTable": {
+        "BlockTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "TextBlock",
+                            "Block",
                             {
                                 "Fn::GetAtt": [
                                     "GraphQLAPI",
@@ -1374,14 +1374,14 @@
                 }
             }
         },
-        "TextBlockIAMRole": {
+        "BlockIAMRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "RoleName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "TextBlockTable",
+                            "BlockTable",
                             "role",
                             {
                                 "Fn::GetAtt": [
@@ -1425,7 +1425,7 @@
                                     "Resource": [
                                         {
                                             "Fn::GetAtt": [
-                                                "TextBlockTable",
+                                                "BlockTable",
                                                 "Arn"
                                             ]
                                         },
@@ -1435,7 +1435,7 @@
                                                 [
                                                     {
                                                         "Fn::GetAtt": [
-                                                            "TextBlockTable",
+                                                            "BlockTable",
                                                             "Arn"
                                                         ]
                                                     },
@@ -1451,7 +1451,7 @@
                 ]
             }
         },
-        "TextBlockDataSource": {
+        "BlockDataSource": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
                 "ApiId": {
@@ -1460,11 +1460,11 @@
                         "ApiId"
                     ]
                 },
-                "Name": "TextBlockTable",
+                "Name": "BlockTable",
                 "Type": "AMAZON_DYNAMODB",
                 "ServiceRoleArn": {
                     "Fn::GetAtt": [
-                        "TextBlockIAMRole",
+                        "BlockIAMRole",
                         "Arn"
                     ]
                 },
@@ -1477,7 +1477,7 @@
                                     ":",
                                     {
                                         "Fn::GetAtt": [
-                                            "TextBlockTable",
+                                            "BlockTable",
                                             "Arn"
                                         ]
                                     }
@@ -1486,16 +1486,16 @@
                         ]
                     },
                     "TableName": {
-                        "Ref": "TextBlockTable"
+                        "Ref": "BlockTable"
                     }
                 }
             },
             "DependsOn": [
-                "TextBlockTable",
-                "TextBlockIAMRole"
+                "BlockTable",
+                "BlockIAMRole"
             ]
         },
-        "GetTextBlockResolver": {
+        "GetBlockResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1506,11 +1506,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TextBlockDataSource",
+                        "BlockDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "getTextBlock",
+                "FieldName": "getBlock",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1532,7 +1532,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getTextBlock",
+                                                    "getBlock",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1566,7 +1566,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getTextBlock",
+                                                    "getBlock",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1583,7 +1583,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "ListTextBlockResolver": {
+        "ListBlockResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1594,11 +1594,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TextBlockDataSource",
+                        "BlockDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "listTextBlocks",
+                "FieldName": "listBlocks",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1620,7 +1620,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listTextBlocks",
+                                                    "listBlocks",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1654,7 +1654,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listTextBlocks",
+                                                    "listBlocks",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1671,7 +1671,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "CreateTextBlockResolver": {
+        "CreateBlockResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1682,11 +1682,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TextBlockDataSource",
+                        "BlockDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "createTextBlock",
+                "FieldName": "createBlock",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1708,7 +1708,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createTextBlock",
+                                                    "createBlock",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1742,7 +1742,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createTextBlock",
+                                                    "createBlock",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1759,7 +1759,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "UpdateTextBlockResolver": {
+        "UpdateBlockResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1770,11 +1770,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TextBlockDataSource",
+                        "BlockDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "updateTextBlock",
+                "FieldName": "updateBlock",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1796,7 +1796,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateTextBlock",
+                                                    "updateBlock",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1830,7 +1830,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateTextBlock",
+                                                    "updateBlock",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1847,7 +1847,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "DeleteTextBlockResolver": {
+        "DeleteBlockResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1858,11 +1858,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TextBlockDataSource",
+                        "BlockDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "deleteTextBlock",
+                "FieldName": "deleteBlock",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1884,7 +1884,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteTextBlock",
+                                                    "deleteBlock",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1918,7 +1918,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteTextBlock",
+                                                    "deleteBlock",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"

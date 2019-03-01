@@ -1,6 +1,32 @@
 // tslint:disable
 // this is an auto generated file. This will be overwritten
 
+export const createTextBlock = `mutation CreateTextBlock($input: CreateTextBlockInput!) {
+  createTextBlock(input: $input) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
+`;
+export const updateTextBlock = `mutation UpdateTextBlock($input: UpdateTextBlockInput!) {
+  updateTextBlock(input: $input) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
+`;
 export const createUser = `mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     id
@@ -46,7 +72,8 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     order
     blockIds
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
   }
 }
 `;
@@ -62,7 +89,8 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     order
     blockIds
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
   }
 }
 `;
@@ -78,42 +106,46 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     order
     blockIds
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
   }
 }
 `;
-export const createTextBlock = `mutation CreateTextBlock($input: CreateTextBlockInput!) {
-  createTextBlock(input: $input) {
+export const createBlock = `mutation CreateBlock($input: CreateBlockInput!) {
+  createBlock(input: $input) {
     id
     version
     type
     documentId
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
     value
   }
 }
 `;
-export const updateTextBlock = `mutation UpdateTextBlock($input: UpdateTextBlockInput!) {
-  updateTextBlock(input: $input) {
+export const updateBlock = `mutation UpdateBlock($input: UpdateBlockInput!) {
+  updateBlock(input: $input) {
     id
     version
     type
     documentId
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
     value
   }
 }
 `;
-export const deleteTextBlock = `mutation DeleteTextBlock($input: DeleteTextBlockInput!) {
-  deleteTextBlock(input: $input) {
+export const deleteBlock = `mutation DeleteBlock($input: DeleteBlockInput!) {
+  deleteBlock(input: $input) {
     id
     version
     type
     documentId
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
     value
   }
 }

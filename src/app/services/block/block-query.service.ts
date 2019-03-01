@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Block } from '../../classes/block';
 import { GraphQLService } from '../graphQL/graph-ql.service';
-import { getTextBlock } from '../../../graphql/queries';
 import { BlockFactoryService } from './block-factory.service';
+import { getBlock } from '../../../graphql/queries';
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +26,9 @@ export class BlockQueryService {
     const block$ = new BehaviorSubject<Block>(null);
     this.blocksMap.set(id, block$);
 
-    this.graphQlService.query(getTextBlock, { id }).then(response => {
+    this.graphQlService.query(getBlock, { id }).then(response => {
       try {
-        const data = response.data.getTextBlock;
+        const data = response.data.getBlock;
         if (data === null) {
           block$.next(null);
           return;

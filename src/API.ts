@@ -1,6 +1,29 @@
 /* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
+export type CreateTextBlockInput = {
+  id?: string | null,
+  version: string,
+  type: BlockType,
+  documentId: string,
+  lastUpdatedBy: string,
+  value: string,
+};
+
+export enum BlockType {
+  TEXT = "TEXT",
+}
+
+
+export type UpdateTextBlockInput = {
+  id: string,
+  version: string,
+  type?: BlockType | null,
+  documentId?: string | null,
+  lastUpdatedBy: string,
+  value: string,
+};
+
 export type CreateUserInput = {
   id?: string | null,
   username: string,
@@ -34,7 +57,8 @@ export type CreateDocumentInput = {
   order?: Array< string | null > | null,
   blockIds?: Array< string | null > | null,
   lastUpdatedBy?: string | null,
-  timestamp?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
 };
 
 export enum DocumentType {
@@ -54,39 +78,37 @@ export type UpdateDocumentInput = {
   order?: Array< string | null > | null,
   blockIds?: Array< string | null > | null,
   lastUpdatedBy?: string | null,
-  timestamp?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
 };
 
 export type DeleteDocumentInput = {
   id?: string | null,
 };
 
-export type CreateTextBlockInput = {
+export type CreateBlockInput = {
   id?: string | null,
   version?: string | null,
   type?: BlockType | null,
   documentId?: string | null,
   lastUpdatedBy?: string | null,
-  timestamp?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
   value?: string | null,
 };
 
-export enum BlockType {
-  TEXT = "TEXT",
-}
-
-
-export type UpdateTextBlockInput = {
+export type UpdateBlockInput = {
   id: string,
   version?: string | null,
   type?: BlockType | null,
   documentId?: string | null,
   lastUpdatedBy?: string | null,
-  timestamp?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
   value?: string | null,
 };
 
-export type DeleteTextBlockInput = {
+export type DeleteBlockInput = {
   id?: string | null,
 };
 
@@ -138,22 +160,60 @@ export type ModelDocumentFilterInput = {
   order?: ModelStringFilterInput | null,
   blockIds?: ModelStringFilterInput | null,
   lastUpdatedBy?: ModelStringFilterInput | null,
-  timestamp?: ModelStringFilterInput | null,
+  createdAt?: ModelStringFilterInput | null,
+  updatedAt?: ModelStringFilterInput | null,
   and?: Array< ModelDocumentFilterInput | null > | null,
   or?: Array< ModelDocumentFilterInput | null > | null,
   not?: ModelDocumentFilterInput | null,
 };
 
-export type ModelTextBlockFilterInput = {
+export type ModelBlockFilterInput = {
   id?: ModelIDFilterInput | null,
   version?: ModelStringFilterInput | null,
   documentId?: ModelStringFilterInput | null,
   lastUpdatedBy?: ModelStringFilterInput | null,
-  timestamp?: ModelStringFilterInput | null,
+  createdAt?: ModelStringFilterInput | null,
+  updatedAt?: ModelStringFilterInput | null,
   value?: ModelStringFilterInput | null,
-  and?: Array< ModelTextBlockFilterInput | null > | null,
-  or?: Array< ModelTextBlockFilterInput | null > | null,
-  not?: ModelTextBlockFilterInput | null,
+  and?: Array< ModelBlockFilterInput | null > | null,
+  or?: Array< ModelBlockFilterInput | null > | null,
+  not?: ModelBlockFilterInput | null,
+};
+
+export type CreateTextBlockMutationVariables = {
+  input: CreateTextBlockInput,
+};
+
+export type CreateTextBlockMutation = {
+  createTextBlock:  {
+    __typename: "TextBlock",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
+  } | null,
+};
+
+export type UpdateTextBlockMutationVariables = {
+  input: UpdateTextBlockInput,
+};
+
+export type UpdateTextBlockMutation = {
+  updateTextBlock:  {
+    __typename: "TextBlock",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
+  } | null,
 };
 
 export type CreateUserMutationVariables = {
@@ -221,7 +281,8 @@ export type CreateDocumentMutation = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
@@ -242,7 +303,8 @@ export type UpdateDocumentMutation = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
@@ -263,77 +325,63 @@ export type DeleteDocumentMutation = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
-export type CreateTextBlockMutationVariables = {
-  input: CreateTextBlockInput,
+export type CreateBlockMutationVariables = {
+  input: CreateBlockInput,
 };
 
-export type CreateTextBlockMutation = {
-  createTextBlock:  {
-    __typename: "TextBlock",
+export type CreateBlockMutation = {
+  createBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
 };
 
-export type UpdateTextBlockMutationVariables = {
-  input: UpdateTextBlockInput,
+export type UpdateBlockMutationVariables = {
+  input: UpdateBlockInput,
 };
 
-export type UpdateTextBlockMutation = {
-  updateTextBlock:  {
-    __typename: "TextBlock",
+export type UpdateBlockMutation = {
+  updateBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
 };
 
-export type DeleteTextBlockMutationVariables = {
-  input: DeleteTextBlockInput,
+export type DeleteBlockMutationVariables = {
+  input: DeleteBlockInput,
 };
 
-export type DeleteTextBlockMutation = {
-  deleteTextBlock:  {
-    __typename: "TextBlock",
+export type DeleteBlockMutation = {
+  deleteBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
-};
-
-export type GetBlocksFromDocumentQueryVariables = {
-  documentId: string,
-};
-
-export type GetBlocksFromDocumentQuery = {
-  getBlocksFromDocument:  Array<( {
-      __typename: "TextBlock",
-      id: string,
-      version: string | null,
-      type: BlockType | null,
-      documentId: string | null,
-      lastUpdatedBy: string | null,
-      timestamp: string | null,
-      value: string | null,
-    }
-  ) | null > | null,
 };
 
 export type GetUserQueryVariables = {
@@ -391,7 +439,8 @@ export type GetDocumentQuery = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
@@ -416,49 +465,70 @@ export type ListDocumentsQuery = {
       order: Array< string | null > | null,
       blockIds: Array< string | null > | null,
       lastUpdatedBy: string | null,
-      timestamp: string | null,
+      createdAt: string | null,
+      updatedAt: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
 };
 
-export type GetTextBlockQueryVariables = {
+export type GetBlockQueryVariables = {
   id: string,
 };
 
-export type GetTextBlockQuery = {
-  getTextBlock:  {
-    __typename: "TextBlock",
+export type GetBlockQuery = {
+  getBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
 };
 
-export type ListTextBlocksQueryVariables = {
-  filter?: ModelTextBlockFilterInput | null,
+export type ListBlocksQueryVariables = {
+  filter?: ModelBlockFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListTextBlocksQuery = {
-  listTextBlocks:  {
-    __typename: "ModelTextBlockConnection",
+export type ListBlocksQuery = {
+  listBlocks:  {
+    __typename: "ModelBlockConnection",
     items:  Array< {
-      __typename: "TextBlock",
+      __typename: "Block",
       id: string,
       version: string | null,
       type: BlockType | null,
       documentId: string | null,
       lastUpdatedBy: string | null,
-      timestamp: string | null,
+      createdAt: string | null,
+      updatedAt: string | null,
       value: string | null,
     } | null > | null,
     nextToken: string | null,
+  } | null,
+};
+
+export type OnUpdateBlockInDocumentSubscriptionVariables = {
+  documentId: string,
+};
+
+export type OnUpdateBlockInDocumentSubscription = {
+  onUpdateBlockInDocument:  {
+    __typename: "Block",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
   } | null,
 };
 
@@ -511,7 +581,8 @@ export type OnCreateDocumentSubscription = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
@@ -528,7 +599,8 @@ export type OnUpdateDocumentSubscription = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
@@ -545,45 +617,49 @@ export type OnDeleteDocumentSubscription = {
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
   } | null,
 };
 
-export type OnCreateTextBlockSubscription = {
-  onCreateTextBlock:  {
-    __typename: "TextBlock",
+export type OnCreateBlockSubscription = {
+  onCreateBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
 };
 
-export type OnUpdateTextBlockSubscription = {
-  onUpdateTextBlock:  {
-    __typename: "TextBlock",
+export type OnUpdateBlockSubscription = {
+  onUpdateBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
 };
 
-export type OnDeleteTextBlockSubscription = {
-  onDeleteTextBlock:  {
-    __typename: "TextBlock",
+export type OnDeleteBlockSubscription = {
+  onDeleteBlock:  {
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
     value: string | null,
   } | null,
 };
