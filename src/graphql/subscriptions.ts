@@ -37,6 +37,7 @@ export const onDeleteUser = `subscription OnDeleteUser {
 export const onCreateDocument = `subscription OnCreateDocument {
   onCreateDocument {
     id
+    version
     type
     title
     ownerId
@@ -44,12 +45,15 @@ export const onCreateDocument = `subscription OnCreateDocument {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;
 export const onUpdateDocument = `subscription OnUpdateDocument {
   onUpdateDocument {
     id
+    version
     type
     title
     ownerId
@@ -57,12 +61,15 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;
 export const onDeleteDocument = `subscription OnDeleteDocument {
   onDeleteDocument {
     id
+    version
     type
     title
     ownerId
@@ -70,6 +77,8 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;

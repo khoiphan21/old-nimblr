@@ -42,7 +42,7 @@ export class BlockFactoryService {
     }
   }
 
-  createTextBlock({
+  private createTextBlock({
     version, documentId, lastUpdatedBy, value, id = uuidv5(version, documentId)
   }) {
     return new TextBlock(id, version, documentId, lastUpdatedBy, value);

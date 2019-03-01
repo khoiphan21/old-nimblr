@@ -37,6 +37,7 @@ export const deleteUser = `mutation DeleteUser($input: DeleteUserInput!) {
 export const createDocument = `mutation CreateDocument($input: CreateDocumentInput!) {
   createDocument(input: $input) {
     id
+    version
     type
     title
     ownerId
@@ -44,12 +45,15 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;
 export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInput!) {
   updateDocument(input: $input) {
     id
+    version
     type
     title
     ownerId
@@ -57,12 +61,15 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;
 export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInput!) {
   deleteDocument(input: $input) {
     id
+    version
     type
     title
     ownerId
@@ -70,6 +77,8 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;

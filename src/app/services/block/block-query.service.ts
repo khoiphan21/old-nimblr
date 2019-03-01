@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Block } from '../../classes/block';
+import { GraphQLService } from '../graphQL/graph-ql.service';
+import { getTextBlock } from '../../../graphql/queries';
+import { BlockFactoryService } from './block-factory.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,19 +11,45 @@ import { Block } from '../../classes/block';
 export class BlockQueryService {
 
   private myVersions: Array<string> = [];
+  private blocksMap: Map<string, Observable<Block>> = new Map();
 
-  constructor() { }
+  constructor(
+    private graphQlService: GraphQLService,
+    private blockFactoryService: BlockFactoryService
+  ) { }
 
   getBlock$(id: string): Observable<Block> {
-    return;
+    if (this.blocksMap.has(id)) {
+      return this.blocksMap.get(id);
+    }
+
+    const block$ = new BehaviorSubject<Block>(null);
+    this.blocksMap.set(id, block$);
+
+    this.graphQlService.query(getTextBlock, { id }).then(response => {
+      try {
+        const data = response.data.getTextBlock;
+        if (data === null) {
+          block$.next(null);
+          return;
+        }
+        const block: Block = this.blockFactoryService.createBlock(data);
+        block$.next(block);
+      } catch (error) {
+        block$.error(error);
+      }
+    });
+
+    return block$;
   }
+
   getBlocksForDocument(id: string): Promise<any> {
     return;
   }
   registerUpdateVersion(version: string) {
 
   }
-  subscribeToUpdate(documentId: string): Promise<any> {
+  private subscribeToUpdate(documentId: string): Promise<any> {
     return;
   }
 }

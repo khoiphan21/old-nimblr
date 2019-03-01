@@ -25,6 +25,7 @@ export type DeleteUserInput = {
 
 export type CreateDocumentInput = {
   id?: string | null,
+  version?: string | null,
   type: DocumentType,
   title?: string | null,
   ownerId?: string | null,
@@ -32,6 +33,8 @@ export type CreateDocumentInput = {
   viewerIds?: Array< string | null > | null,
   order?: Array< string | null > | null,
   blockIds?: Array< string | null > | null,
+  lastUpdatedBy?: string | null,
+  timestamp?: string | null,
 };
 
 export enum DocumentType {
@@ -42,6 +45,7 @@ export enum DocumentType {
 
 export type UpdateDocumentInput = {
   id: string,
+  version?: string | null,
   type?: DocumentType | null,
   title?: string | null,
   ownerId?: string | null,
@@ -49,6 +53,8 @@ export type UpdateDocumentInput = {
   viewerIds?: Array< string | null > | null,
   order?: Array< string | null > | null,
   blockIds?: Array< string | null > | null,
+  lastUpdatedBy?: string | null,
+  timestamp?: string | null,
 };
 
 export type DeleteDocumentInput = {
@@ -61,7 +67,7 @@ export type CreateTextBlockInput = {
   type?: BlockType | null,
   documentId?: string | null,
   lastUpdatedBy?: string | null,
-  timestamp?: number | null,
+  timestamp?: string | null,
   value?: string | null,
 };
 
@@ -76,7 +82,7 @@ export type UpdateTextBlockInput = {
   type?: BlockType | null,
   documentId?: string | null,
   lastUpdatedBy?: string | null,
-  timestamp?: number | null,
+  timestamp?: string | null,
   value?: string | null,
 };
 
@@ -124,12 +130,15 @@ export type ModelStringFilterInput = {
 
 export type ModelDocumentFilterInput = {
   id?: ModelIDFilterInput | null,
+  version?: ModelStringFilterInput | null,
   title?: ModelStringFilterInput | null,
   ownerId?: ModelStringFilterInput | null,
   editorIds?: ModelStringFilterInput | null,
   viewerIds?: ModelStringFilterInput | null,
   order?: ModelStringFilterInput | null,
   blockIds?: ModelStringFilterInput | null,
+  lastUpdatedBy?: ModelStringFilterInput | null,
+  timestamp?: ModelStringFilterInput | null,
   and?: Array< ModelDocumentFilterInput | null > | null,
   or?: Array< ModelDocumentFilterInput | null > | null,
   not?: ModelDocumentFilterInput | null,
@@ -140,23 +149,11 @@ export type ModelTextBlockFilterInput = {
   version?: ModelStringFilterInput | null,
   documentId?: ModelStringFilterInput | null,
   lastUpdatedBy?: ModelStringFilterInput | null,
-  timestamp?: ModelIntFilterInput | null,
+  timestamp?: ModelStringFilterInput | null,
   value?: ModelStringFilterInput | null,
   and?: Array< ModelTextBlockFilterInput | null > | null,
   or?: Array< ModelTextBlockFilterInput | null > | null,
   not?: ModelTextBlockFilterInput | null,
-};
-
-export type ModelIntFilterInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  contains?: number | null,
-  notContains?: number | null,
-  between?: Array< number | null > | null,
 };
 
 export type CreateUserMutationVariables = {
@@ -215,6 +212,7 @@ export type CreateDocumentMutation = {
   createDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -222,6 +220,8 @@ export type CreateDocumentMutation = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -233,6 +233,7 @@ export type UpdateDocumentMutation = {
   updateDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -240,6 +241,8 @@ export type UpdateDocumentMutation = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -251,6 +254,7 @@ export type DeleteDocumentMutation = {
   deleteDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -258,6 +262,8 @@ export type DeleteDocumentMutation = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -273,7 +279,7 @@ export type CreateTextBlockMutation = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };
@@ -290,7 +296,7 @@ export type UpdateTextBlockMutation = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };
@@ -307,7 +313,7 @@ export type DeleteTextBlockMutation = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };
@@ -324,7 +330,7 @@ export type GetBlocksFromDocumentQuery = {
       type: BlockType | null,
       documentId: string | null,
       lastUpdatedBy: string | null,
-      timestamp: number | null,
+      timestamp: string | null,
       value: string | null,
     }
   ) | null > | null,
@@ -376,6 +382,7 @@ export type GetDocumentQuery = {
   getDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -383,6 +390,8 @@ export type GetDocumentQuery = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -398,6 +407,7 @@ export type ListDocumentsQuery = {
     items:  Array< {
       __typename: "Document",
       id: string,
+      version: string | null,
       type: DocumentType,
       title: string | null,
       ownerId: string | null,
@@ -405,6 +415,8 @@ export type ListDocumentsQuery = {
       viewerIds: Array< string | null > | null,
       order: Array< string | null > | null,
       blockIds: Array< string | null > | null,
+      lastUpdatedBy: string | null,
+      timestamp: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -422,7 +434,7 @@ export type GetTextBlockQuery = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };
@@ -443,7 +455,7 @@ export type ListTextBlocksQuery = {
       type: BlockType | null,
       documentId: string | null,
       lastUpdatedBy: string | null,
-      timestamp: number | null,
+      timestamp: string | null,
       value: string | null,
     } | null > | null,
     nextToken: string | null,
@@ -490,6 +502,7 @@ export type OnCreateDocumentSubscription = {
   onCreateDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -497,6 +510,8 @@ export type OnCreateDocumentSubscription = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -504,6 +519,7 @@ export type OnUpdateDocumentSubscription = {
   onUpdateDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -511,6 +527,8 @@ export type OnUpdateDocumentSubscription = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -518,6 +536,7 @@ export type OnDeleteDocumentSubscription = {
   onDeleteDocument:  {
     __typename: "Document",
     id: string,
+    version: string | null,
     type: DocumentType,
     title: string | null,
     ownerId: string | null,
@@ -525,6 +544,8 @@ export type OnDeleteDocumentSubscription = {
     viewerIds: Array< string | null > | null,
     order: Array< string | null > | null,
     blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    timestamp: string | null,
   } | null,
 };
 
@@ -536,7 +557,7 @@ export type OnCreateTextBlockSubscription = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };
@@ -549,7 +570,7 @@ export type OnUpdateTextBlockSubscription = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };
@@ -562,7 +583,7 @@ export type OnDeleteTextBlockSubscription = {
     type: BlockType | null,
     documentId: string | null,
     lastUpdatedBy: string | null,
-    timestamp: number | null,
+    timestamp: string | null,
     value: string | null,
   } | null,
 };

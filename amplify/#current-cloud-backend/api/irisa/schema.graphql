@@ -9,6 +9,7 @@ type User @model {
 
 type Document @model {
   id: ID!
+  version: String
   type: DocumentType!
   title: String
   ownerId: String
@@ -16,6 +17,8 @@ type Document @model {
   viewerIds: [String]
   order: [String]
   blockIds: [String]
+  lastUpdatedBy: String
+  timestamp: String
 }
 
 enum DocumentType {
@@ -29,7 +32,7 @@ interface Block {
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: Int
+  timestamp: String
 }
 
 enum BlockType {
@@ -42,7 +45,7 @@ type TextBlock implements Block @model {
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: Int
+  timestamp: String
   value: String
 }
 

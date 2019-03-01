@@ -47,6 +47,7 @@ export const listUsers = `query ListUsers(
 export const getDocument = `query GetDocument($id: ID!) {
   getDocument(id: $id) {
     id
+    version
     type
     title
     ownerId
@@ -54,6 +55,8 @@ export const getDocument = `query GetDocument($id: ID!) {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    timestamp
   }
 }
 `;
@@ -65,6 +68,7 @@ export const listDocuments = `query ListDocuments(
   listDocuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      version
       type
       title
       ownerId
@@ -72,6 +76,8 @@ export const listDocuments = `query ListDocuments(
       viewerIds
       order
       blockIds
+      lastUpdatedBy
+      timestamp
     }
     nextToken
   }
