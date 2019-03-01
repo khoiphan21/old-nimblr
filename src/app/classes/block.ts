@@ -33,7 +33,14 @@ export class TextBlock implements Block {
     }
 }
 
+export class BlockCreateError extends Error {
+    blockType: BlockType;
+    constructor(blockType: BlockType, ...params) {
+        super(...params);
+        this.blockType = blockType;
+    }
+}
 
-export interface BlockUpdateOptions {
+export interface BlockMutationOptions {
     newTextValue?: string;
 }
