@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DocumentService } from '../document/document.service';
-import { Observable, Subject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Document } from '../../classes/document';
 import { NavigationTabDocument } from '../../classes/navigation-tab';
 
@@ -8,18 +8,25 @@ import { NavigationTabDocument } from '../../classes/navigation-tab';
   providedIn: 'root'
 })
 export class NavigationBarService {
-  navigationBar$: Subject<Array<NavigationTabDocument>> = new Subject();
+  private navigationBar$: BehaviorSubject<Array<NavigationTabDocument>>;
 
   constructor(
     private documentService: DocumentService
   ) { }
 
   getNavigationBar$(): Observable<Array<NavigationTabDocument>> {
-     return null;
+    if (!this.navigationBar$) {
+      this.navigationBar$ = new BehaviorSubject([]);
+      this.documentService.getUserDocuments$().subscribe((documents) => {
+        const navigationTabs = this.processNavigationTab(documents);
+        this.navigationBar$.next(navigationTabs);
+      });
+    }
+    return this.navigationBar$;
   }
 
   updateNavigationBar() {
-    
+
   }
 
   processNavigationTab(documents: Array<Document>): Array<NavigationTabDocument> {
@@ -32,6 +39,7 @@ export class NavigationBarService {
       const navigationTab = new NavigationTabDocument(id, title, []);
       navigationTabs.push(navigationTab);
     }
+    console.log('tabs', navigationTabs)
     return navigationTabs;
   }
 }
