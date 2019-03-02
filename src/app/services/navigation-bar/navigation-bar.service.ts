@@ -25,10 +25,6 @@ export class NavigationBarService {
     return this.navigationBar$;
   }
 
-  updateNavigationBar() {
-
-  }
-
   processNavigationTab(documents: Array<Document>): Array<NavigationTabDocument> {
     const navigationTabs: Array<NavigationTabDocument> = [];
     for (const document of documents) {
@@ -39,7 +35,6 @@ export class NavigationBarService {
       const navigationTab = new NavigationTabDocument(id, title, []);
       navigationTabs.push(navigationTab);
     }
-    console.log('tabs', navigationTabs)
     return navigationTabs;
   }
 }
