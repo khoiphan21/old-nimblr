@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { GraphQLService } from './graph-ql.service';
 import { take } from 'rxjs/operators';
-import { CreateTextBlockInput, BlockType } from '../../../API';
-import { createTextBlock, createBlock, deleteBlock } from '../../../graphql/mutations';
+import { CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../API';
+import { createTextBlock, createBlock, deleteBlock, updateBlock, updateTextBlock } from '../../../graphql/mutations';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 
@@ -20,8 +20,9 @@ fdescribe('GraphQLService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should create and delete a text block in the database', done => {
+  it('should create, update and delete a text block in the database', done => {
     let id: string;
+    let updateBlockInput: UpdateTextBlockInput;
     const input: CreateTextBlockInput = {
       version: uuidv4(),
       type: BlockType.TEXT,
@@ -30,17 +31,31 @@ fdescribe('GraphQLService', () => {
       value: 'TextBlock created from test'
     };
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
+      // Create a block for testing
       service.query(createTextBlock, { input }).then(response => {
         // Store the id to delete the block
         id = response.data.createTextBlock.id;
         expect(response.data.createTextBlock !== null).toBe(true);
+        // update the block
+        updateBlockInput = {
+          id,
+          version: uuidv4(),
+          lastUpdatedBy: uuidv4(),
+          value: '(Update TextBlock test)'
+        };
+        return service.query(updateTextBlock, { input: updateBlockInput });
+      }).then(response => {
+        const updatedBlock = response.data.updateTextBlock;
+        expect(updatedBlock.value).toEqual(updateBlockInput.value);
+        expect(updatedBlock.version).toEqual(updateBlockInput.version);
+        expect(updatedBlock.lastUpdatedBy).toEqual(updateBlockInput.lastUpdatedBy);
         // now delete the created block
-        return service.query(deleteBlock, { input: { id }});
+        return service.query(deleteBlock, { input: { id } });
       }).then(response => {
         const deletedBlockId = response.data.deleteBlock.id;
         expect(deletedBlockId).toEqual(id);
         done();
-      })
+      }).catch(error => { fail(error); done(); });
     });
   });
 
