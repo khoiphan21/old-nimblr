@@ -12,7 +12,7 @@ import { Block } from 'src/app/classes/block';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('GraphQLService', () => {
+describe('GraphQLService', () => {
   const service$ = new BehaviorSubject<GraphQLService>(null);
 
   let input: CreateTextBlockInput;

@@ -11,7 +11,7 @@ const uuidv4 = require('uuid/v4');
 
 export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
-describe('BlockQueryService', () => {
+fdescribe('BlockQueryService', () => {
   const service$ = new BehaviorSubject(null);
 
   beforeAll(() => {
@@ -19,10 +19,6 @@ describe('BlockQueryService', () => {
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
       service$.next(TestBed.get(BlockQueryService))
     });
-  });
-
-  beforeEach(() => {
-    service$.next(TestBed.get(BlockQueryService))
   });
 
   it('should be created', () => {
@@ -40,14 +36,16 @@ describe('BlockQueryService', () => {
           expect(value).toBe(null);
           done();
         }, error => { fail(error); done(); });
-      })
+      }, error => { fail(error); done(); });
     });
 
     it('should return a valid block if the id is correct', done => {
-      service$.subscribe(service => {
+      const serviceSubscription = service$.subscribe(service => {
         if (service === null) { return; }
-        service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(skip(1)).pipe(take(1)).subscribe(value => {
+        service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(value => {
+          if (value === null) { return; }
           checkTextBlock(value, TEST_TEXT_BLOCK_ID);
+          serviceSubscription.unsubscribe();
           done();
         }, error => { fail(error); done(); });
       });
@@ -59,24 +57,27 @@ describe('BlockQueryService', () => {
     }
 
     it('should store the retrieved block in the internal map', done => {
-      service$.subscribe(service => {
+      const serviceSubscription = service$.subscribe(service => {
         if (service === null) { return; }
-        service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(skip(1)).pipe(take(1)).subscribe(() => {
+        const blockSubscription = service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(value => {
+          if (value === null) { return; }
           /* tslint:disable:no-string-literal */
           const observable = service['blocksMap'].get(TEST_TEXT_BLOCK_ID);
           expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
-          observable.pipe(take(1)).subscribe(block => {
+          observable.subscribe(block => {
+            if (block === null) { return; }
             checkTextBlock(block, TEST_TEXT_BLOCK_ID);
             done();
           });
         }, error => { fail(error); done(); });
       });
-    });
+    }, 10000);
 
     it('should not call backend again if it already called once', done => {
-      service$.subscribe(service => {
+      const serviceSubscription = service$.subscribe(service => {
         if (service === null) { return; }
-        service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(skip(1)).pipe(take(1)).subscribe(() => {
+        service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(take(1)).subscribe(value => {
+          if (value === null) { return; }
           /* tslint:disable:no-string-literal */
           // Spy on the query method of the graphQlService
           const spy = spyOn(service['graphQlService'], 'query').and.returnValue(Promise.resolve());
