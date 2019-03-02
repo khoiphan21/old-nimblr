@@ -16,6 +16,7 @@ import { DropdownComponent } from '../../components/block/question-block/dropdow
 import { CheckboxComponent } from '../../components/block/question-block/checkbox/checkbox.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MultipleChoiceComponent } from 'src/app/components/block/question-block/multiple-choice/multiple-choice.component';
+import { NavigationTabComponent } from '../../components/navigation-bar/navigation-tab/navigation-tab.component';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
@@ -35,7 +36,8 @@ describe('DocumentPageComponent', () => {
         QuestionBlockComponent,
         DropdownComponent,
         CheckboxComponent,
-        MultipleChoiceComponent
+        MultipleChoiceComponent,
+        NavigationTabComponent
       ],
       imports: [
         ServicesModule,

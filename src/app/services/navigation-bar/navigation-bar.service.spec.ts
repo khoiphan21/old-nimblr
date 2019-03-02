@@ -63,7 +63,7 @@ describe('NavigationBarService', () => {
     });
 
 
-    it('should update the navigation bar when a new document is created', done => {
+    fit('should update the navigation bar when a new document is created', done => {
       accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         const navigationSubscription = service.getNavigationBar$();
         let navigationTabCount = 0;
