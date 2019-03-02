@@ -72,6 +72,34 @@ fdescribe('GraphQLService', () => {
     });
   });
 
+  it('should get subscription for createTextBlock in a document', done => {
+    let blockId: string;
+    const documentId = uuidv4();
+    // change the default input's documentId
+    input.documentId = documentId;
+    // Subscribe to any changes for the given documentId
+    service$.subscribe(service => {
+      if (service === null) { return; }
+      // First setup subscription
+      service.getSubscription(onUpdateBlockInDocument, { documentId }).pipe(take(1)).subscribe(update => {
+        const block = update.value.data.onUpdateBlockInDocument;
+        expect(block.value).toEqual(input.value);
+        expect(block.version).toEqual(input.version);
+        expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+        done();
+      }, error => { fail(error); done(); });
+      // Now create a TextBlock with that documentId
+      setTimeout(() => {
+        service.query(createTextBlock, { input }).then(response => {
+          const createdBlock: Block = response.data.createTextBlock;
+          blockId = createdBlock.id; // store the id to delete later
+          // Now delete the newly created block
+          return service.query(deleteBlock, { input: { id: blockId } });
+        }).catch(error => { fail(error); done(); });
+      }, 500);
+    }, error => { fail(error); done(); });
+  });
+
   it('should get subscription for updateTextBlock mutation', done => {
     let blockId: string;
     service$.subscribe(service => {
