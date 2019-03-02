@@ -68,5 +68,6 @@ input UpdateTextBlockInput {
   type: BlockType
   documentId: String
   lastUpdatedBy: String!
+  updatedAt: String!
   value: String!
 }

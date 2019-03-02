@@ -21,6 +21,7 @@ export type UpdateTextBlockInput = {
   type?: BlockType | null,
   documentId?: string | null,
   lastUpdatedBy: string,
+  updatedAt: string,
   value: string,
 };
 

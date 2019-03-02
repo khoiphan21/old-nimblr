@@ -16,6 +16,7 @@ fdescribe('GraphQLService', () => {
   const service$ = new BehaviorSubject<GraphQLService>(null);
 
   let input: CreateTextBlockInput;
+  let updateBlockInput: UpdateBlockInput;
 
   beforeAll(() => {
     TestBed.configureTestingModule({});
@@ -32,6 +33,13 @@ fdescribe('GraphQLService', () => {
       lastUpdatedBy: uuidv4(),
       value: 'TextBlock created from test'
     };
+    updateBlockInput = {
+      id: null, // need to be updated during test
+      updatedAt: new Date().toUTCString(),
+      version: uuidv4(),
+      lastUpdatedBy: uuidv4(),
+      value: '(Update TextBlock test)'
+    };
   });
 
   it('should be created', () => {
@@ -41,7 +49,6 @@ fdescribe('GraphQLService', () => {
 
   it('should create, update and delete a text block in the database', done => {
     let id: string;
-    let updateBlockInput: UpdateTextBlockInput;
     service$.subscribe(service => {
       if (service === null) { return; }
       // Create a block for testing
@@ -49,19 +56,12 @@ fdescribe('GraphQLService', () => {
         // Store the id to delete the block
         id = response.data.createTextBlock.id;
         expect(response.data.createTextBlock !== null).toBe(true);
-        // update the block
-        updateBlockInput = {
-          id,
-          version: uuidv4(),
-          lastUpdatedBy: uuidv4(),
-          value: '(Update TextBlock test)'
-        };
+        // update the input id to query 'updateTextBlock'
+        updateBlockInput.id = id;
         return service.query(updateTextBlock, { input: updateBlockInput });
       }).then(response => {
         const updatedBlock = response.data.updateTextBlock;
-        expect(updatedBlock.value).toEqual(updateBlockInput.value);
-        expect(updatedBlock.version).toEqual(updateBlockInput.version);
-        expect(updatedBlock.lastUpdatedBy).toEqual(updateBlockInput.lastUpdatedBy);
+        checkUpdatedBlock(updatedBlock, updateBlockInput);
         // now delete the created block
         return service.query(deleteBlock, { input: { id } });
       }).then(response => {
@@ -71,6 +71,12 @@ fdescribe('GraphQLService', () => {
       }).catch(error => { fail(error); done(); });
     });
   });
+
+  function checkUpdatedBlock(source, compare) {
+    expect(compare.value).toEqual(source.value);
+    expect(compare.version).toEqual(source.version);
+    expect(compare.lastUpdatedBy).toEqual(source.lastUpdatedBy);
+  }
 
   it('should get subscription for createTextBlock in a document', done => {
     let blockId: string;
@@ -83,9 +89,7 @@ fdescribe('GraphQLService', () => {
       // First setup subscription
       service.getSubscription(onUpdateBlockInDocument, { documentId }).pipe(take(1)).subscribe(update => {
         const block = update.value.data.onUpdateBlockInDocument;
-        expect(block.value).toEqual(input.value);
-        expect(block.version).toEqual(input.version);
-        expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+        checkUpdatedBlock(block, input);
         done();
       }, error => { fail(error); done(); });
       // Now create a TextBlock with that documentId
@@ -109,19 +113,12 @@ fdescribe('GraphQLService', () => {
         const createdBlock: Block = response.data.createTextBlock;
         const documentId = createdBlock.documentId;
         blockId = createdBlock.id; // store the id to delete later
-        // update the block
-        const updateBlockInput: UpdateBlockInput = {
-          id: createdBlock.id,
-          version: uuidv4(),
-          lastUpdatedBy: uuidv4(),
-          value: '(Update TextBlock test)'
-        };
+        // update the input id to query 'updateTextBlock'
+        updateBlockInput.id = blockId;
         // Setup subscription
         service.getSubscription(onUpdateBlockInDocument, { documentId }).pipe(take(1)).subscribe(update => {
           const block = update.value.data.onUpdateBlockInDocument;
-          expect(block.version).toEqual(updateBlockInput.version);
-          expect(block.lastUpdatedBy).toEqual(updateBlockInput.lastUpdatedBy);
-          expect(block.value).toEqual(updateBlockInput.value);
+          checkUpdatedBlock(block, updateBlockInput);
           done();
         });
         return new Promise((resolve, reject) => {
