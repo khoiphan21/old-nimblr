@@ -9,7 +9,7 @@ import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.sp
 
 const uuidv4 = require('uuid/v4');
 
-export const TEST_TEXT_BLOCK_ID = '25755a43-0383-4030-bae4-d454adbab6bd';
+export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
 describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject(null);

@@ -186,7 +186,7 @@ export type CreateTextBlockMutationVariables = {
 
 export type CreateTextBlockMutation = {
   createTextBlock:  {
-    __typename: "TextBlock",
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,
@@ -204,7 +204,7 @@ export type UpdateTextBlockMutationVariables = {
 
 export type UpdateTextBlockMutation = {
   updateTextBlock:  {
-    __typename: "TextBlock",
+    __typename: "Block",
     id: string,
     version: string | null,
     type: BlockType | null,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 
 @Injectable({
@@ -19,7 +19,13 @@ export class GraphQLService {
     }
   }
 
-  subscribe(subscription): Observable<any> {
-    return;
+  getSubscription(subscription, params): Observable<any> {
+    const observable = new Subject();
+    const graphqlQuery: any = API.graphql(graphqlOperation(subscription, params));
+    graphqlQuery.subscribe(response => {
+      observable.next(response);
+    });
+
+    return observable;
   }
 }

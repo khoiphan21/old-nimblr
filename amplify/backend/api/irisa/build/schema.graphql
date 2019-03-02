@@ -42,20 +42,9 @@ enum BlockType {
   TEXT
 }
 
-type TextBlock {
-  id: ID!
-  version: String
-  type: BlockType
-  documentId: String
-  lastUpdatedBy: String
-  createdAt: String
-  updatedAt: String
-  value: String
-}
-
 type Mutation {
-  createTextBlock(input: CreateTextBlockInput!): TextBlock
-  updateTextBlock(input: UpdateTextBlockInput!): TextBlock
+  createTextBlock(input: CreateTextBlockInput!): Block
+  updateTextBlock(input: UpdateTextBlockInput!): Block
   createUser(input: CreateUserInput!): User
   updateUser(input: UpdateUserInput!): User
   deleteUser(input: DeleteUserInput!): User
@@ -68,7 +57,7 @@ type Mutation {
 }
 
 type Subscription {
-  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock"])
+  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock"])
   onCreateUser: User @aws_subscribe(mutations: ["createUser"])
   onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
   onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])

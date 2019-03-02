@@ -44,28 +44,14 @@ enum BlockType {
   TEXT
 }
 
-# This type is only a guide as to what values are relevant to TextBlock
-# It still refers to the Block table with all kinds of blocks in it
-type TextBlock {
-  id: ID!
-  version: String
-  type: BlockType
-  documentId: String
-  lastUpdatedBy: String
-  createdAt: String
-  updatedAt: String
-  value: String
-}
-
 type Mutation {
-  createTextBlock(input: CreateTextBlockInput!): TextBlock
-  updateTextBlock(input: UpdateTextBlockInput!): TextBlock
+  createTextBlock(input: CreateTextBlockInput!): Block
+  updateTextBlock(input: UpdateTextBlockInput!): Block
 }
 
 type Subscription {
-  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock"])
+  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock"])
 }
-
 
 input CreateTextBlockInput {
   id: ID
