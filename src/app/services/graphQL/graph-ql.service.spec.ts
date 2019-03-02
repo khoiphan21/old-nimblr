@@ -13,13 +13,14 @@ import { Block } from 'src/app/classes/block';
 const uuidv4 = require('uuid/v4');
 
 describe('GraphQLService', () => {
+  TestBed.configureTestingModule({});
+
   const service$ = new BehaviorSubject<GraphQLService>(null);
 
   let input: CreateTextBlockInput;
   let updateBlockInput: UpdateBlockInput;
 
   beforeAll(() => {
-    TestBed.configureTestingModule({});
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
       service$.next(TestBed.get(GraphQLService));
     });
@@ -102,7 +103,7 @@ describe('GraphQLService', () => {
         }).catch(error => { fail(error); done(); });
       }, 500);
     }, error => { fail(error); done(); });
-  });
+  }, 10000);
 
   it('should get subscription for updateTextBlock mutation', done => {
     let blockId: string;
@@ -135,5 +136,5 @@ describe('GraphQLService', () => {
       }).catch(error => { fail(error); done(); });
 
     });
-  });
+  }, 10000);
 });

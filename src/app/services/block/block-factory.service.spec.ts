@@ -6,7 +6,7 @@ import { isUuid } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('BlockFactoryService', () => {
+describe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
 
   beforeEach(() => {

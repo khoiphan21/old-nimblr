@@ -16,11 +16,11 @@ export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
 describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
+  TestBed.configureTestingModule({});
 
   beforeAll(() => {
-    TestBed.configureTestingModule({});
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      service$.next(TestBed.get(BlockQueryService))
+      service$.next(TestBed.get(BlockQueryService));
     });
   });
 
@@ -60,7 +60,7 @@ describe('BlockQueryService', () => {
     }
 
     it('should store the retrieved block in the internal map', done => {
-      const serviceSubscription = service$.subscribe(service => {
+      service$.subscribe(service => {
         if (service === null) { return; }
         const blockSubscription = service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(value => {
           if (value === null) { return; }
@@ -77,7 +77,7 @@ describe('BlockQueryService', () => {
     }, 10000);
 
     it('should not call backend again if it already called once', done => {
-      const serviceSubscription = service$.subscribe(service => {
+      service$.subscribe(service => {
         if (service === null) { return; }
         service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(take(1)).subscribe(value => {
           if (value === null) { return; }
@@ -104,31 +104,30 @@ describe('BlockQueryService', () => {
           id: TEST_TEXT_BLOCK_ID,
           version: uuidv4(),
           lastUpdatedBy: uuidv4(),
-          updatedAt: new Date().toUTCString(),
-          value: 'new value'
+          updatedAt: new Date().toISOString(),
+          value: 'new value: ' + Math.random()
         };
         service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(block => {
           if (block === null) { return; }
-          console.log('block retrieved: ', block);
           if (shouldUpdate) {
             shouldUpdate = false;
             // Call to update the block
             const graphQLService: GraphQLService = TestBed.get(GraphQLService);
-            graphQLService.query(updateTextBlock, { input }).catch(error => {
-              fail(error);
-              done();
-            });
+            setTimeout(() => {
+              graphQLService.query(updateTextBlock, { input }).catch(error => {
+                fail(error);
+                done();
+              });
+            }, 500);
           } else {
             // Check if the notified block is the updated block
             expect(block.version).toEqual(input.version);
             expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
             expect(block.updatedAt).toEqual(input.updatedAt);
+            done();
           }
-          console.log(block);
         });
       });
-      fail();
-      done();
     });
   });
 });
