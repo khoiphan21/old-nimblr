@@ -6,7 +6,7 @@ import { isUuid } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
-describe('BlockFactoryService', () => {
+fdescribe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
 
   beforeEach(() => {
@@ -29,7 +29,6 @@ describe('BlockFactoryService', () => {
         type: 'TEXT',
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
-        timestamp: new Date().getTime(),
         value: 'Test Value'
       };
       block = factory.createBlock(rawData);
@@ -64,6 +63,19 @@ describe('BlockFactoryService', () => {
       it('should have the right value', () => {
         const textBlock: TextBlock = block as TextBlock;
         expect(textBlock.value).toEqual(rawData.value);
+      });
+      it('should have a createdAt if not given', () => {
+        expect(typeof block.createdAt).toEqual('string');
+        expect(new Date(block.createdAt) instanceof Date).toBe(true);
+      });
+      it('should have a updatedAt if not given', () => {
+        expect(typeof block.updatedAt).toEqual('string');
+        expect(new Date(block.updatedAt) instanceof Date).toBe(true);
+      });
+      it('should store the updatedAt if given one', () => {
+        rawData.updatedAt = new Date('01/01/2100').toISOString();
+        block = factory.createBlock(rawData);
+        expect(block.updatedAt).toEqual(rawData.updatedAt);
       });
     });
 

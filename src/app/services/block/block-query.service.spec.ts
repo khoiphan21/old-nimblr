@@ -6,13 +6,16 @@ import { TextBlock, Block } from '../../classes/block';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
+import { GraphQLService } from '../graphQL/graph-ql.service';
+import { UpdateTextBlockInput } from '../../../API';
+import { updateTextBlock } from '../../../graphql/mutations';
 
 const uuidv4 = require('uuid/v4');
 
 export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
-fdescribe('BlockQueryService', () => {
-  const service$ = new BehaviorSubject(null);
+describe('BlockQueryService', () => {
+  const service$ = new BehaviorSubject<BlockQueryService>(null);
 
   beforeAll(() => {
     TestBed.configureTestingModule({});
@@ -94,7 +97,37 @@ fdescribe('BlockQueryService', () => {
     });
 
     it('should notify when there is an update on a block', done => {
-      fail('test to be written');
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        let shouldUpdate = true;
+        const input: UpdateTextBlockInput = {
+          id: TEST_TEXT_BLOCK_ID,
+          version: uuidv4(),
+          lastUpdatedBy: uuidv4(),
+          updatedAt: new Date().toUTCString(),
+          value: 'new value'
+        };
+        service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(block => {
+          if (block === null) { return; }
+          console.log('block retrieved: ', block);
+          if (shouldUpdate) {
+            shouldUpdate = false;
+            // Call to update the block
+            const graphQLService: GraphQLService = TestBed.get(GraphQLService);
+            graphQLService.query(updateTextBlock, { input }).catch(error => {
+              fail(error);
+              done();
+            });
+          } else {
+            // Check if the notified block is the updated block
+            expect(block.version).toEqual(input.version);
+            expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+            expect(block.updatedAt).toEqual(input.updatedAt);
+          }
+          console.log(block);
+        });
+      });
+      fail();
       done();
     });
   });

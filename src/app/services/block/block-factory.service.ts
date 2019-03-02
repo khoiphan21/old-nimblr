@@ -19,7 +19,7 @@ export class BlockFactoryService {
     switch (data.type) {
       case BlockType.TEXT:
         this.checkParameter(data.value, 'value', false);
-        return this.createTextBlock(data);
+        return new TextBlock(data);
       default:
         throw new BlockCreateError(null, 'BlockType not supported');
     }
@@ -40,12 +40,5 @@ export class BlockFactoryService {
     if (!isUuid(parameter)) {
       throw new BlockCreateError(BlockType.TEXT, `BlockCreateError: ${parameterName} must be an uuid`);
     }
-  }
-
-  private createTextBlock({
-    version, documentId, lastUpdatedBy, value, id = uuidv5(version, documentId)
-  }) {
-    return new TextBlock(id, version, documentId, lastUpdatedBy, value);
-
   }
 }

@@ -47,7 +47,7 @@ export class BlockQueryService {
     return;
   }
   registerUpdateVersion(version: string) {
-
+    
   }
   private subscribeToUpdate(documentId: string): Promise<any> {
     return;
