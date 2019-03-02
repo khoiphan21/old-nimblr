@@ -63,32 +63,38 @@ describe('NavigationBarService', () => {
     });
 
 
-    fit('should update the navigation bar when a new document is created', done => {
+    it('should update the navigation bar when a new document is created', done => {
       accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         const navigationSubscription = service.getNavigationBar$();
         let navigationTabCount = 0;
-        let docId: string;
         navigationSubscription.pipe(skip(1)).pipe(take(1)).subscribe((navigationTabs) => {
           navigationTabCount = navigationTabs.length;
-          console.log('1', navigationTabs.length);
           documentService.createFormDocument().then((document) => {
-            docId = document.id;
-            console.log(docId);
           });
         });
         // After document creation
         navigationSubscription.pipe(skip(2)).pipe(take(1)).subscribe((navigationTabs) => {
-          console.log('2', navigationTabs.length);
           expect(navigationTabs.length).toBe(navigationTabCount + 1);
           navigationTabCount = navigationTabs.length;
-          documentService.deleteDocument(docId);
           done();
         });
+      });
+    });
+
+    xit('should update the navigation bar when a new document is deleted', done => {
+      accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        const navigationSubscription = service.getNavigationBar$();
+        let navigationTabCount = 0;
+        navigationSubscription.pipe(skip(1)).pipe(take(1)).subscribe((navigationTabs) => {
+          navigationTabCount = navigationTabs.length;
+          const docId = navigationTabs[0].id;
+          documentService.deleteDocument(docId);
+        });
         // After document deletion
-        // navigationSubscription.pipe(skip(3)).pipe(take(1)).subscribe((navigationTabs) => {
-        //   console.log('3', navigationTabs.length);
-        //   expect(navigationTabs.length).toBe(navigationTabCount - 1);
-        // });
+        navigationSubscription.pipe(skip(2)).pipe(take(1)).subscribe((navigationTabs) => {
+          expect(navigationTabs.length).toBe(navigationTabCount - 1);
+          done();
+        });
       });
     });
   });
