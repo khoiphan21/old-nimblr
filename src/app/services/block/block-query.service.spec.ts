@@ -394,7 +394,7 @@ describe('BlockQueryService', () => {
             expect(ids.has(response.data.deleteBlock.id)).toBe(true);
           });
           done();
-        }).catch(error => { fail(); console.log(error); done(); });
+        }).catch(error => { fail(); console.error(error); done(); });
       });
     });
   });

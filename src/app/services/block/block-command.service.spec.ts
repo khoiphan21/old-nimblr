@@ -173,8 +173,8 @@ describe('BlockCommandService', () => {
           expect(response.data.deleteBlock.id).toEqual(input.id);
           done();
         }).catch(error => {
-          fail('Error getting service');
-          console.log(error); done();
+          fail('Check console for more details');
+          console.error(error); done();
         });
       }, error => { console.error(error); fail(); done(); });
     });
