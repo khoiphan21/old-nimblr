@@ -23,7 +23,7 @@ export class DocumentQueryTestHelper {
       this.documentId = response.data.createDocument.id;
       this.latestResponse = response;
 
-      return Promise.resolve(response);
+      return Promise.resolve(response.data.createDocument);
     } catch (error) {
       return Promise.reject(error);
     }
@@ -34,7 +34,7 @@ export class DocumentQueryTestHelper {
       const response = await this.graphQlService.query(updateDocument, { input });
       this.latestResponse = response;
 
-      return Promise.resolve(response);
+      return Promise.resolve(response.data.updateDocument);
     } catch (error) {
       return Promise.reject(error);
     }
@@ -49,7 +49,7 @@ export class DocumentQueryTestHelper {
       this.documentId = null;
       this.latestResponse = response;
 
-      return Promise.resolve(response);
+      return Promise.resolve(response.data.deleteDocument);
     } catch (error) {
       return Promise.reject(error);
     }

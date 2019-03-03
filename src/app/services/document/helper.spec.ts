@@ -7,7 +7,7 @@ import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.sp
 import { CreateDocumentInput, DocumentType } from '../../../API';
 import { processTestError } from 'src/app/classes/helpers';
 
-fdescribe('DocumentQueryTestHelper', () => {
+describe('DocumentQueryTestHelper', () => {
   const helper$ = new BehaviorSubject<DocumentQueryTestHelper>(null);
   TestBed.configureTestingModule({});
 
@@ -25,24 +25,24 @@ fdescribe('DocumentQueryTestHelper', () => {
         type: DocumentType.FORM
       };
       const testTitle = 'Updated title (testing Helper)';
-      helper.sendCreateDocument(input).then(response => {
-        createdId = response.data.createDocument.id;
-        expect(response.data.createDocument).toBeTruthy();
+      helper.sendCreateDocument(input).then(createdDocument => {
+        createdId = createdDocument.id;
+        expect(createdDocument).toBeTruthy();
         // now attempt to update the document
         return helper.sendUpdateDocument({
           id: createdId,
           title: testTitle
         });
       }).then(updatedResponse => {
-        expect(updatedResponse.data.updateDocument).toBeTruthy();
-        expect(updatedResponse.data.updateDocument.id).toEqual(createdId);
-        expect(updatedResponse.data.updateDocument.title).toEqual(testTitle);
+        expect(updatedResponse).toBeTruthy();
+        expect(updatedResponse.id).toEqual(createdId);
+        expect(updatedResponse.title).toEqual(testTitle);
 
         // now delete the document
         return helper.deleteDocument();
       }).then(deletedResponse => {
-        expect(deletedResponse.data.deleteDocument).toBeTruthy();
-        expect(deletedResponse.data.deleteDocument.id).toEqual(createdId);
+        expect(deletedResponse).toBeTruthy();
+        expect(deletedResponse.id).toEqual(createdId);
         done();
       }).catch(error => processTestError('error creating document', error, done));
     }, error => processTestError('unable to get helper', error, done) );
