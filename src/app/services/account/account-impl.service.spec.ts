@@ -12,6 +12,8 @@ import { CognitoSignUpUser } from '../../classes/user';
 import awsmobile from 'src/aws-exports';
 import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
+import { getUser } from '../../../graphql/queries';
+import { toBase64String } from '@angular/compiler/src/output/source_map';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
@@ -244,47 +246,82 @@ describe('AccountImplService', () => {
     it('should throw error when a private operation is perform after loggout', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD)
         .then(() => {
-          console.log('step 1');
-          // let spam =  await service.logout(); // await only allowed in async
-          return service.logout(); // i just want it to wait until its actually logged out...
+          console.log('logout now');
+          return service.logout();
         }).then(() => {
-          try {
-            console.log('step 2');
-            service.update(user).then(() => {
-              fail('private operation shouldnt be performing when logged out');
-              done();
-            })
-          } catch (err) {
-            err.then(err => {
-              console.log('This error is returned by AWS: ', err);
-              done();
-            });
-          }
+          console.log('running updates...');
+          service.update(user).then(() => {
+            console.log('private operation wrong...');
+            fail('private operation shouldnt be performing when logged out');
+          }).catch((err) => {
+            done();
+          });
         }
 
         );
-    });
+    }, 100000);
   });
 
   describe('update()', () => {
-    const user: User = {
-      id: 'abc123',
-      firstName: 'tester',
-      lastName: 'telstra',
-      email: 'changed@test.com'
-    };
 
     beforeEach(() => {
       // Login before everything
-      service.login(TEST_USERNAME, TEST_PASSWORD).then(
-        data => console.log(data));
+      // service.login(TEST_USERNAME, TEST_PASSWORD).then(
+      //   data => console.log('Sign in: ', data));
     });
 
     it('should update the attributes on dynamodb', done => {
-      service.update(user);
-    });
 
+      const userBefore: User = {
+        id: TEST_USER_ID,
+        firstName: 'test1',
+        lastName: 'test1',
+        email: 'testing1@test.com'
+      };
+
+      const userAfter: User = {
+        id: TEST_USER_ID,
+        firstName: 'test2',
+        lastName: 'test2',
+        email: 'testing2@test.com'
+      };
+
+      // step 0: sign in
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(data => {
+        return data;
+
+      }).then(data => {
+        console.log('update 1');
+        return service.update(userBefore);
+
+      }).then(data => {
+        console.log('update 2');
+        return service.update(userAfter);
+
+      }).then(data => {
+        const input = {
+          id: TEST_USER_ID
+        }
+
+        async function getApiCall(){
+          const response: any = await API.graphql(graphqlOperation(getUser, input));
+          console.log('After info updated: ', response);
+          return Promise.resolve(response);
+        }
+
+        getApiCall().then(response => {
+          expect(response).toBeTruthy();
+          expect(response.data.getUser.email).toEqual(userAfter.email);
+          expect(response.data.getUser.firstName).toEqual(userAfter.firstName);
+          expect(response.data.getUser.lastName).toEqual(userAfter.lastName);
+          done();
+        });
+
+      });
+    }, 10000);
   });
+
+
 
   describe('getUser$()', () => {
     it('should retrieve a user if the user session is still valid', done => {

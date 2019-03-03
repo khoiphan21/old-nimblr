@@ -18,6 +18,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MultipleChoiceComponent } from '../../components/block/question-block/multiple-choice/multiple-choice.component';
 import { Subject } from 'rxjs';
 
+import { NavigationTabComponent } from '../../components/navigation-bar/navigation-tab/navigation-tab.component';
+
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
   let fixture: ComponentFixture<DocumentPageComponent>;
@@ -37,7 +39,8 @@ describe('DocumentPageComponent', () => {
         QuestionBlockComponent,
         DropdownComponent,
         CheckboxComponent,
-        MultipleChoiceComponent
+        MultipleChoiceComponent,
+        NavigationTabComponent
       ],
       imports: [
         ServicesModule,

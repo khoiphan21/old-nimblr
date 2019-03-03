@@ -16,7 +16,7 @@ describe('QuestionBlockComponent', () => {
         QuestionBlockComponent,
         CheckboxComponent,
         DropdownComponent,
-        MultipleChoiceComponent
+        MultipleChoiceComponent,
       ],
       imports: [
         ReactiveFormsModule
