@@ -3,8 +3,8 @@ import { Block } from '../../classes/block';
 import { Observable } from 'rxjs';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { BlockQueryService } from './block-query.service';
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType } from '../../../API';
-import { createTextBlock } from '../../../graphql/mutations';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../API';
+import { createTextBlock, updateTextBlock } from '../../../graphql/mutations';
 
 @Injectable({
   providedIn: 'root'
@@ -16,18 +16,47 @@ export class BlockCommandService {
     private blockQueryService: BlockQueryService
   ) { }
 
-  updateBlock$(input: UpdateBlockInput): Observable<Block> {
-    return null;
+  /**
+   * Update a block in the database given the input.
+   * This will also notify BlockQueryService of the updated block's version
+   * @param input the input to the update query
+   */
+  updateBlock(input: UpdateBlockInput | UpdateTextBlockInput): Promise<any> {
+    switch (input.type) {
+      case BlockType.TEXT:
+        return this.updateTextBlock({
+          id: input.id,
+          documentId: input.documentId,
+          version: input.version,
+          lastUpdatedBy: input.lastUpdatedBy,
+          updatedAt: new Date().toISOString(),
+          value: input.value
+        });
+      default:
+        return Promise.reject('BlockType not supported');
+    }
   }
 
+  private async updateTextBlock(input: UpdateTextBlockInput): Promise<any> {
+    const requiredParams = [
+      'id', 'documentId', 'version', 'lastUpdatedBy', 'updatedAt', 'value'
+    ];
+    try {
+      this.checkForNullOrUndefined(input, requiredParams, 'UpdateTextBlockInput');
+
+      this.blockQueryService.registerUpdateVersion(input.version);
+
+      return this.graphQLService.query(updateTextBlock, { input });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+
   /**
-   * Create the block in the database
-   * @param version the version of the block
-   * @param type the type of the block
-   * @param documentId the id of the document the block belongs to
-   * @param lastUpdatedBy the id of the author who initiated this update
-   * @param options other options depending what kind of block it is
-   * @return the observable for the created block
+   * Create a block in the database based on the input.
+   * This will also notify BlockQueryService of the created block's version
+   * @param input the input to the create query
    */
   createBlock(input: CreateBlockInput | CreateTextBlockInput): Promise<any> {
     switch (input.type) {

@@ -7,13 +7,13 @@ import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { BlockQueryService } from './block-query.service';
 import { CreateBlockInput, CreateTextBlockInput } from '../../../API';
-import { createBlock, deleteBlock, createTextBlock } from '../../../graphql/mutations';
+import { createBlock, deleteBlock, createTextBlock, updateBlock } from '../../../graphql/mutations';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 
 const uuidv4 = require('uuid/v4');
 
 
-describe('BlockCommandService', () => {
+fdescribe('BlockCommandService', () => {
   const service$ = new BehaviorSubject<BlockCommandService>(null);
   let graphQlService: GraphQLService;
   TestBed.configureTestingModule({});
@@ -33,7 +33,100 @@ describe('BlockCommandService', () => {
     expect(service).toBeTruthy();
   });
 
-  fdescribe('createBlock', () => {
+  describe('updateBlock', () => {
+    let input: any;
+
+    beforeEach(() => {
+      input = {
+        id: uuidv4(),
+        documentId: uuidv4(),
+        version: uuidv4(),
+        type: BlockType.TEXT,
+        lastUpdatedBy: uuidv4(),
+        value: 'from updateBlock test'
+      };
+    });
+
+    describe('(error in params - sample tests)', () => {
+
+      it('should throw an error if "value" is missing for a text block', done => {
+        const service: BlockCommandService = TestBed.get(BlockCommandService);
+        delete input.value;
+        service.updateBlock(input).then(() => {
+          fail('error should occur');
+          done();
+        }).catch(error => {
+          expect(error.message).toEqual('Missing argument "value" in UpdateTextBlockInput');
+          done();
+        });
+      });
+
+      it('should throw an error if "id" is missing for a text block', done => {
+        const service: BlockCommandService = TestBed.get(BlockCommandService);
+        delete input.id;
+        service.updateBlock(input).then(() => {
+          fail('error should occur');
+          done();
+        }).catch(error => {
+          expect(error.message).toEqual('Missing argument "id" in UpdateTextBlockInput');
+          done();
+        });
+      });
+
+
+    });
+
+    it('should update a block in the database', done => {
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        service.createBlock(input).then(() => {
+          input.value = 'UPDATED VALUE (updateBlock test)';
+          // Update the block
+          return service.updateBlock(input);
+        }).then(response => {
+          const updatedBlock = response.data.updateTextBlock;
+          const id = updatedBlock.id;
+          expect(updatedBlock.value).toEqual(input.value);
+          console.log(response);
+          // Now delete the block
+          return graphQlService.query(deleteBlock, { input: { id } });
+        }).then(response => {
+          expect(response.data.deleteBlock.id).toEqual(input.id);
+          done();
+        }).catch(error => {
+          fail('Check console for details');
+          console.error(error); done();
+        });
+      }, error => { console.error(error); fail(); done(); });
+    });
+
+    /* tslint:disable:no-string-literal */
+    it(`should store the updated block's version in the query service`, done => {
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        service.createBlock(input).then(() => {
+          // Change the version to call update with
+          input.version = uuidv4();
+
+          return service.updateBlock(input);
+        }).then(response => {
+          const version = response.data.updateTextBlock.version;
+          const id = response.data.updateTextBlock.id;
+          expect(service['blockQueryService']['myVersions'].has(version)).toBe(true);
+          // Now delete the block
+          return graphQlService.query(deleteBlock, { input: { id } });
+        }).then(response => {
+          expect(response.data.deleteBlock.id).toEqual(input.id);
+          done();
+        }).catch(error => {
+          fail('Check console for more details');
+          console.error(error); done();
+        });
+      }, error => { console.error(error); fail(); done(); });
+    })
+  });
+
+  describe('createBlock', () => {
     it('should throw an error if a param is missing when creating a text block', done => {
       const service: BlockCommandService = TestBed.get(BlockCommandService);
       const sampleErrorInput = {
@@ -109,8 +202,8 @@ describe('BlockCommandService', () => {
           expect(response.data.deleteBlock.id).toEqual(input.id);
           done();
         }).catch(error => {
-          fail('Error getting service');
-          console.log(error); done();
+          fail('Check console for more details');
+          console.error(error); done();
         });
       }, error => { console.error(error); fail(); done(); });
     });
