@@ -87,7 +87,6 @@ describe('BlockCommandService', () => {
           const updatedBlock = response.data.updateTextBlock;
           const id = updatedBlock.id;
           expect(updatedBlock.value).toEqual(input.value);
-          console.log(response);
           // Now delete the block
           return graphQlService.query(deleteBlock, { input: { id } });
         }).then(response => {

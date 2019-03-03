@@ -56,6 +56,8 @@ export class GraphQLService {
   }
 
   private async sendQueryForListing(query, params, queryName): Promise<any> {
+    console.log('querying: ', query)
+    console.log('with params: ', params)
     const response: any = await API.graphql(graphqlOperation(query, params));
     const items = response.data[queryName].items;
     const nextToken = response.data[queryName].nextToken;
