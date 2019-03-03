@@ -199,7 +199,7 @@ describe('BlockQueryService', () => {
   });
 
   describe('getBlocksForDocument', () => {
-    it('should return observables for all blocks when queried', done => {
+    it('should return observables for all blocks (with values)', done => {
       // First create two blocks
       const graphqlService: GraphQLService = TestBed.get(GraphQLService);
       const documentId = uuidv4();
@@ -222,13 +222,8 @@ describe('BlockQueryService', () => {
           return service.getBlocksForDocument(documentId);
         }).then((observables: Array<Observable<Block>>) => {
           expect(observables.length).toEqual(2);
-          observables.forEach(observable => {
-            expect(observable instanceof BehaviorSubject).toBe(true);
-            observable.subscribe(block => {
-              if (block === null) { return; }
-              console.log(block);
-            });
-          });
+          return checkObservables(observables, documentId);
+        }).then(() => {
           // Now delete the two blocks
           return Promise.all(responses.map(response => {
             return graphqlService.query(deleteBlock, {
@@ -239,7 +234,7 @@ describe('BlockQueryService', () => {
           }));
         }).then(deletedBlocks => {
           expect(deletedBlocks.length).toEqual(2); // The number of created blocks
-          fail();
+          done();
         }).catch(error => { console.error(error); fail('error received'); done(); });
       }, error => {
         fail('Error getting BlockQueryService from observable');
@@ -247,5 +242,26 @@ describe('BlockQueryService', () => {
       });
 
     });
+
+    async function checkObservables(
+      observables: Array<Observable<Block>>,
+      documentId: string
+    ): Promise<any> {
+      return Promise.all(observables.map(observable => {
+        return awaitAndCheckObservable(observable, documentId);
+      }));
+    }
+
+    async function awaitAndCheckObservable(observable: Observable<any>, documentId: string) {
+      return new Promise((resolve, reject) => {
+        // Write the expect() statements here
+        expect(observable instanceof BehaviorSubject).toBe(true);
+        observable.subscribe(block => {
+          if (block === null) { return; }
+          expect(block.documentId).toEqual(documentId);
+          resolve();
+        }, error => reject(error));
+      });
+    }
   });
 });

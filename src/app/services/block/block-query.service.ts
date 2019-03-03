@@ -37,19 +37,30 @@ export class BlockQueryService {
     return block$;
   }
 
-  getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
+  async getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
     return new Promise((resolve, reject) => {
       const observables: Array<Observable<Block>> = [];
 
-      const input = {
+      const params = {
         filter: {
-          documentId: { eq: id}
+          documentId: { eq: id }
         }
       };
-      
-      // this.graphQlService.query(listBlocks)
 
-      resolve(observables);
+      this.graphQlService.list({
+        query: listBlocks,
+        queryName: 'listBlocks',
+        params,
+        listAll: true
+      }).then(response => {
+        response.items.forEach(rawBlock => {
+          const blockObservable = new BehaviorSubject(null);
+          observables.push(blockObservable);
+          this.processRaw(rawBlock, blockObservable, false);
+        });
+        resolve(observables);
+      });
+
     });
   }
   registerUpdateVersion(version: string) {
@@ -78,6 +89,8 @@ export class BlockQueryService {
   private processRaw(data, block$: BehaviorSubject<Block>, subscribe = true) {
     try {
       const block: Block = this.blockFactoryService.createBlock(data);
+      // This is needed for when called by getBlocksForDocument
+      this.blocksMap.set(block.id, block$); 
       if (subscribe) {
         this.subscribeToUpdate(block.documentId, block.id);
       }

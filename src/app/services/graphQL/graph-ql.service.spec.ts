@@ -144,7 +144,7 @@ describe('GraphQLService', () => {
 
   });
 
-  fdescribe('(list)', () => {
+  describe('(list)', () => {
     it('should get the desired number of items', done => {
       service$.subscribe(service => {
         if (service === null) { return; }
