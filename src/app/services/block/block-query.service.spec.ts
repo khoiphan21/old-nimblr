@@ -7,16 +7,76 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
-import { UpdateTextBlockInput, CreateTextBlockInput, BlockType } from '../../../API';
+import { UpdateTextBlockInput, BlockType, CreateTextBlockInput } from '../../../API';
 import { updateTextBlock, createTextBlock, deleteBlock } from '../../../graphql/mutations';
-import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
 import { environment } from '../../../environments/environment';
 
 const uuidv4 = require('uuid/v4');
 
 export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
-describe('BlockQueryService', () => {
+
+interface QueryHelperInput {
+  graphQlService: GraphQLService;
+}
+
+class TextBlockQueryHelper {
+  private graphQlService: GraphQLService;
+
+  private createdBlockIds: Array<string> = [];
+
+  constructor(input: QueryHelperInput) {
+    this.graphQlService = input.graphQlService;
+  }
+
+  async createBlocks({
+    amount,
+    id = null,
+    version = uuidv4(),
+    type = BlockType.TEXT,
+    documentId = uuidv4(),
+    lastUpdatedBy = uuidv4(),
+    value = 'Block created during test'
+  }): Promise<Array<any>> {
+    const input: CreateTextBlockInput = {
+      id, version, type, documentId, lastUpdatedBy, value
+    };
+    const promises: Array<Promise<any>> = [];
+    try {
+      for (let i = 0; i < amount; i++) {
+        promises.push(this.graphQlService.query(createTextBlock, { input }));
+      }
+
+      const createdBlocks = await Promise.all(promises);
+
+      createdBlocks.forEach(block => {
+        this.createdBlockIds.push(block.data.createTextBlock.id);
+      });
+
+      return Promise.resolve(createdBlocks);
+
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  async deleteCreatedBlocks(): Promise<Array<any>> {
+    try {
+      const deletedBlocks = await Promise.all(this.createdBlockIds.map(id => {
+        return this.graphQlService.query(deleteBlock, { input: { id } });
+      }));
+
+      // Clear the internal list
+      this.createdBlockIds = [];
+
+      return Promise.resolve(deletedBlocks);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+}
+
+fdescribe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   TestBed.configureTestingModule({});
 
@@ -198,42 +258,34 @@ describe('BlockQueryService', () => {
 
   });
 
-  describe('getBlocksForDocument', () => {
+  fdescribe('getBlocksForDocument', () => {
     it('should return observables for all blocks (with values)', done => {
-      // First create two blocks
-      const graphqlService: GraphQLService = TestBed.get(GraphQLService);
+      const graphQlService: GraphQLService = TestBed.get(GraphQLService);
       const documentId = uuidv4();
-      const responses = [];
-      const input: CreateTextBlockInput = {
-        version: uuidv4(),
-        type: BlockType.TEXT,
-        documentId,
-        lastUpdatedBy: uuidv4(),
-        value: '(from getBlocksForDocument test)'
-      };
+      const amountOfBlocks = 2;
       service$.subscribe(service => {
         if (service === null) { return; }
-        graphqlService.query(createTextBlock, { input }).then(response => {
-          responses.push(response);
-          return graphqlService.query(createTextBlock, { input });
-        }).then(response => {
-          responses.push(response);
-          // Get all blocks for the given document id here
+
+        const helper = new TextBlockQueryHelper({ graphQlService });
+
+        // Start testing logic
+        // First create two blocks
+        helper.createBlocks({
+          amount: amountOfBlocks,
+          documentId,
+          value: '(from getBlocksForDocument test)'
+        }).then(() => {
+          // Call the function
           return service.getBlocksForDocument(documentId);
         }).then((observables: Array<Observable<Block>>) => {
-          expect(observables.length).toEqual(2);
-          return checkObservables(observables, documentId);
+          // Check the return observables
+          expect(observables.length).toEqual(amountOfBlocks);
+          return checkObservables(observables);
         }).then(() => {
-          // Now delete the two blocks
-          return Promise.all(responses.map(response => {
-            return graphqlService.query(deleteBlock, {
-              input: {
-                id: response.data.createTextBlock.id
-              }
-            });
-          }));
-        }).then(deletedBlocks => {
-          expect(deletedBlocks.length).toEqual(2); // The number of created blocks
+          return helper.deleteCreatedBlocks();
+        }).then(responses => {
+          // Check that the blocks have been deleted
+          expect(responses.length).toBe(amountOfBlocks);
           done();
         }).catch(error => { console.error(error); fail('error received'); done(); });
       }, error => {
@@ -241,27 +293,113 @@ describe('BlockQueryService', () => {
         console.error(error); done();
       });
 
+      async function checkObservables(
+        observables: Array<Observable<Block>>
+      ): Promise<any> {
+        return Promise.all(observables.map(observable => {
+          return awaitAndCheckObservable(observable);
+        }));
+      }
+
+      async function awaitAndCheckObservable(observable: Observable<any>) {
+        return new Promise((resolve, reject) => {
+          // Write the expect() statements here
+          expect(observable instanceof BehaviorSubject).toBe(true);
+          observable.subscribe(block => {
+            if (block === null) { return; }
+            expect(block.documentId).toEqual(documentId);
+            resolve();
+          }, error => reject(error));
+        });
+      }
     });
 
-    async function checkObservables(
-      observables: Array<Observable<Block>>,
-      documentId: string
-    ): Promise<any> {
-      return Promise.all(observables.map(observable => {
-        return awaitAndCheckObservable(observable, documentId);
-      }));
-    }
 
-    async function awaitAndCheckObservable(observable: Observable<any>, documentId: string) {
-      return new Promise((resolve, reject) => {
-        // Write the expect() statements here
-        expect(observable instanceof BehaviorSubject).toBe(true);
-        observable.subscribe(block => {
-          if (block === null) { return; }
-          expect(block.documentId).toEqual(documentId);
-          resolve();
-        }, error => reject(error));
-      });
-    }
+
+
+    // it('should update blockMaps', done => {
+    //   // First create two blocks
+    //   const graphQlService: GraphQLService = TestBed.get(GraphQLService);
+    //   const documentId = uuidv4();
+    //   const responses = [];
+    //   const input: CreateTextBlockInput = {
+    //     version: uuidv4(),
+    //     type: BlockType.TEXT,
+    //     documentId,
+    //     lastUpdatedBy: uuidv4(),
+    //     value: '(from getBlocksForDocument test)'
+    //   };
+    //   service$.subscribe(service => {
+    //     if (service === null) { return; }
+    //     graphQlService.query(createTextBlock, { input }).then(response => {
+    //       responses.push(response);
+    //       return graphQlService.query(createTextBlock, { input });
+    //     }).then(response => {
+    //       responses.push(response);
+    //       // Get all blocks for the given document id here
+    //       return service.getBlocksForDocument(documentId);
+    //     }).then((observables: Array<Observable<Block>>) => {
+
+    //       // Write expect() here
+    //       // Now delete the two blocks
+    //       return Promise.all(responses.map(response => {
+    //         return graphQlService.query(deleteBlock, {
+    //           input: {
+    //             id: response.data.createTextBlock.id
+    //           }
+    //         });
+    //       }));
+    //     }).then(deletedBlocks => {
+    //       expect(deletedBlocks.length).toEqual(2); // The number of created blocks
+    //       done();
+    //     }).catch(error => { console.error(error); fail('error received'); done(); });
+    //   }, error => {
+    //     fail('Error getting BlockQueryService from observable');
+    //     console.error(error); done();
+    //   });
+    // });
   });
+
+  describe('TextBlockQueryHelper', () => {
+    it('should create and delete blocks as requested', done => {
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        const input = {
+          documentId: uuidv4(),
+          value: '(from Helper test)'
+        };
+
+        const helper = new TextBlockQueryHelper({
+          graphQlService: TestBed.get(GraphQLService)
+        });
+
+        const ids = new Set();
+
+        // Start testing code here
+        helper.createBlocks({
+          amount: 2,
+          value: input.value,
+          documentId: input.documentId
+        }).then((responses: Array<any>) => {
+
+          expect(responses.length).toBe(2);
+          responses.forEach(response => {
+            // Store the ids to test against created blocks later
+            ids.add(response.data.createTextBlock.id);
+            // Checking these 2 properties should be enough.
+            expect(response.data.createTextBlock.documentId).toEqual(input.documentId);
+            expect(response.data.createTextBlock.value).toEqual(input.value);
+          });
+
+          return helper.deleteCreatedBlocks();
+        }).then((responses: Array<any>) => {
+          expect(responses.length).toBe(2);
+          responses.forEach(response => {
+            expect(ids.has(response.data.deleteBlock.id)).toBe(true);
+          });
+          done();
+        }).catch(error => { fail(); console.log(error); done(); });
+      });
+    });
+  })
 });
