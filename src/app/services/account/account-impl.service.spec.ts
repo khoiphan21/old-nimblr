@@ -269,7 +269,7 @@ describe('AccountImplService', () => {
       //   data => console.log('Sign in: ', data));
     });
 
-    fit('should update the attributes on dynamodb', done => {
+    it('should update the attributes on dynamodb', done => {
 
       const userBefore: User = {
         id: TEST_USER_ID,
