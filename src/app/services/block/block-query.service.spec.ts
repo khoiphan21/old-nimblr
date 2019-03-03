@@ -1,20 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockQueryService } from './block-query.service';
-import { take, skip } from 'rxjs/operators';
-import { TextBlock, Block } from '../../classes/block';
+import { take } from 'rxjs/operators';
+import { TextBlock } from '../../classes/block';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
-import { UpdateTextBlockInput } from '../../../API';
-import { updateTextBlock } from '../../../graphql/mutations';
+import { UpdateTextBlockInput, CreateTextBlockInput, BlockType } from '../../../API';
+import { updateTextBlock, createTextBlock, deleteBlock } from '../../../graphql/mutations';
+import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
+import { environment } from '../../../environments/environment';
 
 const uuidv4 = require('uuid/v4');
 
 export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
-describe('BlockQueryService', () => {
+fdescribe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   TestBed.configureTestingModule({});
 
@@ -105,7 +107,7 @@ describe('BlockQueryService', () => {
           version: uuidv4(),
           lastUpdatedBy: uuidv4(),
           updatedAt: new Date().toISOString(),
-          value: 'new value: ' + Math.random()
+          value: '(block for testing) new value: ' + Math.random()
         };
         service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(block => {
           if (block === null) { return; }
@@ -114,11 +116,12 @@ describe('BlockQueryService', () => {
             // Call to update the block
             const graphQLService: GraphQLService = TestBed.get(GraphQLService);
             setTimeout(() => {
-              graphQLService.query(updateTextBlock, { input }).catch(error => {
+              graphQLService.query(updateTextBlock, { input }).then(() => {
+              }).catch(error => {
                 fail(error);
                 done();
               });
-            }, 500);
+            }, environment.WAIT_TIME_BEFORE_UPDATE);
           } else {
             // Check if the notified block is the updated block
             expect(block.version).toEqual(input.version);
@@ -128,6 +131,70 @@ describe('BlockQueryService', () => {
           }
         });
       });
-    });
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
+
+    it('should not notify if the received version is in myVersions', done => {
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        // First create a block for testing
+        const input = {
+          id: uuidv4(),
+          version: uuidv4(),
+          type: BlockType.TEXT,
+          documentId: uuidv4(),
+          updatedAt: undefined,
+          lastUpdatedBy: uuidv4(),
+          value: 'TextBlock created from test'
+        };
+        const graphql: GraphQLService = TestBed.get(GraphQLService);
+
+        // Create the text block
+        graphql.query(createTextBlock, { input }).then(() => {
+          // Retrieve that block's observable. This one should only be notified of the actual block once
+          let count = 1;
+          let updatedOnce = false;
+          service.getBlock$(input.id).subscribe(block => {
+            if (block === null) { return; }
+            switch (count) {
+              case 1:
+                updatedOnce = true;
+                createUpdate();
+                count++;
+                break;
+              default:
+                fail('should not be called again');
+                done();
+                break;
+            }
+          }, error => {
+            fail('error getting block');
+            console.error(error);
+            done();
+          });
+
+          // Update the block with the new version
+          function createUpdate() {
+            // Create an update with a new version
+            input.version = uuidv4();
+            input.updatedAt = new Date().toISOString();
+            // Store that version into myVersions
+            service.registerUpdateVersion(input.version);
+            // send the update
+            setTimeout(() => {
+              graphql.query(updateTextBlock, { input }).then(() => {
+                console.log('textblock updated');
+                setTimeout(() => {
+                  // After time runs out and there's no more update, should call done
+                  if (updatedOnce) { done(); }
+                }, environment.WAIT_TIME_BEFORE_UPDATE);
+              }).catch(error => {
+                console.error(error); fail('unable to update'); done();
+              });
+            }, environment.WAIT_TIME_BEFORE_UPDATE);
+          }
+        });
+      });
+    }, 10000);
+
   });
 });

@@ -9,6 +9,7 @@ import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.sp
 import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
 import { BehaviorSubject } from 'rxjs';
 import { Block } from 'src/app/classes/block';
+import { environment } from '../../../environments/environment';
 
 const uuidv4 = require('uuid/v4');
 
@@ -28,6 +29,7 @@ describe('GraphQLService', () => {
 
   beforeEach(() => {
     input = {
+      id: uuidv4,
       version: uuidv4(),
       type: BlockType.TEXT,
       documentId: uuidv4(),
@@ -79,62 +81,66 @@ describe('GraphQLService', () => {
     expect(compare.lastUpdatedBy).toEqual(source.lastUpdatedBy);
   }
 
-  it('should get subscription for createTextBlock in a document', done => {
-    let blockId: string;
-    const documentId = uuidv4();
-    // change the default input's documentId
-    input.documentId = documentId;
-    // Subscribe to any changes for the given documentId
-    service$.subscribe(service => {
-      if (service === null) { return; }
-      // First setup subscription
-      service.getSubscription(onUpdateBlockInDocument, { documentId }).pipe(take(1)).subscribe(update => {
-        const block = update.value.data.onUpdateBlockInDocument;
-        checkUpdatedBlock(block, input);
-        done();
-      }, error => { fail(error); done(); });
-      // Now create a TextBlock with that documentId
-      setTimeout(() => {
-        service.query(createTextBlock, { input }).then(response => {
-          const createdBlock: Block = response.data.createTextBlock;
-          blockId = createdBlock.id; // store the id to delete later
-          // Now delete the newly created block
-          return service.query(deleteBlock, { input: { id: blockId } });
-        }).catch(error => { fail(error); done(); });
-      }, 500);
-    }, error => { fail(error); done(); });
-  }, 10000);
-
-  it('should get subscription for updateTextBlock mutation', done => {
-    let blockId: string;
-    service$.subscribe(service => {
-      if (service === null) { return; }
-      // First create a block for testing
-      service.query(createTextBlock, { input }).then(response => {
-        const createdBlock: Block = response.data.createTextBlock;
-        const documentId = createdBlock.documentId;
-        blockId = createdBlock.id; // store the id to delete later
-        // update the input id to query 'updateTextBlock'
-        updateBlockInput.id = blockId;
-        // Setup subscription
+  describe('(subscription)', () => {
+    it('should notify when createTextBlock mutation happens in a document', done => {
+      let blockId: string;
+      const documentId = uuidv4();
+      // change the default input's documentId
+      input.documentId = documentId;
+      // Subscribe to any changes for the given documentId
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        // First setup subscription
         service.getSubscription(onUpdateBlockInDocument, { documentId }).pipe(take(1)).subscribe(update => {
           const block = update.value.data.onUpdateBlockInDocument;
-          checkUpdatedBlock(block, updateBlockInput);
+          checkUpdatedBlock(block, input);
           done();
-        });
-        return new Promise((resolve, reject) => {
-          // this delay is require to make sure that 
-          // the subscription is set up properly first
-          setTimeout(() => {
-            service.query(updateTextBlock, { input: updateBlockInput })
-              .then(() => resolve())
-              .catch(error => reject(error));
-          }, 500);
-        });
-      }).then(() => {
-        return service.query(deleteBlock, { input: { id: blockId } });
-      }).catch(error => { fail(error); done(); });
+        }, error => { fail(error); done(); });
+        // Now create a TextBlock with that documentId
+        setTimeout(() => {
+          service.query(createTextBlock, { input }).then(response => {
+            const createdBlock: Block = response.data.createTextBlock;
+            blockId = createdBlock.id; // store the id to delete later
+            // Now delete the newly created block
+            return service.query(deleteBlock, { input: { id: blockId } });
+          }).catch(error => { fail(error); done(); });
+        }, environment.WAIT_TIME_BEFORE_UPDATE);
+      }, error => { fail(error); done(); });
+    }, 10000);
 
-    });
-  }, 10000);
+    it('should notify for updateTextBlock mutation happens in the document', done => {
+      let blockId: string;
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        // First create a block for testing
+        service.query(createTextBlock, { input }).then(response => {
+          const createdBlock: Block = response.data.createTextBlock;
+          const documentId = createdBlock.documentId;
+          blockId = createdBlock.id; // store the id to delete later
+          // update the input id to query 'updateTextBlock'
+          updateBlockInput.id = blockId;
+          // Setup subscription
+          service.getSubscription(onUpdateBlockInDocument, { documentId }).pipe(take(1)).subscribe(update => {
+            const block = update.value.data.onUpdateBlockInDocument;
+            checkUpdatedBlock(block, updateBlockInput);
+            done();
+          });
+          return new Promise((resolve, reject) => {
+            // this delay is require to make sure that 
+            // the subscription is set up properly first
+            setTimeout(() => {
+              service.query(updateTextBlock, { input: updateBlockInput })
+                .then(() => resolve())
+                .catch(error => reject(error));
+            }, environment.WAIT_TIME_BEFORE_UPDATE);
+          });
+        }).then(() => {
+          return service.query(deleteBlock, { input: { id: blockId } });
+        }).catch(error => { fail(error); done(); });
+
+      });
+    }, 10000);
+
+  });
+
 });

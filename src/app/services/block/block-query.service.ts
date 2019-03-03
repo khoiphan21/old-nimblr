@@ -11,7 +11,7 @@ import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
 })
 export class BlockQueryService {
 
-  private myVersions: Array<string> = [];
+  private myVersions: Set<string> = new Set();
   private blocksMap: Map<string, Observable<Block>> = new Map();
 
   constructor(
@@ -40,15 +40,18 @@ export class BlockQueryService {
     return;
   }
   registerUpdateVersion(version: string) {
-
+    this.myVersions.add(version);
   }
-  
+
   private subscribeToUpdate(documentId: string, blockId: string): Promise<any> {
     const block$ = this.blocksMap.get(blockId) as BehaviorSubject<Block>;
+
+    // subscribe to graphql subscription
     this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
       const data = response.value.data.onUpdateBlockInDocument;
       this.processRaw(data, block$, false);
     }, error => block$.error(error));
+
     return Promise.resolve();
   }
 
@@ -65,7 +68,10 @@ export class BlockQueryService {
       if (subscribe) {
         this.subscribeToUpdate(block.documentId, block.id);
       }
-      block$.next(block);
+      if (!this.myVersions.has(block.version)) {
+        // To ensure only other versions will be updated
+        block$.next(block);
+      }
     } catch (error) {
       block$.error(error);
     }
