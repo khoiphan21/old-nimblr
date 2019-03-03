@@ -16,10 +16,12 @@ import { DropdownComponent } from '../../components/block/question-block/dropdow
 import { CheckboxComponent } from '../../components/block/question-block/checkbox/checkbox.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MultipleChoiceComponent } from '../../components/block/question-block/multiple-choice/multiple-choice.component';
+import { Subject } from 'rxjs';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
   let fixture: ComponentFixture<DocumentPageComponent>;
+  let spy: jasmine.Spy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -46,14 +48,16 @@ describe('DocumentPageComponent', () => {
       .compileComponents();
   }));
 
+  /* tslint:disable:no-string-literal */
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentPageComponent);
     component = fixture.componentInstance;
-    spyOn(TestBed.get(Router), 'navigate');
+    spy = spyOn(component['documentService'], 'getCurrentDocument$').and.returnValue(new Subject());
     fixture.detectChanges();
   });
 
   it('should create', () => {
+    expect(spy.calls.count()).toBe(1);
     expect(component).toBeTruthy();
   });
 });
