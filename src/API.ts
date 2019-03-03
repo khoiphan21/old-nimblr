@@ -533,6 +533,28 @@ export type OnUpdateBlockInDocumentSubscription = {
   } | null,
 };
 
+export type OnSpecificDocumentUpdateSubscriptionVariables = {
+  id: string,
+};
+
+export type OnSpecificDocumentUpdateSubscription = {
+  onSpecificDocumentUpdate:  {
+    __typename: "Document",
+    id: string,
+    version: string | null,
+    type: DocumentType,
+    title: string | null,
+    ownerId: string | null,
+    editorIds: Array< string | null > | null,
+    viewerIds: Array< string | null > | null,
+    order: Array< string | null > | null,
+    blockIds: Array< string | null > | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+  } | null,
+};
+
 export type OnCreateUserSubscription = {
   onCreateUser:  {
     __typename: "User",

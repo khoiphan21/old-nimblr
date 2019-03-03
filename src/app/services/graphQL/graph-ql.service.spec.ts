@@ -107,7 +107,7 @@ describe('GraphQLService', () => {
           }).catch(error => { fail(error); done(); });
         }, environment.WAIT_TIME_BEFORE_UPDATE);
       }, error => { fail(error); done(); });
-    }, 10000);
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     it('should notify for updateTextBlock mutation happens in the document', done => {
       let blockId: string;
@@ -140,7 +140,7 @@ describe('GraphQLService', () => {
         }).catch(error => { fail(error); done(); });
 
       });
-    }, 10000);
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
   });
 

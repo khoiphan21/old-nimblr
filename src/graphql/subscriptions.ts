@@ -14,6 +14,23 @@ export const onUpdateBlockInDocument = `subscription OnUpdateBlockInDocument($do
   }
 }
 `;
+export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($id: ID!) {
+  onSpecificDocumentUpdate(id: $id) {
+    id
+    version
+    type
+    title
+    ownerId
+    editorIds
+    viewerIds
+    order
+    blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
+  }
+}
+`;
 export const onCreateUser = `subscription OnCreateUser {
   onCreateUser {
     id

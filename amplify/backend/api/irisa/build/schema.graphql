@@ -58,6 +58,7 @@ type Mutation {
 
 type Subscription {
   onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock"])
+  onSpecificDocumentUpdate(id: ID!): Document @aws_subscribe(mutations: ["updateDocument"])
   onCreateUser: User @aws_subscribe(mutations: ["createUser"])
   onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
   onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])

@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { getDocument } from '../../../graphql/queries';
 import { DocumentFactoryService } from './document-factory.service';
+import { onUpdateDocument, onSpecificDocumentUpdate } from '../../../graphql/subscriptions';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,15 @@ export class DocumentQueryService {
   ) { }
 
   getDocument$(id: string): Observable<Document> {
-    const document$ = new BehaviorSubject<Document>(null);
+    if (!this.documentMap.has(id)) {
+      this.documentMap.set(id, new BehaviorSubject<Document>(null))
+    }
+    const document$ = this.documentMap.get(id);
+
+    // setup subscription if not yet done
+    if (!this.subscriptionMap.has(id)) {
+      this.subscribeToUpdate(id);
+    }
 
     this.graphQlService.query(getDocument, { id }).then(response => {
       const rawData = response.data.getDocument;
@@ -41,7 +50,19 @@ export class DocumentQueryService {
   }
 
   private subscribeToUpdate(documentId: string) {
-
+    // Get the subscription from graphql
+    const subscription = this.graphQlService.getSubscription(
+      onSpecificDocumentUpdate, { id: documentId }
+    ).subscribe(notification => {
+      // Notification received
+      const rawData = notification.value.data.onSpecificDocumentUpdate;
+      // Convert raw data into the app Document
+      this.documentFactory.createDocument(rawData).then((document: Document) => {
+        // Emit the new data
+        this.documentMap.get(documentId).next(document);
+      }).catch(error => console.error(error));
+    });
+    this.subscriptionMap.set(documentId, subscription);
   }
 
 }

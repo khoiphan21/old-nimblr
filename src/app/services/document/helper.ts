@@ -29,15 +29,17 @@ export class DocumentQueryTestHelper {
     }
   }
 
-  async sendUpdateDocument(input: UpdateDocumentInput): Promise<any> {
-    try {
-      const response = await this.graphQlService.query(updateDocument, { input });
-      this.latestResponse = response;
-
-      return Promise.resolve(response.data.updateDocument);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  async sendUpdateDocument(input: UpdateDocumentInput, delay = 0): Promise<any> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.graphQlService.query(updateDocument, { input }).then(response => {
+          this.latestResponse = response;
+          resolve(response.data.updateDocument);
+        }).catch(error => {
+          reject(error);
+        });
+      }, delay);
+    });
   }
 
   async deleteDocument(): Promise<any> {

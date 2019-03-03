@@ -7,7 +7,11 @@ import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.sp
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { createDocument, deleteDocument } from '../../../graphql/mutations';
 import { CreateDocumentInput, DocumentType } from '../../../API';
-import { take } from 'rxjs/operators';
+import { take, skip } from 'rxjs/operators';
+import { DocumentQueryTestHelper } from './helper';
+import { processTestError } from '../../classes/helpers';
+import { Document } from 'src/app/classes/document';
+import { environment } from '../../../environments/environment';
 
 describe('DocumentQueryService', () => {
   const service$ = new BehaviorSubject<DocumentQueryService>(null);
@@ -83,13 +87,47 @@ describe('DocumentQueryService', () => {
     it('should subscribe to any changes from the backend', done => {
       service$.subscribe(service => {
         if (service === null) { return; }
+        const helper = new DocumentQueryTestHelper(TestBed.get(GraphQLService));
+        let document: any;
+        const input: CreateDocumentInput = {
+          type: DocumentType.FORM
+        };
+        const title = 'title from getDocument$ subscription test';
         // Create a document
-        // update the document
-        // Check for notification
-        // delete the document
-        fail('test to be written');
-      }, error => { fail('unable to get service'); console.error(error); done(); });
-    });
+        helper.sendCreateDocument(input).then(createdDocument => {
+          document = createdDocument;
+          // Setup to test subscription
+          service.getDocument$(document.id).subscribe(notifiedDocument => {
+            if (notifiedDocument === null) { return; }
+            // Check for notification
+            if (notifiedDocument.title === title) {
+              // received the latest update
+              done();
+            }
+          });
+          return getFirstDocument(document.id, service);
+        }).then(() => {
+          // Now update the document
+          return helper.sendUpdateDocument({
+            id: document.id, title
+          }, environment.WAIT_TIME_BEFORE_UPDATE);
+        }).then(() => {
+          return helper.deleteDocument();
+        }).catch(error => processTestError('error during logic step', error, done));
+      }, error => processTestError('unable to get service', error, done));
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
+
+    async function getFirstDocument(
+      id: string, service: DocumentQueryService
+    ): Promise<Document> {
+      return new Promise((resolve, reject) => {
+        service.getDocument$(id).subscribe(document => {
+          if (document === null) { return; }
+          resolve(document);
+        }, error => reject(error));
+      });
+    }
+
   });
 
 });
