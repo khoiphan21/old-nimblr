@@ -18,7 +18,7 @@ describe('BlockCommandService', () => {
     expect(service).toBeTruthy();
   });
 
-  fdescribe('[Create Block]', () => {
+  describe('[Create Block]', () => {
     fit('should ');
     it('should return an object with .subscribe() function', () => {
       // const version = uuidv4();

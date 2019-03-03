@@ -28,7 +28,7 @@ export class BlockCommandService {
    * @param options other options depending what kind of block it is
    * @return the observable for the created block
    */
-  createBlock(input: CreateBlockInput): Observable<Block> {
+  createBlock(input: CreateBlockInput): Promise<any> {
     return;
   }
 }

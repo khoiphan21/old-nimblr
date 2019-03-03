@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { BlockQueryService } from './block-query.service';
 import { take } from 'rxjs/operators';
 import { TextBlock, Block } from '../../classes/block';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
@@ -76,7 +76,7 @@ class TextBlockQueryHelper {
   }
 }
 
-describe('BlockQueryService', () => {
+fdescribe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   TestBed.configureTestingModule({});
 
@@ -171,6 +171,8 @@ describe('BlockQueryService', () => {
         };
         service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(block => {
           if (block === null) { return; }
+          // Setup subscription
+          service.subscribeToUpdate(block.documentId);
           if (shouldUpdate) {
             shouldUpdate = false;
             // Call to update the block
@@ -215,8 +217,10 @@ describe('BlockQueryService', () => {
           let updatedOnce = false;
           service.getBlock$(input.id).subscribe(block => {
             if (block === null) { return; }
+
             switch (count) {
               case 1:
+                service.subscribeToUpdate(block.documentId);
                 updatedOnce = true;
                 sendAnUpdateToAPI();
                 count++;
@@ -242,7 +246,6 @@ describe('BlockQueryService', () => {
             // send the update
             setTimeout(() => {
               graphql.query(updateTextBlock, { input }).then(() => {
-                console.log('textblock updated');
                 setTimeout(() => {
                   // After time runs out and there's no more update, should call done
                   if (updatedOnce) { done(); }
@@ -336,7 +339,7 @@ describe('BlockQueryService', () => {
         }).then(() => {
           // Check the blockMap variable
           service['blocksMap'].get(createdBlockResponse.id).pipe(take(1)).subscribe(block => {
-            console.log('stored block in blocksMap: ', block);
+            expect(block instanceof TextBlock).toBe(true);
           });
 
           // Call the function
@@ -394,5 +397,22 @@ describe('BlockQueryService', () => {
         }).catch(error => { fail(); console.log(error); done(); });
       });
     });
-  })
+  });
+
+  describe('subscribeToUpdate', () => {
+    it('should not subscribe to backend again if already subscribed', done => {
+      const documentId = uuidv4();
+      const graphQlService: GraphQLService = TestBed.get(GraphQLService);
+      const service: BlockQueryService = TestBed.get(BlockQueryService);
+      const spy = spyOn(graphQlService, 'getSubscription').and.returnValue(new Subject());
+      
+      service.subscribeToUpdate(documentId).then(() => {
+        // Try to subscribe again
+        return service.subscribeToUpdate(documentId);
+      }).then(() => {
+        expect(spy.calls.count()).toBe(1);
+        done();
+      }).catch(error => { fail('Error received'); console.error(error); done(); });
+    });
+  });
 });
