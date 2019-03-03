@@ -14,8 +14,10 @@ export class RegisterPageComponent implements OnInit {
   verificationForm: FormGroup;
   steps = 'one';
   passwordType = 'password';
+
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private AccountService: AccountService
   ) { }
 
   ngOnInit() {
@@ -63,7 +65,7 @@ export class RegisterPageComponent implements OnInit {
     // }
 
     // // send to service
-    // AccountService.registerCognitoUser(user)
+    // AccountService.registerCognitoUser(user);
   }
 
 }
