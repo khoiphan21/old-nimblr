@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DocumentService } from './document.service';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Document, DocumentType } from '../../classes/document';
 import { AccountService } from '../account/account.service';
 import { User } from '../../classes/user';
@@ -8,10 +8,9 @@ import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../../../graphql/mutations';
 import * as queries from '../../../graphql/queries';
 import * as subscriptions from '../../../graphql/subscriptions';
-import { CreateDocumentInput, CreateDocumentMutation } from '../../../API';
-import { UserFactoryService } from '../user/user-factory.service';
-import { DocumentImpl } from '../../classes/document-impl';
+import { CreateDocumentInput } from '../../../API';
 import { Deferred } from '../../classes/deferred';
+import { DocumentFactoryService } from './document-factory.service';
 
 
 @Injectable({
@@ -24,7 +23,7 @@ export class DocumentServiceImpl implements DocumentService {
 
   constructor(
     private accountService: AccountService,
-    private userFactory: UserFactoryService,
+    private documentFactory: DocumentFactoryService
   ) {
   }
 
@@ -44,7 +43,7 @@ export class DocumentServiceImpl implements DocumentService {
     );
 
     const documentPromisses: Array<Promise<Document>> = response.data.listDocuments.items.map(rawDocument => {
-      return DocumentFactory.createDocument(rawDocument, this.userFactory);
+      return this.documentFactory.createDocument(rawDocument);
     });
 
     Promise.all(documentPromisses).then((documents: Array<Document>) => {
@@ -75,7 +74,7 @@ export class DocumentServiceImpl implements DocumentService {
     const rawDocument = response.data.createDocument;
 
     // Create a document, then emit the newly created document
-    DocumentFactory.createDocument(rawDocument, this.userFactory).then(document => {
+    this.documentFactory.createDocument(rawDocument).then(document => {
       this.currentDocument$.next(document);
       deferred.resolve(document);
     });
@@ -135,38 +134,38 @@ export class DocumentServiceImpl implements DocumentService {
 
 }
 
-export class DocumentFactory {
+// export class DocumentFactory {
 
-  static async createDocument(
-    rawDocument: any,
-    userFactory: UserFactoryService
-  ): Promise<Document> {
-    return new Promise((resolve, reject) => {
-      try {
-        // Retrieve editors and viewers
-        Promise.all([
-          userFactory.getUserFromIds([rawDocument.ownerId]),
-          userFactory.getUserFromIds(rawDocument.editorIds),
-          userFactory.getUserFromIds(rawDocument.viewerIds)
-        ]).then(result => {
-          const owner: User = result[0][0];
-          const editors: User[] = result[1];
-          const viewers: User[] = result[2];
-          resolve(new DocumentImpl(
-            rawDocument.id,
-            rawDocument.type,
-            rawDocument.title,
-            owner,
-            editors,
-            viewers,
-            rawDocument.order
-          ));
-        });
-      } catch (error) {
-        reject(error);
-      }
+//   static async createDocument(
+//     rawDocument: any,
+//     userFactory: UserFactoryService
+//   ): Promise<Document> {
+//     return new Promise((resolve, reject) => {
+//       try {
+//         // Retrieve editors and viewers
+//         Promise.all([
+//           userFactory.getUserFromIds([rawDocument.ownerId]),
+//           userFactory.getUserFromIds(rawDocument.editorIds),
+//           userFactory.getUserFromIds(rawDocument.viewerIds)
+//         ]).then(result => {
+//           const owner: User = result[0][0];
+//           const editors: User[] = result[1];
+//           const viewers: User[] = result[2];
+//           resolve(new DocumentImpl(
+//             rawDocument.id,
+//             rawDocument.type,
+//             rawDocument.title,
+//             owner,
+//             editors,
+//             viewers,
+//             rawDocument.order
+//           ));
+//         });
+//       } catch (error) {
+//         reject(error);
+//       }
 
-    });
-  }
+//     });
+//   }
 
-}
+// }

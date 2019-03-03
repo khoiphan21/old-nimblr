@@ -1,15 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UserFactoryServiceImpl } from './user-factory-impl.service';
+import { UserFactoryService } from './user-factory.service';
 import { UserImpl } from '../../classes/user-impl';
 
 describe('UserFactoryService', () => {
-  let factory: UserFactoryServiceImpl;
+  let factory: UserFactoryService;
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [UserFactoryServiceImpl]
-    });
-    factory = TestBed.get(UserFactoryServiceImpl);
+    TestBed.configureTestingModule({});
+    factory = TestBed.get(UserFactoryService);
   });
 
   it('should be created', () => {
