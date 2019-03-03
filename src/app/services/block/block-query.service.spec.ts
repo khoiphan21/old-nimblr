@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { BlockQueryService } from './block-query.service';
 import { take } from 'rxjs/operators';
-import { TextBlock } from '../../classes/block';
-import { BehaviorSubject } from 'rxjs';
+import { TextBlock, Block } from '../../classes/block';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
@@ -16,7 +16,7 @@ const uuidv4 = require('uuid/v4');
 
 export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
 
-fdescribe('BlockQueryService', () => {
+describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   TestBed.configureTestingModule({});
 
@@ -196,5 +196,56 @@ fdescribe('BlockQueryService', () => {
       });
     }, 10000);
 
+  });
+
+  describe('getBlocksForDocument', () => {
+    it('should return observables for all blocks when queried', done => {
+      // First create two blocks
+      const graphqlService: GraphQLService = TestBed.get(GraphQLService);
+      const documentId = uuidv4();
+      const responses = [];
+      const input: CreateTextBlockInput = {
+        version: uuidv4(),
+        type: BlockType.TEXT,
+        documentId,
+        lastUpdatedBy: uuidv4(),
+        value: '(from getBlocksForDocument test)'
+      };
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        graphqlService.query(createTextBlock, { input }).then(response => {
+          responses.push(response);
+          return graphqlService.query(createTextBlock, { input });
+        }).then(response => {
+          responses.push(response);
+          // Get all blocks for the given document id here
+          return service.getBlocksForDocument(documentId);
+        }).then((observables: Array<Observable<Block>>) => {
+          expect(observables.length).toEqual(2);
+          observables.forEach(observable => {
+            expect(observable instanceof BehaviorSubject).toBe(true);
+            observable.subscribe(block => {
+              if (block === null) { return; }
+              console.log(block);
+            });
+          });
+          // Now delete the two blocks
+          return Promise.all(responses.map(response => {
+            return graphqlService.query(deleteBlock, {
+              input: {
+                id: response.data.createTextBlock.id
+              }
+            });
+          }));
+        }).then(deletedBlocks => {
+          expect(deletedBlocks.length).toEqual(2); // The number of created blocks
+          fail();
+        }).catch(error => { console.error(error); fail('error received'); done(); });
+      }, error => {
+        fail('Error getting BlockQueryService from observable');
+        console.error(error); done();
+      });
+
+    });
   });
 });

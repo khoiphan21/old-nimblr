@@ -3,8 +3,9 @@ import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Block } from '../../classes/block';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { BlockFactoryService } from './block-factory.service';
-import { getBlock } from '../../../graphql/queries';
+import { getBlock, listBlocks } from '../../../graphql/queries';
 import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
+import { ListBlocksQuery } from 'src/API';
 
 @Injectable({
   providedIn: 'root'
@@ -36,8 +37,20 @@ export class BlockQueryService {
     return block$;
   }
 
-  getBlocksForDocument(id: string): Promise<any> {
-    return;
+  getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
+    return new Promise((resolve, reject) => {
+      const observables: Array<Observable<Block>> = [];
+
+      const input = {
+        filter: {
+          documentId: { eq: id}
+        }
+      };
+      
+      // this.graphQlService.query(listBlocks)
+
+      resolve(observables);
+    });
   }
   registerUpdateVersion(version: string) {
     this.myVersions.add(version);
