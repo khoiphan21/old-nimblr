@@ -90,7 +90,7 @@ export class BlockQueryService {
     try {
       const block: Block = this.blockFactoryService.createBlock(data);
       // This is needed for when called by getBlocksForDocument
-      this.blocksMap.set(block.id, block$); 
+      this.blocksMap.set(block.id, block$);
       if (subscribe) {
         this.subscribeToUpdate(block.documentId, block.id);
       }
