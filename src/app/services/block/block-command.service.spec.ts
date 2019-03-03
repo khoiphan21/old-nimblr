@@ -13,7 +13,7 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 const uuidv4 = require('uuid/v4');
 
 
-fdescribe('BlockCommandService', () => {
+describe('BlockCommandService', () => {
   const service$ = new BehaviorSubject<BlockCommandService>(null);
   let graphQlService: GraphQLService;
   TestBed.configureTestingModule({});
