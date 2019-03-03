@@ -54,7 +54,3 @@ export class BlockCreateError extends Error {
         this.blockType = blockType;
     }
 }
-
-export interface BlockMutationOptions {
-    newTextValue?: string;
-}

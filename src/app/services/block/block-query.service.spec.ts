@@ -76,7 +76,7 @@ class TextBlockQueryHelper {
   }
 }
 
-fdescribe('BlockQueryService', () => {
+describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   TestBed.configureTestingModule({});
 

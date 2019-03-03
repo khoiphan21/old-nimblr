@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BlockType, BlockMutationOptions, Block } from '../../classes/block';
+import { Block } from '../../classes/block';
 import { Observable } from 'rxjs';
 import { GraphQLService } from '../graphQL/graph-ql.service';
+import { BlockQueryService } from './block-query.service';
+import { CreateBlockInput, UpdateBlockInput } from '../../../API';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +11,11 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 export class BlockCommandService {
 
   constructor(
-    private graphQLService: GraphQLService
+    private graphQLService: GraphQLService,
+    private blockQueryService: BlockQueryService
   ) { }
 
-  updateBlock$(id: string, type: BlockType,
-               options: BlockMutationOptions): Observable<Block> {
+  updateBlock$(input: UpdateBlockInput): Observable<Block> {
     return null;
   }
 
@@ -26,8 +28,7 @@ export class BlockCommandService {
    * @param options other options depending what kind of block it is
    * @return the observable for the created block
    */
-  createBlock(version: string, type: BlockType, documentId: string,
-              lastUpdatedBy: string, options: BlockMutationOptions): Observable<Block> {
+  createBlock(input: CreateBlockInput): Observable<Block> {
     return;
   }
 }

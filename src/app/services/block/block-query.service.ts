@@ -63,6 +63,7 @@ export class BlockQueryService {
 
     });
   }
+
   registerUpdateVersion(version: string) {
     this.myVersions.add(version);
   }
