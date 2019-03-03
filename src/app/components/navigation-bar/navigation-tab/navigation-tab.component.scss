@@ -1,0 +1,17 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+div.navigation-tab {
+    color: $color-mid-grey;
+    font-weight: normal;
+    padding: 4px 0;
+    &:hover {
+        opacity: 0.75;
+    }
+    i.fa-chevron-down {
+        transform: rotate(-90deg);
+    }
+    span {
+        margin-left: 15px;
+    }
+}

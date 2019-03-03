@@ -23,6 +23,7 @@ import { QuestionBlockComponent } from './components/block/question-block/questi
 import { DropdownComponent } from './components/block/question-block/dropdown/dropdown.component';
 import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
 import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
+import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { MultipleChoiceComponent } from './components/block/question-block/multi
     CheckboxComponent,
     DropdownComponent,
     MultipleChoiceComponent,
+    NavigationTabComponent,
   ],
   imports: [
     BrowserModule,
