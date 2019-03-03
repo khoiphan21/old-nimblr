@@ -76,7 +76,7 @@ class TextBlockQueryHelper {
   }
 }
 
-fdescribe('BlockQueryService', () => {
+describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   TestBed.configureTestingModule({});
 
@@ -405,7 +405,7 @@ fdescribe('BlockQueryService', () => {
       const graphQlService: GraphQLService = TestBed.get(GraphQLService);
       const service: BlockQueryService = TestBed.get(BlockQueryService);
       const spy = spyOn(graphQlService, 'getSubscription').and.returnValue(new Subject());
-      
+
       service.subscribeToUpdate(documentId).then(() => {
         // Try to subscribe again
         return service.subscribeToUpdate(documentId);
