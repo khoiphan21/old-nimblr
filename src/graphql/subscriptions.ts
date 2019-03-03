@@ -1,6 +1,36 @@
 // tslint:disable
 // this is an auto generated file. This will be overwritten
 
+export const onUpdateBlockInDocument = `subscription OnUpdateBlockInDocument($documentId: ID!) {
+  onUpdateBlockInDocument(documentId: $documentId) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
+`;
+export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($id: ID!) {
+  onSpecificDocumentUpdate(id: $id) {
+    id
+    version
+    type
+    title
+    ownerId
+    editorIds
+    viewerIds
+    order
+    blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
+  }
+}
+`;
 export const onCreateUser = `subscription OnCreateUser {
   onCreateUser {
     id
@@ -37,6 +67,7 @@ export const onDeleteUser = `subscription OnDeleteUser {
 export const onCreateDocument = `subscription OnCreateDocument {
   onCreateDocument {
     id
+    version
     type
     title
     ownerId
@@ -44,12 +75,16 @@ export const onCreateDocument = `subscription OnCreateDocument {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
   }
 }
 `;
 export const onUpdateDocument = `subscription OnUpdateDocument {
   onUpdateDocument {
     id
+    version
     type
     title
     ownerId
@@ -57,12 +92,16 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
   }
 }
 `;
 export const onDeleteDocument = `subscription OnDeleteDocument {
   onDeleteDocument {
     id
+    version
     type
     title
     ownerId
@@ -70,41 +109,47 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     viewerIds
     order
     blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
   }
 }
 `;
-export const onCreateTextBlock = `subscription OnCreateTextBlock {
-  onCreateTextBlock {
+export const onCreateBlock = `subscription OnCreateBlock {
+  onCreateBlock {
     id
     version
     type
     documentId
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
     value
   }
 }
 `;
-export const onUpdateTextBlock = `subscription OnUpdateTextBlock {
-  onUpdateTextBlock {
+export const onUpdateBlock = `subscription OnUpdateBlock {
+  onUpdateBlock {
     id
     version
     type
     documentId
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
     value
   }
 }
 `;
-export const onDeleteTextBlock = `subscription OnDeleteTextBlock {
-  onDeleteTextBlock {
+export const onDeleteBlock = `subscription OnDeleteBlock {
+  onDeleteBlock {
     id
     version
     type
     documentId
     lastUpdatedBy
-    timestamp
+    createdAt
+    updatedAt
     value
   }
 }

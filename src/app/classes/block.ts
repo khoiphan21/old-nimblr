@@ -1,10 +1,14 @@
+
+const uuidv5 = require('uuid/v5');
+
 export interface Block {
     readonly id: string;
     readonly version: string;
     readonly type: BlockType;
     readonly documentId: string;
     readonly lastUpdatedBy: string;
-    readonly timestamp: number;
+    readonly createdAt: string;
+    readonly updatedAt: string;
 }
 
 export enum BlockType {
@@ -19,21 +23,34 @@ export class TextBlock implements Block {
     readonly type: BlockType;
     readonly documentId: string;
     readonly lastUpdatedBy: string;
-    readonly timestamp: number;
+    readonly createdAt: string;
+    readonly updatedAt: string;
     readonly value: string;
 
-    constructor(id: string, version: string, documentId: string, lastUpdatedBy: string, value: string = '') {
+    constructor({
+        version,
+        documentId,
+        id = uuidv5(version, documentId),
+        lastUpdatedBy,
+        value = '',
+        updatedAt = new Date().toISOString(),
+        createdAt = new Date().toISOString()
+    }) {
         this.id = id;
         this.version = version;
         this.documentId = documentId;
         this.type = BlockType.TEXT;
         this.lastUpdatedBy = lastUpdatedBy;
-        this.timestamp = new Date().getTime();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.value = value;
     }
 }
 
-
-export interface BlockUpdateOptions {
-    newTextValue?: string;
+export class BlockCreateError extends Error {
+    blockType: BlockType;
+    constructor(blockType: BlockType, ...params) {
+        super(...params);
+        this.blockType = blockType;
+    }
 }

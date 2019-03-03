@@ -9,6 +9,7 @@ type User @model {
 
 type Document @model {
   id: ID!
+  version: String
   type: DocumentType!
   title: String
   ownerId: String
@@ -16,6 +17,9 @@ type Document @model {
   viewerIds: [String]
   order: [String]
   blockIds: [String]
+  lastUpdatedBy: String
+  createdAt: String
+  updatedAt: String
 }
 
 enum DocumentType {
@@ -23,29 +27,48 @@ enum DocumentType {
   FORM
 }
 
-interface Block {
+type Block @model {
+  # Note: this type should contain ALL possible attributes from each block type
   id: ID!
   version: String
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: Int
+  createdAt: String
+  updatedAt: String
+  # Attributes from TextBlock
+  value: String
 }
 
 enum BlockType {
   TEXT
 }
 
-type TextBlock implements Block @model {
-  id: ID!
-  version: String
-  type: BlockType
-  documentId: String
-  lastUpdatedBy: String
-  timestamp: Int
-  value: String
+type Mutation {
+  createTextBlock(input: CreateTextBlockInput!): Block
+  updateTextBlock(input: UpdateTextBlockInput!): Block
 }
 
-type Query {
-  getBlocksFromDocument(documentId: ID!): [Block]
+type Subscription {
+  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock"])
+  onSpecificDocumentUpdate(id: ID!): Document @aws_subscribe(mutations: ["updateDocument"])
+}
+
+input CreateTextBlockInput {
+  id: ID
+  version: String!
+  type: BlockType!
+  documentId: String!
+  lastUpdatedBy: String!
+  value: String!
+}
+
+input UpdateTextBlockInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  updatedAt: String!
+  value: String!
 }

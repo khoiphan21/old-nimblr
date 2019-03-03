@@ -22,6 +22,7 @@ export const TEST_USERNAME = 'khoi-test';
 export const TEST_PASSWORD = 'Khoi1234';
 export const TEST_USER_ID = '85a705f1-7485-4efd-9e4a-d196ff8c9219';
 
+const uuidv4 = require('uuid/v4');
 @Component({
   selector: 'app-header',
   template: ''
@@ -99,7 +100,7 @@ describe('AccountImplService', () => {
     let userPool;
 
     const newCognitoUser: CognitoSignUpUser = {
-      username: 'khoi-test-2',
+      username: uuidv4(),
       password: 'Test1234',
       attributes: {
         email: 'success@simulator.amazonses.com', // for email to be sent successfully

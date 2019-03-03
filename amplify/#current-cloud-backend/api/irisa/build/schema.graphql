@@ -9,6 +9,7 @@ type User {
 
 type Document {
   id: ID!
+  version: String
   type: DocumentType!
   title: String
   ownerId: String
@@ -16,6 +17,9 @@ type Document {
   viewerIds: [String]
   order: [String]
   blockIds: [String]
+  lastUpdatedBy: String
+  createdAt: String
+  updatedAt: String
 }
 
 enum DocumentType {
@@ -23,37 +27,66 @@ enum DocumentType {
   FORM
 }
 
-interface Block {
+type Block {
   id: ID!
   version: String
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: Int
+  createdAt: String
+  updatedAt: String
+  value: String
 }
 
 enum BlockType {
   TEXT
 }
 
-type TextBlock implements Block {
-  id: ID!
-  version: String
-  type: BlockType
-  documentId: String
-  lastUpdatedBy: String
-  timestamp: Int
-  value: String
+type Mutation {
+  createTextBlock(input: CreateTextBlockInput!): Block
+  updateTextBlock(input: UpdateTextBlockInput!): Block
+  createUser(input: CreateUserInput!): User
+  updateUser(input: UpdateUserInput!): User
+  deleteUser(input: DeleteUserInput!): User
+  createDocument(input: CreateDocumentInput!): Document
+  updateDocument(input: UpdateDocumentInput!): Document
+  deleteDocument(input: DeleteDocumentInput!): Document
+  createBlock(input: CreateBlockInput!): Block
+  updateBlock(input: UpdateBlockInput!): Block
+  deleteBlock(input: DeleteBlockInput!): Block
 }
 
-type Query {
-  getBlocksFromDocument(documentId: ID!): [Block]
-  getUser(id: ID!): User
-  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
-  getDocument(id: ID!): Document
-  listDocuments(filter: ModelDocumentFilterInput, limit: Int, nextToken: String): ModelDocumentConnection
-  getTextBlock(id: ID!): TextBlock
-  listTextBlocks(filter: ModelTextBlockFilterInput, limit: Int, nextToken: String): ModelTextBlockConnection
+type Subscription {
+  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock"])
+  onSpecificDocumentUpdate(id: ID!): Document @aws_subscribe(mutations: ["updateDocument"])
+  onCreateUser: User @aws_subscribe(mutations: ["createUser"])
+  onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
+  onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])
+  onCreateDocument: Document @aws_subscribe(mutations: ["createDocument"])
+  onUpdateDocument: Document @aws_subscribe(mutations: ["updateDocument"])
+  onDeleteDocument: Document @aws_subscribe(mutations: ["deleteDocument"])
+  onCreateBlock: Block @aws_subscribe(mutations: ["createBlock"])
+  onUpdateBlock: Block @aws_subscribe(mutations: ["updateBlock"])
+  onDeleteBlock: Block @aws_subscribe(mutations: ["deleteBlock"])
+}
+
+input CreateTextBlockInput {
+  id: ID
+  version: String!
+  type: BlockType!
+  documentId: String!
+  lastUpdatedBy: String!
+  value: String!
+}
+
+input UpdateTextBlockInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  updatedAt: String!
+  value: String!
 }
 
 enum ModelSortDirection {
@@ -133,6 +166,15 @@ input ModelUserFilterInput {
   not: ModelUserFilterInput
 }
 
+type Query {
+  getUser(id: ID!): User
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
+  getDocument(id: ID!): Document
+  listDocuments(filter: ModelDocumentFilterInput, limit: Int, nextToken: String): ModelDocumentConnection
+  getBlock(id: ID!): Block
+  listBlocks(filter: ModelBlockFilterInput, limit: Int, nextToken: String): ModelBlockConnection
+}
+
 input CreateUserInput {
   id: ID
   username: String!
@@ -155,30 +197,6 @@ input DeleteUserInput {
   id: ID
 }
 
-type Mutation {
-  createUser(input: CreateUserInput!): User
-  updateUser(input: UpdateUserInput!): User
-  deleteUser(input: DeleteUserInput!): User
-  createDocument(input: CreateDocumentInput!): Document
-  updateDocument(input: UpdateDocumentInput!): Document
-  deleteDocument(input: DeleteDocumentInput!): Document
-  createTextBlock(input: CreateTextBlockInput!): TextBlock
-  updateTextBlock(input: UpdateTextBlockInput!): TextBlock
-  deleteTextBlock(input: DeleteTextBlockInput!): TextBlock
-}
-
-type Subscription {
-  onCreateUser: User @aws_subscribe(mutations: ["createUser"])
-  onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
-  onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])
-  onCreateDocument: Document @aws_subscribe(mutations: ["createDocument"])
-  onUpdateDocument: Document @aws_subscribe(mutations: ["updateDocument"])
-  onDeleteDocument: Document @aws_subscribe(mutations: ["deleteDocument"])
-  onCreateTextBlock: TextBlock @aws_subscribe(mutations: ["createTextBlock"])
-  onUpdateTextBlock: TextBlock @aws_subscribe(mutations: ["updateTextBlock"])
-  onDeleteTextBlock: TextBlock @aws_subscribe(mutations: ["deleteTextBlock"])
-}
-
 type ModelDocumentConnection {
   items: [Document]
   nextToken: String
@@ -186,12 +204,16 @@ type ModelDocumentConnection {
 
 input ModelDocumentFilterInput {
   id: ModelIDFilterInput
+  version: ModelStringFilterInput
   title: ModelStringFilterInput
   ownerId: ModelStringFilterInput
   editorIds: ModelStringFilterInput
   viewerIds: ModelStringFilterInput
   order: ModelStringFilterInput
   blockIds: ModelStringFilterInput
+  lastUpdatedBy: ModelStringFilterInput
+  createdAt: ModelStringFilterInput
+  updatedAt: ModelStringFilterInput
   and: [ModelDocumentFilterInput]
   or: [ModelDocumentFilterInput]
   not: ModelDocumentFilterInput
@@ -199,6 +221,7 @@ input ModelDocumentFilterInput {
 
 input CreateDocumentInput {
   id: ID
+  version: String
   type: DocumentType!
   title: String
   ownerId: String
@@ -206,10 +229,14 @@ input CreateDocumentInput {
   viewerIds: [String]
   order: [String]
   blockIds: [String]
+  lastUpdatedBy: String
+  createdAt: String
+  updatedAt: String
 }
 
 input UpdateDocumentInput {
   id: ID!
+  version: String
   type: DocumentType
   title: String
   ownerId: String
@@ -217,49 +244,55 @@ input UpdateDocumentInput {
   viewerIds: [String]
   order: [String]
   blockIds: [String]
+  lastUpdatedBy: String
+  createdAt: String
+  updatedAt: String
 }
 
 input DeleteDocumentInput {
   id: ID
 }
 
-type ModelTextBlockConnection {
-  items: [TextBlock]
+type ModelBlockConnection {
+  items: [Block]
   nextToken: String
 }
 
-input ModelTextBlockFilterInput {
+input ModelBlockFilterInput {
   id: ModelIDFilterInput
   version: ModelStringFilterInput
   documentId: ModelStringFilterInput
   lastUpdatedBy: ModelStringFilterInput
-  timestamp: ModelIntFilterInput
+  createdAt: ModelStringFilterInput
+  updatedAt: ModelStringFilterInput
   value: ModelStringFilterInput
-  and: [ModelTextBlockFilterInput]
-  or: [ModelTextBlockFilterInput]
-  not: ModelTextBlockFilterInput
+  and: [ModelBlockFilterInput]
+  or: [ModelBlockFilterInput]
+  not: ModelBlockFilterInput
 }
 
-input CreateTextBlockInput {
+input CreateBlockInput {
   id: ID
   version: String
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: Int
+  createdAt: String
+  updatedAt: String
   value: String
 }
 
-input UpdateTextBlockInput {
+input UpdateBlockInput {
   id: ID!
   version: String
   type: BlockType
   documentId: String
   lastUpdatedBy: String
-  timestamp: Int
+  createdAt: String
+  updatedAt: String
   value: String
 }
 
-input DeleteTextBlockInput {
+input DeleteBlockInput {
   id: ID
 }

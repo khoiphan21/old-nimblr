@@ -8,8 +8,6 @@ import Amplify from '@aws-amplify/core';
 import awsmobile from '../../aws-exports';
 import { AccountService } from '../services/account/account.service';
 import { AccountServiceImpl } from '../services/account/account-impl.service';
-import { UserFactoryService } from '../services/user/user-factory.service';
-import { UserFactoryServiceImpl } from '../services/user/user-factory-impl.service';
 import { GraphQLService } from '../services/graphQL/graph-ql.service';
 import { NavigationBarService } from '../services/navigation-bar/navigation-bar.service';
 Amplify.configure(awsmobile);
@@ -30,12 +28,7 @@ Amplify.configure(awsmobile);
     {
       provide: AccountService,
       useClass: AccountServiceImpl
-    },
-    {
-      provide: UserFactoryService,
-      useClass: UserFactoryServiceImpl
-    },
-    NavigationBarService,
+    }
   ],
 })
 export class ServicesModule { }
