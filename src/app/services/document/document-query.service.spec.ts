@@ -8,7 +8,6 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 import { createDocument, deleteDocument } from '../../../graphql/mutations';
 import { CreateDocumentInput, DocumentType } from '../../../API';
 import { take } from 'rxjs/operators';
-import { UserFactoryService } from '../user/user-factory.service';
 
 describe('DocumentQueryService', () => {
   const service$ = new BehaviorSubject<DocumentQueryService>(null);
@@ -30,7 +29,7 @@ describe('DocumentQueryService', () => {
     expect(service).toBeTruthy();
   });
 
-  fdescribe('getDocument$', () => {
+  describe('getDocument$', () => {
 
     it('should return an observable with the initial value of null', done => {
       service$.subscribe(service => {
@@ -78,7 +77,18 @@ describe('DocumentQueryService', () => {
           fail('Check console for more details');
           console.error(error); done();
         });
-      }, error => { fail('unable to get service'); console.error(error); done(); })
+      }, error => { fail('unable to get service'); console.error(error); done(); });
+    });
+
+    it('should subscribe to any changes from the backend', done => {
+      service$.subscribe(service => {
+        if (service === null) { return; }
+        // Create a document
+        // update the document
+        // Check for notification
+        // delete the document
+        fail('test to be written');
+      }, error => { fail('unable to get service'); console.error(error); done(); });
     });
   });
 

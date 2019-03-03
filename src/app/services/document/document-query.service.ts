@@ -40,4 +40,8 @@ export class DocumentQueryService {
 
   }
 
+  private subscribeToUpdate(documentId: string) {
+
+  }
+
 }
