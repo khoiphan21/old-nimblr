@@ -157,21 +157,21 @@ export class AccountServiceImpl implements AccountService {
         firstName: user.firstName,
         lastName: user.lastName
       }
-    }
+    };
 
     try {
       // update info in Cognito
-      let userDB = await Auth.currentAuthenticatedUser();
-      let result = await Auth.updateUserAttributes(userDB, {
-        'email': user.email
+      const userDB = await Auth.currentAuthenticatedUser();
+      const result = await Auth.updateUserAttributes(userDB, {
+        email: user.email
       });
 
       // update info in dynamodb
       const response = await API.graphql(graphqlOperation(updateUser, input));
-      return Promise.resolve('user updated')
+      return Promise.resolve('user updated');
 
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
 
   }

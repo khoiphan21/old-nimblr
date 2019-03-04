@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full' },
   { path: 'register', component: RegisterPageComponent },
   { path: 'login', component: LoginPageComponent },
-  { path: 'dashboard', component: DashboardPageComponent },
+  { path: 'dashboard/:userid', component: DashboardPageComponent },
   { path: 'document', component: DocumentPageComponent }
 ];
 

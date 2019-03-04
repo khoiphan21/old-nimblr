@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { AccountService } from '../../services/account/account.service';
-import { User } from 'src/app/classes/user';
+import { CognitoSignUpUser } from '../../classes/user';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-page',
@@ -14,10 +15,13 @@ export class RegisterPageComponent implements OnInit {
   verificationForm: FormGroup;
   steps = 'one';
   passwordType = 'password';
+  uuid: string;
+  newCognitoUser: CognitoSignUpUser;
 
   constructor(
     private formBuilder: FormBuilder,
-    private AccountService: AccountService
+    private accountService: AccountService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -50,22 +54,28 @@ export class RegisterPageComponent implements OnInit {
     const lastName = this.registerForm.get('lastName').value;
     const password = this.registerForm.get('password').value;
 
-
-    console.log('email: ', email);
-    console.log('fName: ', firstName);
-    console.log('lName: ', lastName);
-    console.log('pw: ', password);
-
-    // // create User object
-    // const user: User = {
-    //   id: '??',
-    //   firstName: firstName,
-    //   lastName: lastName,
-    //   email: email
-    // }
-
-    // // send to service
-    // AccountService.registerCognitoUser(user);
+    this.newCognitoUser = {
+      username: email,
+      password: `${password}`,
+      attributes: {
+        email: `${email}`,
+        given_name: `${firstName}`,
+        family_name: `${lastName}`
+      }
+    };
+    this.accountService.registerCognitoUser(this.newCognitoUser).then((data) => {
+      this.uuid = data.userSub;
+      this.steps = 'three';
+    });
   }
+
+  verifyAccount() {
+    const verificationcode = this.verificationForm.get('verificationCode').value;
+    this.accountService.registerAppUser(this.newCognitoUser, this.uuid, verificationcode).then(() => {
+      this.router.navigate([`/dashboard`, this.uuid]);
+    }).catch(error => {
+      console.error(error);
+    });
+   }
 
 }
