@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DocumentPageComponent } from './document-page.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Router } from '@angular/router';
 import { ServicesModule } from '../../modules/services.module';
 import { BlockOptionComponent } from '../../components/block/block-option/block-option.component';
 import { BlockComponent } from '../../components/block/block.component';
@@ -19,11 +18,20 @@ import { MultipleChoiceComponent } from '../../components/block/question-block/m
 import { Subject } from 'rxjs';
 
 import { NavigationTabComponent } from '../../components/navigation-bar/navigation-tab/navigation-tab.component';
+import { DocumentService } from 'src/app/services/document/document.service';
+
+class MockDocumentService {
+  getCurrentDocument$() {
+    return new Subject();
+  }
+  getUserDocuments$() {
+    return new Subject();
+  }
+}
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
   let fixture: ComponentFixture<DocumentPageComponent>;
-  let spy: jasmine.Spy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -46,21 +54,22 @@ describe('DocumentPageComponent', () => {
         ServicesModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes([])
+      ],
+      providers: [
+        {
+          provide: DocumentService,
+          useClass: MockDocumentService
+        }
       ]
     })
       .compileComponents();
   }));
 
-  /* tslint:disable:no-string-literal */
-  beforeEach(() => {
+  it('should create', done => {
     fixture = TestBed.createComponent(DocumentPageComponent);
     component = fixture.componentInstance;
-    spy = spyOn(component['documentService'], 'getCurrentDocument$').and.returnValue(new Subject());
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(spy.calls.count()).toBe(1);
     expect(component).toBeTruthy();
+    done();
   });
 });

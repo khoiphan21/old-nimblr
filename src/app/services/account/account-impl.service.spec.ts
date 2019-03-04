@@ -13,7 +13,7 @@ import awsmobile from 'src/aws-exports';
 import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
-import { toBase64String } from '@angular/compiler/src/output/source_map';
+import { processTestError } from 'src/app/classes/helpers';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
@@ -78,18 +78,14 @@ describe('AccountImplService', () => {
 
   it('should emit a new user object if successfully logged in', done => {
     // Setup subscription for assertion
-    service.getUser$().subscribe(value => {
-      // should be called here
-      done();
-    }, error => {
-      fail(error);
-      done();
-    });
     // Call login method here
-    service.login(TEST_USERNAME, TEST_PASSWORD).catch(error => {
-      fail(error);
-      done();
-    });
+    service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+      service.getUser$().subscribe(value => {
+        if (value === null) { return; }
+        // should be called here
+        done();
+      }, error => processTestError('unable to get user', error, done));
+    }).catch(error => processTestError('failed to login', error, done));
   });
 
   describe('RegisterService', () => {
