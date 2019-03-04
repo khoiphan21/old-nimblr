@@ -16,8 +16,7 @@ export class RegisterPageComponent implements OnInit {
   passwordType = 'password';
 
   constructor(
-    private formBuilder: FormBuilder,
-    private AccountService: AccountService
+    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {

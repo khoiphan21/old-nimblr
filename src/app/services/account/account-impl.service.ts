@@ -200,6 +200,7 @@ export class AccountServiceImpl implements AccountService {
             resolve(user);
           }
         }, error => {
+          console.error('Error in isUserReady()');
           reject(error);
         });
     });
