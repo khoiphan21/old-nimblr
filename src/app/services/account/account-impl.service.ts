@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AccountService } from './account.service';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { User, CognitoSignUpUser } from '../../classes/user';
 
 import { Auth, API, graphqlOperation } from 'aws-amplify';
-import { take, timeout, catchError } from 'rxjs/operators';
-
-import * as queries from '../../../graphql/queries';
+import { take } from 'rxjs/operators';
 import { UserFactoryService } from '../user/user-factory.service';
 import { Router } from '@angular/router';
 
@@ -52,7 +50,7 @@ export class AccountServiceImpl implements AccountService {
     });
   }
 
-  private async awsConfirmAccount(email: string, code: string): Promise<any> {
+  async awsConfirmAccount(email: string, code: string): Promise<any> {
     // Note: this function can never be automatically tested, as it requires
     // manual checking of email address, which is a pain to automate for now.
     return Auth.confirmSignUp(email, code, {
@@ -60,29 +58,26 @@ export class AccountServiceImpl implements AccountService {
     });
   }
 
-  async registerAppUser(user: CognitoSignUpUser, userId: string, verificationCode: string): Promise<any> {
-    return this.awsConfirmAccount(user.attributes.email, verificationCode).then(() => {
+  async registerAppUser(user: CognitoSignUpUser, userId: string): Promise<any> {
       // 2. Sign in to Cognito to perform graphql
-      return Auth.signIn(user.username, user.password);
-    }).then(() => {
-      // 3. Register in App DB
-      const userDetails = {
-        input: {
-          id: userId,
-          username: user.username,
-          email: user.attributes.email,
-          firstName: user.attributes.given_name,
-          lastName: user.attributes.family_name,
-          documentIds: []
-        }
-      };
-
-      return this.graphQLService.query(createUser, userDetails);
-    }).then(result => {
-      return Promise.resolve(result);
-    }).catch(err => {
-      return Promise.reject(err);
-    });
+      return Auth.signIn(user.username, user.password).then(() => {
+        // 3. Register in App DB
+        const userDetails = {
+          input: {
+            id: userId,
+            username: user.username,
+            email: user.attributes.email,
+            firstName: user.attributes.given_name,
+            lastName: user.attributes.family_name,
+            documentIds: []
+          }
+        };
+        return this.graphQLService.query(createUser, userDetails);
+      }).then(result => {
+        return Promise.resolve(result);
+      }).catch(error => {
+        return Promise.reject(error);
+      });
   }
 
   private async getAppUser(cognitoUserId: string): Promise<User> {
@@ -114,7 +109,7 @@ export class AccountServiceImpl implements AccountService {
           const userId = cognitoUser.signInUserSession.idToken.payload.sub;
           this.getAppUser(userId).then(user => {
             this.user$.next(user);
-            resolve();
+            resolve(user);
           }).catch(error => {
             reject(error);
           });

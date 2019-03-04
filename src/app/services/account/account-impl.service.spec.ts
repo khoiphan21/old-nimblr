@@ -29,7 +29,7 @@ const uuidv4 = require('uuid/v4');
 })
 export class BlankComponent { }
 
-describe('AccountImplService', () => {
+fdescribe('AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
   beforeEach(() => {
@@ -176,7 +176,7 @@ describe('AccountImplService', () => {
       let cognitoUserId: string;
 
       // Mock the function to confirm verification code with AWS
-      service['awsConfirmAccount'] = () => {
+      service.awsConfirmAccount = () => {
         return Promise.resolve();
       };
 
@@ -189,7 +189,7 @@ describe('AccountImplService', () => {
       }).then(loggedInUser => {
         // Now register app user and check if it's registered properly
         cognitoUserId = loggedInUser.signInUserSession.idToken.payload.sub;
-        return service.registerAppUser(newCognitoUser, cognitoUserId, 'random-code');
+        return service.registerAppUser(newCognitoUser, cognitoUserId);
       }).then(response => {
         // Check that all expected attributes are there, and match with the originals
         expect(response).toBeTruthy();
