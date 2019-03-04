@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Block } from '../../classes/block';
-import { Observable } from 'rxjs';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { BlockQueryService } from './block-query.service';
 import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../API';
