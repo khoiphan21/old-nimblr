@@ -8,6 +8,7 @@ import { TEST_USERNAME, TEST_PASSWORD, BlankComponent } from '../account/account
 import { DocumentImpl } from 'src/app/classes/document-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
+import { processTestError } from 'src/app/classes/helpers';
 
 describe('DocumentService', () => {
   let service: DocumentServiceImpl;
@@ -66,7 +67,7 @@ describe('DocumentService', () => {
         expect(documents.length).toBeGreaterThan(0);
         expect(documents[0] instanceof DocumentImpl).toBe(true);
         done();
-      });
+      }, error => processTestError('Error trying to retrieve all documents from DocumentImplService test', error, done));
     });
   });
 

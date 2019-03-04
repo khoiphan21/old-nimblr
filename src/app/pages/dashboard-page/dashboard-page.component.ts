@@ -19,6 +19,9 @@ export class DashboardPageComponent implements OnInit {
   ngOnInit() {
     this.documentService.getUserDocuments$().subscribe(documents => {
       this.userDocuments = documents;
+    }, error => {
+      console.error('Error received in DashboardPageComponent. Details below:');
+      console.error(error);
     });
   }
 

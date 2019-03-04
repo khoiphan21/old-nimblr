@@ -5,6 +5,14 @@ import { NavigationTabComponent } from './navigation-tab/navigation-tab.componen
 import { ServicesModule } from 'src/app/modules/services.module';
 import { BlankComponent } from '../../services/account/account-impl.service.spec';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
+import { Subject } from 'rxjs';
+
+class MockNavigationBarService {
+  getNavigationBar$() {
+    return new Subject();
+  }
+}
 
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
@@ -24,6 +32,12 @@ describe('NavigationBarComponent', () => {
               path: 'document', component: BlankComponent
             }
           ])
+        ],
+        providers: [
+          {
+            provide: NavigationBarService,
+            useClass: MockNavigationBarService
+          }
         ]
     })
     .compileComponents();

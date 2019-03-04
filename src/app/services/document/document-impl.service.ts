@@ -56,28 +56,34 @@ export class DocumentServiceImpl implements DocumentService {
   async createFormDocument(): Promise<Document> {
     const deferred: Deferred<Document> = new Deferred();
 
-    const user = await this.accountService.isUserReady();
+    try {
+      const user = await this.accountService.isUserReady();
+  
+      const documentDetails = {
+        type: DocumentType.FORM,
+        title: null,
+        ownerId: user.id,
+        editorIds: [],
+        viewerIds: [],
+        order: [],
+      } as CreateDocumentInput;
+  
+      const response: any = await API.graphql(
+        graphqlOperation(mutations.createDocument, { input: documentDetails })
+      );
+  
+      const rawDocument = response.data.createDocument;
+  
+      // Create a document, then emit the newly created document
+      this.documentFactory.createDocument(rawDocument).then(document => {
+        this.currentDocument$.next(document);
+        deferred.resolve(document);
+      });
+    } catch (error) {
+      console.error('error received in createFormDocument()');
+      deferred.reject(error)
+    }
 
-    const documentDetails = {
-      type: DocumentType.FORM,
-      title: null,
-      ownerId: user.id,
-      editorIds: [],
-      viewerIds: [],
-      order: [],
-    } as CreateDocumentInput;
-
-    const response: any = await API.graphql(
-      graphqlOperation(mutations.createDocument, { input: documentDetails })
-    );
-
-    const rawDocument = response.data.createDocument;
-
-    // Create a document, then emit the newly created document
-    this.documentFactory.createDocument(rawDocument).then(document => {
-      this.currentDocument$.next(document);
-      deferred.resolve(document);
-    });
 
     return deferred.promise;
   }
@@ -96,24 +102,31 @@ export class DocumentServiceImpl implements DocumentService {
             this.userDocuments$.next(documents);
           }
         );
+      }).catch(error => {
+        console.error('Error in getUserDocuments$');
+        this.userDocuments$.error(error);
       });
     }
     return this.userDocuments$;
   }
 
   private async setupSubscriptionForUserDocuments() {
-
-    const user: User = await this.accountService.isUserReady();
-    const subscription: any = API.graphql(
-      graphqlOperation(subscriptions.onCreateDocument)
-    );
-    subscription.subscribe(response => {
-      this.getDocumentsForUserId(user.id).then(
-        documents => {
-          this.userDocuments$.next(documents);
-        }
+    try {
+      const user: User = await this.accountService.isUserReady();
+      const subscription: any = API.graphql(
+        graphqlOperation(subscriptions.onCreateDocument)
       );
-    });
+      subscription.subscribe(response => {
+        this.getDocumentsForUserId(user.id).then(
+          documents => {
+            this.userDocuments$.next(documents);
+          }
+        );
+      });
+    } catch (error) {
+      console.error('Error setting up subscription for user documents. More details below.');
+      console.error(error);
+    }
   }
 
   async deleteDocument(id: string): Promise<any> {
