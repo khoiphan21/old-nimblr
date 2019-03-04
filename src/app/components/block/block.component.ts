@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Block } from '../../classes/block';
 
 @Component({
   selector: 'app-block',
@@ -9,6 +10,8 @@ export class BlockComponent implements OnInit {
   isBlockOptionsShown: boolean;
   isSelectedOptionShown = false;
 
+  @Input() block: Block;
+  
   constructor() { }
 
   ngOnInit() {

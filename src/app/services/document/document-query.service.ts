@@ -68,17 +68,21 @@ export class DocumentQueryService {
     const subscription = this.graphQlService.getSubscription(
       onSpecificDocumentUpdate, { id: documentId }
     ).subscribe(notification => {
-      // Notification received
-      const rawData = notification.value.data.onSpecificDocumentUpdate;
-      // Check if the version is in myVersions
-      if (this.myVersions.has(rawData.version)) {
-        return;
-      }
-      // Convert raw data into the app Document
-      this.documentFactory.createDocument(rawData).then((document: Document) => {
-        // Emit the new data
+      try {
+        // Notification received
+        const rawData = notification.value.data.onSpecificDocumentUpdate;
+        // Check if the version is in myVersions
+        if (this.myVersions.has(rawData.version)) {
+          return;
+        }
+        // Convert raw data into the app Document
+        const document = this.documentFactory.createDocument(rawData)
         this.documentMap.get(documentId).next(document);
-      }).catch(error => console.error(error));
+      } catch (error) {
+        console.log('Error trying to subscribe to onSpecificDocumentUpdate');
+        console.error(error);
+        this.subscriptionMap.delete(documentId);
+      }
     });
     this.subscriptionMap.set(documentId, subscription);
   }

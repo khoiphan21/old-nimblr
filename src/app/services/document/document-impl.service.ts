@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { DocumentService } from './document.service';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Document, DocumentType } from '../../classes/document';
+import { Document } from '../../classes/document';
 import { AccountService } from '../account/account.service';
 import { User } from '../../classes/user';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../../../graphql/mutations';
 import * as queries from '../../../graphql/queries';
 import * as subscriptions from '../../../graphql/subscriptions';
-import { CreateDocumentInput } from '../../../API';
+import { CreateDocumentInput, DocumentType } from '../../../API';
 import { Deferred } from '../../classes/deferred';
 import { DocumentFactoryService } from './document-factory.service';
 
@@ -75,13 +75,13 @@ export class DocumentServiceImpl implements DocumentService {
       const rawDocument = response.data.createDocument;
 
       // Create a document, then emit the newly created document
-      this.documentFactory.createDocument(rawDocument).then(document => {
-        this.currentDocument$.next(document);
-        deferred.resolve(document);
-      });
+      const document = this.documentFactory.createDocument(rawDocument)
+      
+      this.currentDocument$.next(document);
+      deferred.resolve(document);
     } catch (error) {
       console.error('error received in createFormDocument()');
-      deferred.reject(error)
+      deferred.reject(error);
     }
 
 

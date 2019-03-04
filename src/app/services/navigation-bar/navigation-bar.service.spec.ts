@@ -4,18 +4,22 @@ import { NavigationBarService } from './navigation-bar.service';
 import { DocumentService } from '../document/document.service';
 import { DocumentImpl } from '../../classes/document-impl';
 import { UserImpl } from '../../classes/user-impl';
-import { DocumentType } from 'src/app/classes/document';
 import { AccountService } from '../account/account.service';
 import { TEST_USERNAME, TEST_PASSWORD, BlankComponent } from '../account/account-impl.service.spec';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
+import { DocumentFactoryService } from '../document/document-factory.service';
+
+const uuidv4 = require('uuid/v4');
 
 const sampleUser = new UserImpl('user123', 'test', 'user', 'test@email.com');
+
 describe('NavigationBarService', () => {
   let accountService: AccountService;
   let documentService: DocumentService;
   let service: NavigationBarService;
+  let documentFactory: DocumentFactoryService;
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -33,6 +37,7 @@ describe('NavigationBarService', () => {
     accountService = TestBed.get(AccountService);
     documentService = TestBed.get(DocumentService);
     service = TestBed.get(NavigationBarService);
+    documentFactory = TestBed.get(DocumentFactoryService);
   });
 
   it('should be created', () => {
@@ -100,8 +105,16 @@ describe('NavigationBarService', () => {
   });
 
   describe('processNavigationTab()', () => {
-    const sampleDocument = new DocumentImpl('doc1', DocumentType.GENERIC, 'Test 1', sampleUser, [], [], []);
-    const sampleDocument2 = new DocumentImpl('doc2', DocumentType.GENERIC, 'Test 2', sampleUser, [], [], []);
+    const sampleDocument = documentFactory.createDocument({
+      id: uuidv4(),
+      ownerId: uuidv4(),
+      title: 'Test title'
+    });
+    const sampleDocument2 = documentFactory.createDocument({
+      id: uuidv4(),
+      ownerId: uuidv4(),
+      title: 'Test title'
+    });
 
     it('should extract the right details from `Document` object to `NavigationTab`', () => {
       const sampleDocuments = [sampleDocument, sampleDocument2];
