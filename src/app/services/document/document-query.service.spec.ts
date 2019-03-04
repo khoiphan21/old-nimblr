@@ -5,9 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
-import { createDocument, deleteDocument } from '../../../graphql/mutations';
 import { CreateDocumentInput, DocumentType } from '../../../API';
-import { take, skip } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { DocumentQueryTestHelper } from './helper';
 import { processTestError } from '../../classes/helpers';
 import { environment } from '../../../environments/environment';
@@ -52,7 +51,11 @@ describe('DocumentQueryService', () => {
 
     beforeEach(() => {
       helper = new DocumentQueryTestHelper(TestBed.get(GraphQLService));
-      input = { type: DocumentType.FORM };
+      input = {
+        id: uuidv4(),
+        ownerId: uuidv4(),
+        type: DocumentType.FORM
+      };
     });
 
     it('should return an observable with the initial value of null', done => {

@@ -19,12 +19,10 @@ import { Subject } from 'rxjs';
 
 import { NavigationTabComponent } from '../../components/navigation-bar/navigation-tab/navigation-tab.component';
 import { DocumentService } from 'src/app/services/document/document.service';
+import { DocumentQueryService } from '../../services/document/document-query.service';
 
-class MockDocumentService {
-  getCurrentDocument$() {
-    return new Subject();
-  }
-  getUserDocuments$() {
+class MockDocumentQueryService {
+  getDocument$() {
     return new Subject();
   }
 }
@@ -57,8 +55,8 @@ describe('DocumentPageComponent', () => {
       ],
       providers: [
         {
-          provide: DocumentService,
-          useClass: MockDocumentService
+          provide: DocumentQueryService,
+          useClass: MockDocumentQueryService
         }
       ]
     })

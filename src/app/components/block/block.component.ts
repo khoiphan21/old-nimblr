@@ -10,7 +10,7 @@ export class BlockComponent implements OnInit {
   isBlockOptionsShown: boolean;
   isSelectedOptionShown = false;
 
-  @Input() block: Block;
+  @Input() blockId: string;
   
   constructor() { }
 
