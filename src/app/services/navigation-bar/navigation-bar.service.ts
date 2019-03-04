@@ -20,6 +20,9 @@ export class NavigationBarService {
       this.documentService.getUserDocuments$().subscribe((documents) => {
         const navigationTabs = this.processNavigationTab(documents);
         this.navigationBar$.next(navigationTabs);
+      }, error => {
+        console.error('Error received in getNavigationBar$. Details below: ');
+        console.error(error);
       });
     }
     return this.navigationBar$;

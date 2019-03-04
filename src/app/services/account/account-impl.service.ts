@@ -37,7 +37,9 @@ export class AccountServiceImpl implements AccountService {
         this.user$.next(user);
         return Promise.resolve(user);
       })
-      .catch(() => {
+      .catch(error => {
+        console.error('Error restoring session. More details below:');
+        console.error(error);
         return Promise.reject();
       });
   }
@@ -200,7 +202,8 @@ export class AccountServiceImpl implements AccountService {
             resolve(user);
           }
         }, error => {
-          console.error('Error in isUserReady()');
+          console.error('Error in isUserReady(). More details below:');
+          console.error(error);
           reject(error);
         });
     });
