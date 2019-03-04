@@ -46,7 +46,7 @@ export class DocumentQueryService {
   }
 
   registerUpdateVersion(version: string) {
-
+    this.myVersions.add(version);
   }
 
   private subscribeToUpdate(documentId: string) {
@@ -56,6 +56,10 @@ export class DocumentQueryService {
     ).subscribe(notification => {
       // Notification received
       const rawData = notification.value.data.onSpecificDocumentUpdate;
+      // Check if the version is in myVersions
+      if (this.myVersions.has(rawData.version)) {
+        return;
+      }
       // Convert raw data into the app Document
       this.documentFactory.createDocument(rawData).then((document: Document) => {
         // Emit the new data
