@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 
 import { createUser, updateUser } from '../../../graphql/mutations';
 import { GraphQLService } from '../graphQL/graph-ql.service';
+import { getUser } from '../../../graphql/queries';
 
 @Injectable({
   providedIn: 'root'
@@ -33,14 +34,12 @@ export class AccountServiceImpl implements AccountService {
         return this.getAppUser(data.getIdToken().payload.sub);
       })
       .then((user: User) => {
-        console.log('retrieved session for user: ', user.email);
+        console.log('restored session for user: ', user.email);
         this.user$.next(user);
         return Promise.resolve(user);
       })
       .catch(error => {
-        console.error('Error restoring session. More details below:');
-        console.error(error);
-        return Promise.reject();
+        return Promise.reject(error);
       });
   }
 
@@ -88,12 +87,10 @@ export class AccountServiceImpl implements AccountService {
 
   private async getAppUser(cognitoUserId: string): Promise<User> {
     try {
-      const userDetails = {
-        id: cognitoUserId
-      };
-
-      const response: any = await API.graphql(
-        graphqlOperation(queries.getUser, userDetails)
+      const response: any = await this.graphQLService.query(
+        getUser, {
+          id: cognitoUserId
+        }
       );
 
       const rawUser = response.data.getUser;
@@ -131,16 +128,14 @@ export class AccountServiceImpl implements AccountService {
     // Has to return a promise, because it gives feedback to user
     // about whether they are actually logged out safely.
 
-    return new Promise((resolve, _) => {
+    return new Promise((resolve, reject) => {
       Auth.signOut()
-        .then(data => {
+        .then(() => {
           this.user$.next(null);
-          console.log('Auth logged out successfully');
           resolve(true);
         })
         .catch(err => {
-          console.log(err);
-          resolve(false);
+          reject(err);
         });
     });
   }
@@ -150,8 +145,6 @@ export class AccountServiceImpl implements AccountService {
     // Case: Auth already signed in
     // Otherwise shoudl throw error saying that user not signin
 
-    // if i want to return promise directly, return a new promise object
-
     const input = {
       input: {
         id: user.id,
@@ -159,21 +152,21 @@ export class AccountServiceImpl implements AccountService {
         firstName: user.firstName,
         lastName: user.lastName
       }
-    }
+    };
 
     try {
       // update info in Cognito
-      let userDB = await Auth.currentAuthenticatedUser();
-      let result = await Auth.updateUserAttributes(userDB, {
-        'email': user.email
+      const userDB = await Auth.currentAuthenticatedUser();
+      await Auth.updateUserAttributes(userDB, {
+        email: user.email
       });
 
       // update info in dynamodb
       const response = await API.graphql(graphqlOperation(updateUser, input));
-      return Promise.resolve('user updated')
+      return Promise.resolve(response)
 
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
 
   }
@@ -196,14 +189,11 @@ export class AccountServiceImpl implements AccountService {
   async isUserReady(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.getUser$()
-        .pipe(timeout(2500))
         .subscribe((user: User) => {
           if (user) {
             resolve(user);
           }
         }, error => {
-          console.error('Error in isUserReady(). More details below:');
-          console.error(error);
           reject(error);
         });
     });

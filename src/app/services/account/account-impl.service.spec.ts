@@ -53,40 +53,37 @@ describe('AccountImplService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should login if the credentials are correct', done => {
-    service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      // should resolve
-      done();
-    }).catch(error => {
-      console.error(error);
-      fail(error);
-      done();
-    });
-  });
-
-  it('should fail in the credentials are wrong', done => {
-    const password = 'WRONG PASSWORD';
-
-    service.login(TEST_USERNAME, password).then(() => {
-      // should have failed
-      fail('Promise should be rejected');
-      done();
-    }).catch(() => {
-      done();
-    });
-  });
-
-  it('should emit a new user object if successfully logged in', done => {
-    // Setup subscription for assertion
-    // Call login method here
-    service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      service.getUser$().subscribe(value => {
-        if (value === null) { return; }
-        // should be called here
+  describe('login', () => {
+    it('should login if the credentials are correct', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // should resolve
         done();
-      }, error => processTestError('unable to get user', error, done));
-    }).catch(error => processTestError('failed to login', error, done));
+      }).catch(error => processTestError('failed to login', error, done));
+    });
+
+    it('should fail in the credentials are wrong', done => {
+      const password = 'WRONG PASSWORD';
+      const errorMessage = 'Promise should be rejected';
+
+      service.login(TEST_USERNAME, password).then(() =>
+        processTestError(errorMessage, errorMessage, done)
+      ).catch(() => done());
+    });
+
+    it('should emit a new user object if successfully logged in', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // Setup subscription for assertion
+        service.getUser$().subscribe(user => {
+          if (user === null) { return; }
+          // should be called here
+          expect(user).toBeTruthy();
+          done();
+        }, error => processTestError('unable to get user', error, done));
+      }).catch(error => processTestError('failed to login', error, done));
+    });
+
   });
+
 
   describe('RegisterService', () => {
     const poolData = {
@@ -239,32 +236,21 @@ describe('AccountImplService', () => {
       email: 'notshownindb@test.com'
     };
 
-    it('should throw error when a private operation is perform after loggout', done => {
-      service.login(TEST_USERNAME, TEST_PASSWORD)
-        .then(() => {
-          console.log('logout now');
+    it('should throw error when another operation is perform after logout', done => {
+      const errorMessage = 'private operation should not be valid after logged out';
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
           return service.logout();
         }).then(() => {
-          console.log('running updates...');
-          service.update(user).then(() => {
-            console.log('private operation wrong...');
-            fail('private operation shouldnt be performing when logged out');
-          }).catch((err) => {
-            done();
-          });
-        }
-
-        );
-    }, 100000);
+          return service.update(user);
+        }).then(() => processTestError(errorMessage, errorMessage, done)
+        ).catch(error => {
+          expect(error).toBeTruthy();
+          done();
+        });
+    });
   });
 
   describe('update()', () => {
-
-    beforeEach(() => {
-      // Login before everything
-      // service.login(TEST_USERNAME, TEST_PASSWORD).then(
-      //   data => console.log('Sign in: ', data));
-    });
 
     it('should update the attributes on dynamodb', done => {
 
@@ -286,22 +272,17 @@ describe('AccountImplService', () => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(data => {
         return data;
 
-      }).then(data => {
-        console.log('update 1');
+      }).then(() => {
         return service.update(userBefore);
-
-      }).then(data => {
-        console.log('update 2');
+      }).then(() => {
         return service.update(userAfter);
-
-      }).then(data => {
+      }).then(() => {
         const input = {
           id: TEST_USER_ID
-        }
+        };
 
-        async function getApiCall(){
+        async function getApiCall() {
           const response: any = await API.graphql(graphqlOperation(getUser, input));
-          console.log('After info updated: ', response);
           return Promise.resolve(response);
         }
 
@@ -314,7 +295,7 @@ describe('AccountImplService', () => {
         });
 
       });
-    }, 10000);
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
   });
 
 
@@ -327,7 +308,7 @@ describe('AccountImplService', () => {
         service.getUser$().pipe(skip(1)).subscribe(user => {
           expect(user instanceof UserImpl).toBe(true);
           done();
-        });
+        }, error => processTestError('getUser$ unable to retrieve', error, done));
       });
     });
 
@@ -341,30 +322,29 @@ describe('AccountImplService', () => {
             done();
           });
         })
-        .catch(err => { console.error(err); done(); });
+        .catch(error => processTestError('failed to sign out', error, done));
     });
   });
 
   describe('isUserReady()', () => {
 
-    it('should resolve if a session exists', (done) => {
+    it('should resolve if a session exists', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         service.isUserReady().then(user => {
           expect(user instanceof UserImpl).toBe(true);
           done();
-        });
-      });
+        }).catch(error => processTestError('user should be logged in', error, done));
+      }).catch(error => processTestError('unable to login', error, done));
     });
 
     it('should reject if no user available', done => {
       Auth.signOut().then(() => {
-        service.isUserReady().then(user => {
+        service.isUserReady().then(() => {
           fail('error must occur');
         }).catch(() => done());
-      });
+      }).catch(error => processTestError('unable to sign out', error, done));
     });
 
   });
-
 
 });
