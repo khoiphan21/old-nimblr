@@ -7,6 +7,7 @@ import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../API';
 import { deleteDocument } from '../../../graphql/mutations';
+import { processTestError } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
@@ -186,6 +187,32 @@ describe('DocumentCommandService', () => {
   });
 
   describe('updateDocument for FORM', () => {
+
+    it('should register the version to the query service', done => {
+      const updatedInput: UpdateDocumentInput = {
+        id: uuidv4(),
+        title: 'test title',
+        version: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        updatedAt: new Date().toISOString()
+      };
+      let service: DocumentCommandService;
+
+      getService().then(readyService => {
+        service = readyService;
+        spyOn(service['graphQlService'], 'query').and.returnValue(Promise.resolve({
+          data: {
+            updateDocument: null
+          }
+        }));
+        return service.updateDocument(updatedInput);
+      }).then(() => {
+        expect(service['queryService']['myVersions'].has(updatedInput.version)).toBe(true);
+        done();
+      }).catch(error => processTestError(
+        'error in testing register version', error, done
+      ));
+    });
 
     it('should update a document with new values', done => {
       let service: DocumentCommandService;

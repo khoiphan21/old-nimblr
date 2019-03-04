@@ -3,6 +3,7 @@ import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../..
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { createDocument, updateDocument } from '../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
+import { DocumentQueryService } from './document-query.service';
 
 export type UUID = string;
 export type ISOTimeString = string;
@@ -27,7 +28,8 @@ export interface UpdateFormDocumentInput {
 export class DocumentCommandService {
 
   constructor(
-    private graphQlService: GraphQLService
+    private graphQlService: GraphQLService,
+    private queryService: DocumentQueryService
   ) { }
 
   async createDocument(input: CreateDocumentInput): Promise<any> {
@@ -88,6 +90,9 @@ export class DocumentCommandService {
   async updateDocument(input: UpdateDocumentInput | UpdateFormDocumentInput): Promise<any> {
     try {
       this.validateUpdateInput(input as UpdateFormDocumentInput);
+
+      // Update the list of versions to be ignored
+      this.queryService.registerUpdateVersion(input.version);
 
       const response: any = await this.graphQlService.query(updateDocument, { input });
       return Promise.resolve(response.data.updateDocument);
