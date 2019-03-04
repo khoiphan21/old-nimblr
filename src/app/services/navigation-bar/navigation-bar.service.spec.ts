@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import { NavigationBarService } from './navigation-bar.service';
 import { DocumentService } from '../document/document.service';
-import { DocumentImpl } from '../../classes/document-impl';
 import { UserImpl } from '../../classes/user-impl';
 import { AccountService } from '../account/account.service';
 import { TEST_USERNAME, TEST_PASSWORD, BlankComponent } from '../account/account-impl.service.spec';

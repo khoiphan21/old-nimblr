@@ -43,8 +43,8 @@ export class DocumentQueryService {
         document$.error(`Document with id ${id} does not exist`);
         return;
       }
-      return this.documentFactory.createDocument(rawData);
-    }).then(document => {
+      const document = this.documentFactory.createDocument(rawData);
+
       document$.next(document);
     }).catch(error => document$.error(error));
 

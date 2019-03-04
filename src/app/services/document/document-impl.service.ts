@@ -75,7 +75,7 @@ export class DocumentServiceImpl implements DocumentService {
       const rawDocument = response.data.createDocument;
 
       // Create a document, then emit the newly created document
-      const document = this.documentFactory.createDocument(rawDocument)
+      const document = this.documentFactory.createDocument(rawDocument);
       
       this.currentDocument$.next(document);
       deferred.resolve(document);

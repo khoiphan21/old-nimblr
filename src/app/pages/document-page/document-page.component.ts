@@ -32,6 +32,7 @@ export class DocumentPageComponent implements OnInit {
         this.documentQueryService.getDocument$(params.get('id')))
     );
     this.document$.subscribe(document => {
+      this.currentDocument = document
       // this.blockIds = document.
       console.log('document retrieved: ', document);
     });
