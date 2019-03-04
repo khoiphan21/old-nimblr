@@ -11,7 +11,7 @@ export const environment = {
   // This variable is normally used when it's a test for subscription,// and should be modified depending on the internet speed
   WAIT_TIME_BEFORE_UPDATE: 2000,
   // Complementary timeout for tests with block update
-  TIMEOUT_FOR_UPDATE_TEST: 20000
+  TIMEOUT_FOR_UPDATE_TEST: 15000
 };
 
 /*
@@ -21,4 +21,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+import 'zone.js/dist/zone-error';  // Included with Angular CLI.

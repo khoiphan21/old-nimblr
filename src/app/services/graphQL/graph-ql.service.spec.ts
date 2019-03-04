@@ -11,6 +11,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Block } from 'src/app/classes/block';
 import { environment } from '../../../environments/environment';
 import { listBlocks } from '../../../graphql/queries';
+import { processTestError } from 'src/app/classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
@@ -145,54 +146,6 @@ describe('GraphQLService', () => {
   });
 
   describe('(list)', () => {
-    it('should get the desired number of items', done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        // First create the blocks for testing
-        const documentId = uuidv4();
-        const blockIds = [];
-        // Setup the input params
-        const testInput = {
-          version: uuidv4(),
-          type: BlockType.TEXT,
-          documentId,
-          lastUpdatedBy: uuidv4(),
-          value: '(from GraphQlService listing test)'
-        };
-        // Create the test blocks
-        service.query(createTextBlock, { input: testInput }).then(response => {
-          blockIds.push(response.data.createTextBlock.id);
-          return service.query(createTextBlock, { input: testInput });
-        }).then(response => {
-          blockIds.push(response.data.createTextBlock.id);
-
-          // Now try to list the blocks
-          const filter = {
-            documentId: {
-              eq: documentId
-            }
-          };
-          return service.list({
-            query: listBlocks,
-            queryName: 'listBlocks',
-            params: { filter },
-            limit: 2, // to get only 1 at a time for pagination testing
-            // listAll should be default to 'false'
-          });
-        }).then(response => {
-          expect(response.items.length).toBe(1);
-          expect(typeof response.nextToken).toEqual('string');
-          expect(response.items[0].documentId).toEqual(documentId);
-          // Now delete the blocks
-          return Promise.all(blockIds.map(id => {
-            return service.query(deleteBlock, { input: { id } });
-          }));
-        }).then(deletedBlocks => {
-          expect(deletedBlocks.length).toBe(2);
-          done();
-        }).catch(error => { console.error(error); fail('error occurred'); done(); });
-      }, error => { fail(); console.error(error); done(); });
-    });
 
     it('should paginate through and list all blocks for a document', done => {
       service$.subscribe(service => {
@@ -228,7 +181,7 @@ describe('GraphQLService', () => {
                 }
               }
             },
-            limit: 2, // to get only 1 at a time for pagination testing
+            limit: 1, // to get only 1 at a time for pagination testing
             listAll: true
           });
         }).then(response => {
