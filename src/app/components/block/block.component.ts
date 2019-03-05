@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Block } from '../../classes/block';
+import { BlockQueryService } from '../../services/block/block-query.service';
 
 @Component({
   selector: 'app-block',
@@ -10,11 +11,23 @@ export class BlockComponent implements OnInit {
   isBlockOptionsShown: boolean;
   isSelectedOptionShown = false;
 
+  block: Block;
+
   @Input() blockId: string;
-  
-  constructor() { }
+
+  constructor(
+    private blockQueryService: BlockQueryService
+  ) { }
 
   ngOnInit() {
+    this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
+      if (block !== null) {
+        this.block = block;
+      }
+    }, error => {
+      console.error(`BlockComponent unable to get block: ${this.blockId}. Details below`);
+      console.error(error);
+    });
   }
 
   toggleBlockOptions(status: boolean) {

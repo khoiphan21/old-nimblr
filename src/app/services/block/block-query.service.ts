@@ -45,9 +45,10 @@ export class BlockQueryService {
    * @param block$ the block observable
    * @param subscribe a boolean flag to specify whether the subscription setup code should be run
    */
-  private processRaw(data, block$: BehaviorSubject<Block>, subscribe = true) {
+  private processRaw(data, block$: BehaviorSubject<Block>) {
+    console.log('processing raw: ', data);
     try {
-      const block: Block = this.blockFactoryService.createBlock(data);
+      const block: Block = this.blockFactoryService.createAppBlock(data);
       // This is needed for when called by getBlocksForDocument
       this.blocksMap.set(block.id, block$);
       if (!this.myVersions.has(block.version)) {
@@ -78,7 +79,7 @@ export class BlockQueryService {
         response.items.forEach(rawBlock => {
           const blockObservable = new BehaviorSubject(null);
           observables.push(blockObservable);
-          this.processRaw(rawBlock, blockObservable, false);
+          this.processRaw(rawBlock, blockObservable);
         });
         resolve(observables);
       });
@@ -99,7 +100,7 @@ export class BlockQueryService {
     const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
       const data = response.value.data.onUpdateBlockInDocument;
 
-      const block: Block = this.blockFactoryService.createBlock(data);
+      const block: Block = this.blockFactoryService.createAppBlock(data);
       let block$: BehaviorSubject<Block>;
       if (!this.blocksMap.has(block.id)) {
         block$ = new BehaviorSubject<Block>(null);
@@ -123,5 +124,12 @@ export class BlockQueryService {
     return Promise.resolve(subscription);
   }
 
+  registerBlockCreatedByUI(block: Block) {
+    const block$ = new BehaviorSubject<Block>(null);
+    this.blocksMap.set(block.id, block$);
+    block$.next(block);
 
+    // Register the version
+    this.registerUpdateVersion(block.version);
+  }
 }

@@ -65,10 +65,18 @@ export class BlockCommandService {
     }
   }
 
-  private async createTextBlock(input: CreateBlockInput): Promise<any> {
+  private async createTextBlock(originalInput: CreateBlockInput): Promise<any> {
+    const input = {
+      id: originalInput.id,
+      version: originalInput.version,
+      type: originalInput.type,
+      documentId: originalInput.documentId,
+      lastUpdatedBy: originalInput.lastUpdatedBy,
+      value: originalInput.value === '' ? null : originalInput.value,
+    };
     const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'value'
-    ]
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
+    ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 

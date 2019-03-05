@@ -22,11 +22,11 @@ export class DocumentImpl implements Document {
     this.type = input.type;
     this.title = input.title;
     this.ownerId = input.ownerId;
-    this.editorIds = input.editorIds;
-    this.viewerIds = input.viewerIds;
-    this.blockIds = input.blockIds;
+    this.editorIds = input.editorIds === null ? [] : input.editorIds;
+    this.viewerIds = input.viewerIds === null ? [] : input.viewerIds;
+    this.blockIds = input.blockIds === null ? [] : input.blockIds;
     this.lastUpdatedBy = input.lastUpdatedBy;
-    this.createdAt = input.createdAt;
-    this.updatedAt = input.updatedAt;
+    this.createdAt = input.createdAt === null ? new Date().toISOString() : input.createdAt;
+    this.updatedAt = input.updatedAt === null ? new Date().toISOString() : input.createdAt;
   }
 }

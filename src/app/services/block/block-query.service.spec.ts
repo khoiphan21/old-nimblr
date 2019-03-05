@@ -10,6 +10,8 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 import { UpdateTextBlockInput, BlockType, CreateTextBlockInput } from '../../../API';
 import { updateTextBlock, createTextBlock, deleteBlock } from '../../../graphql/mutations';
 import { environment } from '../../../environments/environment';
+import { BlockFactoryService } from './block-factory.service';
+import { processTestError } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
@@ -78,12 +80,17 @@ class TextBlockQueryHelper {
 
 describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
+  let blockFactory: BlockFactoryService;
   TestBed.configureTestingModule({});
 
   beforeAll(() => {
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
       service$.next(TestBed.get(BlockQueryService));
     });
+  });
+
+  beforeEach(() => {
+    blockFactory = TestBed.get(BlockFactoryService);
   });
 
   it('should be created', () => {
@@ -413,6 +420,52 @@ describe('BlockQueryService', () => {
         expect(spy.calls.count()).toBe(1);
         done();
       }).catch(error => { fail('Error received'); console.error(error); done(); });
+    });
+  });
+
+  describe('registerBlockCreatedByUI', () => {
+    let block: Block;
+
+    function getService(): Promise<BlockQueryService> {
+      return new Promise((resolve, reject) => {
+        service$.subscribe(service => {
+          if (service !== null) {
+            resolve(service);
+          }
+        }, error => reject(error));
+      });
+    }
+
+    beforeEach(() => {
+      block = blockFactory.createAppBlock({
+        id: uuidv4(),
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        version: uuidv4(),
+        type: BlockType.TEXT,
+        value: ''
+      });
+    });
+
+    it('should store the block in the internal map', done => {
+      getService().then(service => {
+        service.registerBlockCreatedByUI(block);
+        service.getBlock$(block.id).subscribe(storedBlock => {
+          if (storedBlock === null) { return; }
+          expect(storedBlock.id).toEqual(block.id);
+          done();
+        }, error => processTestError(
+          'registerBlockCreatedByUI test unable to get block', error, done
+        ));
+      }).catch(error => processTestError('unable to get service', error, done));
+    });
+
+    it('should also store the version of the given block', done => {
+      getService().then(service => {
+        service.registerBlockCreatedByUI(block);
+        expect(service['myVersions'].has(block.version)).toBe(true);
+        done();
+      }, error => processTestError('unable to get service', error, done));
     });
   });
 });

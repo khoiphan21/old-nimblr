@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/helpers';
+import { Subject } from 'rxjs';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
@@ -21,6 +22,19 @@ const AWS = require('aws-sdk');
 export const TEST_USERNAME = 'khoi-test';
 export const TEST_PASSWORD = 'Khoi1234';
 export const TEST_USER_ID = '85a705f1-7485-4efd-9e4a-d196ff8c9219';
+
+export class MockAccountService {
+  getUser$() {
+    return new Subject();
+  }
+  isUserReady() {
+    return new Promise((_, __) => {}); // a promise that never returns
+  }
+  login() {
+    return new Promise((_, __) => {}); // a promise that never returns
+  }
+}
+
 
 const uuidv4 = require('uuid/v4');
 @Component({

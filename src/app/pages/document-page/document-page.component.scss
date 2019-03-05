@@ -13,12 +13,27 @@ div.fluid-container {
         flex-grow: 1;
         section.content {
             height: 100%;
+            padding: 0 100px;
             h1 {
                 font-size: 2.2rem;
                 font-weight: normal;
                 letter-spacing: 1.5px;
-                padding-left: 100px;
-                padding-right: 100px;
+            }
+            .add-block {
+                $background:  rgb(200, 200, 200);
+                background: $background;
+                width: 100%;
+                height: 20vh;
+                font-size: 3rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background cubic-bezier(0.215, 0.610, 0.355, 1);
+                &:hover {
+                    background: lighten($background, 2);
+                    // transition: background cubic-bezier(0.215, 0.610, 0.355, 1);
+                    cursor: pointer;
+                }
             }
         }
     }

@@ -49,18 +49,6 @@ describe('BlockCommandService', () => {
 
     describe('(error in params - sample tests)', () => {
 
-      it('should throw an error if "value" is missing for a text block', done => {
-        const service: BlockCommandService = TestBed.get(BlockCommandService);
-        delete input.value;
-        service.updateBlock(input).then(() => {
-          fail('error should occur');
-          done();
-        }).catch(error => {
-          expect(error.message).toEqual('Missing argument "value" in UpdateTextBlockInput');
-          done();
-        });
-      });
-
       it('should throw an error if "id" is missing for a text block', done => {
         const service: BlockCommandService = TestBed.get(BlockCommandService);
         delete input.id;

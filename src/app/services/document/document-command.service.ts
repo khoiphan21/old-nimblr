@@ -97,6 +97,7 @@ export class DocumentCommandService {
       const response: any = await this.graphQlService.query(updateDocument, { input });
       return Promise.resolve(response.data.updateDocument);
     } catch (error) {
+      console.error('DocummentCommandService failed to update document with input: ', input);
       return Promise.reject(error);
     }
   }
