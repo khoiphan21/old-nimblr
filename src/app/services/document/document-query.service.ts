@@ -79,7 +79,6 @@ export class DocumentQueryService {
         const document = this.documentFactory.createDocument(rawData)
         this.documentMap.get(documentId).next(document);
       } catch (error) {
-        console.log('Error trying to subscribe to onSpecificDocumentUpdate');
         console.error(error);
         this.subscriptionMap.delete(documentId);
       }

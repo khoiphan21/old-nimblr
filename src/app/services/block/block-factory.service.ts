@@ -73,7 +73,6 @@ export class BlockFactoryService {
   private checkIfValidTimeString(parameter, parameterName) {
     const createdDate = new Date(parameter);
     if (`${createdDate}`.indexOf('Invalid Date') !== -1) {
-      // console.log(`invalid date created: ${createdDate} for parameter: ${parameter}`);
       const message = `BlockCreateError: ${parameterName} must be a valid time string`;
       throw new BlockCreateError(BlockType.TEXT, message);
     }

@@ -64,7 +64,6 @@ export class DocumentPageComponent implements OnInit {
       this.currentDocument = document;
       this.blockIds = document.blockIds;
       this.setupBlockUpdateSubscription();
-      console.log('document retrieved: ', document);
     }, () => console.error('error getting document in DocumentPage'));
   }
 
@@ -74,7 +73,6 @@ export class DocumentPageComponent implements OnInit {
   }
 
   async addBlock() {
-    console.log('current document: ', this.currentDocument)
     const block = this.blockFactoryService.createAppBlock({
       documentId: this.currentDocument.id,
       lastUpdatedBy: this.currentUser.id,
@@ -84,16 +82,13 @@ export class DocumentPageComponent implements OnInit {
     try {
       this.blockQueryService.registerBlockCreatedByUI(block);
       // send create command to BlockCommandService
-      console.log('creating block');
       await this.blockCommandService.createBlock(block);
       // update document
-      console.log('updating document');
       this.currentDocument.blockIds.push(block.id);
       this.currentDocument.version = uuidv5(this.currentDocument.ownerId, this.currentDocument.id);
       this.currentDocument.lastUpdatedBy = this.currentUser.id;
       // send update command to DocumentCommandService
       this.documentCommandService.updateDocument(this.currentDocument);
-      console.log('block created: ', block);
     } catch (error) {
       this.printAddBlockError(error);
     }
