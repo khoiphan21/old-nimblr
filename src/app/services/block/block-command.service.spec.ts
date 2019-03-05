@@ -60,8 +60,6 @@ describe('BlockCommandService', () => {
           done();
         });
       });
-
-
     });
 
     it('should update a block in the database', done => {
@@ -114,23 +112,6 @@ describe('BlockCommandService', () => {
   });
 
   describe('createBlock', () => {
-    it('should throw an error if a param is missing when creating a text block', done => {
-      const service: BlockCommandService = TestBed.get(BlockCommandService);
-      const sampleErrorInput = {
-        id: uuidv4(),
-        version: uuidv4(),
-        type: BlockType.TEXT,
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4()
-      };
-      service.createBlock(sampleErrorInput).then(() => {
-        fail('error should occur');
-        done();
-      }).catch(error => {
-        expect(error.message).toEqual('Missing argument "value" in CreateTextBlockInput');
-        done();
-      });
-    });
 
     it('should create a block in the database', done => {
       const input: CreateTextBlockInput = {

@@ -72,15 +72,18 @@ export class BlockCommandService {
       type: originalInput.type,
       documentId: originalInput.documentId,
       lastUpdatedBy: originalInput.lastUpdatedBy,
-      value: originalInput.value === '' ? null : originalInput.value,
+      value: originalInput.value,
     };
     const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'value'
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 
       this.blockQueryService.registerUpdateVersion(input.version);
+
+      // Now do a convert for empty string in 'value'
+      input.value = input.value === '' ? null : input.value;
 
       return this.graphQLService.query(createTextBlock, { input });
     } catch (error) {

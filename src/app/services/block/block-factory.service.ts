@@ -49,7 +49,6 @@ export class BlockFactoryService {
 
     switch (type) {
       case BlockType.TEXT:
-        this.checkForNullOrUndefined(value, 'value');
         return new TextBlock(input);
       default:
         throw new BlockCreateError(null, 'BlockType not supported');

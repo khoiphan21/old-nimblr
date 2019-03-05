@@ -60,7 +60,7 @@ input CreateTextBlockInput {
   type: BlockType!
   documentId: String!
   lastUpdatedBy: String!
-  value: String!
+  value: String
 }
 
 input UpdateTextBlockInput {
@@ -70,5 +70,5 @@ input UpdateTextBlockInput {
   documentId: String
   lastUpdatedBy: String!
   updatedAt: String!
-  value: String!
+  value: String
 }

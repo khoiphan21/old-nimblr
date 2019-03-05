@@ -7,7 +7,7 @@ export type CreateTextBlockInput = {
   type: BlockType,
   documentId: string,
   lastUpdatedBy: string,
-  value: string,
+  value?: string | null,
 };
 
 export enum BlockType {
@@ -22,7 +22,7 @@ export type UpdateTextBlockInput = {
   documentId?: string | null,
   lastUpdatedBy: string,
   updatedAt: string,
-  value: string,
+  value?: string | null,
 };
 
 export type CreateUserInput = {
