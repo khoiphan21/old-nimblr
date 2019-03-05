@@ -9,8 +9,7 @@ const uuidv4 = require('uuid/v4');
 
 describe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
-  let rawData;
-  let block: Block;
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
@@ -22,6 +21,8 @@ describe('BlockFactoryService', () => {
   });
 
   describe('Create app TextBlock with all parameters specified', () => {
+    let rawData;
+    let block: Block;
     beforeEach(() => {
       rawData = {
         id: uuidv4(),
@@ -159,6 +160,8 @@ describe('BlockFactoryService', () => {
   });
 
   describe('Create app TextBlock with minimal parameters', () => {
+    let rawData;
+    let block: Block;
 
     beforeEach(() => {
       rawData = {
@@ -192,6 +195,19 @@ describe('BlockFactoryService', () => {
   });
 
   describe('(missing/error in parameters)', () => {
+    let rawData;
+    let block: Block;
+
+    beforeEach(() => {
+      rawData = {
+        type: BlockType.TEXT,
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        value: 'Test Value'
+      };
+      block = factory.createAppBlock(rawData);
+    });
+
     it('should throw error if block type is not supported', () => {
       rawData.type = null;
       try {

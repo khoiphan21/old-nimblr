@@ -75,7 +75,7 @@ export class BlockCommandService {
       value: originalInput.value === '' ? null : originalInput.value,
     };
     const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'value'
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');

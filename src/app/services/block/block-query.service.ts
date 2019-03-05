@@ -46,7 +46,6 @@ export class BlockQueryService {
    * @param subscribe a boolean flag to specify whether the subscription setup code should be run
    */
   private processRaw(data, block$: BehaviorSubject<Block>) {
-    console.log('processing raw: ', data);
     try {
       const block: Block = this.blockFactoryService.createAppBlock(data);
       // This is needed for when called by getBlocksForDocument
