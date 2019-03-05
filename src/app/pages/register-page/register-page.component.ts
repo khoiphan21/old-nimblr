@@ -136,6 +136,8 @@ export class RegisterPageComponent implements OnInit {
     const email = value.email;
     const givenName = value.phone_number;
     const familyName = value.phone_number;
+    const id = value.sub;
+    this.uuid = id;
     this.newCognitoUser.attributes = {
       email: `${email}`,
       given_name: `${givenName}`,

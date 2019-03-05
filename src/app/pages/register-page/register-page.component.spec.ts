@@ -127,9 +127,11 @@ describe('RegisterPageComponent', () => {
     const email = 'bla';
     const firstName = 'ble';
     const lastName = 'blo';
+    const id = 'blu';
     const userAttribute = {
       email: `${email}`,
-      phone_number: `${firstName}`
+      phone_number: `${firstName}`,
+      sub: `${id}`
     };
     // const userAttribute = {
     //   email: `${email}`,
@@ -140,5 +142,6 @@ describe('RegisterPageComponent', () => {
     expect(component.newCognitoUser.attributes.email).toBe(email);
     expect(component.newCognitoUser.attributes.given_name).toBe(firstName);
     expect(component.newCognitoUser.attributes.family_name).toBe(firstName);
+    expect(component.uuid).toBe(id);
   });
 });
