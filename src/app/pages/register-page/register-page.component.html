@@ -32,7 +32,7 @@
                         <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                         <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
                     </div>
-                    <button class="filled-button-primary ml-auto mr-auto" (click)="registerAccount()">GET STARTED</button>
+                    <button class="filled-button-primary ml-auto mr-auto" (click)="registerAccountInAws()">GET STARTED</button>
                 </ng-container>
             </form>
             <form [formGroup]="verificationForm">

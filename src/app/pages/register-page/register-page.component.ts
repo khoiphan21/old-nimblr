@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { AccountService } from '../../services/account/account.service';
+import { AccountService, UnverifiedUser } from '../../services/account/account.service';
 import { CognitoSignUpUser } from '../../classes/user';
 import { Router } from '@angular/router';
+import { Auth } from 'aws-amplify';
 
 @Component({
   selector: 'app-register-page',
@@ -16,7 +17,11 @@ export class RegisterPageComponent implements OnInit {
   steps = 'one';
   passwordType = 'password';
   uuid: string;
-  newCognitoUser: CognitoSignUpUser;
+  newCognitoUser: CognitoSignUpUser = {
+    username: '',
+    password: '',
+    attributes: null
+  };
 
   constructor(
     private formBuilder: FormBuilder,
@@ -25,10 +30,27 @@ export class RegisterPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.checkUserVerification();
     this.buildForm();
   }
 
-  buildForm() {
+  private checkUserVerification() {
+    const unverifiedAccount: UnverifiedUser = this.accountService.getUnverifiedUser();
+    if (unverifiedAccount === null) {
+      this.steps = 'one';
+    } else {
+      const email = unverifiedAccount.email;
+      const password = unverifiedAccount.password;
+      this.newCognitoUser = {
+        username: email,
+        password: `${password}`,
+        attributes: null
+      };
+      this.steps = 'three';
+    }
+  }
+
+  private buildForm() {
     this.registerForm = this.formBuilder.group({
       email: this.formBuilder.control('', [Validators.required, Validators.email, Validators.minLength(6)]),
       firstName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
@@ -48,7 +70,7 @@ export class RegisterPageComponent implements OnInit {
     }
   }
 
-  registerAccount() {
+  registerAccountInAws() {
     const email = this.registerForm.get('email').value;
     const firstName = this.registerForm.get('firstName').value;
     const lastName = this.registerForm.get('lastName').value;
@@ -59,8 +81,8 @@ export class RegisterPageComponent implements OnInit {
       password: `${password}`,
       attributes: {
         email: `${email}`,
-        given_name: `${firstName}`,
-        family_name: `${lastName}`
+        firstName: `${firstName}`,
+        lastName: `${lastName}`
       }
     };
     this.accountService.registerCognitoUser(this.newCognitoUser).then((data) => {
@@ -71,11 +93,54 @@ export class RegisterPageComponent implements OnInit {
 
   verifyAccount() {
     const verificationcode = this.verificationForm.get('verificationCode').value;
-    this.accountService.registerAppUser(this.newCognitoUser, this.uuid, verificationcode).then(() => {
-      this.router.navigate([`/dashboard`, this.uuid]);
+    const email = this.newCognitoUser.username;
+    this.accountService.awsConfirmAccount(email, verificationcode).then(() => {
+      this.createAccountInDatabase();
     }).catch(error => {
-      console.error(error);
+      console.error('verifiyAccount()', error);
     });
-   }
+  }
+
+  createAccountInDatabase() {
+      if (this.newCognitoUser.attributes === null) {
+        this.getCognitoUserDetails();
+      } else {
+        this.accountService.registerAppUser(this.newCognitoUser, this.uuid).then(() => {
+          this.router.navigate([`/dashboard`, this.uuid]);
+        }).catch(error => {
+          console.error(error);
+        });
+      }
+  }
+
+  getCognitoUserDetails(): Promise<any> {
+    const username = this.newCognitoUser.username;
+    const password = this.newCognitoUser.password;
+    return Auth.signIn(username, password).then(() => {
+      return Auth.currentAuthenticatedUser({ bypassCache: false });
+    }).catch(error => {
+      console.error('Login in getCognitoUserDetails()', error);
+      return Promise.reject();
+    }).then(user => {
+      const details = user.attributes;
+      this.setNewCognitoUser(details);
+      this.createAccountInDatabase();
+      return Promise.resolve();
+    }).catch(error => {
+      console.error('Get current auth user in getCognitoUserDetails()', error);
+      return Promise.reject();
+    });
+  }
+
+  private setNewCognitoUser(value: any) {
+    const email = value.email;
+    const firstName = value.phone_number;
+    const lastName = value.phone_number;
+    this.newCognitoUser.attributes = {
+      email: `${email}`,
+      firstName: `${firstName}`,
+      lastName: `${lastName}`
+    };
+  }
 
 }

@@ -13,7 +13,7 @@ export interface CognitoSignUpUser {
 
 export interface CognitoUserAttributes {
     email: string;
-    given_name: string;
-    family_name: string;
+    firstName: string;
+    lastName: string;
 }
 

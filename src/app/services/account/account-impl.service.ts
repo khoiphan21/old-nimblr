@@ -75,8 +75,8 @@ export class AccountServiceImpl implements AccountService {
             id: userId,
             username: user.username,
             email: user.attributes.email,
-            firstName: user.attributes.given_name,
-            lastName: user.attributes.family_name,
+            firstName: user.attributes.firstName,
+            lastName: user.attributes.lastName,
             documentIds: []
           }
         };
