@@ -28,7 +28,7 @@ describe('LoginPageComponent', () => {
       providers: [
         {
           provide: AccountService,
-      useClass: AccountServiceImpl
+          useClass: AccountServiceImpl
         }
       ]
     })
@@ -69,15 +69,15 @@ describe('LoginPageComponent', () => {
     });
 
     /* tslint:disable:no-string-literal */
-    xit('should navigate to register page if the user have verified the account', done => {
+    it('should navigate to register page if the user have verified the account', done => {
       const spy = spyOn(component['router'], 'navigate');
       const verifiedEmail = component.loginForm.controls.email;
       const password = component.loginForm.controls.password;
-      verifiedEmail.setValue('p1336336@nwytg.net');
-      password.setValue('Password1234');
+      verifiedEmail.setValue('khoi-test');
+      password.setValue('Khoi1234');
       component.signIn().then(() => {
         const navigatedPath = spy.calls.mostRecent().args[0][0];
-        expect(navigatedPath).toBe('dashbord');
+        expect(navigatedPath).toBe('dashboard');
         done();
       }).catch(error => {
         fail('should not fail to sign in');

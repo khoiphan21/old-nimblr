@@ -39,8 +39,9 @@ export class LoginPageComponent implements OnInit {
   signIn(): Promise<any> {
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
-    return this.accountService.login(email, password).then(() => {
-      this.router.navigate(['dashboard']);
+    return this.accountService.login(email, password).then((data) => {
+      const id = data.id;
+      this.router.navigate(['dashboard', id]);
     }).catch(error => {
       console.error('signIn() - ', error);
       if (error.code === 'UserNotConfirmedException') {
