@@ -22,6 +22,7 @@ export class BlockComponent implements OnInit {
   ngOnInit() {
     this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
       if (block !== null) {
+        console.log('block notification: ', block);
         this.block = block;
       }
     }, error => {

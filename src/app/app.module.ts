@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './modules/app-routing.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -49,6 +49,7 @@ import { NavigationTabComponent } from './components/navigation-bar/navigation-t
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
     MDBBootstrapModule.forRoot(),
     ServicesModule,

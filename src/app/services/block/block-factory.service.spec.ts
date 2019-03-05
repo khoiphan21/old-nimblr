@@ -7,7 +7,7 @@ import { BlockType } from 'src/API';
 
 const uuidv4 = require('uuid/v4');
 
-describe('BlockFactoryService', () => {
+fdescribe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
 
 
