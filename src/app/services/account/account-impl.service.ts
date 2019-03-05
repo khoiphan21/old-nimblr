@@ -109,7 +109,6 @@ export class AccountServiceImpl implements AccountService {
   }
 
   async login(username: string, password: string): Promise<any> {
-
     return new Promise((resolve, reject) => {
       Auth.signIn(username, password).then(
         cognitoUser => {

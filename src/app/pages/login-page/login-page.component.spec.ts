@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoginPageComponent } from './login-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { AccountService } from '../../services/account/account.service';
 
-describe('LoginPageComponent', () => {
+fdescribe('LoginPageComponent', () => {
   let component: LoginPageComponent;
   let fixture: ComponentFixture<LoginPageComponent>;
   let accountService: AccountService;
@@ -46,6 +46,15 @@ describe('LoginPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
+
+  it('should toggle the password status', () => {
+    expect(component.passwordType).toBe('password');
+    component.togglePassword();
+    expect(component.passwordType).toBe('text');
+    component.togglePassword();
+    expect(component.passwordType).toBe('password');
+  });
+
   describe('signIn()', () => {
 
     /* tslint:disable:no-string-literal */
@@ -53,14 +62,14 @@ describe('LoginPageComponent', () => {
       const spy = spyOn(component['router'], 'navigate');
       const unverifiedEmail = component.loginForm.controls.email;
       const password = component.loginForm.controls.password;
-      unverifiedEmail.setValue('p1234026@nwytg.net');
+      unverifiedEmail.setValue('p1356193@nwytg.net');
       password.setValue('Password1234');
       component.signIn().then(() => {
         fail('should not sign in successfully');
         done();
       }).catch(error => {
         expect(accountService.getUnverifiedUser()).toEqual({
-          email: 'p1234026@nwytg.net', password: 'Password1234'
+          email: 'p1356193@nwytg.net', password: 'Password1234'
         });
         const navigatedPath = spy.calls.mostRecent().args[0][0];
         expect(navigatedPath).toBe('register');
