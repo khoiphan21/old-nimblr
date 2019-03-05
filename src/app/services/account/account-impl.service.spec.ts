@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/helpers';
+import { UnverifiedUser } from './account.service';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
@@ -29,7 +30,7 @@ const uuidv4 = require('uuid/v4');
 })
 export class BlankComponent { }
 
-fdescribe('AccountImplService', () => {
+describe('AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
   beforeEach(() => {
@@ -51,6 +52,15 @@ fdescribe('AccountImplService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should be created', () => {
+    expect(service.getUnverifiedUser()).toEqual(null);
+    const email = 'test@email.com';
+    const password = 'Password1234';
+    const value: UnverifiedUser = {email, password};
+    service.setUnverifiedUser(email, password);
+    expect(service.getUnverifiedUser()).toEqual(value);
   });
 
   describe('login', () => {
@@ -239,14 +249,14 @@ fdescribe('AccountImplService', () => {
     it('should throw error when another operation is perform after logout', done => {
       const errorMessage = 'private operation should not be valid after logged out';
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-          return service.logout();
-        }).then(() => {
-          return service.update(user);
-        }).then(() => processTestError(errorMessage, errorMessage, done)
-        ).catch(error => {
-          expect(error).toBeTruthy();
-          done();
-        });
+        return service.logout();
+      }).then(() => {
+        return service.update(user);
+      }).then(() => processTestError(errorMessage, errorMessage, done)
+      ).catch(error => {
+        expect(error).toBeTruthy();
+        done();
+      });
     });
   });
 

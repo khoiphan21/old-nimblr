@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AccountService } from './account.service';
+import { AccountService, UnverifiedUser } from './account.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { User, CognitoSignUpUser } from '../../classes/user';
 
@@ -16,7 +16,7 @@ import { getUser } from '../../../graphql/queries';
   providedIn: 'root'
 })
 export class AccountServiceImpl implements AccountService {
-
+  private unverifiedUser: UnverifiedUser = null;
   private user$: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
   constructor(
@@ -24,6 +24,14 @@ export class AccountServiceImpl implements AccountService {
     private graphQLService: GraphQLService,
     private router: Router
   ) {
+  }
+
+  getUnverifiedUser(): UnverifiedUser {
+    return this.unverifiedUser;
+  }
+
+  setUnverifiedUser(email: string, password: string) {
+    this.unverifiedUser = {email, password};
   }
 
   private restoreSession(): Promise<User> {
