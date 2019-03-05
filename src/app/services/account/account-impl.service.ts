@@ -50,7 +50,6 @@ export class AccountServiceImpl implements AccountService {
   }
 
   async registerCognitoUser(user: CognitoSignUpUser): Promise<any> {
-
     return new Promise((resolve, reject) => {
       Auth.signUp(user).then(data => {
         resolve(data);
@@ -75,8 +74,8 @@ export class AccountServiceImpl implements AccountService {
             id: userId,
             username: user.username,
             email: user.attributes.email,
-            firstName: user.attributes.firstName,
-            lastName: user.attributes.lastName,
+            firstName: user.attributes.given_name,
+            lastName: user.attributes.family_name,
             documentIds: []
           }
         };

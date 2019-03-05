@@ -107,8 +107,8 @@ describe('AccountImplService', () => {
       password: 'Test1234',
       attributes: {
         email: 'success@simulator.amazonses.com', // for email to be sent successfully
-        firstName: 'Test',
-        lastName: 'Account'
+        given_name: 'Test',
+        family_name: 'Account'
       }
     };
 
@@ -205,8 +205,8 @@ describe('AccountImplService', () => {
         expect(response).toBeTruthy();
         expect(response.data.createUser.id).toEqual(cognitoUserId);
         expect(response.data.createUser.email).toEqual(newCognitoUser.attributes.email);
-        expect(response.data.createUser.firstName).toEqual(newCognitoUser.attributes.firstName);
-        expect(response.data.createUser.lastName).toEqual(newCognitoUser.attributes.lastName);
+        expect(response.data.createUser.firstName).toEqual(newCognitoUser.attributes.given_name);
+        expect(response.data.createUser.lastName).toEqual(newCognitoUser.attributes.family_name);
         expect(response.data.createUser.username).toEqual(newCognitoUser.username);
         // delete the app user in DynamoDB
         return deleteAppUser(cognitoUserId);

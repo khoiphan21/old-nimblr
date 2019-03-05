@@ -81,8 +81,8 @@ export class RegisterPageComponent implements OnInit {
       password: `${password}`,
       attributes: {
         email: `${email}`,
-        firstName: `${firstName}`,
-        lastName: `${lastName}`
+        given_name: `${firstName}`,
+        family_name: `${lastName}`
       }
     };
     this.accountService.registerCognitoUser(this.newCognitoUser).then((data) => {
@@ -134,12 +134,12 @@ export class RegisterPageComponent implements OnInit {
 
   private setNewCognitoUser(value: any) {
     const email = value.email;
-    const firstName = value.phone_number;
-    const lastName = value.phone_number;
+    const givenName = value.phone_number;
+    const familyName = value.phone_number;
     this.newCognitoUser.attributes = {
       email: `${email}`,
-      firstName: `${firstName}`,
-      lastName: `${lastName}`
+      given_name: `${givenName}`,
+      family_name: `${familyName}`
     };
   }
 

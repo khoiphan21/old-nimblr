@@ -99,8 +99,8 @@ describe('RegisterPageComponent', () => {
         password: `Password1234`,
         attributes: {
           email: `test@email.com`,
-          firstName: `test`,
-          lastName: `name`
+          given_name: `test`,
+          family_name: `name`
         }
       };
       component.createAccountInDatabase();
@@ -138,7 +138,7 @@ describe('RegisterPageComponent', () => {
     // };
     const setUser = component['setNewCognitoUser'](userAttribute);
     expect(component.newCognitoUser.attributes.email).toBe(email);
-    expect(component.newCognitoUser.attributes.firstName).toBe(firstName);
-    expect(component.newCognitoUser.attributes.lastName).toBe(firstName);
+    expect(component.newCognitoUser.attributes.given_name).toBe(firstName);
+    expect(component.newCognitoUser.attributes.family_name).toBe(firstName);
   });
 });
