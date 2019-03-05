@@ -15,7 +15,8 @@ export class DocumentFactoryService {
   constructor() { }
 
   createDocument({
-    id, ownerId, title = null,
+    id, ownerId,
+    title = null,
     version = 'NOT SET',
     type = DocumentType.GENERIC,
     editorIds = [],
@@ -26,7 +27,8 @@ export class DocumentFactoryService {
     updatedAt = new Date().toUTCString()
   }): Document {
     const input: CreateDocumentInput = {
-      id, version, type, title, ownerId, editorIds, viewerIds, blockIds, lastUpdatedBy, createdAt, updatedAt
+      id, version, type, title, ownerId, editorIds, viewerIds,
+      blockIds, lastUpdatedBy, createdAt, updatedAt
     };
 
     this.checkForNullOrUndefined(input);

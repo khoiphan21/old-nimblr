@@ -27,6 +27,6 @@ export class DocumentImpl implements Document {
     this.blockIds = input.blockIds === null ? [] : input.blockIds;
     this.lastUpdatedBy = input.lastUpdatedBy;
     this.createdAt = input.createdAt === null ? new Date().toISOString() : input.createdAt;
-    this.updatedAt = input.updatedAt === null ? new Date().toISOString() : input.createdAt;
+    this.updatedAt = input.updatedAt === null ? new Date().toISOString() : input.updatedAt;
   }
 }
