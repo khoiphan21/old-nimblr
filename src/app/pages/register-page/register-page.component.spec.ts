@@ -12,7 +12,7 @@ import { processTestError } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('RegisterPageComponent', () => {
+describe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
