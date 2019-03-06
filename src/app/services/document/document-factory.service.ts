@@ -15,7 +15,8 @@ export class DocumentFactoryService {
   constructor() { }
 
   createDocument({
-    id, ownerId,
+    id,
+    ownerId,
     title = null,
     version = 'NOT SET',
     type = DocumentType.GENERIC,
