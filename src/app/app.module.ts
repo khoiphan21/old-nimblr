@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './modules/app-routing.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -24,6 +24,9 @@ import { DropdownComponent } from './components/block/question-block/dropdown/dr
 import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
 import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
+import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
+import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
+import { AddInformationComponent } from './components/block/add-information/add-information.component';
 
 @NgModule({
   declarations: [
@@ -45,10 +48,14 @@ import { NavigationTabComponent } from './components/navigation-bar/navigation-t
     DropdownComponent,
     MultipleChoiceComponent,
     NavigationTabComponent,
+    HeaderOptionsComponent,
+    ForgetPasswordPageComponent,
+    AddInformationComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
     MDBBootstrapModule.forRoot(),
     ServicesModule,

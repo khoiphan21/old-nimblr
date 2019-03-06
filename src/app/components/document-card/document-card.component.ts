@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { Document } from 'src/app/classes/document';
 
 @Component({
   selector: 'app-document-card',
@@ -7,9 +9,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DocumentCardComponent implements OnInit {
 
-  constructor() { }
+  title: string;
+
+  @Input() document: Document;
+
+  constructor(
+    private router: Router
+  ) { }
 
   ngOnInit() {
+    this.title = this.document.title ? this.document.title : 'Untitled';
+  }
+
+  navigateToDocument() {
+    this.router.navigate(['/document', this.document.id]);
   }
 
 }

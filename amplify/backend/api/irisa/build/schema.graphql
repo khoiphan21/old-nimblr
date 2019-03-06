@@ -57,7 +57,7 @@ type Mutation {
 }
 
 type Subscription {
-  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock"])
+  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock", "deleteBlock"])
   onSpecificDocumentUpdate(id: ID!): Document @aws_subscribe(mutations: ["updateDocument"])
   onCreateUser: User @aws_subscribe(mutations: ["createUser"])
   onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
@@ -76,7 +76,7 @@ input CreateTextBlockInput {
   type: BlockType!
   documentId: String!
   lastUpdatedBy: String!
-  value: String!
+  value: String
 }
 
 input UpdateTextBlockInput {
@@ -86,7 +86,7 @@ input UpdateTextBlockInput {
   documentId: String
   lastUpdatedBy: String!
   updatedAt: String!
-  value: String!
+  value: String
 }
 
 enum ModelSortDirection {

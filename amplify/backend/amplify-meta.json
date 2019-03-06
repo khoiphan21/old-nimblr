@@ -19,7 +19,7 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/irisa-20190227103613-deployment/amplify-cfn-templates/auth/irisa-cloudformation-template.yml",
 				"logicalId": "authirisa"
 			},
-			"lastPushTimeStamp": "2019-03-03T17:30:45.020Z",
+			"lastPushTimeStamp": "2019-03-06T06:49:12.612Z",
 			"output": {
 				"AppClientSecret": "fj6chvr0vn8ageh6bs672dbk222pqdbk7e3sq8e3rs89fm4mn42",
 				"UserPoolId": "ap-southeast-2_d6cypRasd",
@@ -49,8 +49,8 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/irisa-20190227103613-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"logicalId": "apiirisa"
 			},
-			"lastPushTimeStamp": "2019-03-03T17:30:47.451Z",
-			"lastPushDirHash": "hqKnc1MaQ5zZh4KSYL3Pmrn0ifU="
+			"lastPushTimeStamp": "2019-03-06T06:49:15.456Z",
+			"lastPushDirHash": "wCC8Rrb1nOLuZ9rcA+ukCECp93g="
 		}
 	}
 }

@@ -7,8 +7,10 @@ import { BlockHeaderComponent } from './block-header/block-header.component';
 import { QuestionBlockComponent } from './question-block/question-block.component';
 import { CheckboxComponent } from './question-block/checkbox/checkbox.component';
 import { DropdownComponent } from './question-block/dropdown/dropdown.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MultipleChoiceComponent } from './question-block/multiple-choice/multiple-choice.component';
+import { BlockQueryService } from '../../services/block/block-query.service';
+import { MockBlockQueryService } from 'src/app/services/block/block-query.service.spec';
 
 describe('BlockComponent', () => {
   let component: BlockComponent;
@@ -27,7 +29,14 @@ describe('BlockComponent', () => {
         MultipleChoiceComponent
       ],
       imports: [
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        FormsModule
+      ],
+      providers: [
+        {
+          provide: BlockQueryService,
+          useClass: MockBlockQueryService
+        }
       ]
     })
     .compileComponents();

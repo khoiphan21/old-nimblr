@@ -9,10 +9,16 @@ import { DocumentImpl } from 'src/app/classes/document-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
 import { processTestError } from 'src/app/classes/helpers';
+import { GraphQLService } from '../graphQL/graph-ql.service';
+import { createDocument, deleteDocument } from '../../../graphql/mutations';
+import { CreateDocumentInput, DocumentType } from '../../../API';
+import { Document } from 'src/app/classes/document';
+import { User } from 'src/app/classes/user';
 
 describe('DocumentService', () => {
   let service: DocumentServiceImpl;
   let accountService: AccountService;
+  let graphQlService: GraphQLService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -32,6 +38,7 @@ describe('DocumentService', () => {
 
     accountService = TestBed.get(AccountService);
     service = TestBed.get(DocumentServiceImpl);
+    graphQlService = TestBed.get(GraphQLService);
   });
 
   it('should be created', () => {
@@ -61,15 +68,35 @@ describe('DocumentService', () => {
   });
 
   it('should retrieve all documents for a user', done => {
-    accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      const subscription = service.getUserDocuments$();
-      subscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {
-        expect(documents.length).toBeGreaterThan(0);
-        expect(documents[0] instanceof DocumentImpl).toBe(true);
-        done();
-      }, error => processTestError('Error trying to retrieve all documents from DocumentImplService test', error, done));
-    });
+    let document: Document;
+    const input: CreateDocumentInput = {
+      type: DocumentType.FORM
+    };
+
+    accountService.login(TEST_USERNAME, TEST_PASSWORD).then((user: User) => {
+      input.ownerId = user.id;
+      return graphQlService.query(createDocument, { input });
+    }).then(response => {
+      document = response.data.createDocument;
+      return getFirstDocumentSet(service);
+    }).then(documents => {
+      expect(documents.length).toBeGreaterThan(0);
+      expect(documents[0] instanceof DocumentImpl).toBe(true);
+      return graphQlService.query(deleteDocument, { input: { id: document.id } });
+    }).then(() => done()
+    ).catch(error => processTestError('failed to retrieve docs', error, done));
+
+    function getFirstDocumentSet(service: DocumentServiceImpl): Promise<Array<Document>> {
+      return new Promise((resolve, reject) => {
+        const subscription = service.getUserDocuments$();
+        subscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {
+          if (documents === null) { return; }
+          resolve(documents);
+        }, error => reject(error));
+      });
+    }
   });
+});
 
   // it('should subscribe to the list of backend documents', done => {
   //   accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
@@ -105,5 +132,4 @@ describe('DocumentService', () => {
   //     });
   //   });
   // }, environment.TIMEOUT_FOR_UPDATE_TEST);
-});
 

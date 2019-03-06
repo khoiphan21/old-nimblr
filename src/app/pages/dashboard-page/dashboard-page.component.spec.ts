@@ -8,6 +8,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { DocumentService } from 'src/app/services/document/document.service';
 import { Subject } from 'rxjs';
+import { AccountService } from '../../services/account/account.service';
+import { MockAccountService } from '../../services/account/account-impl.service.spec';
 
 class MockDocumentService {
   getUserDocuments$() {
@@ -35,6 +37,10 @@ describe('DashboardPageComponent', () => {
         {
           provide: DocumentService,
           useClass: MockDocumentService
+        },
+        {
+          provide: AccountService,
+          useClass: MockAccountService
         }
       ]
     })

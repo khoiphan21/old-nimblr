@@ -1,40 +1,36 @@
+import { BlockType } from 'src/API';
+import { UUID, ISOTimeString } from '../services/document/document-command.service';
 
-const uuidv5 = require('uuid/v5');
+const uuidv4 = require('uuid/v4');
 
 export interface Block {
-    readonly id: string;
-    readonly version: string;
+    readonly id: UUID;
+    readonly version: UUID;
     readonly type: BlockType;
-    readonly documentId: string;
-    readonly lastUpdatedBy: string;
-    readonly createdAt: string;
-    readonly updatedAt: string;
-}
-
-export enum BlockType {
-    TEXT = 'TEXT',
-    HEADER = 'HEADER',
-    QUESTION = 'QUESTION'
+    readonly documentId: UUID;
+    readonly lastUpdatedBy: UUID;
+    readonly createdAt: ISOTimeString;
+    readonly updatedAt: ISOTimeString;
 }
 
 export class TextBlock implements Block {
-    readonly id: string;
-    readonly version: string;
+    readonly id: UUID;
+    readonly version: UUID;
     readonly type: BlockType;
-    readonly documentId: string;
-    readonly lastUpdatedBy: string;
-    readonly createdAt: string;
-    readonly updatedAt: string;
+    readonly documentId: UUID;
+    readonly lastUpdatedBy: UUID;
+    readonly createdAt: ISOTimeString;
+    readonly updatedAt: ISOTimeString;
     readonly value: string;
 
     constructor({
+        id,
         version,
         documentId,
-        id = uuidv5(version, documentId),
         lastUpdatedBy,
-        value = '',
-        updatedAt = new Date().toISOString(),
-        createdAt = new Date().toISOString()
+        value,
+        updatedAt,
+        createdAt
     }) {
         this.id = id;
         this.version = version;

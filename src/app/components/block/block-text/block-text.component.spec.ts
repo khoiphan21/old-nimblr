@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockTextComponent } from './block-text.component';
+import { FormsModule } from '@angular/forms';
 
 describe('BlockTextComponent', () => {
   let component: BlockTextComponent;
@@ -8,7 +9,10 @@ describe('BlockTextComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockTextComponent ]
+      declarations: [ BlockTextComponent ],
+      imports: [
+        FormsModule
+      ]
     })
     .compileComponents();
   }));

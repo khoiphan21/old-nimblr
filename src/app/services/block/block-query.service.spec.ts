@@ -10,23 +10,24 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 import { UpdateTextBlockInput, BlockType, CreateTextBlockInput } from '../../../API';
 import { updateTextBlock, createTextBlock, deleteBlock } from '../../../graphql/mutations';
 import { environment } from '../../../environments/environment';
+import { BlockFactoryService } from './block-factory.service';
+import { processTestError } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
-export const TEST_TEXT_BLOCK_ID = '03dda84a-7d78-4272-97cc-fe0601075e30';
-
-
-interface QueryHelperInput {
-  graphQlService: GraphQLService;
+export class MockBlockQueryService {
+  getBlock$(_: string) { return new Subject(); }
+  getBlocksForDocument(_: string) { return new Promise((___, __) => {}); }
+  registerUpdateVersion(_: string) {}
+  subscribeToUpdate(_: string) { return new Promise((___, __) => {}); }
+  registerBlockCreatedByUI(_: Block) { }
 }
 
 class TextBlockQueryHelper {
-  private graphQlService: GraphQLService;
 
   private createdBlockIds: Array<string> = [];
 
-  constructor(input: QueryHelperInput) {
-    this.graphQlService = input.graphQlService;
+  constructor(private graphQlService: GraphQLService) {
   }
 
   async createBlocks({
@@ -78,12 +79,32 @@ class TextBlockQueryHelper {
 
 describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
+  let graphQlService: GraphQLService;
+  let blockFactory: BlockFactoryService;
+  let helper: TextBlockQueryHelper;
   TestBed.configureTestingModule({});
+
+  function getService(): Promise<BlockQueryService> {
+    return new Promise((resolve, reject) => {
+      Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        service$.subscribe(service => {
+          if (service === null) { return; }
+          resolve(service);
+        }, error => reject(error));
+      }).catch(error => console.error(error));
+    });
+  }
 
   beforeAll(() => {
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
       service$.next(TestBed.get(BlockQueryService));
     });
+  });
+
+  beforeEach(() => {
+    blockFactory = TestBed.get(BlockFactoryService);
+    graphQlService = TestBed.get(GraphQLService);
+    helper = new TextBlockQueryHelper(graphQlService);
   });
 
   it('should be created', () => {
@@ -105,71 +126,121 @@ describe('BlockQueryService', () => {
     });
 
     it('should return a valid block if the id is correct', done => {
-      const serviceSubscription = service$.subscribe(service => {
-        if (service === null) { return; }
-        service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(value => {
-          if (value === null) { return; }
-          checkTextBlock(value, TEST_TEXT_BLOCK_ID);
-          serviceSubscription.unsubscribe();
-          done();
-        }, error => { fail(error); done(); });
-      });
+      const documentId = uuidv4();
+      let createdBlock;
+      // Create a block
+      helper.createBlocks({
+        amount: 1,
+        documentId,
+        value: '(from getBlock$ test)'
+      }).catch(error => {
+        console.error(error);
+        return Promise.reject('unable to create blocks');
+      }).then(blocks => {
+        createdBlock = blocks[0].data.createTextBlock;
+        return getService();
+      }).then(service => {
+        return getFirstBlock(service, createdBlock.id);
+      }).catch(error => {
+        console.error(error);
+        return Promise.reject('unable to retrieve blocks');
+      }).then(retrievedBlock => {
+        checkTextBlock(retrievedBlock, createdBlock);
+        return helper.deleteCreatedBlocks();
+      }).then(() => done()
+      ).catch(error => processTestError('fail to create blocks', error, done));
     });
 
-    function checkTextBlock(givenObject, id: string) {
-      expect(givenObject instanceof TextBlock).toBe(true); // should be a TextBlock
-      expect(givenObject.id).toEqual(id);
+    function getFirstBlock(service: BlockQueryService, blockId: string): Promise<Block> {
+      return new Promise((resolve, reject) => {
+        service.getBlock$(blockId).subscribe(block => {
+          if (block !== null) { resolve(block); }
+        }, error => reject(error));
+      });
+    }
+
+    function checkTextBlock(retrievedBlock, createdBlock) {
+      expect(retrievedBlock.id).toEqual(createdBlock.id);
+      expect(retrievedBlock.version).toEqual(createdBlock.version);
+      expect(retrievedBlock.documentId).toEqual(createdBlock.documentId);
     }
 
     it('should store the retrieved block in the internal map', done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(value => {
-          if (value === null) { return; }
-          /* tslint:disable:no-string-literal */
-          const observable = service['blocksMap'].get(TEST_TEXT_BLOCK_ID);
-          expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
-          observable.subscribe(block => {
-            if (block === null) { return; }
-            checkTextBlock(block, TEST_TEXT_BLOCK_ID);
-            done();
-          });
-        }, error => { fail(error); done(); });
-      });
-    }, 10000);
+      const documentId = uuidv4();
+      let createdBlock;
+      let service: BlockQueryService;
+      helper.createBlocks({
+        amount: 1,
+        documentId
+      }).then(responses => {
+        createdBlock = responses[0].data.createTextBlock;
+        return getService();
+      }).then(retrievedService => {
+        service = retrievedService;
+        return getFirstBlock(service, createdBlock.id);
+      }).then(() => {
+        /* tslint:disable:no-string-literal */
+        const observable = service['blocksMap'].get(createdBlock.id);
+        expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
+        observable.subscribe(block => {
+          if (block === null) { return; }
+          checkTextBlock(block, createdBlock);
+          done();
+        });
+        return helper.deleteCreatedBlocks();
+      }).then(() => done()
+      ).catch(error => processTestError('error testing blocksMap', error, done));
+    });
 
     it('should not call backend again if it already called once', done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(take(1)).subscribe(value => {
-          if (value === null) { return; }
-          /* tslint:disable:no-string-literal */
-          // Spy on the query method of the graphQlService
-          const spy = spyOn(service['graphQlService'], 'query').and.returnValue(Promise.resolve());
-          // Check return value
-          service.getBlock$(TEST_TEXT_BLOCK_ID).pipe(take(1)).subscribe(block => {
-            // Check relevant values
-            checkTextBlock(block, TEST_TEXT_BLOCK_ID);
-            // Check that the query method should not have been called
-            expect(spy.calls.count()).toEqual(0);
-            done();
-          });
-        }, error => { fail(error); done(); });
-      });
+      const documentId = uuidv4();
+      let createdBlock;
+      let service: BlockQueryService;
+      helper.createBlocks({
+        amount: 1,
+        documentId
+      }).then(responses => {
+        createdBlock = responses[0].data.createTextBlock;
+        return getService();
+      }).then(retrievedService => {
+        service = retrievedService;
+        return getFirstBlock(service, createdBlock.id);
+      }).then(() => {
+        /* tslint:disable:no-string-literal */
+        // Spy on the query method of the graphQlService
+        const spy = spyOn(service['graphQlService'], 'query').and.returnValue(Promise.resolve());
+        // Check return value
+        service.getBlock$(createdBlock.id).pipe(take(1)).subscribe(block => {
+          // Check relevant values
+          checkTextBlock(block, createdBlock);
+          // Check that the query method should not have been called
+          expect(spy.calls.count()).toEqual(0);
+          done();
+        });
+      }).catch(error => processTestError('error in test not call backend', error, done));
     });
 
     it('should notify when there is an update on a block', done => {
-      service$.subscribe(service => {
+      const documentId = uuidv4();
+      let createdBlock;
+      let service: BlockQueryService;
+      helper.createBlocks({
+        amount: 1,
+        documentId
+      }).then(responses => {
+        createdBlock = responses[0].data.createTextBlock;
+        return getService();
+      }).then(service => {
         if (service === null) { return; }
         let shouldUpdate = true;
         const input: UpdateTextBlockInput = {
-          id: TEST_TEXT_BLOCK_ID,
+          id: createdBlock.id,
           version: uuidv4(),
           lastUpdatedBy: uuidv4(),
           updatedAt: new Date().toISOString(),
           value: '(block for testing) new value: ' + Math.random()
         };
-        service.getBlock$(TEST_TEXT_BLOCK_ID).subscribe(block => {
+        service.getBlock$(createdBlock.id).subscribe(block => {
           if (block === null) { return; }
           // Setup subscription
           service.subscribeToUpdate(block.documentId);
@@ -191,8 +262,8 @@ describe('BlockQueryService', () => {
             expect(block.updatedAt).toEqual(input.updatedAt);
             done();
           }
-        });
-      });
+        }, () => console.error('unable to get block with given id'));
+      }).catch(error => processTestError('Error in testing update for block', error, done));
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     it('should not notify if the received version is in myVersions', done => {
@@ -269,7 +340,7 @@ describe('BlockQueryService', () => {
       service$.subscribe(service => {
         if (service === null) { return; }
 
-        const helper = new TextBlockQueryHelper({ graphQlService });
+        const helper = new TextBlockQueryHelper(graphQlService);
 
         // Start testing logic
         // First create two blocks
@@ -324,7 +395,7 @@ describe('BlockQueryService', () => {
       const amountOfBlocks = 1;
       service$.subscribe(service => {
         if (service === null) { return; }
-        const helper = new TextBlockQueryHelper({ graphQlService });
+        const helper = new TextBlockQueryHelper(graphQlService);
 
         // Start testing logic
         // First create two blocks
@@ -365,9 +436,7 @@ describe('BlockQueryService', () => {
           value: '(from Helper test)'
         };
 
-        const helper = new TextBlockQueryHelper({
-          graphQlService: TestBed.get(GraphQLService)
-        });
+        const helper = new TextBlockQueryHelper(TestBed.get(GraphQLService));
 
         const ids = new Set();
 
@@ -413,6 +482,52 @@ describe('BlockQueryService', () => {
         expect(spy.calls.count()).toBe(1);
         done();
       }).catch(error => { fail('Error received'); console.error(error); done(); });
+    });
+  });
+
+  describe('registerBlockCreatedByUI', () => {
+    let block: Block;
+
+    function getService(): Promise<BlockQueryService> {
+      return new Promise((resolve, reject) => {
+        service$.subscribe(service => {
+          if (service !== null) {
+            resolve(service);
+          }
+        }, error => reject(error));
+      });
+    }
+
+    beforeEach(() => {
+      block = blockFactory.createAppBlock({
+        id: uuidv4(),
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        version: uuidv4(),
+        type: BlockType.TEXT,
+        value: ''
+      });
+    });
+
+    it('should store the block in the internal map', done => {
+      getService().then(service => {
+        service.registerBlockCreatedByUI(block);
+        service.getBlock$(block.id).subscribe(storedBlock => {
+          if (storedBlock === null) { return; }
+          expect(storedBlock.id).toEqual(block.id);
+          done();
+        }, error => processTestError(
+          'registerBlockCreatedByUI test unable to get block', error, done
+        ));
+      }).catch(error => processTestError('unable to get service', error, done));
+    });
+
+    it('should also store the version of the given block', done => {
+      getService().then(service => {
+        service.registerBlockCreatedByUI(block);
+        expect(service['myVersions'].has(block.version)).toBe(true);
+        done();
+      }, error => processTestError('unable to get service', error, done));
     });
   });
 });
