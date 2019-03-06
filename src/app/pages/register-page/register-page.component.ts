@@ -36,9 +36,7 @@ export class RegisterPageComponent implements OnInit {
 
   private checkUserVerification() {
     const unverifiedAccount: UnverifiedUser = this.accountService.getUnverifiedUser();
-    if (unverifiedAccount === null) {
-      this.steps = 'one';
-    } else {
+    if (unverifiedAccount !== null) {
       const email = unverifiedAccount.email;
       const password = unverifiedAccount.password;
       this.newCognitoUser = {
@@ -70,7 +68,7 @@ export class RegisterPageComponent implements OnInit {
     }
   }
 
-  registerAccountInAws() {
+  registerAccountInAws(): Promise<any> {
     const email = this.registerForm.get('email').value;
     const firstName = this.registerForm.get('firstName').value;
     const lastName = this.registerForm.get('lastName').value;
@@ -85,9 +83,10 @@ export class RegisterPageComponent implements OnInit {
         family_name: `${lastName}`
       }
     };
-    this.accountService.registerCognitoUser(this.newCognitoUser).then((data) => {
+    return this.accountService.registerCognitoUser(this.newCognitoUser).then((data) => {
       this.uuid = data.userSub;
       this.steps = 'three';
+      return Promise.resolve();
     });
   }
 
@@ -101,16 +100,17 @@ export class RegisterPageComponent implements OnInit {
     });
   }
 
-  createAccountInDatabase() {
+  async createAccountInDatabase(): Promise<any> {
+    try {
       if (this.newCognitoUser.attributes === null) {
         this.getCognitoUserDetails();
       } else {
-        this.accountService.registerAppUser(this.newCognitoUser, this.uuid).then(() => {
-          this.router.navigate([`/dashboard`, this.uuid]);
-        }).catch(error => {
-          console.error(error);
-        });
+        await this.accountService.registerAppUser(this.newCognitoUser, this.uuid);
+        this.router.navigate([`/dashboard`]);
       }
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   getCognitoUserDetails(): Promise<any> {
@@ -133,15 +133,11 @@ export class RegisterPageComponent implements OnInit {
   }
 
   private setNewCognitoUser(value: any) {
-    const email = value.email;
-    const givenName = value.phone_number;
-    const familyName = value.phone_number;
-    const id = value.sub;
-    this.uuid = id;
+    this.uuid = value.sub;
     this.newCognitoUser.attributes = {
-      email: `${email}`,
-      given_name: `${givenName}`,
-      family_name: `${familyName}`
+      email: `${value.email}`,
+      given_name: `${value.firstName}`,
+      family_name: `${value.lastName}`
     };
   }
 

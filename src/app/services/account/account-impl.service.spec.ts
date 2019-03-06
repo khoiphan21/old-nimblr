@@ -19,9 +19,9 @@ import { UnverifiedUser } from './account.service';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
 
-export const TEST_USERNAME = 'khoi-test';
-export const TEST_PASSWORD = 'Khoi1234';
-export const TEST_USER_ID = '85a705f1-7485-4efd-9e4a-d196ff8c9219';
+export const TEST_USERNAME = 'p1354930@nwytg.net';
+export const TEST_PASSWORD = 'Test1234';
+export const TEST_USER_ID = '88627eeb-f992-477f-8728-cfc01929c379';
 
 const uuidv4 = require('uuid/v4');
 @Component({
