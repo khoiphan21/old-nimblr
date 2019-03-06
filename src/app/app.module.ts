@@ -25,6 +25,7 @@ import { CheckboxComponent } from './components/block/question-block/checkbox/ch
 import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
 import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
+import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { HeaderOptionsComponent } from './components/header/header-options/heade
     MultipleChoiceComponent,
     NavigationTabComponent,
     HeaderOptionsComponent,
+    ForgetPasswordPageComponent,
   ],
   imports: [
     BrowserModule,
