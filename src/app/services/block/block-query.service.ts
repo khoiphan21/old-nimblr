@@ -86,11 +86,11 @@ export class BlockQueryService {
       });
     });
   }
-  
+
   registerUpdateVersion(version: string) {
     this.myVersions.add(version);
   }
-  
+
 
   // TODO: Refactor this Bruno
   /* Purpose?:
@@ -103,14 +103,12 @@ export class BlockQueryService {
     }
 
     // subscribe to graphql subscription
-     const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
+    const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
       const data = response.value.data.onUpdateBlockInDocument;
-      console.log('notification for updateBlockInDocument: ', data);
 
       const block: Block = this.blockFactoryService.createAppBlock(data);
       let block$: BehaviorSubject<Block>;
       if (!this.blocksMap.has(block.id)) {
-        console.log('ignoring this version');
         block$ = new BehaviorSubject<Block>(null);
         this.blocksMap.set(block.id, block$);
       } else {

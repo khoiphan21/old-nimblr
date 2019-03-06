@@ -90,7 +90,7 @@ describe('LoginPageComponent', () => {
         done();
       }).catch(error => {
         fail('should not fail to sign in');
-        console.log(error);
+        console.error(error);
         done();
       });
     });

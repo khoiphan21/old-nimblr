@@ -69,7 +69,6 @@ export class DocumentPageComponent implements OnInit {
 
   private setupBlockUpdateSubscription() {
     // The return result can be ignored (maybe)
-    console.log('setting up block update subscription')
     this.blockQueryService.subscribeToUpdate(this.currentDocument.id);
   }
 

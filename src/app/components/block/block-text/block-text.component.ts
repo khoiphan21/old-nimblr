@@ -23,7 +23,6 @@ export class BlockTextComponent implements OnChanges {
 
   ngOnChanges() {
     this.value = this.block.value === null ? '' : this.block.value;
-    console.log(this.value);
   }
 
   updateValue() {
@@ -38,8 +37,7 @@ export class BlockTextComponent implements OnChanges {
         value: this.value,
         createdAt: this.block.createdAt
       });
-      this.blockCommandService.updateBlock(updatedBlock)
-      .then(updatedBlock => console.log('updated block: ', updatedBlock));
+      this.blockCommandService.updateBlock(updatedBlock);
     }, 500);
   }
 
