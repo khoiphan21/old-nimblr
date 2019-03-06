@@ -2,8 +2,13 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 .content {
-    color: $color-grey;
-    font-family: $font-roboto;
-    font-size: 14px;
-    line-height: 20px;
+   
+    input[type="text"] {
+        width: 100%;
+        border: 0;
+        color: $color-grey;
+        font-family: $font-roboto;
+        font-size: 14px;
+        line-height: 20px;
+    }
 }
