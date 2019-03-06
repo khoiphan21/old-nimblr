@@ -5,7 +5,7 @@
         <section class="content col-10 pt-4">
             <h1>Untitled Form</h1>
             <app-block *ngFor="let id of blockIds" [blockId]="id"></app-block>
-            <div class="add-block" (click)="addBlock()">+</div>
+            <app-add-information (click)="addBlock()" style="width: 100%"></app-add-information>
         </section>
     </div>
 </div>
