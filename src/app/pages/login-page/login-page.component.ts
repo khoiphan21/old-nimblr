@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account/account.service';
 import { Router } from '@angular/router';
-import { Auth, API, graphqlOperation } from 'aws-amplify';
-import { getUser } from '../../../graphql/queries';
 
 @Component({
   selector: 'app-login-page',
@@ -38,14 +36,23 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  signIn() {
+  signIn(): Promise<any> {
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
-    this.accountService.login(email, password).then(() => {
-      this.router.navigate(['dashboard']);
+    return this.accountService.login(email, password).then((data) => {
+      if (data === null) {
+        throw new Error(`[loginPage]: 'Null' received from successful login`);
+      }
+      const id = data.id;
+      this.router.navigate(['dashboard', id]);
     }).catch(error => {
-      alert('An unknown error occurred. Open Console for details');
-      console.error(error);
+      if (error.code === 'UserNotConfirmedException') {
+        this.accountService.setUnverifiedUser(email, password);
+        this.router.navigate(['register']);
+      } else {
+        console.error('Unknown error in signIn(): ', error);
+      }
+      return Promise.reject();
     });
   }
 

@@ -62,7 +62,6 @@ export class BlockQueryService {
   async getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
     return new Promise((resolve, reject) => {
       const observables: Array<Observable<Block>> = [];
-
       const params = {
         filter: {
           documentId: { eq: id }
@@ -75,28 +74,36 @@ export class BlockQueryService {
         params,
         listAll: true
       }).then(response => {
+        // call funcion
         response.items.forEach(rawBlock => {
           const blockObservable = new BehaviorSubject(null);
           observables.push(blockObservable);
           this.processRaw(rawBlock, blockObservable);
         });
         resolve(observables);
+      }).catch(err => {
+        console.error('rawBlock parsing error: ', err);
       });
-
     });
   }
-
+  
   registerUpdateVersion(version: string) {
     this.myVersions.add(version);
   }
+  
 
+  // TODO: Refactor this Bruno
+  /* Purpose?:
+  - subscribe 
+  */
   subscribeToUpdate(documentId: string): Promise<Subscription> {
     if (this.subscriptionMap.has(documentId)) {
+      // If not empty:
       return Promise.resolve(this.subscriptionMap.get(documentId));
     }
 
     // subscribe to graphql subscription
-    const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
+     const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
       const data = response.value.data.onUpdateBlockInDocument;
       console.log('notification for updateBlockInDocument: ', data);
 
@@ -124,6 +131,7 @@ export class BlockQueryService {
 
     return Promise.resolve(subscription);
   }
+
 
   registerBlockCreatedByUI(block: Block) {
     const block$ = new BehaviorSubject<Block>(null);

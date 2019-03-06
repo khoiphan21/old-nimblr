@@ -14,14 +14,15 @@ import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/helpers';
+import { UnverifiedUser } from './account.service';
 import { Subject } from 'rxjs';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
 
-export const TEST_USERNAME = 'khoi-test';
-export const TEST_PASSWORD = 'Khoi1234';
-export const TEST_USER_ID = '85a705f1-7485-4efd-9e4a-d196ff8c9219';
+export const TEST_USERNAME = 'p1354930@nwytg.net';
+export const TEST_PASSWORD = 'Test1234';
+export const TEST_USER_ID = '88627eeb-f992-477f-8728-cfc01929c379';
 
 export class MockAccountService {
   getUser$() {
@@ -65,6 +66,15 @@ describe('AccountImplService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should be created', () => {
+    expect(service.getUnverifiedUser()).toEqual(null);
+    const email = 'test@email.com';
+    const password = 'Password1234';
+    const value: UnverifiedUser = {email, password};
+    service.setUnverifiedUser(email, password);
+    expect(service.getUnverifiedUser()).toEqual(value);
   });
 
   describe('login', () => {
@@ -190,7 +200,7 @@ describe('AccountImplService', () => {
       let cognitoUserId: string;
 
       // Mock the function to confirm verification code with AWS
-      service['awsConfirmAccount'] = () => {
+      service.awsConfirmAccount = () => {
         return Promise.resolve();
       };
 
@@ -203,7 +213,7 @@ describe('AccountImplService', () => {
       }).then(loggedInUser => {
         // Now register app user and check if it's registered properly
         cognitoUserId = loggedInUser.signInUserSession.idToken.payload.sub;
-        return service.registerAppUser(newCognitoUser, cognitoUserId, 'random-code');
+        return service.registerAppUser(newCognitoUser, cognitoUserId);
       }).then(response => {
         // Check that all expected attributes are there, and match with the originals
         expect(response).toBeTruthy();
@@ -253,14 +263,14 @@ describe('AccountImplService', () => {
     it('should throw error when another operation is perform after logout', done => {
       const errorMessage = 'private operation should not be valid after logged out';
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-          return service.logout();
-        }).then(() => {
-          return service.update(user);
-        }).then(() => processTestError(errorMessage, errorMessage, done)
-        ).catch(error => {
-          expect(error).toBeTruthy();
-          done();
-        });
+        return service.logout();
+      }).then(() => {
+        return service.update(user);
+      }).then(() => processTestError(errorMessage, errorMessage, done)
+      ).catch(error => {
+        expect(error).toBeTruthy();
+        done();
+      });
     });
   });
 

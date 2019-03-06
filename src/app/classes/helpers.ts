@@ -8,7 +8,7 @@ export function isUuid(value: string): boolean {
 
 /**
  * Process an error during an asynchronous test
- * 
+ *
  * @param message The message to fail the test with
  * @param error the error object to log to console
  * @param done the 'done' object to mark the test as done
