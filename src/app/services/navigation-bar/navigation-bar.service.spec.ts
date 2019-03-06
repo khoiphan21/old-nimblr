@@ -13,8 +13,6 @@ import { environment } from '../../../environments/environment';
 
 const uuidv4 = require('uuid/v4');
 
-const sampleUser = new UserImpl('user123', 'test', 'user', 'test@email.com');
-
 describe('NavigationBarService', () => {
   let accountService: AccountService;
   let documentService: DocumentService;
@@ -73,6 +71,7 @@ describe('NavigationBarService', () => {
         const navigationSubscription = service.getNavigationBar$();
         let navigationTabCount = 0;
         navigationSubscription.pipe(skip(1)).subscribe(navigationTabs => {
+          console.log(navigationTabs);
           navigationTabCount = navigationTabs.length;
           switch (navigationTabCount) {
             case 0:

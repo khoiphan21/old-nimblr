@@ -108,7 +108,7 @@ export class AccountServiceImpl implements AccountService {
     } catch (error) { return Promise.reject(error); }
   }
 
-  async login(username: string, password: string): Promise<any> {
+  async login(username: string, password: string): Promise<User> {
     return new Promise((resolve, reject) => {
       Auth.signIn(username, password).then(
         cognitoUser => {

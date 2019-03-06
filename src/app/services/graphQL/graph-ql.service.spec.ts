@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
 import { GraphQLService } from './graph-ql.service';
-import { take, skip } from 'rxjs/operators';
-import { CreateTextBlockInput, BlockType, UpdateTextBlockInput, UpdateBlockInput } from '../../../API';
-import { createTextBlock, deleteBlock, updateTextBlock, updateBlock } from '../../../graphql/mutations';
+import { take } from 'rxjs/operators';
+import { CreateTextBlockInput, BlockType, UpdateBlockInput } from '../../../API';
+import { createTextBlock, deleteBlock, updateTextBlock } from '../../../graphql/mutations';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
@@ -11,7 +11,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Block } from 'src/app/classes/block';
 import { environment } from '../../../environments/environment';
 import { listBlocks } from '../../../graphql/queries';
-import { processTestError } from 'src/app/classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
@@ -161,16 +160,14 @@ describe('GraphQLService', () => {
           lastUpdatedBy: uuidv4(),
           value: '(from GraphQlService listing test)'
         };
-        // Create the test blocks
-        service.query(createTextBlock, { input: testInput }).then(response => {
-          blockIds.push(response.data.createTextBlock.id);
-          return service.query(createTextBlock, { input: testInput });
-        }).then(response => {
-          blockIds.push(response.data.createTextBlock.id);
-          return service.query(createTextBlock, { input: testInput });
-        }).then(response => {
-          blockIds.push(response.data.createTextBlock.id);
-          // Now test the list query
+        Promise.all([
+          service.query(createTextBlock, { input: testInput }),
+          service.query(createTextBlock, { input: testInput }),
+          service.query(createTextBlock, { input: testInput })
+        ]).then(responses => {
+          responses.forEach(response => {
+            blockIds.push(response.data.createTextBlock.id);
+          });
           return service.list({
             query: listBlocks,
             queryName: 'listBlocks',
@@ -199,7 +196,7 @@ describe('GraphQLService', () => {
           done();
         }).catch(error => { console.error(error); fail('error occurred'); done(); });
       }, error => { fail(); console.error(error); done(); });
-    });
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
   });
 
 });

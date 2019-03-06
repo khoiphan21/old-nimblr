@@ -1,6 +1,6 @@
 <div class="row no-pad">
     <!-- <div class="row no-pad" *ngIf="currentUser"> -->
-    <section class="user-profile col-2 pl-4">
+    <section class="user-profile col-2 pl-4" *ngIf="currentUser">
         <div class="user-icon mr-2">C</div>
         <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
     </section>

@@ -15,6 +15,14 @@ import { processTestError } from '../../classes/helpers';
 
 const uuidv4 = require('uuid/v4');
 
+export class MockBlockQueryService {
+  getBlock$(_: string) { return new Subject(); }
+  getBlocksForDocument(_: string) { return new Promise((___, __) => {}); }
+  registerUpdateVersion(_: string) {}
+  subscribeToUpdate(_: string) { return new Promise((___, __) => {}); }
+  registerBlockCreatedByUI(_: Block) { }
+}
+
 class TextBlockQueryHelper {
 
   private createdBlockIds: Array<string> = [];
