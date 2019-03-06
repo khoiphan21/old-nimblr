@@ -11,8 +11,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'dashboard', component: DashboardPageComponent },
-  { path: 'document', component: DocumentPageComponent },
-  { path: 'forgot-password', component: ForgetPasswordPageComponent }
+  { path: 'forgot-password', component: ForgetPasswordPageComponent },
+  { path: 'document/:id', component: DocumentPageComponent }
 ];
 
 @NgModule({

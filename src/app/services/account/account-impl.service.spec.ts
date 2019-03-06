@@ -15,6 +15,7 @@ import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/helpers';
 import { UnverifiedUser } from './account.service';
+import { Subject } from 'rxjs';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
@@ -22,6 +23,19 @@ const AWS = require('aws-sdk');
 export const TEST_USERNAME = 'p1354930@nwytg.net';
 export const TEST_PASSWORD = 'Test1234';
 export const TEST_USER_ID = '88627eeb-f992-477f-8728-cfc01929c379';
+
+export class MockAccountService {
+  getUser$() {
+    return new Subject();
+  }
+  isUserReady() {
+    return new Promise((_, __) => {}); // a promise that never returns
+  }
+  login() {
+    return new Promise((_, __) => {}); // a promise that never returns
+  }
+}
+
 
 const uuidv4 = require('uuid/v4');
 @Component({

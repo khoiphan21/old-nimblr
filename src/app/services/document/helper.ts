@@ -6,6 +6,7 @@ export class DocumentQueryTestHelper {
 
   private documentId: string;
   private latestResponse: any;
+  private createdDocument: any;
 
   constructor(
     private graphQlService: GraphQLService
@@ -21,6 +22,7 @@ export class DocumentQueryTestHelper {
       const response = await this.graphQlService.query(createDocument, { input });
 
       this.documentId = response.data.createDocument.id;
+      this.createdDocument = response.data.createDocument;
       this.latestResponse = response;
 
       return Promise.resolve(response.data.createDocument);
@@ -59,5 +61,9 @@ export class DocumentQueryTestHelper {
 
   getLatestResponse(): any {
     return this.latestResponse;
+  }
+
+  getCreatedDocument(): any {
+    return this.createdDocument;
   }
 }

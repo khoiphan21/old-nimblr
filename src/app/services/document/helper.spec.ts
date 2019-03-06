@@ -28,6 +28,7 @@ describe('DocumentQueryTestHelper', () => {
       helper.sendCreateDocument(input).then(createdDocument => {
         createdId = createdDocument.id;
         expect(createdDocument).toBeTruthy();
+        expect(helper.getCreatedDocument()).toBeTruthy();
         // now attempt to update the document
         return helper.sendUpdateDocument({
           id: createdId,

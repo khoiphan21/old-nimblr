@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Block } from '../../classes/block';
-import { Observable } from 'rxjs';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { BlockQueryService } from './block-query.service';
 import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../API';
@@ -67,14 +65,25 @@ export class BlockCommandService {
     }
   }
 
-  private async createTextBlock(input: CreateBlockInput): Promise<any> {
+  private async createTextBlock(originalInput: CreateBlockInput): Promise<any> {
+    const input = {
+      id: originalInput.id,
+      version: originalInput.version,
+      type: originalInput.type,
+      documentId: originalInput.documentId,
+      lastUpdatedBy: originalInput.lastUpdatedBy,
+      value: originalInput.value,
+    };
     const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'value'
-    ]
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
+    ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 
       this.blockQueryService.registerUpdateVersion(input.version);
+
+      // Now do a convert for empty string in 'value'
+      input.value = input.value === '' ? null : input.value;
 
       return this.graphQLService.query(createTextBlock, { input });
     } catch (error) {

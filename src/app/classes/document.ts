@@ -1,16 +1,17 @@
 import { User } from './user';
+import { UUID, ISOTimeString } from '../services/document/document-command.service';
+import { DocumentType } from 'src/API';
 
 export interface Document {
-  id: string;
+  id: UUID;
+  version: UUID;
   type: DocumentType;
   title: string;
-  owner: User;
-  editors: Array<User>;
-  viewers: Array<User>;
-  order: Array<string>;
-}
-
-export enum DocumentType {
-  GENERIC = 'GENERIC',
-  FORM = 'FORM'
+  ownerId: UUID;
+  editorIds: Array<UUID>;
+  viewerIds: Array<UUID>;
+  blockIds: Array<UUID>;
+  lastUpdatedBy: UUID;
+  createdAt: ISOTimeString;
+  updatedAt: ISOTimeString;
 }

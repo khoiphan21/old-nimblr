@@ -45,9 +45,9 @@ export class BlockQueryService {
    * @param block$ the block observable
    * @param subscribe a boolean flag to specify whether the subscription setup code should be run
    */
-  private processRaw(data, block$: BehaviorSubject<Block>, subscribe = true) {
+  private processRaw(data, block$: BehaviorSubject<Block>) {
     try {
-      const block: Block = this.blockFactoryService.createBlock(data);
+      const block: Block = this.blockFactoryService.createAppBlock(data);
       // This is needed for when called by getBlocksForDocument
       this.blocksMap.set(block.id, block$);
       if (!this.myVersions.has(block.version)) {
@@ -78,7 +78,7 @@ export class BlockQueryService {
         response.items.forEach(rawBlock => {
           const blockObservable = new BehaviorSubject(null);
           observables.push(blockObservable);
-          this.processRaw(rawBlock, blockObservable, false);
+          this.processRaw(rawBlock, blockObservable);
         });
         resolve(observables);
       }).catch(err => {
@@ -103,8 +103,25 @@ export class BlockQueryService {
     }
 
     // subscribe to graphql subscription
-    const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(rawBlocks => {
-      this.arrangeBlocksSubscription(rawBlocks);
+     const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
+      const data = response.value.data.onUpdateBlockInDocument;
+      console.log('notification for updateBlockInDocument: ', data);
+
+      const block: Block = this.blockFactoryService.createAppBlock(data);
+      let block$: BehaviorSubject<Block>;
+      if (!this.blocksMap.has(block.id)) {
+        console.log('ignoring this version');
+        block$ = new BehaviorSubject<Block>(null);
+        this.blocksMap.set(block.id, block$);
+      } else {
+        block$ = this.blocksMap.get(block.id) as BehaviorSubject<Block>;
+      }
+      // This is needed for when called by getBlocksForDocument
+      this.blocksMap.set(block.id, block$);
+      if (!this.myVersions.has(block.version)) {
+        // To ensure only other versions will be updated
+        block$.next(block);
+      }
     }, error => {
       console.error('Error received while processing subscription notification');
       console.error(error);
@@ -115,23 +132,13 @@ export class BlockQueryService {
     return Promise.resolve(subscription);
   }
 
-  private async arrangeBlocksSubscription(rawBlocks: any){
-    const data = rawBlocks.value.data.onUpdateBlockInDocument;
-    const block: Block = this.blockFactoryService.createBlock(data);
-    let block$: BehaviorSubject<Block>;
 
-    if (!this.blocksMap.has(block.id)) {
-      block$ = new BehaviorSubject<Block>(null);
-      this.blocksMap.set(block.id, block$);
-    } else {
-      block$ = this.blocksMap.get(block.id) as BehaviorSubject<Block>;
-    }
-    
-    // This is needed for when called by getBlocksForDocument
+  registerBlockCreatedByUI(block: Block) {
+    const block$ = new BehaviorSubject<Block>(null);
     this.blocksMap.set(block.id, block$);
-    if (!this.myVersions.has(block.version)) {
-      // To ensure only other versions will be updated
-      block$.next(block);
-    }
+    block$.next(block);
+
+    // Register the version
+    this.registerUpdateVersion(block.version);
   }
 }
