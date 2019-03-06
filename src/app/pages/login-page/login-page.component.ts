@@ -40,13 +40,17 @@ export class LoginPageComponent implements OnInit {
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
     return this.accountService.login(email, password).then((data) => {
+      if (data === null) {
+        throw new Error(`[loginPage]: 'Null' received from successful login`);
+      }
       const id = data.id;
       this.router.navigate(['dashboard', id]);
     }).catch(error => {
-      console.error('signIn() - ', error);
       if (error.code === 'UserNotConfirmedException') {
         this.accountService.setUnverifiedUser(email, password);
         this.router.navigate(['register']);
+      } else {
+        console.error('Unknown error in signIn(): ', error);
       }
       return Promise.reject();
     });

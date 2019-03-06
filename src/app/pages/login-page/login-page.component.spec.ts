@@ -9,7 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { AccountService } from '../../services/account/account.service';
 
-fdescribe('LoginPageComponent', () => {
+describe('LoginPageComponent', () => {
   let component: LoginPageComponent;
   let fixture: ComponentFixture<LoginPageComponent>;
   let accountService: AccountService;
@@ -80,11 +80,11 @@ fdescribe('LoginPageComponent', () => {
     /* tslint:disable:no-string-literal */
     it('should navigate to register page if the user have verified the account', done => {
       const spy = spyOn(component['router'], 'navigate');
-      const verifiedEmail = component.loginForm.controls.email;
-      const password = component.loginForm.controls.password;
-      verifiedEmail.setValue('khoi-test');
-      password.setValue('Khoi1234');
+      const accountServiceSpy = spyOn(component['accountService'], 'login')
+        .and.returnValues(Promise.resolve({ id: 'abcd' }));
+
       component.signIn().then(() => {
+        expect(accountServiceSpy.calls.count()).toBe(1);
         const navigatedPath = spy.calls.mostRecent().args[0][0];
         expect(navigatedPath).toBe('dashboard');
         done();
