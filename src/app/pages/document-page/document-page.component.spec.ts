@@ -13,7 +13,7 @@ import { DocumentOptionsComponent } from '../../components/document-card/documen
 import { QuestionBlockComponent } from '../../components/block/question-block/question-block.component';
 import { DropdownComponent } from '../../components/block/question-block/dropdown/dropdown.component';
 import { CheckboxComponent } from '../../components/block/question-block/checkbox/checkbox.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MultipleChoiceComponent } from '../../components/block/question-block/multiple-choice/multiple-choice.component';
 import { Subject } from 'rxjs';
 
@@ -21,6 +21,7 @@ import { NavigationTabComponent } from '../../components/navigation-bar/navigati
 import { DocumentQueryService } from '../../services/document/document-query.service';
 import { AccountService } from '../../services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
+import { AddInformationComponent } from '../../components/block/add-information/add-information.component';
 
 class MockDocumentQueryService {
   getDocument$() {
@@ -47,10 +48,12 @@ describe('DocumentPageComponent', () => {
         DropdownComponent,
         CheckboxComponent,
         MultipleChoiceComponent,
-        NavigationTabComponent
+        NavigationTabComponent,
+        AddInformationComponent
       ],
       imports: [
         ServicesModule,
+        FormsModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes([])
       ],
