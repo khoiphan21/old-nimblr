@@ -24,6 +24,7 @@ import { DropdownComponent } from './components/block/question-block/dropdown/dr
 import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
 import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
+import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { NavigationTabComponent } from './components/navigation-bar/navigation-t
     DropdownComponent,
     MultipleChoiceComponent,
     NavigationTabComponent,
+    HeaderOptionsComponent,
   ],
   imports: [
     BrowserModule,
