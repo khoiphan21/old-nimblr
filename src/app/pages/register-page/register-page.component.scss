@@ -74,18 +74,6 @@ div.fluid-container {
                 height: 40px;
                 font-size: 15px;
             }
-            div.sign-in {
-                font-size: 0.85rem;
-                position: absolute;
-                bottom: 2rem;
-                left: 0;
-                width: 100%;
-                text-align: center;
-                span {
-                    color: $color-blue;
-                    cursor: pointer;
-                }
-            }
         }
     }
 }
