@@ -5,21 +5,29 @@
             <section class="heading">
                 <h1 *ngIf="steps === 'one'">Enter your work <br class="mobile"> email to get started</h1>
                 <h3 *ngIf="steps === 'one'">It’s as simple as that.</h3>
-                <h1 *ngIf="steps === 'two'">We just need a few more details</h1>
+                <h1 *ngIf="steps === 'two'">Great! We just need a few more details</h1>
                 <h1 *ngIf="steps === 'three'">Please check your email inbox and enter the verification code</h1>
             </section>
             <form [formGroup]="registerForm">
                 <ng-container *ngIf="steps === 'one'">
                     <!-- Step 1  -->
                     <div class="form-input">
-                        <div class="input-label mb-1">This email will also be used as your username</div>
+                        <div class="input-label mb-1" style="text-transform: none;">This email will also be used as your username</div>
                         <input class="mb-4" formControlName="email" type="email" required>
                     </div>
                     <button class="filled-button-primary ml-auto mr-auto" (click)="steps = 'two'">Continue</button>
                 </ng-container>
                 <ng-container *ngIf="steps === 'two'">
                     <!-- Step 2  -->
-                    <div class="row no-pad">
+                    <div class="form-input mobile">
+                        <div class="input-label mb-1">First Name</div>
+                        <input class="mb-4" formControlName="firstName" type="text" required>
+                    </div>
+                    <div class="form-input  mobile">
+                        <div class="input-label  mb-1">Last Name</div>
+                        <input class="mb-4" formControlName="lastName" type="text" required>
+                    </div>
+                    <div class="row no-pad desktop">
                         <div class="form-input col-5 pl-0 ">
                             <div class="input-label mb-1">First Name</div>
                             <input class="mb-4" formControlName="firstName" type="text" required>
@@ -47,7 +55,7 @@
                     <button class="filled-button-primary ml-auto mr-auto" [disabled]="verificationForm.invalid" (click)="verifyAccount()">Verify Code</button>
                 </ng-container>
             </form>
-            <button class="outline-button-primary mobile">Sign in</button>
+            <button class="outline-button-primary mobile" routerLink="/login">Sign in</button>
             <div class="sign-in desktop">Already have an account? <span routerLink="/login">Sign in</span></div>
         </section>
     </div>

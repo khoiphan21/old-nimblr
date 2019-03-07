@@ -11,7 +11,7 @@ div.fluid-container {
             align-items: flex-start;
             justify-content: flex-start;
             padding: 0 10%;
-            padding-top: 150px;
+            padding-top: 125px;
             section.heading {
                 margin-bottom: 2rem;
                 h1 {
@@ -22,7 +22,7 @@ div.fluid-container {
                     height: fit-content;
                 }
                 h3 {
-                    font-size: 18px;
+                    font-size: 19px;
                     color: $color-grey;
                     font-weight: normal;
                 }
@@ -50,7 +50,7 @@ div.fluid-container {
                     width: 100%;
                     position: relative;
                     .input-label {
-                        font-size: 0.65rem;
+                        font-size: 15px;
                         text-transform: uppercase;
                     }
                     .password-toggle {
@@ -72,7 +72,7 @@ div.fluid-container {
                 top: 25px;
                 right: 10%;
                 height: 40px;
-                font-size: 11px;
+                font-size: 15px;
             }
             div.sign-in {
                 font-size: 0.85rem;
