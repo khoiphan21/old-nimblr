@@ -17,8 +17,32 @@ div.fluid-container {
                 font-size: 2.2rem;
                 font-weight: normal;
                 letter-spacing: 1.5px;
-                padding-left: 100px;
-                padding-right: 100px;
+                padding: 0 $mobile-frame-horizontal-padding;
+            }
+        }
+    }
+}
+
+@include media(lg) {
+    div.fluid-container {
+        width: 100%;
+        height: 100vh;
+        font-family: $font-roboto;
+        @include column-center;
+        justify-content: flex-start;
+        color: $color-grey;
+        div.row {
+            width: 100%;
+            flex-grow: 1;
+            section.content {
+                height: 100%;
+                h1 {
+                    font-size: 2.2rem;
+                    font-weight: normal;
+                    letter-spacing: 1.5px;
+                    padding-left: 100px;
+                    padding-right: 100px;
+                }
             }
         }
     }

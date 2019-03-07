@@ -3,20 +3,29 @@
 @import '../../../_sass/base';
 .add-information {
     width: 100%;
-    height: 174px; 
-    padding: 7.5px 100px 7.5px 100px;
+    height: 174px;
+    padding: 7.5px $mobile-frame-horizontal-padding 7.5px $mobile-frame-horizontal-padding;
     section.clickable {
         width: 100%;
         height: 100%;
         @include row-center;
+        background: #F3F3F3;
         color: #898989;
         font-size: 12px;
-       
         span {
             margin-left: 15px;
         }
         &:hover {
             background: #F4F4F4;
+        }
+    }
+}
+
+@include media(lg) {
+    .add-information {
+        padding: 7.5px 100px 7.5px 100px;
+        section.clickable {
+            background: white;
         }
     }
 }
