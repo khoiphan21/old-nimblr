@@ -1,11 +1,10 @@
 <div class="fluid-container">
     <app-header></app-header>
-    <div class="row no-pad">
+    <div class="row no-pad pt-5 pb-5 pt-lg-0">
         <h1 class="col-10 pl-0">Your Documents</h1>
-        <div class="document-thumbnails row col-10">
-
-            <app-document-card [document]="document" *ngFor="let document of userDocuments" class="col-lg-2"></app-document-card>
-            <div class="create-new-document col-2 clickable" (click)="createNewFormDocument()">
+        <div class="document-thumbnails row no-pad col-10">
+            <app-document-card [document]="document" *ngFor="let document of userDocuments" class="col-10 col-lg-2"></app-document-card>
+            <div class="create-new-document col-10 col-lg-2 clickable" (click)="createNewFormDocument()">
                 <div class="container">
                     <div class="plus"><i class="fas fa-plus"></i></div>
                     <span>Create new document</span>

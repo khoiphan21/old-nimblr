@@ -1,6 +1,41 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
+$dashboard-document-height: 289px;
+$dashboard-document-footer-height: 44px;
+div.fluid-container {
+    width: 100%;
+    height: $dashboard-document-height;
+    font-family: $font-roboto;
+    background: #FFFFFF;
+    border-radius: 3px;
+    box-shadow: 3px 3px 2px 0 #DDDDDD;
+    border: #DDDDDD solid 1px;
+    @include column-center;
+    justify-content: space-between;
+    padding: 0;
+    section.snapshot {
+        width: 100%;
+        height: $dashboard-document-height - $dashboard-document-footer-height;
+    }
+    .document-card-footer {
+        width: 100%;
+        height: $dashboard-document-footer-height;
+        @include row-center;
+        justify-content: space-between;
+        background: #DDD;
+        padding: 0 1rem;
+        color: $color-grey;
+        .title {
+            font-size: 0.8rem;
+        }
+    }
+    &:hover {
+        transform: translateY('5px');
+        box-shadow: 6px 6px 2px 0 #BBB;
+    }
+}
+
 @include media(lg) {
     $dashboard-document-height: 289px;
     $dashboard-document-footer-height: 44px;
