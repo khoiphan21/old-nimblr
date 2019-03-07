@@ -1,14 +1,14 @@
 <div class="fluid-container">
     <div class="row">
-        <section class="col-3 login-background"></section>
-        <section class="col-7 login-container">
+        <section class="col-3 login-background desktop"></section>
+        <section class="col-lg-7 login-container">
             <section class="heading">
                 <h1>Log in</h1>
                 <h3>Enter your details below</h3>
             </section>
             <form [formGroup]="loginForm">
                 <div class="form-input">
-                    <div class="input-label  mb-1">Work Email</div>
+                    <div class="input-label  mb-1">Email</div>
                     <input class="mb-4" formControlName="email" type="text" required>
                 </div>
                 <div class="form-input">
@@ -23,7 +23,8 @@
                 <!-- <button class="filled-button-primary ml-auto mr-auto" [disabled]="loginForm.invalid" (click)="signIn()">Sign in</button> -->
                 <button class="filled-button-primary ml-auto mr-auto" (click)="signIn()">Sign in</button>
             </form>
-            <div class="sign-up">Don't have an account? <span routerLink="/register">Get Started</span></div>
+            <button class="outline-button-primary mobile" routerLink="/register">Get Started</button>
+            <div class="sign-up desktop">Don't have an account? <span routerLink="/register">Get Started</span></div>
         </section>
     </div>
 </div>

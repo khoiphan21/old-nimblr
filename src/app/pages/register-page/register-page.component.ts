@@ -14,7 +14,7 @@ import { Auth } from 'aws-amplify';
 export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
   verificationForm: FormGroup;
-  steps = 'three';
+  steps = 'one';
   passwordType = 'password';
   uuid: string;
   newCognitoUser: CognitoSignUpUser = {
