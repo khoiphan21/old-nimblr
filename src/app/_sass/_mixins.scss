@@ -6,9 +6,13 @@
  */
 
 @mixin media($type) {
+    // Small devices (landscape phones, less than 768px)
     $small-size: "(min-width: 576px)";
+    // Medium devices (tablets, less than 992px)
     $medium-size: "(min-width: 768px)";
+    // Large devices (desktops, less than 1200px)
     $large-size: "(min-width: 992px)";
+    // Extra large devices (large desktops, 1200px and up)
     $extra-large-size: "(min-width: 1200px)";
     @if $type==sm {
         @media #{$small-size} {

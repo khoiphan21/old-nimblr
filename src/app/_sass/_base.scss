@@ -13,6 +13,15 @@ button {
     display: none;
 }
 
+@include media(lg) {
+    .mobile {
+        display: none;
+    }
+    .desktop {
+        display: block;
+    }
+}
+
 .clickable {
     transition: 0.3s;
     cursor: pointer;

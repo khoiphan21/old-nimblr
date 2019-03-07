@@ -2,10 +2,13 @@
 @import 'mixins';
 .outline-button-primary {
     height: 44px;
-    border: 1px solid $color-blue;
+    border: 1px solid $color-mid-grey;
     border-radius: 100px;
-    color: $color-blue;
+    color: $color-grey;
     transition: all 0.3s;
+    font-weight: 300;
+    background: white;
+    padding: 0 2.25rem;
     &:hover {
         background-color: rgba(0, 145, 255, 0.11);
     }
@@ -34,6 +37,7 @@
     transition: all 0.3s;
     font-size: 14px;
     padding: 0 2.25rem;
+    font-weight: 300;
     &:hover {
         background-color: rgba(0, 145, 255, 0.75);
     }
