@@ -91,7 +91,7 @@ div.fluid-container {
                 height: 100vh;
                 @include column-center;
                 align-items: flex-start;
-                padding: 0 20%;
+                padding: 0 10%;
                 section.heading {
                     margin-bottom: 2rem;
                     h1 {
@@ -148,8 +148,9 @@ div.fluid-container {
                     bottom: 2rem;
                     left: 0;
                     width: 100%;
-                    text-align: center;
+                    justify-content: center;
                     span {
+                        margin-left: 10px;
                         color: $color-blue;
                         cursor: pointer;
                     }
@@ -163,7 +164,7 @@ div.fluid-container {
     div.fluid-container {
         div.row {
             section.register-container {
-                padding: 0 15rem;
+                padding: 0 15%;
             }
         }
     }

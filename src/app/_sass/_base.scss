@@ -6,19 +6,19 @@ button {
 }
 
 .mobile {
-    display: block;
+    display: flex !important;
 }
 
 .desktop {
-    display: none;
+    display: none !important;
 }
 
 @include media(lg) {
     .mobile {
-        display: none;
+        display: none !important;
     }
     .desktop {
-        display: block;
+        display: flex !important;
     }
 }
 
