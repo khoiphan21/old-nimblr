@@ -1,4 +1,4 @@
-<div class="content">
-    <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
+<div class="content" *ngIf="block">
+    <!-- <input type="text" [(ngModel)]="value" (ngModelChange)="updateValue()"> -->
     Header
 </div>

@@ -1,7 +1,7 @@
 <!-- Remember to add margin for different type of blocks in this component -->
 <!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-    <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
-    <app-block-header></app-block-header>
+    <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
+    <app-block-header [block]="block"></app-block-header>
 </div> -->
 <div class="block" *ngIf="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
     <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>

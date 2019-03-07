@@ -8,3 +8,15 @@
     font-weight: normal;
     line-height: 24px;
 }
+
+.content {
+    input[type="text"] {
+        width: 100%;
+        border: 0;
+        color: $color-grey;
+        font-family: $font-roboto;
+        font-size: 27px;
+        font-weight: normal;
+        line-height: 24px;
+    }
+}
