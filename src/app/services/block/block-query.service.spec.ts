@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockQueryService } from './block-query.service';
-import { take } from 'rxjs/operators';
+import { take, skip } from 'rxjs/operators';
 import { TextBlock, Block } from '../../classes/block';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { Auth } from 'aws-amplify';
+import { Auth, graphqlOperation } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { UpdateTextBlockInput, BlockType, CreateTextBlockInput } from '../../../API';
@@ -12,22 +12,44 @@ import { updateTextBlock, createTextBlock, deleteBlock } from '../../../graphql/
 import { environment } from '../../../environments/environment';
 import { BlockFactoryService } from './block-factory.service';
 import { processTestError } from '../../classes/helpers';
+import { MockAPIDataFactory } from '../graphQL/mockData';
+import { getBlock } from '../../../graphql/queries';
 
 const uuidv4 = require('uuid/v4');
 
 export class MockBlockQueryService {
   getBlock$(_: string) { return new Subject(); }
-  getBlocksForDocument(_: string) { return new Promise((___, __) => {}); }
-  registerUpdateVersion(_: string) {}
-  subscribeToUpdate(_: string) { return new Promise((___, __) => {}); }
+  getBlocksForDocument(_: string) { return new Promise((___, __) => { }); }
+  registerUpdateVersion(_: string) { }
+  subscribeToUpdate(_: string) { return new Promise((___, __) => { }); }
   registerBlockCreatedByUI(_: Block) { }
 }
+
+/**
+ * Helper classes and functions for testing
+ */
 
 class TextBlockQueryHelper {
 
   private createdBlockIds: Array<string> = [];
+  private service$ = new BehaviorSubject<BlockQueryService>(null);
+  private service: BlockQueryService;
 
   constructor(private graphQlService: GraphQLService) {
+  }
+
+  async getService(): Promise<BlockQueryService> {
+    return new Promise((resolve, reject) => {
+      if (this.service) {
+        resolve(this.service);
+      } else {
+        this.service$.subscribe(service => {
+          if (service === null) { return; }
+
+          resolve(service);
+        }, error => reject(error));
+      }
+    });
   }
 
   async createBlocks({
@@ -77,6 +99,187 @@ class TextBlockQueryHelper {
   }
 }
 
+/* tslint:disable:no-string-literal */
+fdescribe('(Unit Tests)', () => {
+  let service: BlockQueryService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.get(BlockQueryService);
+  });
+
+  describe('getBlock$()', () => {
+    let id: string;
+    let documentId: string;
+    let querySpy: jasmine.Spy;
+    let subscriptionSpy: jasmine.Spy;
+    let backendSubject: Subject<any>;
+
+    beforeEach(() => {
+      documentId = uuidv4();
+      id = uuidv4();
+      // Setup the query spy
+      querySpy = spyOn(service['graphQlService'], 'query');
+      querySpy.and.returnValue(Promise.resolve({
+        data: {
+          getBlock: MockAPIDataFactory.createBlock({
+            id, documentId
+          })
+        }
+      }));
+      // Setup the subscription spy
+      subscriptionSpy = spyOn(service['graphQlService'], 'getSubscription');
+      backendSubject = new Subject();
+      subscriptionSpy.and.returnValue(backendSubject);
+    });
+
+    it('should be created', () => {
+      expect(service).toBeTruthy();
+    });
+
+    it('should return an observable with initial value null', done => {
+      service.getBlock$(id).pipe(take(1)).subscribe(value => {
+        expect(value).toBe(null);
+        done();
+      }, error => { fail(error); done(); });
+    });
+
+    it('should return a valid block for a given id', done => {
+      // Call the function from the service to check
+      service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(block => {
+        const queryArg = querySpy.calls.mostRecent().args[0];
+        expect(queryArg).toEqual(getBlock);
+        checkBlock({
+          given: block,
+          expected: { id },
+          attributes: ['id', 'instance'],
+          instanceType: TextBlock
+        });
+        done();
+      }, error => processTestError('Error in BlockQueryService', error, done));
+    });
+
+    function checkBlock({
+      given, expected, attributes = [], instanceType = null
+    }) {
+      attributes.forEach(attribute => {
+        if (attribute === 'instance') {
+          expect(given instanceof instanceType).toBe(true);
+        } else {
+          expect(given[attribute]).toEqual(expected[attribute]);
+        }
+      });
+    }
+
+    it('should store the retrieved block in the internal map', done => {
+      service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
+        const observable = service['blocksMap'].get(id);
+        expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
+        // Now when called the observable should return a block first
+        observable.pipe(take(1)).subscribe(block => {
+          checkBlock({
+            given: block,
+            expected: { id },
+            attributes: ['id', 'instance'],
+            instanceType: TextBlock
+          });
+          done();
+        }, error => processTestError('Error in BlockQueryService', error, done));
+      }, error => processTestError('Error in BlockQueryService', error, done));
+    });
+
+    it('should not call backend again if it already called once', done => {
+      service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
+        // Now when called the observable should return a block first
+        service['blocksMap'].get(id).pipe(take(1)).subscribe(() => {
+          // Check that the query method should have only been called once
+          expect(querySpy.calls.count()).toBe(1);
+          done();
+        }, error => processTestError('Error in BlockQueryService', error, done));
+      }, error => processTestError('Error in BlockQueryService', error, done));
+    });
+
+    it('should notify when there is an update on a document', done => {
+      // Setup the supposedly 'updated' block
+      const input = {
+        id, documentId,
+        version: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        updatedAt: new Date().toISOString(),
+        value: '(block for testing) new value: ' + Math.random()
+      };
+      // generate and remap the factory default basic response
+      const response = {
+        value: {
+          data: {
+            onUpdateBlockInDocument: MockAPIDataFactory.createBlock(input)
+          }
+        }
+      };
+      // Setup code to test subscription
+      service.subscribeToUpdate(documentId);
+      service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
+        // time out is needed to make sure the first notification is received
+        setTimeout(() => {
+          backendSubject.next(response);
+        }, 50);
+      });
+      service.getBlock$(id).pipe(skip(2)).pipe(take(1)).subscribe(block => {
+        // now check if the retrieved block is correct
+        checkBlock({
+          given: block,
+          expected: input,
+          attributes: [
+            'id', 'instance', 'document', 'version', 'lastUpdatedBy',
+            'updatedAt', 'value'
+          ],
+          instanceType: TextBlock
+        });
+        done();
+      });
+    });
+
+    it('should not notify if the received version is in myVersions', done => {
+      const version = uuidv4();
+      // Setup the supposedly 'updated' block
+      const input = {
+        id, documentId, version,
+        lastUpdatedBy: uuidv4(),
+        updatedAt: new Date().toISOString(),
+        value: '(block for testing) new value: ' + Math.random()
+      };
+      // generate and remap the factory default basic response
+      const response = {
+        value: {
+          data: {
+            onUpdateBlockInDocument: MockAPIDataFactory.createBlock(input)
+          }
+        }
+      };
+      // Setup code to test subscription
+      service.subscribeToUpdate(documentId);
+
+      service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
+        // time out is needed to make sure the first notification is received
+        setTimeout(() => {
+          // Register a version into the service
+          service.registerUpdateVersion(version);
+          backendSubject.next(response);
+        }, 50);
+        // Set time out: if no notification received then automatically passes
+        setTimeout(() => {
+          done();
+        }, 100);
+      });
+      service.getBlock$(id).pipe(skip(2)).pipe(take(1)).subscribe(() => {
+        // should fail if a 3rd notification is received
+        fail('should not have notified the 3rd time');
+        done();
+      });
+    });
+  });
+});
+
 describe('BlockQueryService', () => {
   const service$ = new BehaviorSubject<BlockQueryService>(null);
   let graphQlService: GraphQLService;
@@ -107,230 +310,6 @@ describe('BlockQueryService', () => {
     helper = new TextBlockQueryHelper(graphQlService);
   });
 
-  it('should be created', () => {
-    const service = TestBed.get(BlockQueryService);
-    expect(service).toBeTruthy();
-  });
-
-  describe('getBlock$', () => {
-
-    it('should return an observable with initial value null', done => {
-      const id = uuidv4();
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.getBlock$(id).pipe(take(1)).subscribe(value => {
-          expect(value).toBe(null);
-          done();
-        }, error => { fail(error); done(); });
-      }, error => { fail(error); done(); });
-    });
-
-    it('should return a valid block if the id is correct', done => {
-      const documentId = uuidv4();
-      let createdBlock;
-      // Create a block
-      helper.createBlocks({
-        amount: 1,
-        documentId,
-        value: '(from getBlock$ test)'
-      }).catch(error => {
-        console.error(error);
-        return Promise.reject('unable to create blocks');
-      }).then(blocks => {
-        createdBlock = blocks[0].data.createTextBlock;
-        return getService();
-      }).then(service => {
-        return getFirstBlock(service, createdBlock.id);
-      }).catch(error => {
-        console.error(error);
-        return Promise.reject('unable to retrieve blocks');
-      }).then(retrievedBlock => {
-        checkTextBlock(retrievedBlock, createdBlock);
-        return helper.deleteCreatedBlocks();
-      }).then(() => done()
-      ).catch(error => processTestError('fail to create blocks', error, done));
-    });
-
-    function getFirstBlock(service: BlockQueryService, blockId: string): Promise<Block> {
-      return new Promise((resolve, reject) => {
-        service.getBlock$(blockId).subscribe(block => {
-          if (block !== null) { resolve(block); }
-        }, error => reject(error));
-      });
-    }
-
-    function checkTextBlock(retrievedBlock, createdBlock) {
-      expect(retrievedBlock.id).toEqual(createdBlock.id);
-      expect(retrievedBlock.version).toEqual(createdBlock.version);
-      expect(retrievedBlock.documentId).toEqual(createdBlock.documentId);
-    }
-
-    it('should store the retrieved block in the internal map', done => {
-      const documentId = uuidv4();
-      let createdBlock;
-      let service: BlockQueryService;
-      helper.createBlocks({
-        amount: 1,
-        documentId
-      }).then(responses => {
-        createdBlock = responses[0].data.createTextBlock;
-        return getService();
-      }).then(retrievedService => {
-        service = retrievedService;
-        return getFirstBlock(service, createdBlock.id);
-      }).then(() => {
-        /* tslint:disable:no-string-literal */
-        const observable = service['blocksMap'].get(createdBlock.id);
-        expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
-        observable.subscribe(block => {
-          if (block === null) { return; }
-          checkTextBlock(block, createdBlock);
-          done();
-        });
-        return helper.deleteCreatedBlocks();
-      }).then(() => done()
-      ).catch(error => processTestError('error testing blocksMap', error, done));
-    });
-
-    it('should not call backend again if it already called once', done => {
-      const documentId = uuidv4();
-      let createdBlock;
-      let service: BlockQueryService;
-      helper.createBlocks({
-        amount: 1,
-        documentId
-      }).then(responses => {
-        createdBlock = responses[0].data.createTextBlock;
-        return getService();
-      }).then(retrievedService => {
-        service = retrievedService;
-        return getFirstBlock(service, createdBlock.id);
-      }).then(() => {
-        /* tslint:disable:no-string-literal */
-        // Spy on the query method of the graphQlService
-        const spy = spyOn(service['graphQlService'], 'query').and.returnValue(Promise.resolve());
-        // Check return value
-        service.getBlock$(createdBlock.id).pipe(take(1)).subscribe(block => {
-          // Check relevant values
-          checkTextBlock(block, createdBlock);
-          // Check that the query method should not have been called
-          expect(spy.calls.count()).toEqual(0);
-          done();
-        });
-      }).catch(error => processTestError('error in test not call backend', error, done));
-    });
-
-    it('should notify when there is an update on a block', done => {
-      const documentId = uuidv4();
-      let createdBlock;
-      let service: BlockQueryService;
-      helper.createBlocks({
-        amount: 1,
-        documentId
-      }).then(responses => {
-        createdBlock = responses[0].data.createTextBlock;
-        return getService();
-      }).then(service => {
-        if (service === null) { return; }
-        let shouldUpdate = true;
-        const input: UpdateTextBlockInput = {
-          id: createdBlock.id,
-          version: uuidv4(),
-          lastUpdatedBy: uuidv4(),
-          updatedAt: new Date().toISOString(),
-          value: '(block for testing) new value: ' + Math.random()
-        };
-        service.getBlock$(createdBlock.id).subscribe(block => {
-          if (block === null) { return; }
-          // Setup subscription
-          service.subscribeToUpdate(block.documentId);
-          if (shouldUpdate) {
-            shouldUpdate = false;
-            // Call to update the block
-            const graphQLService: GraphQLService = TestBed.get(GraphQLService);
-            setTimeout(() => {
-              graphQLService.query(updateTextBlock, { input }).then(() => {
-              }).catch(error => {
-                fail(error);
-                done();
-              });
-            }, environment.WAIT_TIME_BEFORE_UPDATE);
-          } else {
-            // Check if the notified block is the updated block
-            expect(block.version).toEqual(input.version);
-            expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
-            expect(block.updatedAt).toEqual(input.updatedAt);
-            done();
-          }
-        }, () => console.error('unable to get block with given id'));
-      }).catch(error => processTestError('Error in testing update for block', error, done));
-    }, environment.TIMEOUT_FOR_UPDATE_TEST);
-
-    it('should not notify if the received version is in myVersions', done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        // First create a block for testing
-        const input = {
-          id: uuidv4(),
-          version: uuidv4(),
-          type: BlockType.TEXT,
-          documentId: uuidv4(),
-          updatedAt: undefined,
-          lastUpdatedBy: uuidv4(),
-          value: 'TextBlock created from test'
-        };
-        const graphql: GraphQLService = TestBed.get(GraphQLService);
-
-        // Create the text block
-        graphql.query(createTextBlock, { input }).then(() => {
-          // Retrieve that block's observable. This one should only be notified of the actual block once
-          let count = 1;
-          let updatedOnce = false;
-          service.getBlock$(input.id).subscribe(block => {
-            if (block === null) { return; }
-
-            switch (count) {
-              case 1:
-                service.subscribeToUpdate(block.documentId);
-                updatedOnce = true;
-                sendAnUpdateToAPI();
-                count++;
-                break;
-              default:
-                fail('should not be called again');
-                done();
-                break;
-            }
-          }, error => {
-            fail('error getting block');
-            console.error(error);
-            done();
-          });
-
-          // Update the block with the new version
-          function sendAnUpdateToAPI() {
-            // Create an update with a new version
-            input.version = uuidv4();
-            input.updatedAt = new Date().toISOString();
-            // Store that version into myVersions
-            service.registerUpdateVersion(input.version);
-            // send the update
-            setTimeout(() => {
-              graphql.query(updateTextBlock, { input }).then(() => {
-                setTimeout(() => {
-                  // After time runs out and there's no more update, should call done
-                  if (updatedOnce) { done(); }
-                }, environment.WAIT_TIME_BEFORE_UPDATE);
-              }).catch(error => {
-                console.error(error); fail('unable to update'); done();
-              });
-            }, environment.WAIT_TIME_BEFORE_UPDATE);
-          }
-        });
-      });
-    }, 10000);
-
-  });
 
   describe('getBlocksForDocument', () => {
     it('should return observables for all blocks (with values)', done => {

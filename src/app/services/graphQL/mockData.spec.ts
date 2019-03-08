@@ -4,20 +4,19 @@ import { BlockType } from '../../../API';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('MockAPIDataFactory', () => {
+describe('MockAPIDataFactory', () => {
   const queryName = 'testQueryName';
 
   describe('createBlock()', () => {
     it('should return data with the right queryName', () => {
-      const response = MockAPIDataFactory.createBlock({ queryName });
-      expect(response.data[queryName]).toBeTruthy();
+      const block = MockAPIDataFactory.createBlock({});
+      expect(block).toBeTruthy();
     });
 
     describe('when given no argument', () => {
       let block: any;
       beforeAll(() => {
-        const response = MockAPIDataFactory.createBlock({ queryName });
-        block = response.data[queryName];
+        block = MockAPIDataFactory.createBlock({});
       });
 
       // Check if the uuid params are correct uuids
@@ -38,6 +37,11 @@ fdescribe('MockAPIDataFactory', () => {
             .toBeLessThan(0);
         });
       });
+
+      it('should return a text block with a valid value', () => {
+        expect(block.type).toBe(BlockType.TEXT);
+      });
+
     });
 
     describe('when given a specific argument', () => {
@@ -45,22 +49,21 @@ fdescribe('MockAPIDataFactory', () => {
       let input: any;
       beforeAll(() => {
         input = {
-          queryName,
           id: uuidv4(),
           version: uuidv4(),
           type: BlockType.TEXT,
           documentId: uuidv4(),
           lastUpdatedBy: uuidv4(),
           updatedAt: new Date('01/01/2020').toISOString(),
-          createdAt: new Date('01/01/2020').toISOString()
+          createdAt: new Date('01/01/2020').toISOString(),
+          value: 'abcd'
         };
-        const response = MockAPIDataFactory.createBlock(input);
-        block = response.data[queryName];
+        block = MockAPIDataFactory.createBlock(input);
       });
 
       [
         'id', 'version', 'type', 'documentId', 'lastUpdatedBy',
-        'updatedAt', 'createdAt'
+        'updatedAt', 'createdAt', 'value'
       ].forEach(param => {
         it(`should return a block with the right ${param}`, () => {
           expect(block[param]).toEqual(input[param]);
