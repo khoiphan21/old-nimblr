@@ -278,6 +278,51 @@ fdescribe('(Unit Tests)', () => {
       });
     });
   });
+
+  describe('getBlocksForDocument()', () => {
+    let listSpy: jasmine.Spy;
+    let documentId: string;
+
+    beforeEach(() => {
+      // setup the parameters
+      documentId = uuidv4();
+      // Setup the 'list' spy
+      listSpy = spyOn(service['graphQlService'], 'list');
+      listSpy.and.returnValue(Promise.resolve({
+        items: [
+          MockAPIDataFactory.createBlock({ documentId }),
+          MockAPIDataFactory.createBlock({ documentId })
+        ]
+      }));
+    });
+
+    it('should return observables with values for all blocks', done => {
+      service.getBlocksForDocument(documentId).then(observables => {
+        expect(observables.length).toBe(2);
+
+        return Promise.all(observables.map(observable => {
+          return awaitAndCheckObservable(observable);
+        })).then(() => done());
+      }).catch(error => processTestError('ERROR in BlockQueryService', error, done));
+    });
+
+    async function awaitAndCheckObservable(observable: Observable<any>) {
+      return new Promise((resolve, reject) => {
+        // Write the expect() statements here
+        expect(observable instanceof BehaviorSubject).toBe(true);
+        observable.subscribe(block => {
+          if (block === null) { return; }
+          expect(block.documentId).toEqual(documentId);
+          resolve();
+        }, error => reject(error));
+      });
+    }
+
+    it('should update blockMaps', done => {
+
+    });
+  });
+
 });
 
 describe('BlockQueryService', () => {
@@ -286,17 +331,6 @@ describe('BlockQueryService', () => {
   let blockFactory: BlockFactoryService;
   let helper: TextBlockQueryHelper;
   TestBed.configureTestingModule({});
-
-  function getService(): Promise<BlockQueryService> {
-    return new Promise((resolve, reject) => {
-      Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
-        service$.subscribe(service => {
-          if (service === null) { return; }
-          resolve(service);
-        }, error => reject(error));
-      }).catch(error => console.error(error));
-    });
-  }
 
   beforeAll(() => {
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
@@ -312,60 +346,6 @@ describe('BlockQueryService', () => {
 
 
   describe('getBlocksForDocument', () => {
-    it('should return observables for all blocks (with values)', done => {
-      const graphQlService: GraphQLService = TestBed.get(GraphQLService);
-      const documentId = uuidv4();
-      const amountOfBlocks = 2;
-      service$.subscribe(service => {
-        if (service === null) { return; }
-
-        const helper = new TextBlockQueryHelper(graphQlService);
-
-        // Start testing logic
-        // First create two blocks
-        helper.createBlocks({
-          amount: amountOfBlocks,
-          documentId,
-          value: '(from getBlocksForDocument test)'
-        }).then(() => {
-          // Call the function
-          return service.getBlocksForDocument(documentId);
-        }).then((observables: Array<Observable<Block>>) => {
-          // Check the return observables
-          expect(observables.length).toEqual(amountOfBlocks);
-          return checkObservables(observables);
-        }).then(() => {
-          return helper.deleteCreatedBlocks();
-        }).then(responses => {
-          // Check that the blocks have been deleted
-          expect(responses.length).toBe(amountOfBlocks);
-          done();
-        }).catch(error => { console.error(error); fail('error received'); done(); });
-      }, error => {
-        fail('Error getting BlockQueryService from observable');
-        console.error(error); done();
-      });
-
-      async function checkObservables(
-        observables: Array<Observable<Block>>
-      ): Promise<any> {
-        return Promise.all(observables.map(observable => {
-          return awaitAndCheckObservable(observable);
-        }));
-      }
-
-      async function awaitAndCheckObservable(observable: Observable<any>) {
-        return new Promise((resolve, reject) => {
-          // Write the expect() statements here
-          expect(observable instanceof BehaviorSubject).toBe(true);
-          observable.subscribe(block => {
-            if (block === null) { return; }
-            expect(block.documentId).toEqual(documentId);
-            resolve();
-          }, error => reject(error));
-        });
-      }
-    });
 
     it('should update blockMaps', done => {
       // First create two blocks

@@ -1,4 +1,4 @@
-import { MockAPIDataFactory } from "./mockData";
+import { MockAPIDataFactory } from './mockData';
 import { isUuid } from '../../classes/helpers';
 import { BlockType } from '../../../API';
 
