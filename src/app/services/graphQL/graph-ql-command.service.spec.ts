@@ -31,31 +31,29 @@ describe('GraphQlCommandService', () => {
     let graphQlService: GraphQlCommandService;
     TestBed.configureTestingModule({});
 
-    beforeAll(() => { });
-    beforeEach(async () => {
-      graphQlService = await TestBed.get(GraphQlCommandService);
+    beforeEach(() => {
+      // graphQlService = TestBed.get(GraphQlCommandService);
+      graphQlService = new GraphQlCommandServiceImpl();
     });
 
-    fit('should return a Promise type when query is registered correctly', async () => {
+    fit('should return a Promise type when query is registered correctly', () => {
       console.log('1');
-      graphQlService.query(testQuery, testParameters).then(value => {
-        console.log('2', value);
-        expect(value instanceof Promise).toBeTruthy();
-
-      }).catch(err => {
-        console.error(err);
-        fail();
-      })
-
-    });
-
-    it('should return a Promise type when error', () => {
       const value = graphQlService.query(testQuery, testParameters);
+      console.log('2', value);
       expect(value instanceof Promise).toBeTruthy();
     });
 
+    it('should return a Promise type when error', () => {
+      // console.log('1');
+      // graphQlService.query(testQuery, testParameters).then(value => {
+      //   console.log('2', value);
+      //   expect(value instanceof Promise).toBeTruthy();
 
-
+      // }).catch(err => {
+      //   console.error(err);
+      //   fail();
+      // })
+    });
 
     it('should resend the same query after timeout if there is no response from cloud API', () => {
 

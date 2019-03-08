@@ -27,7 +27,7 @@ export class GraphQlCommandServiceImpl implements GraphQlCommandService {
     return new Promise((resolve, reject) => {
       try {
 
-        return resolve(null);
+        return resolve('resolved');
       } catch (error) {
 
         return reject(error);
