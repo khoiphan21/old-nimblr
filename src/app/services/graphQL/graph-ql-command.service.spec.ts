@@ -52,7 +52,6 @@ describe('GraphQlCommandService', () => {
 
     });
 
-
     it('should remove query from queue when API response', () => {
 
     });
