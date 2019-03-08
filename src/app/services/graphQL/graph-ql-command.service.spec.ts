@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-
-import { GraphQlCommandService } from './graph-ql-command.service';
+import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
+import { GraphQlCommandService, GraphQlCommandServiceImpl } from './graph-ql-command.service';
+import { Auth } from 'aws-amplify';
 
 describe('GraphQlCommandService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
@@ -11,7 +12,10 @@ describe('GraphQlCommandService', () => {
   });
 
   describe('Integration Tests', () => {
-    beforeAll(() => { });
+    beforeAll(() => {
+      Auth.signIn(TEST_USERNAME, TEST_PASSWORD)
+    });
+
     beforeEach(() => { });
 
     it('should perform the corresponding query in backend with correct values', () => {
@@ -20,17 +24,38 @@ describe('GraphQlCommandService', () => {
 
   });
 
-  describe('Unit Tests', () => {
-    beforeAll(() => { });
-    beforeEach(() => { });
+  fdescribe('Unit Tests', () => {
+    const testQuery = '';
+    const testParameters = '';
 
-    it('should return a Promise type when query is registered correctly', () => {
+    let graphQlService: GraphQlCommandService;
+    TestBed.configureTestingModule({});
+
+    beforeAll(() => { });
+    beforeEach(async () => {
+      graphQlService = await TestBed.get(GraphQlCommandService);
+    });
+
+    fit('should return a Promise type when query is registered correctly', async () => {
+      console.log('1');
+      graphQlService.query(testQuery, testParameters).then(value => {
+        console.log('2', value);
+        expect(value instanceof Promise).toBeTruthy();
+
+      }).catch(err => {
+        console.error(err);
+        fail();
+      })
 
     });
 
     it('should return a Promise type when error', () => {
-
+      const value = graphQlService.query(testQuery, testParameters);
+      expect(value instanceof Promise).toBeTruthy();
     });
+
+
+
 
     it('should resend the same query after timeout if there is no response from cloud API', () => {
 

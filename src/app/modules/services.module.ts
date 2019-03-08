@@ -10,6 +10,9 @@ import { AccountService } from '../services/account/account.service';
 import { AccountServiceImpl } from '../services/account/account-impl.service';
 import { GraphQLService } from '../services/graphQL/graph-ql.service';
 import { NavigationBarService } from '../services/navigation-bar/navigation-bar.service';
+import { GraphQlCommandService, GraphQlCommandServiceImpl } from '../services/graphQL/graph-ql-command.service';
+
+
 Amplify.configure(awsmobile);
 
 @NgModule({
@@ -28,6 +31,10 @@ Amplify.configure(awsmobile);
     {
       provide: AccountService,
       useClass: AccountServiceImpl
+    },
+    {
+      provide: GraphQlCommandService,
+      useClass: GraphQlCommandServiceImpl
     }
   ],
 })

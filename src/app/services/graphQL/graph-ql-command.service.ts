@@ -7,14 +7,13 @@ import { Observable, Subject } from 'rxjs';
 })
 
 export abstract class GraphQlCommandService {
-  abstract async query(): Promise<any>;
+  abstract async query(query: string, parameters: string): Promise<any>;
 }
 
 export class GraphQlCommandServiceImpl implements GraphQlCommandService {
 
-  constructor() {
-    let queryQueue = [];
-  }
+  private queryQueue: Array<any> = [];
+  constructor() { }
 
   /**
    * This method implements the interface GraphQlCommandService. It
@@ -24,14 +23,21 @@ export class GraphQlCommandServiceImpl implements GraphQlCommandService {
    * @param query graphql query
    * @param params graphql parameters corresponding to query
    */
-  async query(): Promise<any> {
+  async query(query: string, parameters: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
 
+        return resolve(null);
+      } catch (error) {
 
-    return null;
+        return reject(error);
+      }
+    });
   }
 
-  private enqueueQuery(): any {
-
+  private enqueueQuery(query: string, parameters: string): any {
+    const queryItem = [query, parameters];
+    this.queryQueue.push();
   }
 
   private registerQuery(): any {
@@ -43,6 +49,6 @@ export class GraphQlCommandServiceImpl implements GraphQlCommandService {
   }
 
   private dequeueQuery(): any {
-
+    return this.queryQueue.shift();
   }
 }
