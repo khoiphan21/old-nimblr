@@ -266,8 +266,7 @@ describe('BlockQueryService', () => {
       const errorMessage = 'test error';
       listSpy.and.returnValue(Promise.reject(errorMessage));
       // now try to get blocks for a document
-      service.getBlocksForDocument(documentId).then(blocks => {
-        console.log(blocks);
+      service.getBlocksForDocument(documentId).then(() => {
         fail('error should have occurred'); done();
       }).catch(error => {
         expect(error).toEqual(errorMessage);
