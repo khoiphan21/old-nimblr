@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { CreateDocumentInput, DocumentType } from '../../../API';
-import { processTestError } from 'src/app/classes/helpers';
+import { processTestError } from 'src/app/classes/test-helpers.spec';
 
 describe('DocumentQueryTestHelper', () => {
   const helper$ = new BehaviorSubject<DocumentQueryTestHelper>(null);

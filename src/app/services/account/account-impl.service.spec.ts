@@ -13,9 +13,9 @@ import awsmobile from 'src/aws-exports';
 import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
-import { processTestError } from 'src/app/classes/helpers';
 import { UnverifiedUser } from './account.service';
 import { Subject } from 'rxjs';
+import { processTestError } from 'src/app/classes/test-helpers.spec';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');

@@ -7,7 +7,7 @@ import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../API';
 import { deleteDocument } from '../../../graphql/mutations';
-import { processTestError } from '../../classes/helpers';
+import { processTestError } from '../../classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 

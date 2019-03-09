@@ -71,7 +71,6 @@ describe('NavigationBarService', () => {
         const navigationSubscription = service.getNavigationBar$();
         let navigationTabCount = 0;
         navigationSubscription.pipe(skip(1)).subscribe(navigationTabs => {
-          console.log(navigationTabs);
           navigationTabCount = navigationTabs.length;
           switch (navigationTabCount) {
             case 0:

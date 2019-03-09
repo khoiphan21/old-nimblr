@@ -8,7 +8,7 @@ import { TEST_USERNAME, TEST_PASSWORD, BlankComponent } from '../account/account
 import { DocumentImpl } from 'src/app/classes/document-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
-import { processTestError } from 'src/app/classes/helpers';
+import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { createDocument, deleteDocument } from '../../../graphql/mutations';
 import { CreateDocumentInput, DocumentType } from '../../../API';

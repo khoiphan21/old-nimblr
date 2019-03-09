@@ -8,7 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { BlankComponent, TEST_USERNAME, TEST_PASSWORD } from '../../services/account/account-impl.service.spec';
-import { processTestError } from '../../classes/helpers';
+import { processTestError } from 'src/app/classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 
