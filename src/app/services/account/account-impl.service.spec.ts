@@ -29,10 +29,10 @@ export class MockAccountService {
     return new Subject();
   }
   isUserReady() {
-    return new Promise((_, __) => {}); // a promise that never returns
+    return new Promise((_, __) => { }); // a promise that never returns
   }
   login() {
-    return new Promise((_, __) => {}); // a promise that never returns
+    return new Promise((_, __) => { }); // a promise that never returns
   }
 }
 
@@ -44,9 +44,10 @@ const uuidv4 = require('uuid/v4');
 })
 export class BlankComponent { }
 
-describe('AccountImplService', () => {
+fdescribe('AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [BlankComponent],
@@ -68,48 +69,20 @@ describe('AccountImplService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should be created', () => {
-    expect(service.getUnverifiedUser()).toEqual(null);
-    const email = 'test@email.com';
-    const password = 'Password1234';
-    const value: UnverifiedUser = {email, password};
-    service.setUnverifiedUser(email, password);
-    expect(service.getUnverifiedUser()).toEqual(value);
-  });
+  describe('get/set Unverified User()', () => {
 
-  describe('login', () => {
-    it('should login if the credentials are correct', done => {
-      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-        // should resolve
-        done();
-      }).catch(error => processTestError('failed to login', error, done));
-    });
-
-    it('should fail in the credentials are wrong', done => {
-      const password = 'WRONG PASSWORD';
-      const errorMessage = 'Promise should be rejected';
-
-      service.login(TEST_USERNAME, password).then(() =>
-        processTestError(errorMessage, errorMessage, done)
-      ).catch(() => done());
-    });
-
-    it('should emit a new user object if successfully logged in', done => {
-      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-        // Setup subscription for assertion
-        service.getUser$().subscribe(user => {
-          if (user === null) { return; }
-          // should be called here
-          expect(user).toBeTruthy();
-          done();
-        }, error => processTestError('unable to get user', error, done));
-      }).catch(error => processTestError('failed to login', error, done));
+    it('should set and get an UnverifiedUser', () => {
+      const email = 'test@email.com';
+      const password = 'Password1234';
+      let storedUser: UnverifiedUser;
+      service.setUnverifiedUser(email, password);
+      storedUser = service.getUnverifiedUser();
+      expect(storedUser).toEqual({ email, password });
     });
 
   });
 
-
-  describe('RegisterService', () => {
+  describe('registerCognitoUser()', () => {
     const poolData = {
       UserPoolId: 'ap-southeast-2_d6cypRasd',
       ClientId: '30aaqa11def8pv48lbg18iu8f9'
@@ -134,6 +107,31 @@ describe('AccountImplService', () => {
       if (currentUser !== null) {
         currentUser.signOut();
       }
+    });
+
+    fit('should call Auth with the right parameters', done => {
+      // Setup spy to check parameters
+      const mockData = { id: '1234' };
+      const authSpy = spyOn(Auth, 'signUp')
+        .and.returnValue(Promise.resolve(mockData));
+      // Call the service to register
+      service.registerCognitoUser(newCognitoUser).then(data => {
+        expect(data).toEqual(mockData);
+        expect(authSpy.calls.mostRecent().args[0]).toEqual(newCognitoUser);
+        done();
+      });
+    })
+
+    fit('should throw an error if unable to sign up', done => {
+      const message = 'Error message';
+      const authSpy = spyOn(Auth, 'signUp').and.returnValue(Promise.reject(message));
+      service.registerCognitoUser(newCognitoUser).then(() => {
+        fail('error should occur'); done();
+      }).catch(error => {
+        expect(authSpy.calls.count()).toBe(1);
+        expect(error).toEqual(message);
+        done();
+      });
     });
 
     it('should register a user in cognito successfully and then delete it', done => {
@@ -251,6 +249,39 @@ describe('AccountImplService', () => {
     }, 10000);
 
   });
+
+  describe('login', () => {
+    it('should login if the credentials are correct', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // should resolve
+        done();
+      }).catch(error => processTestError('failed to login', error, done));
+    });
+
+    it('should fail in the credentials are wrong', done => {
+      const password = 'WRONG PASSWORD';
+      const errorMessage = 'Promise should be rejected';
+
+      service.login(TEST_USERNAME, password).then(() =>
+        processTestError(errorMessage, errorMessage, done)
+      ).catch(() => done());
+    });
+
+    it('should emit a new user object if successfully logged in', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // Setup subscription for assertion
+        service.getUser$().subscribe(user => {
+          if (user === null) { return; }
+          // should be called here
+          expect(user).toBeTruthy();
+          done();
+        }, error => processTestError('unable to get user', error, done));
+      }).catch(error => processTestError('failed to login', error, done));
+    });
+
+  });
+
+
 
   describe('Logout()', () => {
     const user: User = {
