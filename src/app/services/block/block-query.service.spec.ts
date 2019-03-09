@@ -5,7 +5,7 @@ import { take, skip } from 'rxjs/operators';
 import { TextBlock, Block } from '../../classes/block';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { BlockFactoryService } from './block-factory.service';
-import { processTestError } from '../../classes/helpers';
+import { processTestError } from '../../classes/test-helpers.spec';
 import { MockAPIDataFactory } from '../graphQL/mockData';
 import { getBlock } from '../../../graphql/queries';
 

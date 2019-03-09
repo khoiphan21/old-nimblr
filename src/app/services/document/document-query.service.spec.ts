@@ -8,7 +8,7 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 import { CreateDocumentInput, DocumentType } from '../../../API';
 import { take } from 'rxjs/operators';
 import { DocumentQueryTestHelper } from './helper';
-import { processTestError } from '../../classes/helpers';
+import { processTestError } from '../../classes/test-helpers.spec';
 import { environment } from '../../../environments/environment';
 import { onSpecificDocumentUpdate } from '../../../graphql/subscriptions';
 
