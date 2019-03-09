@@ -14,7 +14,7 @@ export class BlockQueryService {
 
   private myVersions: Set<string> = new Set();
   private blocksMap: Map<string, BehaviorSubject<Block>> = new Map();
-  private subscriptionMap: Map<string, Subscription> = new Map();
+  private subscriptionMap: Map<string, Observable<Subscription>> = new Map();
 
   constructor(
     private graphQlService: GraphQLService,
@@ -61,7 +61,6 @@ export class BlockQueryService {
 
   async getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
     return new Promise((resolve, reject) => {
-      const observables: Array<Observable<Block>> = [];
       const params = {
         filter: {
           documentId: { eq: id }
@@ -74,17 +73,21 @@ export class BlockQueryService {
         params,
         listAll: true
       }).then(response => {
-        // call funcion
-        response.items.forEach(rawBlock => {
-          const blockObservable = new BehaviorSubject(null);
-          observables.push(blockObservable);
-          this.processRaw(rawBlock, blockObservable);
-        });
-        resolve(observables);
-      }).catch(err => {
-        console.error('rawBlock parsing error: ', err);
-      });
+        resolve(this.processMultipleRaw(response.items));
+      }).catch(error => reject(error));
     });
+  }
+
+  private processMultipleRaw(items: any): Array<Observable<Block>> {
+    const observables: Array<Observable<Block>> = [];
+
+    items.forEach(rawBlock => {
+      const blockObservable = new BehaviorSubject(null);
+      observables.push(blockObservable);
+      this.processRaw(rawBlock, blockObservable);
+    });
+
+    return observables;
   }
 
   registerUpdateVersion(version: string) {
@@ -92,42 +95,49 @@ export class BlockQueryService {
   }
 
 
-  // TODO: Refactor this Bruno
-  /* Purpose?:
-  - subscribe 
-  */
-  subscribeToUpdate(documentId: string): Promise<Subscription> {
+  subscribeToUpdate(documentId: string): Observable<Subscription> {
     if (this.subscriptionMap.has(documentId)) {
       // If not empty:
-      return Promise.resolve(this.subscriptionMap.get(documentId));
+      return this.subscriptionMap.get(documentId);
     }
 
+    // Else setup a new observable
+    const subject = new BehaviorSubject<Subscription>(null);
+    this.subscriptionMap.set(documentId, subject);
+
     // subscribe to graphql subscription
-    const subscription = this.graphQlService.getSubscription(onUpdateBlockInDocument, { documentId }).subscribe(response => {
+    const subscription = this.graphQlService.getSubscription(
+      onUpdateBlockInDocument, { documentId }
+    ).subscribe(response => {
+      // Process the block notified by graphql
       const data = response.value.data.onUpdateBlockInDocument;
+      this.processBlockNotification(data);
+    }, error => subject.error(error));
 
-      const block: Block = this.blockFactoryService.createAppBlock(data);
-      let block$: BehaviorSubject<Block>;
-      if (!this.blocksMap.has(block.id)) {
-        block$ = new BehaviorSubject<Block>(null);
-        this.blocksMap.set(block.id, block$);
-      } else {
-        block$ = this.blocksMap.get(block.id) as BehaviorSubject<Block>;
-      }
-      // This is needed for when called by getBlocksForDocument
+    subject.next(subscription);
+
+    return subject;
+  }
+
+  private processBlockNotification(data) {
+    // Create the block from the raw data
+    const block: Block = this.blockFactoryService.createAppBlock(data);
+
+    // Retrieve the block subject
+    let block$: BehaviorSubject<Block>;
+    if (!this.blocksMap.has(block.id)) {
+      block$ = new BehaviorSubject<Block>(null);
       this.blocksMap.set(block.id, block$);
-      if (!this.myVersions.has(block.version)) {
-        // To ensure only other versions will be updated
-        block$.next(block);
-      }
-    }, error => {
-      console.error('Error received while processing subscription notification');
-      console.error(error);
-    });
+    } else {
+      block$ = this.blocksMap.get(block.id) as BehaviorSubject<Block>;
+    }
 
-    this.subscriptionMap.set(documentId, subscription);
-
-    return Promise.resolve(subscription);
+    // This is needed for when called by getBlocksForDocument
+    this.blocksMap.set(block.id, block$);
+    if (!this.myVersions.has(block.version)) {
+      // To ensure only other versions will be updated
+      block$.next(block);
+    }
   }
 
 

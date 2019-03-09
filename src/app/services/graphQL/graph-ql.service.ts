@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { Observable, Subject } from 'rxjs';
 
-export type ListQueryResponse = {
-  items: Array<any>,
-  nextToken: string,
-  responses: Array<any>
-};
+export interface ListQueryResponse {
+  items: Array<any>;
+  nextToken: string;
+  responses: Array<any>;
+}
 
 @Injectable({
   providedIn: 'root'
