@@ -6,6 +6,7 @@ import { AccountService } from '../account/account.service';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../document/factory/document-factory.service';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 const uuidv4 = require('uuid/v4');
 
@@ -34,7 +35,10 @@ describe('NavigationBarService', () => {
   describe('getNavigationBar$', () => {
 
     it('should have an observable of Navigation Tabs', () => {
-      expect(service.getNavigationBar$()).toBeTruthy();
+      // spy on the document service
+      spyOn(service['documentService'], 'getUserDocuments$')
+        .and.returnValue(new Subject());
+      expect(service.getNavigationBar$() instanceof BehaviorSubject).toBe(true);
     });
 
   });
