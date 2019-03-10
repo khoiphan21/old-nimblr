@@ -3,26 +3,24 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegisterPageComponent } from './register-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
-import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
-import { TEST_USERNAME, TEST_PASSWORD } from '../../services/account/account-impl.service.spec';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('RegisterPageComponent', () => {
+describe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
         RegisterPageComponent
       ],
       imports: [
-        ServicesModule,
         ReactiveFormsModule,
         MDBBootstrapModule.forRoot(),
         RouterTestingModule.withRoutes([])
@@ -45,7 +43,7 @@ fdescribe('RegisterPageComponent', () => {
     fixture.detectChanges();
   });
 
-  fit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
@@ -58,6 +56,7 @@ fdescribe('RegisterPageComponent', () => {
   });
 
   describe('ngOnInit() - check account verification', () => {
+
     it(`should go straight to register step 3 (verification) if user's account is unverified`, () => {
       const email = 'test@email.com';
       const password = 'Password1234';
@@ -72,6 +71,7 @@ fdescribe('RegisterPageComponent', () => {
     it(`should go straight to register step 1 (fill in email) if user have not sign up yet`, () => {
       expect(component.steps).toBe('one');
     });
+
   });
 
   /* tslint:disable:no-string-literal */
@@ -81,7 +81,7 @@ fdescribe('RegisterPageComponent', () => {
     beforeEach(() => {
       uuid = uuidv4();
       spy = spyOn(component['accountService'], 'registerCognitoUser')
-      .and.returnValue(Promise.resolve({ userSub: uuid }));
+        .and.returnValue(Promise.resolve({ userSub: uuid }));
     });
     it('should call accountService to register a cognito user', done => {
       component.registerAccountInAws().then(() => {
@@ -118,9 +118,11 @@ fdescribe('RegisterPageComponent', () => {
   });
 
   describe('createAccountInDatabase() - ', () => {
+    let routerSpy: jasmine.Spy;
+
     beforeEach(() => {
       spyOn(component, 'getCognitoUserDetails');
-      spyOn(component, 'createAccountInDatabase').and.callThrough();
+      routerSpy = spyOn(component['router'], 'navigate');
     });
 
     it('should call getCognitoUserDetails() if the current user detail is empty', () => {
@@ -135,8 +137,7 @@ fdescribe('RegisterPageComponent', () => {
     });
 
     /* tslint:disable:no-string-literal */
-    it('should not call getCognitoUserDetails() if the current user detail is not empty', done => {
-      const routerSpy = spyOn(component['router'], 'navigate');
+    it('should register the app user if the user details are available', done => {
       component.uuid = 'bla';
       component.newCognitoUser = {
         username: 'test@email.com',
@@ -157,19 +158,6 @@ fdescribe('RegisterPageComponent', () => {
       );
     });
 
-  });
-
-  it('should get the details of a AWS signed in user', done => {
-    component.uuid = 'bla';
-    component.newCognitoUser = {
-      username: TEST_USERNAME,
-      password: TEST_PASSWORD,
-      attributes: null
-    };
-    component.getCognitoUserDetails().then(() => {
-      expect(component.newCognitoUser.attributes).not.toBe(null);
-      done();
-    }).catch(error => processTestError('error during logic step', error, done));
   });
 
   // fix this when all of the user attribute is set
