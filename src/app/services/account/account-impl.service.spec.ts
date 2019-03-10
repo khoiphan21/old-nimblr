@@ -25,6 +25,8 @@ export class MockAccountService {
   login() {
     return new Promise((_, __) => { }); // a promise that never returns
   }
+  setUnverifiedUser(_, __) {}
+  getUnverifiedUser() {}
 }
 
 

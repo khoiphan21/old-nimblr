@@ -3,11 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginPageComponent } from './login-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
-import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { AccountService } from '../../services/account/account.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
 
 describe('LoginPageComponent', () => {
   let component: LoginPageComponent;
@@ -20,14 +19,13 @@ describe('LoginPageComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        ServicesModule,
         MDBBootstrapModule.forRoot(),
         RouterTestingModule
       ],
       providers: [
         {
           provide: AccountService,
-          useClass: AccountServiceImpl
+          useClass: MockAccountService
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -58,19 +56,24 @@ describe('LoginPageComponent', () => {
   describe('signIn()', () => {
 
     /* tslint:disable:no-string-literal */
-    it('should navigate to register page if the user have not verify the account', done => {
+    it('should navigate to register page if the account is not verified', done => {
+      // spy on the router
       const spy = spyOn(component['router'], 'navigate');
-      const unverifiedEmail = component.loginForm.controls.email;
-      const password = component.loginForm.controls.password;
-      unverifiedEmail.setValue('p1356193@nwytg.net');
-      password.setValue('Password1234');
+      // spy on the accountService
+      spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
+        code: 'UserNotConfirmedException'
+      }));
+
+      // Set the email and password for testing
+      const email = 'abcd@email.com';
+      const password = 'PAssword1234';
+      component.loginForm.controls.email.setValue(email);
+      component.loginForm.controls.password.setValue(password);
+      // Now try to sign in
       component.signIn().then(() => {
         fail('should not sign in successfully');
         done();
-      }).catch(error => {
-        expect(accountService.getUnverifiedUser()).toEqual({
-          email: 'p1356193@nwytg.net', password: 'Password1234'
-        });
+      }).catch(() => {
         const navigatedPath = spy.calls.mostRecent().args[0][0];
         expect(navigatedPath).toBe('register');
         done();
