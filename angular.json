@@ -81,7 +81,7 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "src/test.ts",
+                        "main": "src/test.unit.ts",
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "src/tsconfig.spec.json",
                         "karmaConfig": "src/karma.conf.js",
@@ -96,12 +96,30 @@
                         "codeCoverage": true
                     }
                 },
-                "integration": {
+                "test-integration": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
                         "main": "src/test.integration.ts",
                         "polyfills": "src/polyfills.ts",
-                        "tsConfig": "src/tsconfig.integration.spec.json",
+                        "tsConfig": "src/tsconfig.spec.json",
+                        "karmaConfig": "src/karma.integration.conf.js",
+                        "styles": [
+                            "src/styles.scss"
+                        ],
+                        "scripts": [],
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets"
+                        ],
+                        "codeCoverage": false
+                    }
+                },
+                "test-all": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "src/test.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "src/tsconfig.spec.json",
                         "karmaConfig": "src/karma.integration.conf.js",
                         "styles": [
                             "src/styles.scss"

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AccountServiceImpl } from './account-impl.service';
 import { ServicesModule } from '../../modules/services.module';
 import { skip } from 'rxjs/operators';
@@ -22,44 +22,21 @@ const uuidv4 = require('uuid/v4');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
 
-class BlankComponent { }
-
 describe('(Integration) AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [BlankComponent],
       providers: [AccountServiceImpl],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([
-          {
-            path: 'login', component: BlankComponent
-          }
-        ])
-      ]
+        RouterTestingModule.withRoutes([])
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
-  describe('get/set Unverified User()', () => {
-
-    it('should set and get an UnverifiedUser', () => {
-      const email = 'test@email.com';
-      const password = 'Password1234';
-      let storedUser: UnverifiedUser;
-      service.setUnverifiedUser(email, password);
-      storedUser = service.getUnverifiedUser();
-      expect(storedUser).toEqual({ email, password });
-    });
-
   });
 
   describe('registerCognitoUser()', () => {
