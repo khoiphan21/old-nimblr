@@ -42,6 +42,9 @@ describe('(Integration) RegisterPageComponent', () => {
   });
 
   it('should get the details of a AWS signed in user', done => {
+    // setup spy on the router
+    const routerSpy = spyOn(component['router'], 'navigate');
+    // setup the values for the test
     component.uuid = 'bla';
     component.newCognitoUser = {
       username: TEST_USERNAME,
@@ -49,6 +52,8 @@ describe('(Integration) RegisterPageComponent', () => {
       attributes: null
     };
     component.getCognitoUserDetails().then(() => {
+      // TODO: REFACTOR THE TEST FOR ROUTERSPY INTO ITS OWN TEST
+      expect(routerSpy.calls.count()).toBe(1); 
       expect(component.newCognitoUser.attributes).not.toBe(null);
       done();
     }).catch(error => processTestError('error during logic step', error, done));

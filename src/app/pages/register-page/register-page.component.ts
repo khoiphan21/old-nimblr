@@ -107,6 +107,7 @@ export class RegisterPageComponent implements OnInit {
       } else {
         await this.accountService.registerAppUser(this.newCognitoUser, this.uuid);
         this.router.navigate([`/dashboard`]);
+        return Promise.resolve();
       }
     } catch (error) {
       return Promise.reject(error);
@@ -124,8 +125,7 @@ export class RegisterPageComponent implements OnInit {
     }).then(user => {
       const details = user.attributes;
       this.setNewCognitoUser(details);
-      this.createAccountInDatabase();
-      return Promise.resolve();
+      return this.createAccountInDatabase();
     }).catch(error => {
       console.error('Get current auth user in getCognitoUserDetails()', error);
       return Promise.reject();
