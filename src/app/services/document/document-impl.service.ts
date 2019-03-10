@@ -10,7 +10,7 @@ import * as queries from '../../../graphql/queries';
 import * as subscriptions from '../../../graphql/subscriptions';
 import { CreateDocumentInput, DocumentType } from '../../../API';
 import { Deferred } from '../../classes/deferred';
-import { DocumentFactoryService } from './document-factory.service';
+import { DocumentFactoryService } from './factory/document-factory.service';
 
 
 @Injectable({

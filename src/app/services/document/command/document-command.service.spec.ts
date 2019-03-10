@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../API';
-import { processTestError } from '../../classes/test-helpers.spec';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { processTestError } from '../../../classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 interface RunTestInput {

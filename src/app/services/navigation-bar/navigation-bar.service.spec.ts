@@ -3,12 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { NavigationBarService } from './navigation-bar.service';
 import { DocumentService } from '../document/document.service';
 import { AccountService } from '../account/account.service';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { skip, take } from 'rxjs/operators';
-import { DocumentFactoryService } from '../document/document-factory.service';
-import { environment } from '../../../environments/environment';
+import { DocumentFactoryService } from '../document/factory/document-factory.service';
 
 const uuidv4 = require('uuid/v4');
 

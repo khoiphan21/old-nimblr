@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Block } from '../../classes/block';
-import { BlockQueryService } from '../../services/block/block-query.service';
+import { BlockQueryService } from '../../services/block/query/block-query.service';
 
 @Component({
   selector: 'app-block',

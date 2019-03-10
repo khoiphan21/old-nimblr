@@ -1,7 +1,7 @@
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { Block, TextBlock } from '../../../classes/block';
-import { BlockCommandService } from '../../../services/block/block-command.service';
-import { BlockFactoryService } from '../../../services/block/block-factory.service';
+import { BlockCommandService } from '../../../services/block/command/block-command.service';
+import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 import { UpdateTextBlockInput } from '../../../../API';
 
 @Component({

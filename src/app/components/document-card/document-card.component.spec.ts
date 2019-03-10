@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DocumentCardComponent } from './document-card.component';
 import { DocumentOptionsComponent } from './document-options/document-options.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DocumentFactoryService } from '../../services/document/document-factory.service';
+import { DocumentFactoryService } from '../../services/document/factory/document-factory.service';
 
 const uuidv4 = require('uuid/v4');
 

@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
 import { BehaviorSubject } from 'rxjs';
-import { GraphQLService } from '../graphQL/graph-ql.service';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../API';
-import { deleteDocument } from '../../../graphql/mutations';
-import { processTestError } from '../../classes/test-helpers.spec';
+import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { deleteDocument } from '../../../../graphql/mutations';
+import { processTestError } from '../../../classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 

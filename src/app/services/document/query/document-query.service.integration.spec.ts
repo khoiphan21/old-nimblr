@@ -3,14 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { DocumentQueryService } from './document-query.service';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { GraphQLService } from '../graphQL/graph-ql.service';
-import { CreateDocumentInput, DocumentType } from '../../../API';
+import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
+import { CreateDocumentInput, DocumentType } from '../../../../API';
 import { take } from 'rxjs/operators';
-import { DocumentQueryTestHelper } from './helper';
-import { processTestError } from '../../classes/test-helpers.spec';
-import { environment } from '../../../environments/environment';
-import { onSpecificDocumentUpdate } from '../../../graphql/subscriptions';
+import { DocumentQueryTestHelper } from '../helper';
+import { processTestError } from '../../../classes/test-helpers.spec';
+import { environment } from '../../../../environments/environment';
+import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 
 const uuidv4 = require('uuid/v4');
 

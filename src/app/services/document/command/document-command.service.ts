@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../API';
-import { GraphQLService } from '../graphQL/graph-ql.service';
-import { createDocument, updateDocument } from '../../../graphql/mutations';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
+import { createDocument, updateDocument } from '../../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
-import { DocumentQueryService } from './document-query.service';
+import { DocumentQueryService } from '../query/document-query.service';
 
 export type UUID = string;
 export type ISOTimeString = string;

@@ -2,7 +2,7 @@ import { TestBed, fakeAsync } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
 import { BlockType } from 'src/API';
-import { createTextBlock, updateTextBlock } from '../../../graphql/mutations';
+import { createTextBlock, updateTextBlock } from '../../../../graphql/mutations';
 import { processTestError, isValidDateString } from 'src/app/classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');

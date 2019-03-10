@@ -4,13 +4,13 @@ import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { DocumentQueryService } from 'src/app/services/document/document-query.service';
-import { BlockFactoryService } from '../../services/block/block-factory.service';
+import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
+import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
-import { BlockQueryService } from '../../services/block/block-query.service';
-import { BlockCommandService } from '../../services/block/block-command.service';
-import { DocumentCommandService } from '../../services/document/document-command.service';
+import { BlockQueryService } from '../../services/block/query/block-query.service';
+import { BlockCommandService } from '../../services/block/command/block-command.service';
+import { DocumentCommandService } from '../../services/document/command/document-command.service';
 
 const uuidv5 = require('uuid/v5');
 

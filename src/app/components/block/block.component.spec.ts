@@ -9,8 +9,8 @@ import { CheckboxComponent } from './question-block/checkbox/checkbox.component'
 import { DropdownComponent } from './question-block/dropdown/dropdown.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MultipleChoiceComponent } from './question-block/multiple-choice/multiple-choice.component';
-import { BlockQueryService } from '../../services/block/block-query.service';
-import { MockBlockQueryService } from 'src/app/services/block/block-query.service.spec';
+import { BlockQueryService } from '../../services/block/query/block-query.service';
+import { MockBlockQueryService } from 'src/app/services/block/query/block-query.service.spec';
 
 describe('BlockComponent', () => {
   let component: BlockComponent;

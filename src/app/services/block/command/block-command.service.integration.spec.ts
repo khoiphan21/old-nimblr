@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BlockCommandService } from '../block-command.service';
+import { BlockCommandService } from './block-command.service';
 import { BlockType } from 'src/API';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
-import { BlockQueryService } from '../block-query.service';
+import { BlockQueryService } from '../query/block-query.service';
 import { CreateTextBlockInput } from '../../../../API';
 import { deleteBlock } from '../../../../graphql/mutations';
 import { GraphQLService } from '../../graphQL/graph-ql.service';

@@ -12,7 +12,7 @@ import { processTestError } from 'src/app/classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 
-describe('RegisterPageComponent', () => {
+fdescribe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
@@ -45,7 +45,7 @@ describe('RegisterPageComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  fit('should create', () => {
     expect(component).toBeTruthy();
   });
 

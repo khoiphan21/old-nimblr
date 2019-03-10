@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockFactoryService } from './block-factory.service';
-import { Block, TextBlock, BlockCreateError } from '../../classes/block';
-import { isUuid } from '../../classes/helpers';
+import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
+import { isUuid } from '../../../classes/helpers';
 import { BlockType } from 'src/API';
 
 const uuidv4 = require('uuid/v4');

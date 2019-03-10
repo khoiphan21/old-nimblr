@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Document } from 'src/app/classes/document';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
-import { GraphQLService } from '../graphQL/graph-ql.service';
-import { getDocument } from '../../../graphql/queries';
-import { DocumentFactoryService } from './document-factory.service';
-import { onSpecificDocumentUpdate } from '../../../graphql/subscriptions';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
+import { getDocument } from '../../../../graphql/queries';
+import { DocumentFactoryService } from '../factory/document-factory.service';
+import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 
 @Injectable({
   providedIn: 'root'

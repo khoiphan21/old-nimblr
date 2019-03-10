@@ -7,10 +7,8 @@ import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.sp
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
-import { DocumentFactoryService } from '../document/document-factory.service';
+import { DocumentFactoryService } from '../document/factory/document-factory.service';
 import { environment } from '../../../environments/environment';
-
-const uuidv4 = require('uuid/v4');
 
 describe('NavigationBarService', () => {
   let accountService: AccountService;

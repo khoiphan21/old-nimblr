@@ -1,5 +1,5 @@
 import { Document } from './document';
-import { UUID, ISOTimeString } from '../services/document/document-command.service';
+import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
 import { DocumentType } from 'src/API';
 import { CreateDocumentInput } from '../../API';
 

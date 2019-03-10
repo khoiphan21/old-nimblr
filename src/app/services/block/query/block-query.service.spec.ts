@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 
 import { BlockQueryService } from './block-query.service';
 import { take, skip } from 'rxjs/operators';
-import { TextBlock, Block } from '../../classes/block';
+import { TextBlock, Block } from '../../../classes/block';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { BlockFactoryService } from './block-factory.service';
-import { processTestError } from '../../classes/test-helpers.spec';
-import { MockAPIDataFactory } from '../graphQL/mockData';
-import { getBlock } from '../../../graphql/queries';
+import { BlockFactoryService } from '../factory/block-factory.service';
+import { processTestError } from '../../../classes/test-helpers.spec';
+import { MockAPIDataFactory } from '../../graphQL/mockData';
+import { getBlock } from '../../../../graphql/queries';
 
 const uuidv4 = require('uuid/v4');
 
