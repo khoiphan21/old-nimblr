@@ -1,56 +1,99 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
 import { BlockType } from 'src/API';
-import { BehaviorSubject } from 'rxjs';
-import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { BlockQueryService } from './block-query.service';
-import { CreateBlockInput, CreateTextBlockInput } from '../../../API';
-import { createBlock, deleteBlock, createTextBlock, updateBlock } from '../../../graphql/mutations';
-import { GraphQLService } from '../graphQL/graph-ql.service';
+import { createTextBlock, updateTextBlock } from '../../../graphql/mutations';
+import { processTestError, isValidDateString } from 'src/app/classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 
 
 describe('BlockCommandService', () => {
-  const service$ = new BehaviorSubject<BlockCommandService>(null);
-  let graphQlService: GraphQLService;
-  TestBed.configureTestingModule({});
-
-  beforeAll(() => {
-    Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      service$.next(TestBed.get(BlockCommandService));
-    }).catch(error => service$.error(error));
-  });
+  let service: BlockCommandService;
+  let input: any;
+  // variables to use with the spy
+  let graphQlSpy: jasmine.Spy;
+  let backendResponse: any;
 
   beforeEach(() => {
-    graphQlService = TestBed.get(GraphQLService);
+    TestBed.configureTestingModule({});
+
+    // Setup the input to be used in the tests
+    input = {
+      id: uuidv4(),
+      version: uuidv4(),
+      type: BlockType.TEXT,
+      documentId: uuidv4(),
+      lastUpdatedBy: uuidv4(),
+      value: 'from updateBlock test'
+    };
+
+    // Get the service
+    service = TestBed.get(BlockCommandService);
+    // spy on the graphql service
+    /* tslint:disable:no-string-literal */
+    graphQlSpy = spyOn(service['graphQLService'], 'query');
+    backendResponse = { value: 'test' };
+    graphQlSpy.and.returnValue(Promise.resolve(backendResponse));
   });
 
   it('should be created', () => {
-    const service = TestBed.get(BlockQueryService);
     expect(service).toBeTruthy();
   });
 
   describe('updateBlock', () => {
-    let input: any;
 
-    beforeEach(() => {
-      input = {
-        id: uuidv4(),
-        documentId: uuidv4(),
-        version: uuidv4(),
-        type: BlockType.TEXT,
-        lastUpdatedBy: uuidv4(),
-        value: 'from updateBlock test'
-      };
+    it('should resolve with the response from backend', done => {
+      service.updateBlock(input).then(value => {
+        // The value resolved must be the value returned by graphql
+        expect(value).toEqual(backendResponse);
+        done();
+      });
+    });
+
+    it('should call graphQlService with the right query', done => {
+      service.updateBlock(input).then(() => {
+        // graphQlService must be called with the right arguments
+        const spyArgs = graphQlSpy.calls.mostRecent().args;
+        expect(spyArgs[0]).toEqual(updateTextBlock);
+        done();
+      });
+    });
+
+    it('should call graphQlService with the right argument', done => {
+      service.updateBlock(input).then(() => {
+        // graphQlService must be called with the right arguments
+        const queryArg = graphQlSpy.calls.mostRecent().args[1];
+        // the queryArg should have a valid 'updatedAt' date string
+        expect(queryArg.input.updatedAt).toBeTruthy();
+        expect(isValidDateString(queryArg.input.updatedAt)).toBe(true);
+        // delete 'type' from input as it should be ignored
+        delete input.type;
+        // delete 'updatedAt' from queryArg as it's auto-generated
+        delete queryArg.input.updatedAt;
+        // now check all other args
+        expect(queryArg.input).toEqual(input);
+        done();
+      }).catch(error =>
+        processTestError('unable to update block', error, done)
+      );
+    });
+
+    /* tslint:disable:no-string-literal */
+    it(`should store the updated block's version in the query service`, done => {
+      service.updateBlock(input).then(() => {
+        // The version must be stored
+        expect(service['blockQueryService']['myVersions']
+          .has(input.version)).toBe(true);
+        done();
+      }).catch(error =>
+        processTestError('unable to update block', error, done)
+      );
     });
 
     describe('(error in params - sample tests)', () => {
 
       it('should throw an error if "id" is missing for a text block', done => {
-        const service: BlockCommandService = TestBed.get(BlockCommandService);
         delete input.id;
         service.updateBlock(input).then(() => {
           fail('error should occur');
@@ -62,118 +105,58 @@ describe('BlockCommandService', () => {
       });
     });
 
-    it('should update a block in the database', done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(input).then(() => {
-          input.value = 'UPDATED VALUE (updateBlock test)';
-          // Update the block
-          return service.updateBlock(input);
-        }).then(response => {
-          const updatedBlock = response.data.updateTextBlock;
-          const id = updatedBlock.id;
-          expect(updatedBlock.value).toEqual(input.value);
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(input.id);
-          done();
-        }).catch(error => {
-          fail('Check console for details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
-    });
-
-    /* tslint:disable:no-string-literal */
-    it(`should store the updated block's version in the query service`, done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(input).then(() => {
-          // Change the version to call update with
-          input.version = uuidv4();
-
-          return service.updateBlock(input);
-        }).then(response => {
-          const version = response.data.updateTextBlock.version;
-          const id = response.data.updateTextBlock.id;
-          expect(service['blockQueryService']['myVersions'].has(version)).toBe(true);
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(input.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
-    })
   });
 
   describe('createBlock', () => {
 
-    it('should create a block in the database', done => {
-      const input: CreateTextBlockInput = {
-        id: uuidv4(),
-        version: uuidv4(),
-        type: BlockType.TEXT,
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4(),
-        value: 'Created in BlockCommandService test'
-      };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(input).then(response => {
-          const id = response.data.createTextBlock.id;
-          const createdBlock: any = response.data.createTextBlock;
+    it('should resolve with the response from backend', done => {
+      service.createBlock(input).then(value => {
+        // The value resolved must be the value returned by graphql
+        expect(value).toEqual(backendResponse);
+        done();
+      });
+    });
 
-          // Check the created block here
-          expect(createdBlock.id).toEqual(input.id);
-          expect(createdBlock.version).toEqual(input.version);
-          expect(createdBlock.type).toEqual(input.type);
-          expect(createdBlock.documentId).toEqual(input.documentId);
-          expect(createdBlock.lastUpdatedBy).toEqual(input.lastUpdatedBy);
-          expect(createdBlock.value).toEqual(input.value);
+    it('should call graphQlService with the right query', done => {
+      service.createBlock(input).then(() => {
+        // graphQlService must be called with the right arguments
+        const spyArgs = graphQlSpy.calls.mostRecent().args;
+        expect(spyArgs[0]).toEqual(createTextBlock);
+        done();
+      });
+    });
 
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(input.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
+    it('should call graphQlService with the right argument', done => {
+      service.createBlock(input).then(() => {
+        // graphQlService must be called with the right arguments
+        const queryArg = graphQlSpy.calls.mostRecent().args[1];
+        // the queryArg must have the same values
+        expect(queryArg.input).toEqual(input);
+        done();
+      });
+    });
+
+    it('should change "value" to be null if given an empty string', done => {
+      // set 'value' to be an empty string
+      input.value = '';
+      // Now call the service
+      service.createBlock(input).then(() => {
+        // graphQlService must be called with the right arguments
+        const queryArg = graphQlSpy.calls.mostRecent().args[1];
+        // the queryArg must have the same values
+        expect(queryArg.input.value).toBe(null);
+        done();
+      });
     });
 
     /* tslint:disable:no-string-literal */
     it(`should store the created block's version in the query service`, done => {
-      const input: CreateTextBlockInput = {
-        id: uuidv4(),
-        version: uuidv4(),
-        type: BlockType.TEXT,
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4(),
-        value: 'Created in BlockCommandService test'
-      };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(input).then(response => {
-          const version = response.data.createTextBlock.version;
-          const id = response.data.createTextBlock.id;
-          expect(service['blockQueryService']['myVersions'].has(version)).toBe(true);
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(input.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
+      service.createBlock(input).then(() => {
+        // The version must be stored
+        expect(service['blockQueryService']['myVersions']
+          .has(input.version)).toBe(true);
+        done();
+      });
     });
 
   });
