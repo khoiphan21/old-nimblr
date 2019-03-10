@@ -109,7 +109,7 @@ fdescribe('AccountImplService', () => {
       }
     });
 
-    fit('should call Auth with the right parameters', done => {
+    it('should call Auth with the right parameters', done => {
       // Setup spy to check parameters
       const mockData = { id: '1234' };
       const authSpy = spyOn(Auth, 'signUp')
@@ -122,7 +122,7 @@ fdescribe('AccountImplService', () => {
       });
     })
 
-    fit('should throw an error if unable to sign up', done => {
+    it('should throw an error if unable to sign up', done => {
       const message = 'Error message';
       const authSpy = spyOn(Auth, 'signUp').and.returnValue(Promise.reject(message));
       service.registerCognitoUser(newCognitoUser).then(() => {
