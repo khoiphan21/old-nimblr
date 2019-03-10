@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AccountServiceImpl } from './account-impl.service';
 import { ServicesModule } from '../../modules/services.module';
 import { skip } from 'rxjs/operators';
@@ -13,8 +13,6 @@ import awsmobile from 'src/aws-exports';
 import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
-import { UnverifiedUser } from './account.service';
-import { Subject } from 'rxjs';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { TEST_USERNAME, TEST_PASSWORD, TEST_USER_ID } from './account-impl.service.spec';
 
@@ -101,16 +99,16 @@ describe('(Integration) AccountImplService', () => {
       });
     }
 
-    function adminDeleteCognitoUser(newCognitoUser): Promise<any> {
+    function adminDeleteCognitoUser(givenUser: any): Promise<any> {
 
       return new Promise((resolve, reject) => {
         const userData = {
-          Username: newCognitoUser.username,
+          Username: givenUser.username,
           Pool: userPool
         };
         const authenticationData = {
-          Username: newCognitoUser.username,
-          Password: newCognitoUser.password
+          Username: givenUser.username,
+          Password: givenUser.password
         };
         const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
         const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
@@ -236,7 +234,7 @@ describe('(Integration) AccountImplService', () => {
     });
   });
 
-  
+
   describe('update()', () => {
 
     it('should update the attributes on dynamodb', done => {
@@ -286,6 +284,8 @@ describe('(Integration) AccountImplService', () => {
   });
 
   describe('getUser$()', () => {
+
+    /* tslint:disable:no-string-literal */
     it('should retrieve a user if the user session is still valid', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // 'Reset' the observable, pretending that it's empty
@@ -332,4 +332,4 @@ describe('(Integration) AccountImplService', () => {
 
   });
 
-})
+});

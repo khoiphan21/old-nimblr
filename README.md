@@ -20,11 +20,11 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Running integration tests
 
-Run `ng run irisa:test-integration` to execute the integration tests via [Karma](https://karma-runner.github.io).
+Run `npm run test-integration` to execute the integration tests via [Karma](https://karma-runner.github.io).
 
 ## Running all tests
 
-Run `ng run irisa:test-all` to both integration and unit tests via [Karma](https://karma-runner.github.io).
+Run `npm run test-all` to both integration and unit tests via [Karma](https://karma-runner.github.io).
 
 ## Running end-to-end tests
 
