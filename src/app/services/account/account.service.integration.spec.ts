@@ -283,9 +283,9 @@ describe('(Integration) AccountImplService', () => {
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
   });
 
+  /* tslint:disable:no-string-literal */
   describe('getUser$()', () => {
 
-    /* tslint:disable:no-string-literal */
     it('should retrieve a user if the user session is still valid', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // 'Reset' the observable, pretending that it's empty
@@ -298,7 +298,7 @@ describe('(Integration) AccountImplService', () => {
     });
 
     it(`should reroute to 'login' if a session doesn't exist`, done => {
-      const routerSpy = spyOn(router, 'navigate');
+      const routerSpy = spyOn(service['router'], 'navigate');
       Auth.signOut()
         .then(() => {
           service.getUser$().subscribe(() => {
@@ -323,10 +323,15 @@ describe('(Integration) AccountImplService', () => {
     });
 
     it('should reject if no user available', done => {
+      const routerSpy = spyOn(service['router'], 'navigate');
       Auth.signOut().then(() => {
         service.isUserReady().then(() => {
           fail('error must occur');
-        }).catch(() => done());
+        }).catch(() => {
+          expect(routerSpy.calls.count()).toBe(1);
+          expect(routerSpy.calls.mostRecent().args[0][0]).toEqual('login');
+          done();
+        });
       }).catch(error => processTestError('unable to sign out', error, done));
     });
 
