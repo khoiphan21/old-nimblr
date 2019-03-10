@@ -2,9 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { NavigationBarService } from './navigation-bar.service';
 import { DocumentService } from '../document/document.service';
-import { UserImpl } from '../../classes/user-impl';
 import { AccountService } from '../account/account.service';
-import { TEST_USERNAME, TEST_PASSWORD, BlankComponent } from '../account/account-impl.service.spec';
+import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
@@ -20,16 +19,9 @@ describe('NavigationBarService', () => {
   let documentFactory: DocumentFactoryService;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        BlankComponent
-      ],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([
-          {
-            path: 'login', component: BlankComponent
-          }
-        ])
+        RouterTestingModule.withRoutes([])
       ]
     });
     accountService = TestBed.get(AccountService);

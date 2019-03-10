@@ -4,7 +4,7 @@ import { DocumentServiceImpl } from './document-impl.service';
 import { AccountService } from '../account/account.service';
 import { ServicesModule } from 'src/app/modules/services.module';
 
-import { TEST_USERNAME, TEST_PASSWORD, BlankComponent } from '../account/account-impl.service.spec';
+import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { DocumentImpl } from 'src/app/classes/document-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
@@ -22,17 +22,12 @@ describe('DocumentService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [BlankComponent],
       providers: [
         DocumentServiceImpl
       ],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([
-          {
-            path: 'login', component: BlankComponent
-          }
-        ])
+        RouterTestingModule.withRoutes([])
       ]
     });
 

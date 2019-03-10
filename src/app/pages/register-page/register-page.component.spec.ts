@@ -7,7 +7,7 @@ import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
-import { BlankComponent, TEST_USERNAME, TEST_PASSWORD } from '../../services/account/account-impl.service.spec';
+import { TEST_USERNAME, TEST_PASSWORD } from '../../services/account/account-impl.service.spec';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
@@ -19,18 +19,13 @@ describe('RegisterPageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        RegisterPageComponent,
-        BlankComponent
+        RegisterPageComponent
       ],
       imports: [
         ServicesModule,
         ReactiveFormsModule,
         MDBBootstrapModule.forRoot(),
-        RouterTestingModule.withRoutes([
-          {
-            path: 'dashboard', component: BlankComponent
-          }
-        ])
+        RouterTestingModule.withRoutes([])
       ],
       providers: [
         {
@@ -46,9 +41,7 @@ describe('RegisterPageComponent', () => {
     fixture = TestBed.createComponent(RegisterPageComponent);
     accountService = TestBed.get(AccountService);
     component = fixture.componentInstance;
-    spyOn(accountService, 'registerAppUser').and.callFake(() => {
-      return Promise.resolve();
-    });
+    spyOn(accountService, 'registerAppUser').and.returnValue(Promise.resolve());
     fixture.detectChanges();
   });
 

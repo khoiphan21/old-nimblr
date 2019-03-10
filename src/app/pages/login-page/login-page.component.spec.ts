@@ -4,10 +4,10 @@ import { LoginPageComponent } from './login-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { ServicesModule } from '../../modules/services.module';
-import { BlankComponent } from '../../services/account/account-impl.service.spec';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { AccountService } from '../../services/account/account.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('LoginPageComponent', () => {
   let component: LoginPageComponent;
@@ -16,8 +16,7 @@ describe('LoginPageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        LoginPageComponent,
-        BlankComponent
+        LoginPageComponent
       ],
       imports: [
         ReactiveFormsModule,
@@ -30,7 +29,8 @@ describe('LoginPageComponent', () => {
           provide: AccountService,
           useClass: AccountServiceImpl
         }
-      ]
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
   }));

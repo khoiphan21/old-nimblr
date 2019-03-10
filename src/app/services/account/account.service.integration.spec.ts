@@ -16,6 +16,7 @@ import { getUser } from '../../../graphql/queries';
 import { UnverifiedUser } from './account.service';
 import { Subject } from 'rxjs';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
+import { TEST_USERNAME, TEST_PASSWORD, TEST_USER_ID } from './account-impl.service.spec';
 
 const uuidv4 = require('uuid/v4');
 
@@ -181,4 +182,154 @@ describe('(Integration) AccountImplService', () => {
     }, 10000);
 
   });
+
+  describe('login', () => {
+    it('should login if the credentials are correct', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // should resolve
+        done();
+      }).catch(error => processTestError('failed to login', error, done));
+    });
+
+    it('should fail in the credentials are wrong', done => {
+      const password = 'WRONG PASSWORD';
+      const errorMessage = 'Promise should be rejected';
+
+      service.login(TEST_USERNAME, password).then(() =>
+        processTestError(errorMessage, errorMessage, done)
+      ).catch(() => done());
+    });
+
+    it('should emit a new user object if successfully logged in', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // Setup subscription for assertion
+        service.getUser$().subscribe(user => {
+          if (user === null) { return; }
+          // should be called here
+          expect(user).toBeTruthy();
+          done();
+        }, error => processTestError('unable to get user', error, done));
+      }).catch(error => processTestError('failed to login', error, done));
+    });
+
+  });
+
+  describe('Logout()', () => {
+    const user: User = {
+      id: 'abc123',
+      firstName: 'tester',
+      lastName: 'tesla',
+      email: 'notshownindb@test.com'
+    };
+
+    it('should throw error when another operation is perform after logout', done => {
+      const errorMessage = 'private operation should not be valid after logged out';
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        return service.logout();
+      }).then(() => {
+        return service.update(user);
+      }).then(() => processTestError(errorMessage, errorMessage, done)
+      ).catch(error => {
+        expect(error).toBeTruthy();
+        done();
+      });
+    });
+  });
+
+  
+  describe('update()', () => {
+
+    it('should update the attributes on dynamodb', done => {
+
+      const userBefore: User = {
+        id: TEST_USER_ID,
+        firstName: 'test1',
+        lastName: 'test1',
+        email: 'testing1@test.com'
+      };
+
+      const userAfter: User = {
+        id: TEST_USER_ID,
+        firstName: 'test2',
+        lastName: 'test2',
+        email: 'testing2@test.com'
+      };
+
+      // step 0: sign in
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(data => {
+        return data;
+
+      }).then(() => {
+        return service.update(userBefore);
+      }).then(() => {
+        return service.update(userAfter);
+      }).then(() => {
+        const input = {
+          id: TEST_USER_ID
+        };
+
+        async function getApiCall() {
+          const response: any = await API.graphql(graphqlOperation(getUser, input));
+          return Promise.resolve(response);
+        }
+
+        getApiCall().then(response => {
+          expect(response).toBeTruthy();
+          expect(response.data.getUser.email).toEqual(userAfter.email);
+          expect(response.data.getUser.firstName).toEqual(userAfter.firstName);
+          expect(response.data.getUser.lastName).toEqual(userAfter.lastName);
+          done();
+        });
+
+      });
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
+  });
+
+  describe('getUser$()', () => {
+    it('should retrieve a user if the user session is still valid', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        // 'Reset' the observable, pretending that it's empty
+        service['user$'].next(null);
+        service.getUser$().pipe(skip(1)).subscribe(user => {
+          expect(user instanceof UserImpl).toBe(true);
+          done();
+        }, error => processTestError('getUser$ unable to retrieve', error, done));
+      });
+    });
+
+    it(`should reroute to 'login' if a session doesn't exist`, done => {
+      const routerSpy = spyOn(router, 'navigate');
+      Auth.signOut()
+        .then(() => {
+          service.getUser$().subscribe(() => {
+          }, () => {
+            expect(routerSpy).toHaveBeenCalled();
+            done();
+          });
+        })
+        .catch(error => processTestError('failed to sign out', error, done));
+    });
+  });
+
+  describe('isUserReady()', () => {
+
+    it('should resolve if a session exists', done => {
+      service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
+        service.isUserReady().then(user => {
+          expect(user instanceof UserImpl).toBe(true);
+          done();
+        }).catch(error => processTestError('user should be logged in', error, done));
+      }).catch(error => processTestError('unable to login', error, done));
+    });
+
+    it('should reject if no user available', done => {
+      Auth.signOut().then(() => {
+        service.isUserReady().then(() => {
+          fail('error must occur');
+        }).catch(() => done());
+      }).catch(error => processTestError('unable to sign out', error, done));
+    });
+
+  });
+
 })
