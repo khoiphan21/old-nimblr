@@ -8,7 +8,7 @@
             width: 100%;
             @include row-center;
             justify-content: flex-start;
-            margin-top: 15px;
+            margin-top: 25px;
             font-size: 0.85rem;
             color: $color-grey;
             input[type=checkbox] {
@@ -33,9 +33,16 @@
                 }
             }
             input[type=text] {
-                width: 100%;
+                width: 60%;
                 border: 0;
                 margin-left: 15px;
+                color: $color-grey;
+                border: #a9a9a9 solid 1px;
+                border-radius: 3px;
+                padding-left: 5px;
+                &::placeholder {
+                    color: $color-grey;
+                }
             }
         }
     }

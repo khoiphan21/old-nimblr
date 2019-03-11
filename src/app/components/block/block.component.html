@@ -3,11 +3,11 @@
     <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
     <app-block-header [block]="block"></app-block-header>
 </div> -->
-<div class="block" *ngIf="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
+<!-- <div class="block" *ngIf="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
     <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
     <app-block-text [block]="block"></app-block-text>
-</div>
-<!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
+</div> -->
+<div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
     <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
     <app-question-block></app-question-block>
-</div> -->
+</div>
