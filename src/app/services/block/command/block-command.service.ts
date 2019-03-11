@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { GraphQLService } from '../graphQL/graph-ql.service';
-import { BlockQueryService } from './block-query.service';
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../API';
-import { createTextBlock, updateTextBlock } from '../../../graphql/mutations';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
+import { BlockQueryService } from '../query/block-query.service';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../../API';
+import { createTextBlock, updateTextBlock } from '../../../../graphql/mutations';
 
 @Injectable({
   providedIn: 'root'

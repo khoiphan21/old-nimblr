@@ -1,5 +1,5 @@
 import { BlockType } from 'src/API';
-import { UUID, ISOTimeString } from '../services/document/document-command.service';
+import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
 

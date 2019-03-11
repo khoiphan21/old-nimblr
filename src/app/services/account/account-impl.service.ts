@@ -34,19 +34,15 @@ export class AccountServiceImpl implements AccountService {
     this.unverifiedUser = {email, password};
   }
 
-  private restoreSession(): Promise<User> {
-    return Auth.currentSession()
-      .then(data => {
-        return this.getAppUser(data.getIdToken().payload.sub);
-      })
-      .then((user: User) => {
-        console.log('restored session for user: ', user.email);
-        this.user$.next(user);
-        return Promise.resolve(user);
-      })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+  private async restoreSession(): Promise<User> {
+    try {
+      const data = await Auth.currentSession();
+      const user = await this.getAppUser(data.getIdToken().payload.sub);
+      this.user$.next(user);
+      return Promise.resolve(user);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   async registerCognitoUser(user: CognitoSignUpUser): Promise<any> {

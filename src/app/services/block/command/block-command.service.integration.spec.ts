@@ -4,11 +4,11 @@ import { BlockCommandService } from './block-command.service';
 import { BlockType } from 'src/API';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { BlockQueryService } from './block-query.service';
-import { CreateBlockInput, CreateTextBlockInput } from '../../../API';
-import { createBlock, deleteBlock, createTextBlock, updateBlock } from '../../../graphql/mutations';
-import { GraphQLService } from '../graphQL/graph-ql.service';
+import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
+import { BlockQueryService } from '../query/block-query.service';
+import { CreateTextBlockInput } from '../../../../API';
+import { deleteBlock } from '../../../../graphql/mutations';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -28,11 +28,6 @@ describe('BlockCommandService', () => {
     graphQlService = TestBed.get(GraphQLService);
   });
 
-  it('should be created', () => {
-    const service = TestBed.get(BlockQueryService);
-    expect(service).toBeTruthy();
-  });
-
   describe('updateBlock', () => {
     let input: any;
 
@@ -45,21 +40,6 @@ describe('BlockCommandService', () => {
         lastUpdatedBy: uuidv4(),
         value: 'from updateBlock test'
       };
-    });
-
-    describe('(error in params - sample tests)', () => {
-
-      it('should throw an error if "id" is missing for a text block', done => {
-        const service: BlockCommandService = TestBed.get(BlockCommandService);
-        delete input.id;
-        service.updateBlock(input).then(() => {
-          fail('error should occur');
-          done();
-        }).catch(error => {
-          expect(error.message).toEqual('Missing argument "id" in UpdateTextBlockInput');
-          done();
-        });
-      });
     });
 
     it('should update a block in the database', done => {
@@ -85,30 +65,7 @@ describe('BlockCommandService', () => {
       }, error => { console.error(error); fail(); done(); });
     });
 
-    /* tslint:disable:no-string-literal */
-    it(`should store the updated block's version in the query service`, done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(input).then(() => {
-          // Change the version to call update with
-          input.version = uuidv4();
-
-          return service.updateBlock(input);
-        }).then(response => {
-          const version = response.data.updateTextBlock.version;
-          const id = response.data.updateTextBlock.id;
-          expect(service['blockQueryService']['myVersions'].has(version)).toBe(true);
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(input.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
-    })
+    
   });
 
   describe('createBlock', () => {
@@ -136,34 +93,6 @@ describe('BlockCommandService', () => {
           expect(createdBlock.lastUpdatedBy).toEqual(input.lastUpdatedBy);
           expect(createdBlock.value).toEqual(input.value);
 
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(input.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
-    });
-
-    /* tslint:disable:no-string-literal */
-    it(`should store the created block's version in the query service`, done => {
-      const input: CreateTextBlockInput = {
-        id: uuidv4(),
-        version: uuidv4(),
-        type: BlockType.TEXT,
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4(),
-        value: 'Created in BlockCommandService test'
-      };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(input).then(response => {
-          const version = response.data.createTextBlock.version;
-          const id = response.data.createTextBlock.id;
-          expect(service['blockQueryService']['myVersions'].has(version)).toBe(true);
           // Now delete the block
           return graphQlService.query(deleteBlock, { input: { id } });
         }).then(response => {

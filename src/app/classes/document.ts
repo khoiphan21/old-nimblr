@@ -1,5 +1,5 @@
 import { User } from './user';
-import { UUID, ISOTimeString } from '../services/document/document-command.service';
+import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
 import { DocumentType } from 'src/API';
 
 export interface Document {

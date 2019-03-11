@@ -18,7 +18,7 @@ import { MultipleChoiceComponent } from '../../components/block/question-block/m
 import { Subject } from 'rxjs';
 
 import { NavigationTabComponent } from '../../components/navigation-bar/navigation-tab/navigation-tab.component';
-import { DocumentQueryService } from '../../services/document/document-query.service';
+import { DocumentQueryService } from '../../services/document/query/document-query.service';
 import { AccountService } from '../../services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
 import { AddInformationComponent } from '../../components/block/add-information/add-information.component';

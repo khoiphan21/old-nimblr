@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { DocumentImpl } from '../../classes/document-impl';
+import { DocumentImpl } from '../../../classes/document-impl';
 import { Document } from 'src/app/classes/document';
 import { DocumentType } from 'src/API';
-import { CreateDocumentInput } from '../../../API';
-import { isUuid } from '../../classes/helpers';
+import { CreateDocumentInput } from '../../../../API';
+import { isUuid } from '../../../classes/helpers';
 
 const uuidv5 = require('uuid/v5');
 

@@ -6,6 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test:integration": "ng run irisa:test-integration",
+    "test:all": "ng run irisa:test-all",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

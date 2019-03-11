@@ -3,14 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { DocumentQueryService } from './document-query.service';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { GraphQLService } from '../graphQL/graph-ql.service';
-import { CreateDocumentInput, DocumentType } from '../../../API';
+import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
+import { CreateDocumentInput, DocumentType } from '../../../../API';
 import { take } from 'rxjs/operators';
-import { DocumentQueryTestHelper } from './helper';
-import { processTestError } from '../../classes/test-helpers.spec';
-import { environment } from '../../../environments/environment';
-import { onSpecificDocumentUpdate } from '../../../graphql/subscriptions';
+import { DocumentQueryTestHelper } from '../helper';
+import { processTestError } from '../../../classes/test-helpers.spec';
+import { environment } from '../../../../environments/environment';
+import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 
 const uuidv4 = require('uuid/v4');
 
@@ -56,16 +56,6 @@ describe('DocumentQueryService', () => {
         ownerId: uuidv4(),
         type: DocumentType.FORM
       };
-    });
-
-    it('should return an observable with the initial value of null', done => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.getDocument$('test-id').pipe(take(1)).subscribe(document => {
-          expect(document).toBe(null);
-          done();
-        }, () => { }); // don't care about any error
-      }, error => { fail('unable to get service'); console.error(error); done(); });
     });
 
     it('should return a previously created document', done => {

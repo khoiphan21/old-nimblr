@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationTabComponent } from './navigation-tab.component';
-import { BlankComponent } from '../../../services/account/account-impl.service.spec';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Auth } from 'aws-amplify';
 
@@ -12,23 +11,18 @@ describe('NavigationTabComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        NavigationTabComponent,
-        BlankComponent
+        NavigationTabComponent
       ],
       imports: [
-        RouterTestingModule.withRoutes([
-          {
-            path: 'document', component: BlankComponent
-          }
-        ])
+        RouterTestingModule.withRoutes([])
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
   });
-  
+
   it('should create', done => {
     Auth.signOut().then(() => {
       fixture = TestBed.createComponent(NavigationTabComponent);

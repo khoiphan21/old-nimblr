@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DocumentFactoryService } from './document-factory.service';
-import { isUuid } from '../../classes/helpers';
+import { isUuid } from '../../../classes/helpers';
 import { DocumentType } from 'src/API';
 
 const uuidv4 = require('uuid/v4');

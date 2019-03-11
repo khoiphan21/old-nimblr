@@ -10,3 +10,12 @@ export function processTestError(message: string, error: any, done: any) {
   console.error(error);
   done();
 }
+
+/**
+ * Returns true if the given dateString is valid, false otherwise
+ *
+ * @param dateString the string to be checked
+ */
+export function isValidDateString(dateString: string) {
+  return `${new Date(dateString)}`.indexOf('Invalid') < 0;
+}
