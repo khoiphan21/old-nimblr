@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
 import { BlockType } from 'src/API';
@@ -8,7 +8,7 @@ import { processTestError, isValidDateString } from 'src/app/classes/test-helper
 const uuidv4 = require('uuid/v4');
 
 
-describe('BlockCommandService', () => {
+fdescribe('BlockCommandService', () => {
   let service: BlockCommandService;
   let input: any;
   // variables to use with the spy
@@ -42,6 +42,16 @@ describe('BlockCommandService', () => {
   });
 
   describe('updateBlock', () => {
+
+    it('should return an error if the type is not supported', done => {
+      input.type = 'ABCD';
+      service.updateBlock(input).then(() => {
+        fail('error should be thrown'); done();
+      }).catch(error => {
+        expect(error).toEqual('BlockType not supported');
+        done();
+      });
+    });
 
     it('should resolve with the response from backend', done => {
       service.updateBlock(input).then(value => {
@@ -91,23 +101,43 @@ describe('BlockCommandService', () => {
       );
     });
 
-    describe('(error in params - sample tests)', () => {
+    describe('(error pathways)', () => {
 
-      it('should throw an error if "id" is missing for a text block', done => {
-        delete input.id;
-        service.updateBlock(input).then(() => {
-          fail('error should occur');
-          done();
-        }).catch(error => {
-          expect(error.message).toEqual('Missing argument "id" in UpdateTextBlockInput');
-          done();
-        });
-      });
+      const requiredParams = [
+        'id', 'version', 'documentId', 'lastUpdatedBy', 'value'
+      ];
+      runTestForMissingParams(
+        requiredParams, 'updateBlock', 'UpdateTextBlockInput'
+      );
+
     });
 
   });
 
   describe('createBlock', () => {
+
+    it('should throw an error if the block type is not supported', done => {
+      input.type = 'ABCD';
+      service.createBlock(input).then(() => {
+        fail('error should be thrown'); done();
+      }).catch(error => {
+        expect(error).toEqual('BlockType not supported');
+        done();
+      });
+    });
+
+    it('should return the error raised by GraphQl if unable to create', done => {
+      // Setup the spy to return a certain error
+      const mockError = { message: 'test' };
+      graphQlSpy.and.returnValue(Promise.reject(mockError));
+      // now call the service
+      service.createBlock(input).then(() => {
+        fail('error should be thrown'); done();
+      }).catch(error => {
+        expect(error).toEqual(mockError);
+        done();
+      });
+    });
 
     it('should resolve with the response from backend', done => {
       service.createBlock(input).then(value => {
@@ -159,6 +189,41 @@ describe('BlockCommandService', () => {
       });
     });
 
+    describe('(error pathways)', () => {
+
+      const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+      runTestForMissingParams(
+        requiredParams, 'createBlock', 'CreateTextBlockInput'
+      );
+
+    });
+
   });
 
+  function runTestForMissingParams(
+    params: Array<string>, functionName: string, context: string
+  ) {
+    params.forEach(param => {
+      // run test for each type of error: 'undefined' and 'null' values
+      ['undefined', 'null'].forEach(errorType => {
+        it(`should throw an error if ${param} is ${errorType}`, done => {
+          // edit the input based on what type of error is being checked
+          if (errorType === 'undefined') {
+            delete input[param];
+          } else {
+            input[param] = null;
+          }
+          // call the service
+          service[functionName](input).then(() => {
+            fail('error should occur'); done();
+          }).catch(error => {
+            expect(error.message).toEqual(
+              `Missing argument "${param}" in ${context}`
+            );
+            done();
+          });
+        });
+      });
+    });
+  }
 });

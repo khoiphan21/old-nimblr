@@ -37,7 +37,7 @@ export class BlockCommandService {
 
   private async updateTextBlock(input: UpdateTextBlockInput): Promise<any> {
     const requiredParams = [
-      'id', 'documentId', 'version', 'lastUpdatedBy', 'updatedAt', 'value'
+      'id', 'documentId', 'version', 'lastUpdatedBy', 'value'
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'UpdateTextBlockInput');
