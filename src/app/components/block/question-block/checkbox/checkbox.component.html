@@ -2,11 +2,11 @@
     <div formArrayName="options">
         <div *ngFor="let option of formGroup.get('options').controls; let i=index">
             <div class="option checkbox" [formGroupName]="i">
-                <input type="checkbox" formControlName="checked">
-                <input type="text" formControlName="answer" placeholder="Option {{i + 1}}">
+                <input type="checkbox" formControlName="checked" id="{{i}}">
+                <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="answer" placeholder="Option {{i + 1}}">
             </div>
         </div>
-        <div class="option checkbox clickable" (click)="addNewOption()">
+        <div class="option checkbox clickable" (click)="addNewOption()" *ngIf="isPreviewMode === false">
             <input type="checkbox" style="pointer-events: none">
             <input type="text" value="Add option or Add 'OTHER'" style="pointer-events: none">
         </div>

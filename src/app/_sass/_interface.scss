@@ -143,3 +143,17 @@
         padding-left: 0;
     }
 }
+
+.not-editable {
+    pointer-events: none;
+}
+
+.borderless {
+    border-color: transparent !important;
+}
+
+input {
+    &:disabled {
+        background: transparent;
+    }
+}

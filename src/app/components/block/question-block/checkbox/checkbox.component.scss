@@ -44,6 +44,13 @@
                     color: $color-grey;
                 }
             }
+            label {
+                width: 60%;
+                margin-left: 15px;
+                color: $color-grey;
+                padding-left: 5px;
+                margin-bottom: 0px;
+            }
         }
     }
 }

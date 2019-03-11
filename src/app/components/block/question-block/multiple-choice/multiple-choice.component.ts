@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 @Component({
@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
   styleUrls: ['./multiple-choice.component.scss']
 })
 export class MultipleChoiceComponent implements OnInit {
+  @Input() isPreviewMode: boolean;
   formGroup: FormGroup;
   selectedRadio: '';
   data = {

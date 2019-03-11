@@ -3,10 +3,10 @@
         <div *ngFor="let option of formGroup.get('options').controls; let i=index">
             <div class="option checkbox" [formGroupName]="i">
                 {{i + 1}}.
-                <input type="text" formControlName="answer" placeholder="Option {{i + 1}}">
+                <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="answer" placeholder="Option {{i + 1}}">
             </div>
         </div>
-        <div class="option checkbox clickable" (click)="addNewOption()">
+        <div class="option checkbox clickable" (click)="addNewOption()" *ngIf="isPreviewMode === false">
             {{formGroup.get('options').controls.length + 1}}.
             <input type="text" value="Add option" style="pointer-events: none">
         </div>

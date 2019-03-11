@@ -8,8 +8,12 @@
         border: 1px solid #CECECE;
         border-radius: 3px;
         padding: 30px;
+        .question-heading {
+            height: 41px;
+        }
         .row {
             @include row-center;
+            align-items: flex-start;
             justify-content: space-between;
             [type=text] {
                 border: 0;

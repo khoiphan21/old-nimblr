@@ -6,9 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./question-block.component.scss']
 })
 export class QuestionBlockComponent implements OnInit {
-
+  isPreviewMode = true;
   isQuestionOptionShown = false;
-  currentType = 'multiple choice';
+  currentType = 'checkbox';
   constructor() { }
 
   ngOnInit() {
@@ -20,6 +20,7 @@ export class QuestionBlockComponent implements OnInit {
 
   selectType(type: string) {
     this.currentType = type;
+    this.isPreviewMode = true;
     this.toggleOptions();
   }
 }
