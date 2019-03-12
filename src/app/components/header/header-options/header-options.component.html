@@ -1,4 +1,4 @@
-<section class="container options-block desktop">
+<section class="container options-block desktop" *ngIf="isOptionShown" [@fadeInOutAnimation]>
     <section class="document-options">
         <div class="option">
             <i class="fas fa-trash-alt"></i><span>Delete</span>

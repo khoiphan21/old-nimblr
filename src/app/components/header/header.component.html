@@ -11,7 +11,7 @@
     <section class="document-tab pr-4" *ngIf="currentUrl === 'document'">
         <span class="mobile"><i class="fas fa-share-alt"></i></span>
         <span class="share clickable desktop">Share</span>
-        <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = true"></i>
+        <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = !isOptionShown"></i>
         <app-header-options [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event"></app-header-options>
     </section>
 </div>

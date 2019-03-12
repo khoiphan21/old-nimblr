@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { slideBottomToTopAnimation } from 'src/app/animation';
+import { slideBottomToTopAnimation, fadeInOutAnimation } from 'src/app/animation';
 
 @Component({
   selector: 'app-header-options',
   templateUrl: './header-options.component.html',
   styleUrls: ['./header-options.component.scss'],
-  animations: [slideBottomToTopAnimation]
+  animations: [slideBottomToTopAnimation, fadeInOutAnimation]
 })
 export class HeaderOptionsComponent implements OnInit {
   @Input() isOptionShown: boolean;
