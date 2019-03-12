@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { Observable, Subject } from 'rxjs';
+import { reject } from 'q';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,12 @@ import { Observable, Subject } from 'rxjs';
 
 export class GraphQlCommandService {
 
-  private queryQueue: Array<any> = [];
-  constructor() { }
+  private queryQueue: any;
+
+  constructor() {
+    const PQueue = require('p-queue');
+    const queryQueue = new PQueue({ concurrency: 1 });
+  }
 
   /**
    * This method implements the interface GraphQlCommandService. It
@@ -28,12 +33,6 @@ export class GraphQlCommandService {
         };
         this.enqueueQuery(queryObject);
 
-        
-
-
-
-
-
         return resolve('resolved');
       } catch (error) {
 
@@ -42,12 +41,28 @@ export class GraphQlCommandService {
     });
   }
 
-  private sendQueryToCloud(): any {
+  private async sendQueryToCloud(queryObject: object): Promise<any> {
+    return new Promise((resolve, reject) => {
+      //graph ql query
+      // queryObject.q
+      // queryObject.p
+      resolve(true);
+    }).catch(err => {
+      reject(err);
+    });
+  };
 
-  }
+
 
   private enqueueQuery(queryObject: object): any {
-    this.queryQueue.push(queryObject);
+    try {
+      this.sendQueryToCloud(queryObject);
+      this.queryQueue.add(() => {
+        // blah
+      });
+      return true;
+
+    } catch (error) { throw error; }
   }
 
   private dequeueQuery(): any {
