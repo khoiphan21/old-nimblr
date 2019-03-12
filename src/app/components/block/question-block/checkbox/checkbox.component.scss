@@ -1,6 +1,58 @@
 @import '../../../../_sass/interface';
 @import '../../../../_sass/variables';
 @import '../../../../_sass/base';
+form.question-setup {
+    width: 100%;
+    .option {
+        width: 100%;
+        @include row-center;
+        justify-content: flex-start;
+        margin-top: 15px;
+        font-size: 15px;
+        color: $color-grey;
+        input[type=checkbox] {
+            -webkit-appearance: none;
+            border: 2px solid #a9a9a9;
+            background: white;
+            border-radius: 3px;
+            width: 20px;
+            height: 20px;
+            position: relative;
+            &:checked {
+                background-color: #a9a9a9;
+                color: white;
+                &::after {
+                    width: 100%;
+                    height: 100%;
+                    content: '\2713';
+                    font-size: 14px;
+                    position: absolute;
+                    @include row-center;
+                }
+            }
+        }
+        input[type=text] {
+            width: 60%;
+            border: 0;
+            margin-left: 15px;
+            color: $color-grey;
+            border: #a9a9a9 solid 1px;
+            border-radius: 3px;
+            padding-left: 5px;
+            &::placeholder {
+                color: $color-grey;
+            }
+        }
+        label {
+            width: 60%;
+            margin-left: 15px;
+            color: $color-grey;
+            padding-left: 5px;
+            margin-bottom: 0px;
+        }
+    }
+}
+
 @include media(lg) {
     form.question-setup {
         width: 100%;

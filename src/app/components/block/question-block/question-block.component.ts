@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class QuestionBlockComponent implements OnInit {
   isPreviewMode = true;
   isQuestionOptionShown = false;
+  question = 'Untitled Question';
   currentType = 'checkbox';
   constructor() { }
 
