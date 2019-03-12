@@ -1,7 +1,31 @@
-<section class="question-block" (click)="isPreviewMode = false" (clickOutside)="isPreviewMode = true" [ngClass]="{'borderless': isPreviewMode === true}">
-    <div class="row no-pad question-heading">
-        <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" class="col-7">
-        <div *ngIf="isPreviewMode === false" class="dropdown col-2" (clickOutside)="isQuestionOptionShown = false">
+<!-- mobile version -->
+<section class="mobile question-block" (click)="isPreviewMode = false" *ngIf="isPreviewMode">
+    <div class="question">
+        {{question}}
+    </div>
+    <div class="row no-pad" [ngSwitch]=currentType>
+        <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%; "></app-checkbox>
+        <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-dropdown>
+        <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
+    </div>
+</section>
+<section class="mobile edit-question" *ngIf="!isPreviewMode" [@slideBottomToTopAnimation]>
+    <div class="row no-pad header">
+        <div class="col-2" (click)="isPreviewMode = true"><i class="fas fa-times"></i></div>
+        <div class="col-2"><i class="fas fa-check"></i></div>
+    </div>
+    <div class="row no-pad question">
+        <label>question</label>
+        <input type="text" placeholder="Type your question here" [(ngModel)]="question">
+    </div>
+    <div class="row no-pad options" [ngSwitch]=currentType>
+        <label>Options</label>
+        <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%; "></app-checkbox>
+        <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-dropdown>
+        <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
+    </div>
+    <div class="row no-pad footer" [ngSwitch]=currentType>
+        <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
                 <div *ngSwitchCase="'short answer'">
                     <i class="fas fa-grip-lines"></i><span>Short Answer</span>
@@ -45,10 +69,9 @@
                 </section>
             </section>
         </div>
-    </div>
-    <div class="row no-pad" [ngSwitch]=currentType>
-        <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%; "></app-checkbox>
-        <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-dropdown>
-        <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
+        <div class="delete">
+            <i class="fas fa-trash-alt"></i>
+        </div>
     </div>
 </section>
+<!-- end of mobile version -->

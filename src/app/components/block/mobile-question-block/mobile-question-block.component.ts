@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { slideBottomToTopAnimation } from 'src/app/animation';
 
 @Component({
-  selector: 'app-question-block',
-  templateUrl: './question-block.component.html',
-  styleUrls: ['./question-block.component.scss']
+  selector: 'app-mobile-question-block',
+  templateUrl: './mobile-question-block.component.html',
+  styleUrls: ['./mobile-question-block.component.scss'],
+  animations: [slideBottomToTopAnimation]
 })
-export class QuestionBlockComponent implements OnInit {
+export class MobileQuestionBlockComponent implements OnInit {
   isPreviewMode = true;
   isQuestionOptionShown = false;
+  question = 'Untitled Question';
   currentType = 'checkbox';
   constructor() { }
 
@@ -22,4 +25,5 @@ export class QuestionBlockComponent implements OnInit {
     this.currentType = type;
     this.toggleOptions();
   }
+
 }

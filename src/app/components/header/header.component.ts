@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.navigationBarService.setNavigationBarStatus(false);
     this.accountService.getUser$().subscribe((user) => {
       if (user !== null) {
         this.currentUser = user;
