@@ -1,17 +1,17 @@
 <div class="row no-pad">
     <!-- <div class="row no-pad" *ngIf="currentUser"> -->
     <section class="header-left mobile">
-        <i class="fas fa-bars"></i>
-        <span>The alchemist</span>
+        <i class="fas fa-bars" (click)="showNavigationBar()"></i>
+        <span *ngIf="currentUrl === 'document'">The alchemist</span>
     </section>
     <section class="user-profile col-2 pl-4 desktop" *ngIf="currentUser">
-        <div class="user-icon mr-2">C</div>
+        <div class="user-icon mr-2">{{initialName}}</div>
         <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
     </section>
-    <section class="document-tab pr-4">
+    <section class="document-tab pr-4" *ngIf="currentUrl === 'document'">
         <span class="mobile"><i class="fas fa-share-alt"></i></span>
         <span class="share clickable desktop">Share</span>
-        <i class="fas fa-ellipsis-h clickable"></i>
-        <!-- <app-header-options></app-header-options> -->
+        <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = true"></i>
+        <app-header-options [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event"></app-header-options>
     </section>
 </div>

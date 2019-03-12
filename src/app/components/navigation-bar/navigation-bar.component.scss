@@ -12,3 +12,38 @@ section.fluid-container {
     font-size: 0.8rem;
     color: $color-mid-grey;
 }
+
+section.mobile.navigation-bar {
+    width: 85vw;
+    height: 100vh;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    padding: 0 4%;
+    display: flex;
+    flex-direction: column;
+    section.user-profile {
+        width: 100%;
+        height: 50px;
+        @include row-center;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+        .user-icon {
+            width: 26.5px;
+            height: 26.5px;
+            font-size: 0.8rem;
+            @include row-center;
+            background: $color-blue;
+            text-align: center;
+            color: white;
+            border-radius: 50px;
+        }
+        .user-name {
+            color: $color-mid-grey;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+    }
+}

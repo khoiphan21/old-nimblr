@@ -19,6 +19,25 @@ div.row {
             margin: 0 $mobile-frame-horizontal-padding;
         }
     }
+    section.user-profile {
+        height: 100%;
+        @include row-center;
+        justify-content: flex-start;
+        .user-icon {
+            @include row-center;
+            width: 20px;
+            height: 20px;
+            background: $color-blue;
+            text-align: center;
+            color: white;
+            border-radius: 50px;
+            font-size: 0.575rem;
+        }
+        .user-name {
+            color: $color-mid-grey;
+            font-size: $header-text-size;
+        }
+    }
     section.document-tab {
         color: $color-mid-grey;
         @include row-center;
