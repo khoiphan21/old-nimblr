@@ -7,7 +7,9 @@ $dropdown-height: 41px;
 }
 
 section.mobile.question-block {
+    width: 100%;
     flex-direction: column;
+    margin-bottom: 25px;
     .question {
         font-size: 19px;
         font-weight: 400;

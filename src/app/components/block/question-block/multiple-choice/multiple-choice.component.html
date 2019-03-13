@@ -2,13 +2,13 @@
     <div formArrayName="options">
         <div *ngFor="let option of formGroup.get('options').controls; let i=index">
             <div class="option checkbox" [formGroupName]="i">
-                <input type="radio" name="selectedRadio" style="pointer-events: none">
+                <input type="radio" name="selectedRadio" id={{i}}>
                 <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="answer" placeholder="Option {{i + 1}}">
             </div>
         </div>
         <div class="option checkbox clickable" (click)="addNewOption()" *ngIf="isPreviewMode === false">
-            <input type="radio" style="pointer-events: none">
-            <input type="text" value="Add option" style="pointer-events: none">
+            <i class="fas fa-plus-circle"></i>
+            <div class="add-option">Add option or Add 'OTHER'</div>
         </div>
     </div>
 </form>

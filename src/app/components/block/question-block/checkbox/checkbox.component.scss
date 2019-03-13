@@ -31,6 +31,15 @@ form.question-setup {
                 }
             }
         }
+        input[type=radio] {
+            // -webkit-appearance: none;
+            border: 2px solid #a9a9a9;
+            background: white !important;
+            border-radius: 20px;
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
         input[type=text] {
             width: 100%;
             border: 0;
@@ -43,12 +52,15 @@ form.question-setup {
                 color: $color-grey;
             }
         }
-        label {
-            width: 60%;
+        .add-option {
+            width: 100%;
             margin-left: 15px;
             color: $color-grey;
-            padding-left: 5px;
             margin-bottom: 0px;
+        }
+        i.fa-plus-circle {
+            font-size: 20px;
+            color: $color-mid-grey;
         }
     }
 }
