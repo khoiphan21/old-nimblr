@@ -4,6 +4,9 @@ import { GraphQlCommandService } from './graph-ql-command.service';
 import { Auth } from 'aws-amplify';
 import { resolve } from 'path';
 
+// Injected service
+import { API, graphqlOperation } from 'aws-amplify';
+
 
 describe('GraphQlCommandService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
@@ -34,57 +37,44 @@ describe('GraphQlCommandService', () => {
     TestBed.configureTestingModule({});
 
     beforeEach(() => {
-      // graphQlService = TestBed.get(GraphQlCommandService);
+      spyOn(API, 'graphql').and.returnValue(Promise.resolve());
       graphQlService = TestBed.get(GraphQlCommandService);
     });
 
-    it('should return a Promise type when query is registered correctly', () => {
-      const value = graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
-      expect(value instanceof Promise).toBeTruthy();
+    async function mockQuery(): Promise<any> {
+      return graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
+    };
+
+    it('should return a Promise type when query is registered correctly', async () => {
+      const response = mockQuery();
+      expect(response instanceof Promise).toBeTruthy();
     });
 
-    it('should return a Promise type when error', () => {
-      // const value = graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
-    });
+    // it('should return a Promise type when error', () => {
+    //   const value = graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
+    // });
 
     fit('should stack up the queue when new query comes in', () => {
-      // const service = graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
-      // // step1: internal graphQlService param check
-      // expect(graphQlService["queryQueue"].length()).toBe(0);
 
-      // // step2: enquery query
+      // scope: test whether the promise is passed into the queue but using add
+      // out scope: not the actual behaviour of the external queue service
+
+      // Set up and mock the queue
+      const spy = spyOnProperty(graphQlService, 'queryQueue');
+      const spyy = spyOn(spy, 'add').and.returnValue(() => {
+        console.log('adding task into queue');
+      });
+
+      // step1: internal graphQlService param check
+      expect(spyy.call).toBe(0);
+
+      // step2: enquery query
       // graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
 
-      // // step3: mock sendQuery behaviour
+      // step4: internal graphQlService param check again
+      // expect(magicmock.call).toBe(1);
 
-      // // step4: internal graphQlService param check again
-      // expect(graphQlService["queryQueue"].length()).toBe(1);
-
-      // SEE: https://www.npmjs.com/package/p-queue
-      const PQueue = require('p-queue');
-      const queue = new PQueue({ concurrency: 2 });
-
-      async function unicornTask() {
-        console.log('unicorn task received...');
-        return new Promise((resolve, _) => {
-          setTimeout(() => {
-            resolve('resolved yeah');
-          }, 5000);
-
-        });
-      };
-
-      console.log('queue start', queue);
-
-      queue.add(() => unicornTask()).then(() => {
-        console.log('Done: task1');
-      });
-
-      queue.add(() => unicornTask()).then(() => {
-        console.log('Done: task2');
-      });
-
-      console.log('queue end', queue);
+      // // SEE: https://www.npmjs.com/package/p-queue
     });
 
     it('should resend the same query after timeout if there is no response from cloud API', () => {

@@ -3,17 +3,21 @@ import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { Observable, Subject } from 'rxjs';
 import { reject } from 'q';
 
+interface QueryObject {
+  q: string;
+  p: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 
 export class GraphQlCommandService {
-
   private queryQueue: any;
 
   constructor() {
     const PQueue = require('p-queue');
-    const queryQueue = new PQueue({ concurrency: 1 });
+    this.queryQueue = new PQueue({ concurrency: 1 });
   }
 
   /**
@@ -27,45 +31,46 @@ export class GraphQlCommandService {
   async query(query: string, parameters: string): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        const queryObject = {
+        const queryObject: QueryObject = {
           q: query,
           p: parameters
         };
+        // Enqueue task into a forever running queue
         this.enqueueQuery(queryObject);
-
-        return resolve('resolved');
+        return resolve(true);
       } catch (error) {
-
         return reject(error);
       }
     });
   }
 
-  private async sendQueryToCloud(queryObject: object): Promise<any> {
-    return new Promise((resolve, reject) => {
-      //graph ql query
-      // queryObject.q
-      // queryObject.p
-      resolve(true);
-    }).catch(err => {
-      reject(err);
-    });
-  };
-
-
-
-  private enqueueQuery(queryObject: object): any {
+  private enqueueQuery(queryObject: QueryObject): any {
     try {
-      this.sendQueryToCloud(queryObject);
       this.queryQueue.add(() => {
-        // blah
+        this.sendQueryToCloud(queryObject);
+      }).then(() => {
+        console.log('task enqueued');
       });
       return true;
 
     } catch (error) { throw error; }
   }
 
-  private dequeueQuery(): any {
-    return this.queryQueue.shift();
-  }
+  private async sendQueryToCloud(queryObject: QueryObject): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const response = await API.graphql(graphqlOperation(queryObject.q, queryObject.p));
+      resolve(response);
+
+    }).catch(err => {
+      reject(err);
+
+    });
+  };
+
+
+  // We probably wont need this, becoz the task queue will dequeue
+  // done task automatically
+  // private dequeueQuery(): any {
+  //   return this.queryQueue.shift();
+  // }
 }
