@@ -54,27 +54,17 @@ describe('GraphQlCommandService', () => {
     //   const value = graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
     // });
 
-    fit('should stack up the queue when new query comes in', () => {
-
+    fit('should call queue add method when new query comes in', () => {
       // scope: test whether the promise is passed into the queue but using add
       // out scope: not the actual behaviour of the external queue service
-
+      
+      // REF: https://www.npmjs.com/package/p-queue
       // Set up and mock the queue
-      const spy = spyOnProperty(graphQlService, 'queryQueue');
-      const spyy = spyOn(spy, 'add').and.returnValue(() => {
-        console.log('adding task into queue');
-      });
+      spyOn(graphQlService['queryQueue'], 'add');
+      expect(graphQlService['queryQueue'].add.calls.count()).toBe(0);
+      graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
+      expect(graphQlService['queryQueue'].add.calls.count()).toBe(1);
 
-      // step1: internal graphQlService param check
-      expect(spyy.call).toBe(0);
-
-      // step2: enquery query
-      // graphQlService.query(TEST_QUERY, TEST_PARAMETERS);
-
-      // step4: internal graphQlService param check again
-      // expect(magicmock.call).toBe(1);
-
-      // // SEE: https://www.npmjs.com/package/p-queue
     });
 
     it('should resend the same query after timeout if there is no response from cloud API', () => {
