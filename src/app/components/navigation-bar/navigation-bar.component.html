@@ -9,7 +9,10 @@
         <div class="user-icon mr-2">T</div>
         <div class="user-name">De</div>
     </section>
-    <app-navigation-tab *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+    <ng-container *ngFor="let navigationTab of navigationTabs" class="">
+        <app-navigation-tab></app-navigation-tab>
+    </ng-container>
+
 </section>
 
 <!-- <section class="mobile navigation-bar" *ngIf="currentUser && isNavigationTabShown" [@slideLeftToRightAnimation]>

@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
+    "@ng-stack/contenteditable": "^1.0.1",
     "@types/chart.js": "^2.7.45",
     "amazon-cognito-identity-js-typescript": "^1.22.0",
     "angular-bootstrap-md": "^7.4.1",

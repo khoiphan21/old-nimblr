@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './modules/app-routing.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ContenteditableModule } from '@ng-stack/contenteditable';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -62,7 +63,8 @@ import { MobileQuestionBlockComponent } from './components/block/mobile-question
     MDBBootstrapModule.forRoot(),
     ServicesModule,
     ClickOutsideModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ContenteditableModule
   ],
 
   bootstrap: [AppComponent]

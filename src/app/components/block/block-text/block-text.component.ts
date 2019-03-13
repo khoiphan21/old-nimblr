@@ -10,7 +10,7 @@ import { UpdateTextBlockInput } from '../../../../API';
   styleUrls: ['./block-text.component.scss']
 })
 export class BlockTextComponent implements OnChanges {
-
+  isPlaceholderShown: boolean;
   value: string;
   private timeout: any;
 
@@ -39,6 +39,14 @@ export class BlockTextComponent implements OnChanges {
       });
       this.blockCommandService.updateBlock(updatedBlock);
     }, 500);
+  }
+
+  togglePlaceholder(status: boolean) {
+    if (this.value.length > 0 || status === false) {
+      this.isPlaceholderShown = false;
+    } else {
+      this.isPlaceholderShown = true;
+    }
   }
 
 
