@@ -3,15 +3,11 @@
     <div class="question">
         {{question}}
     </div>
-    <div class="row no-pad" [ngSwitch]=currentType>
-        <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%;"></app-checkbox>
-        <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%;"></app-dropdown>
-        <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
-    </div>
+    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style=" width: 100%;"></app-question-option>
 </section>
 <section class="mobile edit-question" *ngIf="!isPreviewMode" [@slideBottomToTopAnimation]>
     <div class="row no-pad header">
-        <div class="col-2" (click)="isPreviewMode = true"><i class="fas fa-times"></i></div>
+        <div class="col-2" (click)="isPreviewMode = true" (click)="callBla()"><i class="fas fa-times"></i></div>
         <div class="col-2"><i class="fas fa-check"></i></div>
     </div>
     <div class="row no-pad question">
@@ -20,9 +16,7 @@
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%; "></app-checkbox>
-        <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-dropdown>
-        <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
+        <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style=" width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">

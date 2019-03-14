@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-question-option',
@@ -7,17 +7,10 @@ import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
   styleUrls: ['./question-option.component.scss']
 })
 export class QuestionOptionComponent implements OnInit {
+  @Input() data;
   @Input() currentType: string;
   @Input() isPreviewMode: boolean;
   formGroup: FormGroup;
-  data = {
-    options: [
-      {
-        checked: false,
-        answer: ''
-      }
-    ]
-  };
 
   constructor(private formBuilder: FormBuilder) {
   }

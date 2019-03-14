@@ -21,9 +21,6 @@ import { BlockTextComponent } from './components/block/block-text/block-text.com
 import { BlockHeaderComponent } from './components/block/block-header/block-header.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
 import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
-import { DropdownComponent } from './components/block/question-block/dropdown/dropdown.component';
-import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
-import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
 import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
 import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
@@ -47,9 +44,6 @@ import { QuestionOptionComponent } from './components/block/question-block/quest
     BlockHeaderComponent,
     DocumentOptionsComponent,
     QuestionBlockComponent,
-    CheckboxComponent,
-    DropdownComponent,
-    MultipleChoiceComponent,
     NavigationTabComponent,
     HeaderOptionsComponent,
     ForgetPasswordPageComponent,

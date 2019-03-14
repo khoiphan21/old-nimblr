@@ -12,6 +12,14 @@ export class MobileQuestionBlockComponent implements OnInit {
   isQuestionOptionShown = false;
   question = 'Untitled Question';
   currentType = 'checkbox';
+  data = {
+    options: [
+      {
+        checked: false,
+        answer: ''
+      }
+    ]
+  };
   constructor() { }
 
   ngOnInit() {

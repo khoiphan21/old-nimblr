@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { QuestionType } from 'src/app/classes/question-block';
 
 @Component({
   selector: 'app-question-block',
@@ -9,12 +8,14 @@ import { QuestionType } from 'src/app/classes/question-block';
 export class QuestionBlockComponent implements OnInit {
   isPreviewMode = true;
   isQuestionOptionShown = false;
+  question = 'Untitled Question';
   currentType = 'short answer';
-  value = {
-    question: '',
-    type: QuestionType.CHECKBOX,
-    option: [
-      ``
+  data = {
+    options: [
+      {
+        checked: false,
+        answer: ''
+      }
     ]
   };
   constructor() { }

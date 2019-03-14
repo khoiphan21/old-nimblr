@@ -1,6 +1,6 @@
 <section class="question-block" (click)="isPreviewMode = false" (clickOutside)="isPreviewMode = true" [ngClass]="{'borderless': isPreviewMode === true}">
     <div class="row no-pad question-heading">
-        <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" class="col-7">
+        <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" [(ngModel)]="question" class="col-7">
         <div *ngIf="isPreviewMode === false" class="dropdown col-2" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
                 <div *ngSwitchCase="'short answer'">
@@ -46,10 +46,5 @@
             </section>
         </div>
     </div>
-    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" style=" width: 100%;"></app-question-option>
-    <!-- <div class="row no-pad" [ngSwitch]=currentType>
-        <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%; "></app-checkbox>
-        <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-dropdown>
-        <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
-    </div> -->
+    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style="width: 100%;"></app-question-option>
 </section>
