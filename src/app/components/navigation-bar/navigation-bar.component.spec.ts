@@ -11,6 +11,9 @@ class MockNavigationBarService {
   getNavigationBar$() {
     return new Subject();
   }
+  getNavigationBarStatus$() {
+    return new Subject();
+  }
 }
 
 describe('NavigationBarComponent', () => {
@@ -28,6 +31,7 @@ describe('NavigationBarComponent', () => {
           RouterTestingModule.withRoutes([])
         ],
         providers: [
+          ServicesModule,
           {
             provide: NavigationBarService,
             useClass: MockNavigationBarService

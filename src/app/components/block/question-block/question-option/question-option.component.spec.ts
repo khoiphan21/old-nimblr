@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionOptionComponent } from './question-option.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('QuestionOptionComponent', () => {
   let component: QuestionOptionComponent;
@@ -8,7 +10,9 @@ describe('QuestionOptionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ QuestionOptionComponent ]
+      declarations: [ QuestionOptionComponent ],
+      imports: [ReactiveFormsModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));
@@ -16,6 +20,14 @@ describe('QuestionOptionComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(QuestionOptionComponent);
     component = fixture.componentInstance;
+    component.data = {
+      options: [
+        {
+          checked: false,
+          answer: ''
+        }
+      ]
+    };
     fixture.detectChanges();
   });
 

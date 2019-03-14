@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MobileQuestionBlockComponent } from './mobile-question-block.component';
+import { QuestionOptionComponent } from '../question-block/question-option/question-option.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('MobileQuestionBlockComponent', () => {
   let component: MobileQuestionBlockComponent;
@@ -8,7 +10,14 @@ describe('MobileQuestionBlockComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MobileQuestionBlockComponent ]
+      declarations: [
+        MobileQuestionBlockComponent,
+        QuestionOptionComponent
+      ],
+      imports: [
+        FormsModule,
+        ReactiveFormsModule
+      ]
     })
     .compileComponents();
   }));
