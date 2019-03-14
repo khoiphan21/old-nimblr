@@ -17,7 +17,7 @@ class MockDocumentService {
 describe('DashboardPageComponent', () => {
   let component: DashboardPageComponent;
   let fixture: ComponentFixture<DashboardPageComponent>;
-
+  let documentService;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -35,17 +35,30 @@ describe('DashboardPageComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
-
-    spyOn(TestBed.get(Router), 'navigate');
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardPageComponent);
     component = fixture.componentInstance;
+    documentService = TestBed.get(DocumentService);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('createNewFormDocument()', () => {
+    it('should call createFormDocument() from Document Service', () => {
+      spyOn(documentService, 'createFormDocument');
+      component.createNewFormDocument();
+      expect(documentService.createFormDocument).toHaveBeenCalled();
+    });
+
+    xit('should navigate to "document" page when the function is called', () => {
+      component.createNewFormDocument();
+      // const routerSpy = spyOn(component['router'], 'navigate');
+      // expect(routerSpy.calls.count()).toBe(1);
+    });
   });
 });
