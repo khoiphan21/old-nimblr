@@ -90,13 +90,15 @@ export class RegisterPageComponent implements OnInit {
     });
   }
 
-  verifyAccount() {
+  verifyAccount(): Promise<any> {
     const verificationcode = this.verificationForm.get('verificationCode').value;
     const email = this.newCognitoUser.username;
-    this.accountService.awsConfirmAccount(email, verificationcode).then(() => {
+    return this.accountService.awsConfirmAccount(email, verificationcode).then(() => {
       this.createAccountInDatabase();
+      return Promise.resolve();
     }).catch(error => {
       console.error('verifiyAccount()', error);
+      return Promise.reject();
     });
   }
 
