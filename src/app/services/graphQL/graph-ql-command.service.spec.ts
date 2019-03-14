@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQlCommandService } from './graph-ql-command.service';
 import { Auth } from 'aws-amplify';
-import { resolve } from 'path';
 
 // Injected service
 import { API, graphqlOperation } from 'aws-amplify';
@@ -81,9 +80,11 @@ describe('GraphQlCommandService', () => {
     fit('should send queries to queue in chronological order according to its enqueued time', () => {
       // Set up and mock the queue
       spyOn(graphQlService['queryQueue'], 'add');
+      spyOn(graphqlOperation, '');
+      spyOn
 
       // execute mock query and check whether queries are added in correct order
-      // TODO: NO, not completed yet, the parameter have been chuck into add is a function
+      // TODO: NO, not completed yet, the parameter have been chucked into add is a function
       // not numbers
       for (var c = 1; c <= 10; c++) {
         let mockParameter = c.toString();

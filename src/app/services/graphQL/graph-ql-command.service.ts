@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { Observable, Subject } from 'rxjs';
-import { reject } from 'q';
 
 interface QueryObject {
   q: string;
@@ -21,8 +20,7 @@ export class GraphQlCommandService {
   }
 
   /**
-   * This method implements the interface GraphQlCommandService. It
-   * will store queries in a temporary queue and perform them whenever 
+   * This method will store queries in a temporary queue and perform them whenever 
    * possible in chronological order.
    *
    * @param query graphql query
@@ -36,37 +34,29 @@ export class GraphQlCommandService {
           p: parameters
         };
         // Enqueue task into a forever running queue
-        this.enqueueQuery(queryObject);
-        return resolve(true);
+        const result: boolean = this.enqueueQuery(queryObject);
+        return resolve(result);
       } catch (error) {
         return reject(error);
       }
     });
   }
 
-  private enqueueQuery(queryObject: QueryObject): any {
+  private enqueueQuery(queryObject: QueryObject): boolean {
     try {
       this.queryQueue.add(() => {
-        this.sendQueryToCloud(queryObject);
-      }).then(() => {
-        console.log('task enqueued');
+        // add a funciton into task queue, so it will be executed automatically
+        return new Promise(async (resolve, _) => {
+          const response = await API.graphql(graphqlOperation(queryObject.q, queryObject.p));
+          resolve(response);
+        });
       });
       return true;
-
-    } catch (error) { throw error; }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
-
-  private async sendQueryToCloud(queryObject: QueryObject): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const response = await API.graphql(graphqlOperation(queryObject.q, queryObject.p));
-      resolve(response);
-
-    }).catch(err => {
-      reject(err);
-
-    });
-  };
-
 
   // We probably wont need this, becoz the task queue will dequeue
   // done task automatically
