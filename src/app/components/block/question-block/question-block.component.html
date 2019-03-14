@@ -46,9 +46,10 @@
             </section>
         </div>
     </div>
-    <div class="row no-pad" [ngSwitch]=currentType>
+    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" style=" width: 100%;"></app-question-option>
+    <!-- <div class="row no-pad" [ngSwitch]=currentType>
         <app-checkbox *ngSwitchCase="'checkbox'" [isPreviewMode]="isPreviewMode" style=" width: 100%; "></app-checkbox>
         <app-dropdown *ngSwitchCase=" 'dropdown'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-dropdown>
         <app-multiple-choice *ngSwitchCase="'multiple choice'" [isPreviewMode]="isPreviewMode" style="width: 100%; "></app-multiple-choice>
-    </div>
+    </div> -->
 </section>

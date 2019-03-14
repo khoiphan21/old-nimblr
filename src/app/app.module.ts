@@ -29,6 +29,7 @@ import { HeaderOptionsComponent } from './components/header/header-options/heade
 import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
 import { AddInformationComponent } from './components/block/add-information/add-information.component';
 import { MobileQuestionBlockComponent } from './components/block/mobile-question-block/mobile-question-block.component';
+import { QuestionOptionComponent } from './components/block/question-block/question-option/question-option.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MobileQuestionBlockComponent } from './components/block/mobile-question
     ForgetPasswordPageComponent,
     AddInformationComponent,
     MobileQuestionBlockComponent,
+    QuestionOptionComponent,
   ],
   imports: [
     BrowserModule,

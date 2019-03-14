@@ -11,7 +11,7 @@ $dropdown-height: 41px;
         border-radius: 3px;
         padding: 30px;
         .question-heading {
-            height: auto;
+            height: 41px;
         }
         .row {
             @include row-center;
@@ -22,9 +22,10 @@ $dropdown-height: 41px;
                 border-bottom: 1px solid #979797;
                 padding-left: 0;
                 letter-spacing: 0.5px;
+                font-size: 20px;
                 &::placeholder {
                     color: $color-grey;
-                    font-size: 18px;
+                    font-size: 20px;
                 }
             }
             $dropdown-height: 41px;
@@ -34,6 +35,7 @@ $dropdown-height: 41px;
                 background-color: #F3F3F3;
                 cursor: pointer;
                 padding: 0;
+                position: relative;
                 div.selected-option {
                     position: relative;
                     height: 100%;
@@ -58,6 +60,7 @@ $dropdown-height: 41px;
                     }
                 }
                 section.container.options-block {
+                    position: absolute;
                     left: 0px;
                     top: $dropdown-height;
                 }
