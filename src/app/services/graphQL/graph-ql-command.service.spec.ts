@@ -17,7 +17,7 @@ export class mockGraphqlService {
   }
 }
 
-describe('GraphQlCommandService', () => {
+fdescribe('GraphQlCommandService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({}));
 
@@ -26,7 +26,7 @@ describe('GraphQlCommandService', () => {
     expect(service).toBeTruthy();
   });
 
-  fdescribe('Integration Tests', () => {
+  describe('Integration Tests', () => {
     let graphQlService: any;
     let TestBlockId = "test123";
     let PARAMETERS: object;
@@ -75,7 +75,7 @@ describe('GraphQlCommandService', () => {
     });
 
 
-    fit('should perform the corresponding query in backend with correct values', async () => {
+    it('should perform the corresponding query in backend with correct values', async () => {
       let graphqlResponse: any;
       let QUERY: any;
       let PARAMETERS: object;
@@ -121,7 +121,7 @@ describe('GraphQlCommandService', () => {
     });
 
     it('should resend the same query after timeout if there is no response from cloud API', () => {
-
+      // skip for now
     });
   });
 
