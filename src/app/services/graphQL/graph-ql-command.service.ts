@@ -34,33 +34,34 @@ export class GraphQlCommandService {
           p: parameters
         };
         // Enqueue task into a forever running queue
-        const result: boolean = this.enqueueQuery(queryObject);
-        return resolve(result);
+        const response = this.enqueueQuery(queryObject);
+        return resolve(response);
       } catch (error) {
         return reject(error);
       }
     });
   }
 
-  private enqueueQuery(queryObject: QueryObject): boolean {
+  private enqueueQuery(queryObject: QueryObject): Promise<any> {
     try {
-      this.queryQueue.add(() => {
-        // add a funciton into task queue, so it will be executed automatically
-        return new Promise(async (resolve, _) => {
-          const response = await API.graphql(graphqlOperation(queryObject.q, queryObject.p));
-          resolve(response);
+
+      // Enqueue a Promise function that will perform a graphQL query.
+      // After enqueuing, this promise will be returned.
+      return this.queryQueue.add(() => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const response = await API.graphql(graphqlOperation(queryObject.q, queryObject.p));
+            console.log('2.0 resolve graphql api');
+            resolve(response);
+          } catch (error) {
+            reject(error);
+          }
         });
       });
-      return true;
     } catch (error) {
       console.error(error);
-      return false;
+      throw error;
     }
   }
 
-  // We probably wont need this, becoz the task queue will dequeue
-  // done task automatically
-  // private dequeueQuery(): any {
-  //   return this.queryQueue.shift();
-  // }
 }
