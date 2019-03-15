@@ -17,7 +17,7 @@ export class mockGraphqlService {
   }
 }
 
-fdescribe('GraphQlCommandService', () => {
+describe('GraphQlCommandService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({}));
 
