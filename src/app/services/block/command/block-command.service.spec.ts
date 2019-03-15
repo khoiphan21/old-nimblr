@@ -8,7 +8,7 @@ import { processTestError, isValidDateString } from 'src/app/classes/test-helper
 const uuidv4 = require('uuid/v4');
 
 
-fdescribe('BlockCommandService', () => {
+describe('BlockCommandService', () => {
   let service: BlockCommandService;
   let input: any;
   // variables to use with the spy

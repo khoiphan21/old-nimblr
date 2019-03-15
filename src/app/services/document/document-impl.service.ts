@@ -3,6 +3,7 @@ import { DocumentService } from './document.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Document } from '../../classes/document';
 import { AccountService } from '../account/account.service';
+import { GraphQLService } from '../graphQL/graph-ql.service';
 import { User } from '../../classes/user';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../../../graphql/mutations';
@@ -23,7 +24,8 @@ export class DocumentServiceImpl implements DocumentService {
 
   constructor(
     private accountService: AccountService,
-    private documentFactory: DocumentFactoryService
+    private documentFactory: DocumentFactoryService,
+    private graphQlService: GraphQLService
   ) {
   }
 
@@ -38,8 +40,8 @@ export class DocumentServiceImpl implements DocumentService {
       }
     };
 
-    const response: any = await API.graphql(
-      graphqlOperation(queries.listDocuments, queryParams)
+    const response: any = await this.graphQlService.query(
+      queries.listDocuments, queryParams
     );
 
     const documentPromisses: Array<Promise<Document>> = response.data.listDocuments.items.map(rawDocument => {
