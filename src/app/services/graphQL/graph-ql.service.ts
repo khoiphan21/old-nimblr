@@ -62,7 +62,7 @@ export class GraphQLService {
     return Promise.resolve({ response, items, nextToken });
   }
 
-  getSubscription(subscription, params): Observable<any> {
+  getSubscription(subscription, params?): Observable<any> {
     const observable = new Subject();
     const graphqlQuery: any = API.graphql(graphqlOperation(subscription, params));
     graphqlQuery.subscribe(response => {
