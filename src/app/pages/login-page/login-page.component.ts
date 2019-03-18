@@ -36,6 +36,7 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
+  // TODO: Handle Error
   signIn(): Promise<any> {
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
