@@ -16,12 +16,12 @@ export class DashboardPageComponent implements OnInit {
     private router: Router
   ) { }
 
+  // TODO: handle error
   ngOnInit() {
     this.documentService.getUserDocuments$().subscribe(documents => {
       this.userDocuments = documents;
     }, error => {
-      console.error('Error received in DashboardPageComponent. Details below:');
-      console.error(error);
+      console.error('Error received in DashboardPageComponent', error);
     });
   }
 

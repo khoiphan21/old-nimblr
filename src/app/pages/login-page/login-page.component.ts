@@ -44,7 +44,7 @@ export class LoginPageComponent implements OnInit {
         throw new Error(`[loginPage]: 'Null' received from successful login`);
       }
       const id = data.id;
-      this.router.navigate(['dashboard', id]);
+      this.router.navigate(['dashboard']);
     }).catch(error => {
       if (error.code === 'UserNotConfirmedException') {
         this.accountService.setUnverifiedUser(email, password);

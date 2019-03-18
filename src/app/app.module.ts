@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './modules/app-routing.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ContenteditableModule } from '@ng-stack/contenteditable';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -20,13 +21,12 @@ import { BlockTextComponent } from './components/block/block-text/block-text.com
 import { BlockHeaderComponent } from './components/block/block-header/block-header.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
 import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
-import { DropdownComponent } from './components/block/question-block/dropdown/dropdown.component';
-import { CheckboxComponent } from './components/block/question-block/checkbox/checkbox.component';
-import { MultipleChoiceComponent } from './components/block/question-block/multiple-choice/multiple-choice.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
 import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
 import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
 import { AddInformationComponent } from './components/block/add-information/add-information.component';
+import { MobileQuestionBlockComponent } from './components/block/mobile-question-block/mobile-question-block.component';
+import { QuestionOptionComponent } from './components/block/question-block/question-option/question-option.component';
 
 @NgModule({
   declarations: [
@@ -44,13 +44,12 @@ import { AddInformationComponent } from './components/block/add-information/add-
     BlockHeaderComponent,
     DocumentOptionsComponent,
     QuestionBlockComponent,
-    CheckboxComponent,
-    DropdownComponent,
-    MultipleChoiceComponent,
     NavigationTabComponent,
     HeaderOptionsComponent,
     ForgetPasswordPageComponent,
     AddInformationComponent,
+    MobileQuestionBlockComponent,
+    QuestionOptionComponent,
   ],
   imports: [
     BrowserModule,
@@ -60,7 +59,8 @@ import { AddInformationComponent } from './components/block/add-information/add-
     MDBBootstrapModule.forRoot(),
     ServicesModule,
     ClickOutsideModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ContenteditableModule
   ],
 
   bootstrap: [AppComponent]

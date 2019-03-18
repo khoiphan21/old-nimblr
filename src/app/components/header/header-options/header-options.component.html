@@ -1,4 +1,4 @@
-<section class="container options-block">
+<section class="container options-block desktop" *ngIf="isOptionShown" [@fadeInOutAnimation]>
     <section class="document-options">
         <div class="option">
             <i class="fas fa-trash-alt"></i><span>Delete</span>
@@ -15,5 +15,24 @@
     <section class="document-details">
         <div>Last edited by Mickey Mouse</div>
         <div>Last Thursday at 15:35</div>
+    </section>
+</section>
+
+<section class="mobile container option-container" *ngIf="isOptionShown" [@slideBottomToTopAnimation]>
+    <div class="row no-pad header">
+        <div class="col-3"></div>
+        <div class="col-3">Actions</div>
+        <div class="col-3" (click)="hideOption()">Cancel</div>
+    </div>
+    <section class="row no-pad document-options">
+        <div class="col-10 option">
+            <i class="fas fa-trash-alt"></i><span>Delete</span>
+        </div>
+        <div class="col-10 option">
+            <i class="fas fa-file-pdf"></i><span>Export as PDF</span>
+        </div>
+        <div class="col-10 option">
+            <i class="fas fa-clock"></i> <span>View document history</span>
+        </div>
     </section>
 </section>

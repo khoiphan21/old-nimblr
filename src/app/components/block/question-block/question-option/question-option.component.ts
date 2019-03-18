@@ -1,27 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 
 @Component({
-  selector: 'app-dropdown',
-  templateUrl: './dropdown.component.html',
-  styleUrls: ['./dropdown.component.scss']
+  selector: 'app-question-option',
+  templateUrl: './question-option.component.html',
+  styleUrls: ['./question-option.component.scss']
 })
-export class DropdownComponent implements OnInit {
+export class QuestionOptionComponent implements OnInit {
+  @Input() data;
+  @Input() currentType: string;
+  @Input() isPreviewMode: boolean;
   formGroup: FormGroup;
-  data = {
-    options: [
-      {
-        checked: false,
-        answer: ''
-      }
-    ]
-  };
 
   constructor(private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({
+      textAnswer: this.formBuilder.control(''),
       options: this.formBuilder.array([])
     });
     this.setOptions();
@@ -52,4 +48,3 @@ export class DropdownComponent implements OnInit {
     });
   }
 }
-

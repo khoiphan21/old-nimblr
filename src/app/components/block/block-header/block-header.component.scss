@@ -2,7 +2,7 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 .content {
-    color: $color-grey;
+    color: $color-grey-1;
     font-family: $font-roboto;
     font-size: 27px;
     font-weight: normal;
@@ -13,7 +13,7 @@
     input[type="text"] {
         width: 100%;
         border: 0;
-        color: $color-grey;
+        color: $color-grey-1;
         font-family: $font-roboto;
         font-size: 27px;
         font-weight: normal;
