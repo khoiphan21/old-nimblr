@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
-import { Observable, Subject } from 'rxjs';
 
 interface QueryObject {
   q: string;
@@ -20,7 +19,7 @@ export class GraphQlCommandService {
   }
 
   /**
-   * This method will store queries in a temporary queue and perform them whenever 
+   * This method will store queries in a temporary queue and perform them whenever
    * possible in chronological order.
    *
    * @param query graphql query
@@ -51,7 +50,6 @@ export class GraphQlCommandService {
         return new Promise(async (resolve, reject) => {
           try {
             const response = await API.graphql(graphqlOperation(queryObject.q, queryObject.p));
-            console.log('2.0 resolve graphql api');
             resolve(response);
           } catch (error) {
             reject(error);
@@ -59,7 +57,6 @@ export class GraphQlCommandService {
         });
       });
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
