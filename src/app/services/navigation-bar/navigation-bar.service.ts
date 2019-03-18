@@ -9,10 +9,19 @@ import { NavigationTabDocument } from '../../classes/navigation-tab';
 })
 export class NavigationBarService {
   private navigationBar$: BehaviorSubject<Array<NavigationTabDocument>>;
+  private navigationBarStatus$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private documentService: DocumentService
   ) { }
+
+  getNavigationBarStatus$(): Observable<boolean> {
+    return this.navigationBarStatus$;
+  }
+
+  setNavigationBarStatus(status: boolean) {
+    this.navigationBarStatus$.next(status);
+  }
 
   getNavigationBar$(): Observable<Array<NavigationTabDocument>> {
     if (!this.navigationBar$) {

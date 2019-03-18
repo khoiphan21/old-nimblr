@@ -4,6 +4,9 @@ import { HeaderComponent } from './header.component';
 import { AccountService } from '../../services/account/account.service';
 import { MockAccountService } from '../../services/account/account-impl.service.spec';
 import { UserFactoryService } from '../../services/user/user-factory.service';
+import { HeaderOptionsComponent } from './header-options/header-options.component';
+import { DocumentService } from 'src/app/services/document/document.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -12,15 +15,22 @@ describe('HeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ],
+      declarations: [
+        HeaderComponent,
+        HeaderOptionsComponent
+      ],
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ],
       providers: [
+        DocumentService,
         {
           provide: AccountService,
           useClass: MockAccountService
         }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

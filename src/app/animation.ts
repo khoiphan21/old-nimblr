@@ -12,3 +12,30 @@ export const fadeInOutAnimation = trigger(
         ])
     ]
 );
+
+export const slideLeftToRightAnimation = trigger(
+    'slideLeftToRightAnimation', [
+        transition(':enter', [
+            style({ transform: 'translateX(-100%)' }),
+            animate('150ms', style({ transform: 'translateX(0)' }))
+        ]),
+        transition(':leave', [
+            style({ transform: 'translateX(0)' }),
+            animate('150ms', style({ transform: 'translateX(-100%)' }))
+        ])
+    ]
+);
+
+export const slideBottomToTopAnimation = trigger(
+    'slideBottomToTopAnimation', [
+        transition(':enter', [
+            style({ transform: 'translateY(100%)' }),
+            animate('150ms', style({ transform: 'translateY(0)' }))
+        ]),
+        transition(':leave', [
+            style({ transform: 'translateY(0)' }),
+            animate('150ms', style({ transform: 'translateY(100%)' }))
+        ])
+    ]
+);
+

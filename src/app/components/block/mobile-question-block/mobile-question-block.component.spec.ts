@@ -1,17 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QuestionBlockComponent } from './question-block.component';
+import { MobileQuestionBlockComponent } from './mobile-question-block.component';
+import { QuestionOptionComponent } from '../question-block/question-option/question-option.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { QuestionOptionComponent } from './question-option/question-option.component';
 
-describe('QuestionBlockComponent', () => {
-  let component: QuestionBlockComponent;
-  let fixture: ComponentFixture<QuestionBlockComponent>;
+describe('MobileQuestionBlockComponent', () => {
+  let component: MobileQuestionBlockComponent;
+  let fixture: ComponentFixture<MobileQuestionBlockComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        QuestionBlockComponent,
+        MobileQuestionBlockComponent,
         QuestionOptionComponent
       ],
       imports: [
@@ -23,7 +23,7 @@ describe('QuestionBlockComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(QuestionBlockComponent);
+    fixture = TestBed.createComponent(MobileQuestionBlockComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

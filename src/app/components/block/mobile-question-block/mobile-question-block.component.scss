@@ -1,0 +1,127 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+$dropdown-height: 41px;
+.question-block {
+    display: none;
+}
+
+section.mobile.question-block {
+    width: 100%;
+    flex-direction: column;
+    margin-bottom: 25px;
+    .question {
+        font-size: 19px;
+        font-weight: 400;
+    }
+}
+
+section.mobile.edit-question {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    padding: 0;
+    flex-direction: column;
+    div.header {
+        width: 100%;
+        @include row-center;
+        height: 50px;
+        justify-content: space-between;
+        border-bottom: $color-grey-5 solid 0.5px;
+        div {
+            text-align: left;
+            color: $color-grey-1;
+            font-size: 18px;
+            &:nth-last-child(1) {
+                text-align: right;
+            }
+        }
+    }
+    label {
+        color: $color-grey-2;
+        text-transform: uppercase;
+        font-weight: normal;
+        letter-spacing: 0.5px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+    div.question {
+        padding: 0 15px;
+        flex-direction: column;
+        input[type=text] {
+            border: 0;
+            // border-bottom: $color-grey-2 solid 0.5px;
+            font-size: 19px;
+        }
+    }
+    div.options {
+        padding: 0 15px;
+    }
+    div.footer {
+        height: $dropdown-height;
+        width: 100vw;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-top: $color-grey-5 solid 1px;
+        @include row-center;
+        justify-content: space-between;
+        $dropdown-height: 41px;
+        .delete {
+            width: $dropdown-height;
+            height: $dropdown-height;
+            @include row-center;
+            border-left: $color-grey-5 solid 1px;
+        }
+        .dropdown {
+            display: block;
+            height: $dropdown-height;
+            cursor: pointer;
+            padding: 0;
+            border-right: $color-grey-5 solid 1px;
+            div.selected-option {
+                position: relative;
+                height: 100%;
+                div {
+                    height: 100%;
+                    @include row-center;
+                    justify-content: flex-start;
+                    padding: 0 10px;
+                    span {
+                        font-size: 0.85rem;
+                        margin-left: 15px;
+                        font-weight: normal;
+                    }
+                }
+                i.fa-chevron-down {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: $dropdown-height;
+                    height: $dropdown-height;
+                    @include row-center;
+                }
+            }
+            section.container.options-block {
+                position: absolute;
+                left: 0px;
+                bottom: $dropdown-height;
+                .title {
+                    border: 0;
+                    font-size: 0.6rem;
+                    color: $color-grey-3;
+                    letter-spacing: 0.5px;
+                    font-weight: normal;
+                }
+                .document-options {
+                    border-bottom: 1px solid #DDD;
+                }
+            }
+        }
+    }
+}

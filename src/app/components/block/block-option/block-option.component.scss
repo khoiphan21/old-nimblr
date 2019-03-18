@@ -35,7 +35,7 @@ section.block-option {
                 height: auto;
                 visibility: hidden;
                 background: black;
-                color: $color-light-grey;
+                color: $color-grey-5;
                 position: absolute;
                 font-size: 13px;
                 top: 135%;
@@ -71,12 +71,12 @@ section.block-option {
                 padding: 0 8.5px;
                 padding-top: 7.5px;
                 font-size: 0.6rem;
-                color: #A9A9A9;
+                color: $color-grey-3;
                 letter-spacing: 0.5px;
                 font-weight: normal;
             }
             .title.form {
-                border-top: 1px solid #DDDDDD;
+                border-top: 1px solid $color-grey-4;
             }
             .block-type {
                 width: 100%;
@@ -113,11 +113,11 @@ section.block-option {
                     .type {
                         font-size: 0.85rem;
                         font-weight: normal;
-                        color: $color-mid-grey;
+                        color: $color-grey-2;
                     }
                     .description {
                         font-size: 0.7rem;
-                        color: #A9A9A9;
+                        color: $color-grey-3;
                     }
                 }
                 &:nth-child(1) {
