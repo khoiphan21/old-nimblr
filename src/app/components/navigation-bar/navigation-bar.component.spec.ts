@@ -6,6 +6,7 @@ import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
 import { Subject, BehaviorSubject } from 'rxjs';
+import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 
 class MockNavigationBarService {
   getNavigationBar$() {
@@ -61,5 +62,16 @@ describe('NavigationBarComponent', () => {
     });
     component.ngOnInit();
     expect(component.isNavigationTabShown).toEqual(expectedResult);
+  });
+
+  it('should receive get the right value for the navigationTabs when the data comes in', () => {
+    const tab1 = new NavigationTabDocument('tab1', 'nav tab 1', []);
+    const tab2 = new NavigationTabDocument('tab2', 'nav tab 2', []);
+    const expectedResult = [tab1, tab2];
+    spyOn(navigationBarService, 'getNavigationBar$').and.callFake(() => {
+      return new BehaviorSubject(expectedResult);
+    });
+    component.ngOnInit();
+    expect(component.navigationTabs).toEqual(expectedResult);
   });
 });
