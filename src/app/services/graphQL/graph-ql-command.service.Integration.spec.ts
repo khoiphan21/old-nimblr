@@ -8,7 +8,6 @@ import { getBlock } from '../../../graphql/queries';
 
 // Injected service
 import { API, graphqlOperation } from 'aws-amplify';
-import { Input } from '@angular/core';
 
 
 export class mockGraphqlService {
@@ -17,15 +16,15 @@ export class mockGraphqlService {
   }
 }
 
-describe('GraphQlCommandService', () => {
+describe('GraphQlCommandService -Integration Tests', () => {
 
   beforeEach(() => TestBed.configureTestingModule({}));
-
   it('should be created', () => {
     const service: GraphQlCommandService = TestBed.get(GraphQlCommandService);
     expect(service).toBeTruthy();
   });
 
+  
   describe('Integration Tests', () => {
     let graphQlService: any;
     let TestBlockId = "test123";
@@ -37,7 +36,6 @@ describe('GraphQlCommandService', () => {
       PARAMETERS = { id: TestBlockId };
 
       const response: any = await API.graphql(graphqlOperation(getBlock, PARAMETERS));
-      console.log('makeSureThereIsATestDataInDB is running...', response);
 
       if (response.data.getBlock === null) {
         PARAMETERS = {
@@ -50,14 +48,12 @@ describe('GraphQlCommandService', () => {
         };
 
         const graphqlResponse = await API.graphql(graphqlOperation(createBlock, PARAMETERS));
-        console.log('block doesnt exist... create block: ', graphqlResponse);
       } else {
-        console.log('block exist... keep going...');
+        // pass
       }
     }
 
     beforeAll(async () => {
-      console.log('user login: ', await Auth.signIn(TEST_USERNAME, TEST_PASSWORD));
       await makeSureThereIsATestDataInDB();
     });
 
@@ -66,12 +62,9 @@ describe('GraphQlCommandService', () => {
     });
 
     afterAll(async () => {
-      console.log('afterAll runs...');
       PARAMETERS = { id: TestBlockId };
       const graphqlResponse = await API.graphql(graphqlOperation(deleteBlock, { input: PARAMETERS }));
-      console.log('block deleted: ', graphqlResponse);
       Auth.signOut();
-      console.log('afterAll have been performed');
     });
 
 
@@ -83,7 +76,6 @@ describe('GraphQlCommandService', () => {
       // check db not updated
       PARAMETERS = { id: TestBlockId };
       graphqlResponse = await API.graphql(graphqlOperation(getBlock, PARAMETERS));
-      console.log('1 get block: ', graphqlResponse.data.getBlock);
 
       const initialVersion = graphqlResponse.data.getBlock.version;
       const initialValue = graphqlResponse.data.getBlock.value;
@@ -101,17 +93,12 @@ describe('GraphQlCommandService', () => {
       };
 
       // PARAMETERS = { id: TestBlockId };
-      graphqlResponse = graphQlService.query(updateTextBlock, { input: PARAMETERS });
-      console.log(graphqlResponse);
-      await graphqlResponse.then(msg => {
-        console.log('2.1 after enqueued:', msg);
-      });
+      graphqlResponse = await graphQlService.query(updateTextBlock, { input: PARAMETERS });
 
       // ------------------------------------------
       // check db updated with correct value
       PARAMETERS = { id: TestBlockId };
       graphqlResponse = await API.graphql(graphqlOperation(getBlock, PARAMETERS));
-      console.log('3 get block: ', graphqlResponse.data.getBlock);
 
       const afterVersion = graphqlResponse.data.getBlock.version;
       const afterValue = graphqlResponse.data.getBlock.value;

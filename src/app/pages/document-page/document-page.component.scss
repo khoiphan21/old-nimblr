@@ -3,11 +3,11 @@
 @import '../../_sass/base';
 div.fluid-container {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     font-family: $font-roboto;
     @include column-center;
     justify-content: flex-start;
-    color: $color-grey;
+    color: $color-grey-1;
     div.row {
         width: 100%;
         flex-grow: 1;
@@ -26,11 +26,10 @@ div.fluid-container {
 @include media(lg) {
     div.fluid-container {
         width: 100%;
-        height: 100vh;
         font-family: $font-roboto;
         @include column-center;
         justify-content: flex-start;
-        color: $color-grey;
+        color: $color-grey-1;
         div.row {
             width: 100%;
             flex-grow: 1;

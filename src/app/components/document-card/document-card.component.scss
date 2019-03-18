@@ -9,8 +9,8 @@ div.fluid-container {
     font-family: $font-roboto;
     background: #FFFFFF;
     border-radius: 3px;
-    box-shadow: 3px 3px 2px 0 #DDDDDD;
-    border: #DDDDDD solid 1px;
+    box-shadow: 3px 3px 2px 0 $color-grey-4;
+    border: $color-grey-4 solid 1px;
     @include column-center;
     justify-content: space-between;
     padding: 0;
@@ -25,7 +25,7 @@ div.fluid-container {
         justify-content: space-between;
         background: #DDD;
         padding: 0 1rem;
-        color: $color-grey;
+        color: $color-grey-1;
         .title {
             font-size: 0.8rem;
         }
@@ -44,7 +44,7 @@ div.fluid-container {
         font-family: $font-roboto;
         background: #FFFFFF;
         border-radius: 3px;
-        box-shadow: 3px 3px 2px 0 #DDDDDD;
+        box-shadow: 3px 3px 2px 0 $color-grey-4;
         @include column-center;
         justify-content: space-between;
         section.snapshot {
@@ -58,7 +58,7 @@ div.fluid-container {
             justify-content: space-between;
             background: #DDD;
             padding: 0 1rem;
-            color: $color-grey;
+            color: $color-grey-1;
             .title {
                 font-size: 0.8rem;
             }

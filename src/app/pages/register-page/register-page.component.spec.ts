@@ -7,6 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
+import { Auth } from 'aws-amplify';
 
 const uuidv4 = require('uuid/v4');
 
@@ -121,11 +122,11 @@ describe('RegisterPageComponent', () => {
     let routerSpy: jasmine.Spy;
 
     beforeEach(() => {
-      spyOn(component, 'getCognitoUserDetails');
       routerSpy = spyOn(component['router'], 'navigate');
     });
 
     it('should call getCognitoUserDetails() if the current user detail is empty', () => {
+      spyOn(component, 'getCognitoUserDetails');
       component.uuid = 'bla';
       component.newCognitoUser = {
         username: 'khoi-test',
@@ -138,6 +139,7 @@ describe('RegisterPageComponent', () => {
 
     /* tslint:disable:no-string-literal */
     it('should register the app user if the user details are available', done => {
+      spyOn(component, 'getCognitoUserDetails');
       component.uuid = 'bla';
       component.newCognitoUser = {
         username: 'test@email.com',
@@ -158,6 +160,114 @@ describe('RegisterPageComponent', () => {
       );
     });
 
+    it('should stop creating an account into database when theres error in the process', done => {
+      spyOn(component, 'getCognitoUserDetails').and.callFake(() => {
+        throw new Error('Failed to get Cognito User');
+      });
+      component.uuid = 'bla';
+      component.newCognitoUser = {
+        username: 'khoi-test',
+        password: `Khoi1234`,
+        attributes: null
+      };
+      component.createAccountInDatabase().then(() => {
+        processTestError('should not create account', '', done);
+      }).catch(error => {
+        done();
+      });
+    });
+  });
+
+
+  describe('verifyAccount(', () => {
+    beforeEach(() => {
+      component.newCognitoUser = {
+        username: 'khoi-test',
+        password: `Khoi1234`,
+        attributes: null
+      };
+    });
+
+    it('should create an account in the database if the account is verified', done => {
+      spyOn(accountService, 'awsConfirmAccount').and.returnValue(Promise.resolve());
+      spyOn(component, 'createAccountInDatabase').and.callFake(() => {
+        return Promise.resolve();
+      });
+      const controls = component.verificationForm.controls;
+      controls.verificationCode.setValue('bla');
+      component.verifyAccount().then(() => {
+        expect(component.createAccountInDatabase).toHaveBeenCalled();
+        done();
+      }).catch(error => {
+        processTestError('failed to verify account', error, done);
+      }
+      );
+    });
+
+    it('should not create an account in the database if the account is not verified', done => {
+      spyOn(accountService, 'awsConfirmAccount').and.returnValue(Promise.reject('account does not exist'));
+      spyOn(component, 'createAccountInDatabase').and.callFake(() => {
+        return Promise.resolve();
+      });
+      const controls = component.verificationForm.controls;
+      controls.verificationCode.setValue('bla');
+      component.verifyAccount().then(() => {
+        processTestError('should not create account', '', done);
+      }).catch(() => {
+        expect(component.createAccountInDatabase).not.toHaveBeenCalled();
+        done();
+      });
+    });
+  });
+
+  describe('getCognitoUserDetails', () => {
+    const user = {
+      attributes: {
+        email: `test@email.com`,
+        given_name: `test`,
+        family_name: `name`
+      }
+    };
+    beforeEach(() => {
+      component.newCognitoUser = {
+        username: 'khoi-test',
+        password: `Khoi1234`,
+        attributes: null
+      };
+    });
+
+    it('should should create a user if there are no errors in the process', done => {
+      spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
+      spyOn(Auth, 'currentAuthenticatedUser').and.returnValue(Promise.resolve(user));
+      spyOn(component, 'createAccountInDatabase').and.callFake(() => {
+        return Promise.resolve();
+      });
+      component.getCognitoUserDetails().then(() => {
+        expect(component.createAccountInDatabase).toHaveBeenCalled();
+        done();
+      }).catch(error => {
+        processTestError('should not create account', error, done);
+      });
+    });
+
+    it('should not should create a user if there is any error in the process - (Auth.signIn)', done => {
+      spyOn(Auth, 'signIn').and.returnValue(Promise.reject());
+      component.getCognitoUserDetails().then(() => {
+        processTestError('should not create account', 'Failed in Auth.signIn()', done);
+      }).catch(error => {
+        done();
+      });
+    });
+
+    it('should not should create a user if there is any error in the process - (Auth.currentAuthenticatedUser)', done => {
+      spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
+      spyOn(Auth, 'currentAuthenticatedUser').and.returnValue(Promise.reject());
+      component.getCognitoUserDetails().then(() => {
+        processTestError('should not create account', 'Failed in Auth.currentAuthenticatedUser()', done);
+      }).catch(error => {
+        done();
+      });
+    });
   });
 
   // fix this when all of the user attribute is set

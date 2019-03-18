@@ -1,0 +1,27 @@
+<div class="row no-pad" *ngIf="currentType">
+    <form class="question-setup" [formGroup]="formGroup" [ngSwitch]=currentType>
+        <div formArrayName="options" *ngIf="currentType === 'dropdown' || currentType === 'checkbox' || currentType === 'multiple choice'">
+            <div *ngFor="let option of formGroup.get('options').controls; let i=index">
+                <div class="option checkbox" [formGroupName]="i" *ngSwitchCase="'checkbox'">
+                    <input type="checkbox" formControlName="checked" id="{{i}}">
+                    <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="answer" placeholder="Option {{i + 1}}">
+                </div>
+                <div class="option checkbox" [formGroupName]="i" *ngSwitchCase="'multiple choice'">
+                    <input type="radio" name="selectedRadio" id={{i}}>
+                    <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="answer" placeholder="Option {{i + 1}}">
+                </div>
+                <div class="option checkbox" [formGroupName]="i" *ngSwitchCase="'dropdown'">
+                    {{i + 1}}.
+                    <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="answer" placeholder="Option {{i + 1}}">
+                </div>
+            </div>
+            <div class="option checkbox clickable" (click)="addNewOption()" *ngIf="isPreviewMode === false">
+                <i class="fas fa-plus-circle"></i>
+                <div class="add-option">Add option or Add 'OTHER'</div>
+            </div>
+        </div>
+        <div class="form-input" *ngIf="currentType === 'short answer' || currentType === 'paragraph'">
+            <input type="text" formControlName="textAnswer" placeholder="Type your answer here" [ngClass]="{'long-input': currentType === 'paragraph'}">
+        </div>
+    </form>
+</div>

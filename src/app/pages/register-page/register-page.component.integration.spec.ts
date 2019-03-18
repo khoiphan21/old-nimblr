@@ -53,7 +53,7 @@ describe('(Integration) RegisterPageComponent', () => {
     };
     component.getCognitoUserDetails().then(() => {
       // TODO: REFACTOR THE TEST FOR ROUTERSPY INTO ITS OWN TEST
-      expect(routerSpy.calls.count()).toBe(1); 
+      expect(routerSpy.calls.count()).toBe(1);
       expect(component.newCognitoUser.attributes).not.toBe(null);
       done();
     }).catch(error => processTestError('error during logic step', error, done));

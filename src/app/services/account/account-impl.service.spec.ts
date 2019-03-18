@@ -25,8 +25,8 @@ export class MockAccountService {
   login() {
     return new Promise((_, __) => { }); // a promise that never returns
   }
-  setUnverifiedUser(_, __) {}
-  getUnverifiedUser() {}
+  setUnverifiedUser(_, __) { }
+  getUnverifiedUser() { }
 }
 
 
@@ -116,6 +116,86 @@ describe('AccountImplService', () => {
         done();
       });
     });
+
+  });
+
+  describe('registerCognitoUser', () => {
+    beforeEach(() => { });
+
+    it('should return promise', () => {
+
+    });
+
+    it('should call signup api', () => {
+
+    });
+  });
+
+  describe('awsConfirmAccount', () => {
+    beforeEach(() => { });
+
+    it('should call confirmSignUp api', () => {
+
+    });
+
+  });
+
+  describe('registerAppUser', () => {
+    beforeEach(() => { });
+
+    it('should always return a promise', () => {
+
+    });
+
+    it('should call graphQL query api only after signIn api is called', () => {
+
+    });
+
+  });
+
+  describe('login', () => {
+    beforeEach(() => { });
+
+    it('should always return a promise', () => {
+
+    });
+
+    it('should call signIn api', () => {
+
+    });
+
+  });
+
+  describe('logout', () => {
+    beforeEach(() => { });
+
+    it('should always return a promise', () => {
+
+    });
+
+    it('should call signOut api', () => {
+
+    });
+  });
+
+  describe('update', () => {
+    beforeEach(() => { });
+
+    it('should always return a promise', () => {
+
+    });
+
+    it('should call signOut api', () => {
+
+    });
+
+  });
+
+  describe('getUser', () => {
+
+  });
+
+  describe('isUserReady', () => {
 
   });
 

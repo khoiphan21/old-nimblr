@@ -1,3 +1,4 @@
-<div class="content" *ngIf="block">
-    <input type="text" [(ngModel)]="value" (ngModelChange)="updateValue()">
+<div class="content text-block" *ngIf="block">
+    <div class="text-input" contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [(ngModel)]="value" (ngModelChange)="updateValue()"></div>
+    <div class="placeholder" *ngIf="isPlaceholderShown">Type something here...</div>
 </div>
