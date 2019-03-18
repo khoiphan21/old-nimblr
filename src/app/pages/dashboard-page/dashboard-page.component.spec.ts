@@ -15,7 +15,7 @@ class MockDocumentService {
   createFormDocument() { }
 }
 
-fdescribe('DashboardPageComponent', () => {
+describe('DashboardPageComponent', () => {
   let component: DashboardPageComponent;
   let fixture: ComponentFixture<DashboardPageComponent>;
   let documentFactory: DocumentFactoryService;
@@ -56,7 +56,7 @@ fdescribe('DashboardPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should receive get the right value when the data comes in', () => {
+  it('should receive get the right value for the document list when the data comes in', () => {
     spyOn(documentService, 'getUserDocuments$').and.callFake(() => {
       return new BehaviorSubject([document]);
     });
