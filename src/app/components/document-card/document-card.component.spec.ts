@@ -10,7 +10,7 @@ const uuidv4 = require('uuid/v4');
 describe('DocumentCardComponent', () => {
   let component: DocumentCardComponent;
   let fixture: ComponentFixture<DocumentCardComponent>;
-  let documentFactory: DocumentFactoryService
+  let documentFactory: DocumentFactoryService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
