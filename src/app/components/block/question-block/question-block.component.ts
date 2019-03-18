@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class QuestionBlockComponent implements OnInit {
   isPreviewMode = true;
   isQuestionOptionShown = false;
-  question = 'Untitled Question';
+  question = '';
   currentType = 'short answer';
   data = {
     options: [

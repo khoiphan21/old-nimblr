@@ -2,9 +2,9 @@
 @import 'mixins';
 .outline-button-primary {
     height: 44px;
-    border: 1px solid $color-mid-grey;
+    border: 1px solid $color-grey-2;
     border-radius: 100px;
-    color: $color-grey;
+    color: $color-grey-1;
     transition: all 0.3s;
     font-weight: 300;
     background: white;
@@ -32,7 +32,7 @@
 .filled-button-primary {
     height: 44px;
     border-radius: 100px;
-    background-color: $color-blue;
+    background-color: $color-blue-2;
     color: white;
     transition: all 0.3s;
     font-size: 14px;
@@ -53,9 +53,9 @@
 .options-block {
     border-radius: 5px;
     background-color: #FFFFFF;
-    box-shadow: 0 4px 11px 0 #A9A9A9;
+    box-shadow: 0 4px 11px 0 $color-grey-3;
     font-family: $font-roboto;
-    color: $color-mid-grey;
+    color: $color-grey-2;
 }
 
 $horizontal-padding: 10px;
@@ -99,7 +99,7 @@ section.container.options-block {
         align-items: flex-start;
         font-size: 0.7rem;
         padding: 5px $horizontal-padding;
-        color: #A9A9A9;
+        color: $color-grey-3;
     }
 }
 
@@ -173,7 +173,7 @@ input {
     .text-input {
         width: 100%;
         border: 0;
-        color: $color-grey;
+        color: $color-grey-1;
         font-family: $font-roboto;
         font-size: 17px;
         line-height: 20px;

@@ -10,17 +10,17 @@ form.question-setup {
         justify-content: flex-start;
         margin-top: $answer-margin-top;
         font-size: 0.85rem;
-        color: $color-grey;
+        color: $color-grey-1;
         input[type=checkbox] {
             -webkit-appearance: none;
-            border: 2px solid #a9a9a9;
+            border: 2px solid $color-grey-3;
             background: white;
             border-radius: 3px;
             width: 20px;
             height: 20px;
             position: relative;
             &:checked {
-                background-color: #a9a9a9;
+                background-color: $color-grey-3;
                 color: white;
                 &::after {
                     width: 100%;
@@ -36,23 +36,23 @@ form.question-setup {
             width: 60%;
             border: 0;
             margin-left: 15px;
-            color: $color-grey;
-            border: #a9a9a9 solid 1px;
+            color: $color-grey-1;
+            border: $color-grey-3 solid 1px;
             border-radius: 3px;
             padding-left: 5px;
             &::placeholder {
-                color: $color-grey;
+                color: $color-grey-1;
             }
         }
         .add-option {
             width: 100%;
             margin-left: 15px;
-            color: $color-grey;
+            color: $color-grey-1;
             margin-bottom: 0px;
         }
         i.fa-plus-circle {
             font-size: 20px;
-            color: $color-mid-grey;
+            color: $color-grey-2;
         }
     }
     .form-input {
@@ -80,17 +80,17 @@ form.question-setup {
             justify-content: flex-start;
             margin-top: $answer-margin-top;
             font-size: 0.85rem;
-            color: $color-grey;
+            color: $color-grey-1;
             input[type=checkbox] {
                 -webkit-appearance: none;
-                border: 2px solid #a9a9a9;
+                border: 2px solid $color-grey-3;
                 background: white;
                 border-radius: 3px;
                 width: 20px;
                 height: 20px;
                 position: relative;
                 &:checked {
-                    background-color: #a9a9a9;
+                    background-color: $color-grey-3;
                     color: white;
                     &::after {
                         width: 100%;
@@ -106,23 +106,23 @@ form.question-setup {
                 width: 60%;
                 border: 0;
                 margin-left: 15px;
-                color: $color-grey;
-                border: #a9a9a9 solid 1px;
+                color: $color-grey-1;
+                border: $color-grey-3 solid 1px;
                 border-radius: 3px;
                 padding-left: 5px;
                 &::placeholder {
-                    color: $color-grey;
+                    color: $color-grey-1;
                 }
             }
             .add-option {
                 width: 100%;
                 margin-left: 15px;
-                color: $color-grey;
+                color: $color-grey-1;
                 margin-bottom: 0px;
             }
             i.fa-plus-circle {
                 font-size: 20px;
-                color: $color-mid-grey;
+                color: $color-grey-2;
             }
         }
         .form-input {

@@ -1,22 +1,21 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
-$navigation-background: #D8D8D8;
 section.fluid-container {
     width: 100%;
     height: 100%;
     font-family: $font-roboto;
-    background-color: $navigation-background;
+    background: $color-light-blue;
     display: flex;
     flex-direction: column;
     font-size: 0.8rem;
-    color: $color-mid-grey;
+    color: $color-grey-2;
 }
 
 section.mobile.navigation-bar {
     width: 85vw;
-    height: 100vh;
-    background: white;
+    min-height: 100vh;
+    background: $color-light-blue;
     position: fixed;
     top: 0;
     left: 0;
@@ -29,7 +28,7 @@ section.mobile.navigation-bar {
     section.user-profile {
         padding: 0 4%;
         width: 100%;
-        border-bottom: $color-light-grey solid 0.5px;
+        border-bottom: $color-grey-5 solid 0.5px;
         height: 50px;
         @include row-center;
         justify-content: flex-start;
@@ -39,13 +38,13 @@ section.mobile.navigation-bar {
             height: 26.5px;
             font-size: 0.8rem;
             @include row-center;
-            background: $color-blue;
+            background: $color-blue-2;
             text-align: center;
             color: white;
             border-radius: 50px;
         }
         .user-name {
-            color: $color-mid-grey;
+            color: $color-grey-2;
             font-size: 0.9rem;
             font-weight: normal;
         }

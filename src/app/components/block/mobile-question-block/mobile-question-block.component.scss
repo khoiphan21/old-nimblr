@@ -31,10 +31,10 @@ section.mobile.edit-question {
         @include row-center;
         height: 50px;
         justify-content: space-between;
-        border-bottom: $color-light-grey solid 0.5px;
+        border-bottom: $color-grey-5 solid 0.5px;
         div {
             text-align: left;
-            color: $color-grey;
+            color: $color-grey-1;
             font-size: 18px;
             &:nth-last-child(1) {
                 text-align: right;
@@ -42,7 +42,7 @@ section.mobile.edit-question {
         }
     }
     label {
-        color: $color-mid-grey;
+        color: $color-grey-2;
         text-transform: uppercase;
         font-weight: normal;
         letter-spacing: 0.5px;
@@ -55,7 +55,7 @@ section.mobile.edit-question {
         flex-direction: column;
         input[type=text] {
             border: 0;
-            // border-bottom: $color-mid-grey solid 0.5px;
+            // border-bottom: $color-grey-2 solid 0.5px;
             font-size: 19px;
         }
     }
@@ -68,7 +68,7 @@ section.mobile.edit-question {
         position: absolute;
         bottom: 0;
         left: 0;
-        border-top: $color-light-grey solid 1px;
+        border-top: $color-grey-5 solid 1px;
         @include row-center;
         justify-content: space-between;
         $dropdown-height: 41px;
@@ -76,14 +76,14 @@ section.mobile.edit-question {
             width: $dropdown-height;
             height: $dropdown-height;
             @include row-center;
-            border-left: $color-light-grey solid 1px;
+            border-left: $color-grey-5 solid 1px;
         }
         .dropdown {
             display: block;
             height: $dropdown-height;
             cursor: pointer;
             padding: 0;
-            border-right: $color-light-grey solid 1px;
+            border-right: $color-grey-5 solid 1px;
             div.selected-option {
                 position: relative;
                 height: 100%;
@@ -114,7 +114,7 @@ section.mobile.edit-question {
                 .title {
                     border: 0;
                     font-size: 0.6rem;
-                    color: #A9A9A9;
+                    color: $color-grey-3;
                     letter-spacing: 0.5px;
                     font-weight: normal;
                 }

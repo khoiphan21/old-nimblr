@@ -16,15 +16,15 @@ section.mobile.container.option-container {
         @include row-center;
         height: 50px;
         justify-content: space-between;
-        border-bottom: $color-light-grey solid 0.5px;
+        border-bottom: $color-grey-5 solid 0.5px;
         div {
             text-align: center;
-            color: $color-grey;
+            color: $color-grey-1;
             font-weight: normal;
             &:nth-last-child(1) {
                 font-weight: 300;
                 text-align: right;
-                color: $color-blue;
+                color: $color-blue-2;
                 font-size: 15px;
             }
         }

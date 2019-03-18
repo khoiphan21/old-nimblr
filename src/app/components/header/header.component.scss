@@ -7,7 +7,7 @@ div.row {
     width: 100%;
     height: 50px;
     font-family: $font-roboto;
-    background-color: white;
+    background-color: $color-blue-3;
     border-bottom: $header-background solid 1px;
     @include row-center;
     justify-content: space-between;
@@ -27,19 +27,19 @@ div.row {
             @include row-center;
             width: 20px;
             height: 20px;
-            background: $color-blue;
+            background: $color-blue-2;
             text-align: center;
             color: white;
             border-radius: 50px;
             font-size: 0.575rem;
         }
         .user-name {
-            color: $color-mid-grey;
+            color: $color-grey-2;
             font-size: $header-text-size;
         }
     }
     section.document-tab {
-        color: $color-mid-grey;
+        color: $color-grey-2;
         @include row-center;
         justify-content: flex-end;
         span {
@@ -55,7 +55,6 @@ div.row {
         width: 100%;
         height: 31px;
         font-family: $font-roboto;
-        background-color: $header-background;
         @include row-center;
         justify-content: space-between;
         section.user-profile {
@@ -66,18 +65,18 @@ div.row {
                 @include row-center;
                 width: 20px;
                 height: 20px;
-                background: $color-blue;
+                background: $color-blue-2;
                 color: white;
                 border-radius: 50px;
                 font-size: 0.575rem;
             }
             .user-name {
-                color: $color-mid-grey;
+                color: $color-grey-2;
                 font-size: $header-text-size;
             }
         }
         section.document-tab {
-            color: $color-mid-grey;
+            color: $color-grey-2;
             @include row-center;
             justify-content: flex-end;
             .share {
