@@ -97,7 +97,6 @@ export class RegisterPageComponent implements OnInit {
       this.createAccountInDatabase();
       return Promise.resolve();
     }).catch(error => {
-      console.error('verifiyAccount()', error);
       return Promise.reject();
     });
   }
@@ -122,14 +121,12 @@ export class RegisterPageComponent implements OnInit {
     return Auth.signIn(username, password).then(() => {
       return Auth.currentAuthenticatedUser({ bypassCache: false });
     }).catch(error => {
-      console.error('Login in getCognitoUserDetails()', error);
       return Promise.reject();
     }).then(user => {
       const details = user.attributes;
       this.setNewCognitoUser(details);
       return this.createAccountInDatabase();
     }).catch(error => {
-      console.error('Get current auth user in getCognitoUserDetails()', error);
       return Promise.reject();
     });
   }
