@@ -16,7 +16,7 @@ export class mockGraphqlService {
   }
 }
 
-fdescribe('GraphQlCommandService -Integration Tests', () => {
+describe('GraphQlCommandService -Integration Tests', () => {
 
   beforeEach(() => TestBed.configureTestingModule({}));
   it('should be created', () => {
