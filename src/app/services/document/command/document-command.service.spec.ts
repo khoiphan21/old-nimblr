@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { DocumentCommandService } from './document-command.service';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
 import { processTestError } from '../../../classes/test-helpers.spec';
+import { createDocument } from 'src/graphql/mutations';
 
 const uuidv4 = require('uuid/v4');
 interface RunTestInput {
@@ -12,12 +13,13 @@ interface RunTestInput {
   fullMessage?: string;
 }
 
-describe('DocumentCommandService', () => {
+fdescribe('DocumentCommandService', () => {
 
   let service: DocumentCommandService;
-
+  let querySpy: jasmine.Spy;
   let input: CreateDocumentInput;
 
+  /* tslint:disable:no-string-literal */
   beforeEach(() => {
     TestBed.configureTestingModule({});
     input = {
@@ -27,6 +29,7 @@ describe('DocumentCommandService', () => {
       lastUpdatedBy: uuidv4()
     };
     service = TestBed.get(DocumentCommandService);
+    querySpy = spyOn(service['graphQlService'], 'query');
   });
 
   it('should be created', () => {
@@ -34,6 +37,39 @@ describe('DocumentCommandService', () => {
   });
 
   describe('createDocument for FORM', () => {
+
+    describe('(checking GraphQlService.query arguments)', () => {
+      beforeEach(() => {
+        // setup graphQlService to return some results
+        querySpy.and.returnValue(Promise.resolve({
+          data: { createDocument: null }
+        }));
+      });
+      it('should call with the right query', done => {
+        service.createDocument(input)
+        expect(querySpy.calls.mostRecent().args[0]).toEqual(createDocument);
+        done();
+      });
+      it('should call with the right argument', done => {
+        service.createDocument(input)
+        expect(querySpy.calls.mostRecent().args[1]).toEqual({ input });
+        done();
+      });
+    });
+
+    describe('[SUCCESS]', () => {
+      it('should resolve the document return by backend', done => {
+        const testValue = { foo: 'bar' };
+        querySpy.and.returnValue(Promise.resolve({
+          data: { createDocument: testValue }
+        }));
+        // now call the service
+        service.createDocument(input).then(document => {
+          expect(document).toEqual(testValue);
+          done();
+        });
+      })
+    });
 
     describe('(error pathways)', () => {
 
@@ -142,7 +178,7 @@ describe('DocumentCommandService', () => {
   describe('updateDocument for FORM', () => {
 
     /* tslint:disable:no-string-literal */
-    it('should register the version to the query service', done => {
+    describe('[SUCCESS]', () => {
       const updatedInput: UpdateDocumentInput = {
         id: uuidv4(),
         title: 'test title',
@@ -150,21 +186,35 @@ describe('DocumentCommandService', () => {
         lastUpdatedBy: uuidv4(),
         updatedAt: new Date().toISOString()
       };
-      spyOn(service['graphQlService'], 'query').and.returnValue(Promise.resolve({
-        data: {
-          updateDocument: null
-        }
-      }));
 
-      service.updateDocument(updatedInput).then(() => {
-        expect(service['queryService']['myVersions'].has(updatedInput.version)).toBe(true);
-        done();
-      }).catch(error => processTestError(
-        'error in testing register version', error, done
-      ));
+      it('should register the version to the query service', done => {
+        querySpy.and.returnValue(Promise.resolve({
+          data: { updateDocument: null }
+        }));
+
+        service.updateDocument(updatedInput).then(() => {
+          expect(service['queryService']['myVersions'].has(updatedInput.version)).toBe(true);
+          done();
+        }).catch(error => processTestError(
+          'error in testing register version', error, done
+        ));
+      });
+
+      it('should return the updated document', done => {
+        const testValue = { foo: 'bar' };
+        querySpy.and.returnValue(Promise.resolve({
+          data: { updateDocument: testValue }
+        }));
+        // now call the service
+        service.updateDocument(updatedInput).then(document => {
+          expect(document).toEqual(testValue);
+          done();
+        });
+      });
+
     });
 
-    describe('(error pathways)', () => {
+    describe('[ERROR]', () => {
       let updatedInput: UpdateDocumentInput;
 
       /* tslint:disable:no-string-literal */
