@@ -28,10 +28,12 @@ export class GraphQLService {
     let returnItems: Array<any>;
     params.limit = limit;
     try {
-      let response;
-      let items;
-      let nextToken;
-      ({ response, items, nextToken } = await this.sendQueryForListing(query, params, queryName));
+      let response: any;
+      let items: any;
+      let nextToken: any;
+      ({ response, items, nextToken } = await this.sendQueryForListing(
+        query, queryName, params
+      ));
       responses.push(response);
       returnItems = items;
       if (listAll) {
@@ -44,17 +46,17 @@ export class GraphQLService {
           returnItems = returnItems.concat(items);
         }
       }
-      return Promise.resolve({
+      return {
         items: returnItems,
         nextToken,
         responses
-      });
+      };
     } catch (error) {
-      return Promise.reject(error);
+      throw new Error(`GraphQLService failed to list: ${error.message}`);
     }
   }
 
-  private async sendQueryForListing(query, params, queryName): Promise<any> {
+  private async sendQueryForListing(query, queryName, params): Promise<any> {
     const response: any = await API.graphql(graphqlOperation(query, params));
     const items = response.data[queryName].items;
     const nextToken = response.data[queryName].nextToken;
