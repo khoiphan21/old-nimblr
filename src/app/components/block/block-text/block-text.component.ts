@@ -1,8 +1,7 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnChanges, Input } from '@angular/core';
 import { Block, TextBlock } from '../../../classes/block';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
-import { UpdateTextBlockInput } from '../../../../API';
 
 @Component({
   selector: 'app-block-text',
@@ -28,7 +27,6 @@ export class BlockTextComponent implements OnChanges {
   updateValue() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-
       const updatedBlock: Block = this.factoryService.createAppBlock({
         id: this.block.id,
         type: this.block.type,

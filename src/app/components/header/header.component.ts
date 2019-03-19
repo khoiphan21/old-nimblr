@@ -33,11 +33,11 @@ export class HeaderComponent implements OnInit {
     this.manageHeaderContent(this.router.url);
   }
 
-  processInitialName(fName: string) {
+  private processInitialName(fName: string) {
     this.initialName = fName.charAt(0);
   }
 
-  manageHeaderContent(url: string) {
+  private manageHeaderContent(url: string) {
     if (url === '/dashboard') {
       this.currentUrl = 'dashboard';
     } else {
