@@ -22,4 +22,11 @@ describe('HeaderOptionsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('hideOption() - should emit the event for hiding to option', () => {
+    component.hideOptionEvent.subscribe((value) => {
+      expect(value).toEqual(false);
+    });
+    component.hideOption();
+  });
 });
