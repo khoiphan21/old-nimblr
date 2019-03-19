@@ -46,12 +46,12 @@ fdescribe('DocumentCommandService', () => {
         }));
       });
       it('should call with the right query', done => {
-        service.createDocument(input)
+        service.createDocument(input);
         expect(querySpy.calls.mostRecent().args[0]).toEqual(createDocument);
         done();
       });
       it('should call with the right argument', done => {
-        service.createDocument(input)
+        service.createDocument(input);
         expect(querySpy.calls.mostRecent().args[1]).toEqual({ input });
         done();
       });
@@ -68,7 +68,7 @@ fdescribe('DocumentCommandService', () => {
           expect(document).toEqual(testValue);
           done();
         });
-      })
+      });
     });
 
     describe('(error pathways)', () => {
