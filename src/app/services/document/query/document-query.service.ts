@@ -53,6 +53,12 @@ export class DocumentQueryService {
     return document$;
   }
 
+  /**
+   * Parse the raw response from getDocument query
+   *
+   * @param response the raw response from the backend
+   * @param id The id of the document, for error message formatting
+   */
   private parseDocument(response: any, id: string): Document {
     let rawData: any;
 
@@ -83,53 +89,55 @@ export class DocumentQueryService {
     this.myVersions.add(version);
   }
 
+  /**
+   * Subscribe to any changes to the document notified by GraphQL.
+   *
+   * Whenever a notification is received, the document observable will emit the
+   * updated document if the version is a new version.
+   *
+   * @param documentId the id of the document to subscribe to
+   */
   private subscribeToUpdate(documentId: string) {
-    // // Get the subscription from graphql
-    // const subscription = this.graphQlService.getSubscription(
-    //   onSpecificDocumentUpdate, { id: documentId }
-    // ).subscribe(notification => {
-    //   try {
-    //     // Notification received
-    //     const rawData = notification.value.data.onSpecificDocumentUpdate;
-    //     // Check if the version is in myVersions
-    //     if (this.myVersions.has(rawData.version)) {
-    //       return;
-    //     }
-    //     // Convert raw data into the app Document
-    //     const document = this.documentFactory.createDocument(rawData)
-    //     this.documentMap.get(documentId).next(document);
-    //   } catch (error) {
-    //     console.error(error);
-    //     this.subscriptionMap.delete(documentId);
-    //   }
-    // });
-    // this.subscriptionMap.set(documentId, subscription);
-    //////////////////////////////////////////
+    const document$ = this.documentMap.get(documentId);
 
     const subscription = this.graphQlService.getSubscription(
       onSpecificDocumentUpdate, { id: documentId }
     ).subscribe(notification => {
-      const document$ = this.documentMap.get(documentId);
       try {
         const document = this.parseNotification(notification);
-        document$.next(document);
+        if (!this.myVersions.has(document.version)) {
+          document$.next(document);
+        }
       } catch (error) {
         document$.error(error);
       }
+    }, error => {
+      // Note: need to delete the subscription from the map first
+      this.subscriptionMap.delete(documentId);
+      // and then emit the error
+      document$.error(Error(`Error from notification: ${error.message}`));
     });
 
     this.subscriptionMap.set(documentId, subscription);
   }
 
+  /**
+   * Parse the raw notification and return the document created.
+   *
+   * @param notification the raw notification from the backend
+   */
   private parseNotification(notification: any): Document {
     let rawData: any;
     let document: Document;
+
+    // Check if the data returned is in the expected format
     try {
       rawData = notification.value.data.onSpecificDocumentUpdate;
     } catch (error) {
       throw new Error(`Unable to parse data: ${error.message}`);
     }
 
+    // check if createDocument can be called successfully
     try {
       document = this.documentFactory.createDocument(rawData);
     } catch (error) {

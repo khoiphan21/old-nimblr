@@ -4,9 +4,7 @@ import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { DocumentQueryService } from './document-query.service';
 import { take, skip } from 'rxjs/operators';
 import { getDocument } from 'src/graphql/queries';
-import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { UUID } from '../command/document-command.service';
-import { query } from '@angular/animations';
 import { DocumentFactoryService } from '../factory/document-factory.service';
 import { DocumentImpl } from 'src/app/classes/document-impl';
 import { onSpecificDocumentUpdate } from 'src/graphql/subscriptions';
@@ -14,11 +12,11 @@ import { Document } from 'src/app/classes/document';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('DocumentQueryService', () => {
+describe('DocumentQueryService', () => {
   let service: DocumentQueryService;
   let factory: DocumentFactoryService;
   // mock data for testing
-  let backendResponse: any;
+  let backendResponse: Document;
   let id: UUID;
 
   beforeEach(() => {
@@ -241,6 +239,22 @@ fdescribe('DocumentQueryService', () => {
           });
           notify();
         });
+        it('should not emit if the version is already stored', done => {
+          // first store the version
+          service.registerUpdateVersion(backendResponse.version);
+          // Then call the service
+          service['subscribeToUpdate'](id);
+          service['documentMap'].get(id).subscribe(value => {
+            if (value === null) {
+              // set timeout to call done
+              setTimeout(() => done(), 5);
+              return;
+            }
+            fail('should not have been notified');
+            done();
+          });
+          notify();
+        });
       });
 
       describe('[ERROR]', () => {
@@ -266,6 +280,27 @@ fdescribe('DocumentQueryService', () => {
             done();
           });
           notify();
+        });
+
+        describe('when thrown by GraphQL API', () => {
+          it('should emit the error directly', done => {
+            const mockError = new Error('test');
+            service['subscribeToUpdate'](id);
+            service['documentMap'].get(id).subscribe(() => { }, error => {
+              const message = `Error from notification: ${mockError.message}`;
+              expect(error.message).toBe(message);
+              done();
+            });
+            backendSubject.error(mockError);
+          });
+          it('should remove the subscription from the map', done => {
+            service['subscribeToUpdate'](id);
+            service['documentMap'].get(id).subscribe(() => { }, () => {
+              expect(service['subscriptionMap'].has(id)).toBe(false);
+              done();
+            });
+            backendSubject.error(`test`);
+          });
         });
       });
     });
