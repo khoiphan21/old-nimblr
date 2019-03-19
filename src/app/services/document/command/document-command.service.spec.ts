@@ -13,7 +13,7 @@ interface RunTestInput {
   fullMessage?: string;
 }
 
-fdescribe('DocumentCommandService', () => {
+describe('DocumentCommandService', () => {
 
   let service: DocumentCommandService;
   let querySpy: jasmine.Spy;
