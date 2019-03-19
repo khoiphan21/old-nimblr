@@ -8,6 +8,8 @@ import { Auth } from 'aws-amplify';
 import { CognitoSignUpUser } from '../../classes/user';
 import { UnverifiedUser } from './account.service';
 import { Subject } from 'rxjs';
+import { promised } from 'q';
+import { onErrorResumeNext } from 'rxjs/operators';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 
@@ -119,7 +121,7 @@ describe('AccountImplService', () => {
 
   });
 
-  fdescribe('registerCognitoUser', () => {
+  describe('registerCognitoUser', () => {
     let testValue: any;
     let spySignup: jasmine.Spy;
     let testUser: CognitoSignUpUser;
@@ -154,10 +156,49 @@ describe('AccountImplService', () => {
   });
 
   describe('awsConfirmAccount', () => {
-    beforeEach(() => { });
+    beforeEach(() => {
 
-    it('should call confirmSignUp api', () => {
 
+      // wish list -- happy path and sad path runner
+      /*
+      const paths = helper.AllPossiblePath('method', {
+        happy: new Promise.resolve('yeah');
+        sad: new Promsie.reject();
+        excited: new Promise.resolve('haha');
+        wow: new Promise.resolve('woww');
+      });
+
+      const test = () => {
+
+      };
+      paths.runAllPath();
+
+      */
+
+    });
+
+    it('should always return promise type', done => {
+      spyOn(Auth, 'confirmSignUp').and.returnValue('test');
+      const data = service.awsConfirmAccount('', '');
+      expect(data instanceof Promise).toBeTruthy();
+      done();
+    });
+
+    it('should return error in promise', done => {
+      const errMsg = 'testing';
+      spyOn(Auth, 'confirmSignUp').and.returnValue(Promise.reject(new Error(errMsg)));
+      service.awsConfirmAccount('', '').catch(err => {
+        expect(err.message).toEqual(errMsg);
+        done();
+      });
+    });
+
+    it('should call confirmSignUp api', done => {
+      const spyAws = spyOn(Auth, 'confirmSignUp').and.returnValue('test');
+      service.awsConfirmAccount('', '').then(_ => {
+        expect(spyAws.calls.count()).toBe(1);
+        done();
+      })
     });
 
   });
