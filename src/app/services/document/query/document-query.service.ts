@@ -28,7 +28,7 @@ export class DocumentQueryService {
    */
   getDocument$(id: string): Observable<Document> {
     if (!this.documentMap.has(id)) {
-      this.documentMap.set(id, new BehaviorSubject<Document>(null))
+      this.documentMap.set(id, new BehaviorSubject<Document>(null));
     }
     const document$ = this.documentMap.get(id);
 
@@ -38,17 +38,37 @@ export class DocumentQueryService {
     }
 
     this.graphQlService.query(getDocument, { id }).then(response => {
-      const rawData = response.data.getDocument;
-      if (rawData === null) {
-        document$.error(`Document with id ${id} does not exist`);
-        return;
-      }
-      const document = this.documentFactory.createDocument(rawData);
 
-      document$.next(document);
-    }).catch(error => document$.error(error));
+      try {
+        const document: Document = this.parseDocument(response, id);
+        document$.next(document);
+      } catch (error) {
+        document$.error(error);
+      }
+
+    }).catch(error =>
+      document$.error(Error(`Unable to send query: ${error.message}`))
+    );
 
     return document$;
+  }
+
+  private parseDocument(response: any, id: string): Document {
+    let rawData: any;
+
+    try {
+      rawData = response.data.getDocument;
+    } catch (error) {
+      throw new Error(`Unable to parse response: ${error.message}`);
+    }
+
+    if (rawData === null) {
+      throw new Error(`Document with id ${id} does not exist`);
+    }
+
+    const document: Document = this.documentFactory.createDocument(rawData);
+
+    return document;
   }
 
   /**
