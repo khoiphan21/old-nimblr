@@ -12,7 +12,7 @@ import { DocumentImpl } from 'src/app/classes/document-impl';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('DocumentQueryService', () => {
+describe('DocumentQueryService', () => {
   let service: DocumentQueryService;
   let id: UUID;
 
