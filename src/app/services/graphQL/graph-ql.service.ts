@@ -15,7 +15,14 @@ export class GraphQLService {
 
   constructor() { }
 
-  async query(query, params): Promise<any> {
+  /**
+   * Send the given query to the backend API and return the raw response
+   * of the query
+   *
+   * @param query the query to be sent
+   * @param params the parameters of the query
+   */
+  async query(query: string, params: any): Promise<any> {
     try {
       return await API.graphql(graphqlOperation(query, params));
     } catch (error) {
@@ -23,6 +30,14 @@ export class GraphQLService {
     }
   }
 
+  /**
+   * Query for a list of items, by default will not try to list all items, and
+   * the default limit of items returned per query is 10.
+   *
+   * Returns the list of items with some additional info for debugging
+   *
+   * @param param0 parameters for the query
+   */
   async list({ query, queryName, params, listAll = false, limit = 10 }): Promise<ListQueryResponse> {
     const responses: Array<any> = [];
     let returnItems: Array<any>;
@@ -56,18 +71,30 @@ export class GraphQLService {
     }
   }
 
-  private async sendQueryForListing(query, queryName, params): Promise<any> {
+  private async sendQueryForListing(
+    query: string, queryName: string, params: any
+  ): Promise<any> {
     const response: any = await API.graphql(graphqlOperation(query, params));
     const items = response.data[queryName].items;
     const nextToken = response.data[queryName].nextToken;
     return Promise.resolve({ response, items, nextToken });
   }
 
-  getSubscription(subscription, params?): Observable<any> {
+  /**
+   * Get the subscription from the backend
+   *
+   * @param subscription the type of subscription to get
+   * @param params parameters for the query
+   */
+  getSubscription(subscription: string, params?: any): Observable<any> {
     const observable = new Subject();
     const graphqlQuery: any = API.graphql(graphqlOperation(subscription, params));
-    graphqlQuery.subscribe(response => {
+
+    graphqlQuery.subscribe((response: any) => {
       observable.next(response);
+    }, (error: Error) => {
+      const newError = Error(`GraphQLService failed to subscribe: ${error.message}`);
+      observable.error(newError);
     });
 
     return observable;

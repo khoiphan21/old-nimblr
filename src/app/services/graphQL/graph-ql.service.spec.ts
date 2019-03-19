@@ -1,8 +1,10 @@
 import { GraphQLService, ListQueryResponse } from './graph-ql.service';
 import { TestBed } from '@angular/core/testing';
 import { API, graphqlOperation } from 'aws-amplify';
+import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
 
-fdescribe('GraphQLService', () => {
+describe('GraphQLService', () => {
   let service: GraphQLService;
   let apiSpy: jasmine.Spy;
 
@@ -177,6 +179,71 @@ fdescribe('GraphQLService', () => {
           done();
         });
       });
+    });
+  });
+
+  describe('sendQueryForListing()', () => {
+    const listArgument = {
+      query: 'foo',
+      queryName: 'bar',
+      params: { foo: 'bar' }
+    };
+    const items = [];
+    const nextToken = null;
+    const response = { data: { bar: { items, nextToken } } };
+
+    beforeEach(() => {
+      apiSpy.and.returnValue(Promise.resolve(response));
+    });
+
+    /* tslint:disable:no-string-literal */
+    it('should resolve with the right values', done => {
+      service['sendQueryForListing'](
+        listArgument.query,
+        listArgument.queryName,
+        listArgument.params,
+      ).then(result => {
+        expect(result.response).toEqual(response);
+        expect(result.items.length).toBe(0);
+        expect(result.nextToken).toBe(null);
+        done();
+      });
+    });
+  });
+
+  describe('getSubscription', () => {
+    let backendSubject: Subject<any>;
+    const query = 'subscribe';
+    const params = { foo: 'bar' };
+
+    beforeEach(() => {
+      backendSubject = new Subject();
+      // setup the spy to return an expected observable
+      apiSpy.and.returnValue(backendSubject);
+    });
+
+    it('should call with the right arguments', () => {
+      service.getSubscription(query, params);
+      expect(apiSpy.calls.mostRecent().args[0]).toEqual(graphqlOperation(query, params));
+    });
+
+    it('should notify with the value from backend', done => {
+      const testValue = { bar: 'foo' };
+      service.getSubscription(query, params).pipe(take(1)).subscribe(value => {
+        expect(value).toEqual(testValue);
+        done();
+      });
+      backendSubject.next(testValue);
+    });
+
+    it('should throw and error if backend fails', done => {
+      const mockError = new Error('test');
+      service.getSubscription(query, params).subscribe(() => { }, error => {
+        const message = `GraphQLService failed to subscribe: ${mockError.message}`;
+        expect(error.message).toEqual(message);
+        done();
+      });
+      backendSubject.error(mockError);
     });
   });
 });
