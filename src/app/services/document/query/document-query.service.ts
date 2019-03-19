@@ -84,26 +84,59 @@ export class DocumentQueryService {
   }
 
   private subscribeToUpdate(documentId: string) {
-    // Get the subscription from graphql
+    // // Get the subscription from graphql
+    // const subscription = this.graphQlService.getSubscription(
+    //   onSpecificDocumentUpdate, { id: documentId }
+    // ).subscribe(notification => {
+    //   try {
+    //     // Notification received
+    //     const rawData = notification.value.data.onSpecificDocumentUpdate;
+    //     // Check if the version is in myVersions
+    //     if (this.myVersions.has(rawData.version)) {
+    //       return;
+    //     }
+    //     // Convert raw data into the app Document
+    //     const document = this.documentFactory.createDocument(rawData)
+    //     this.documentMap.get(documentId).next(document);
+    //   } catch (error) {
+    //     console.error(error);
+    //     this.subscriptionMap.delete(documentId);
+    //   }
+    // });
+    // this.subscriptionMap.set(documentId, subscription);
+    //////////////////////////////////////////
+
     const subscription = this.graphQlService.getSubscription(
       onSpecificDocumentUpdate, { id: documentId }
     ).subscribe(notification => {
+      const document$ = this.documentMap.get(documentId);
       try {
-        // Notification received
-        const rawData = notification.value.data.onSpecificDocumentUpdate;
-        // Check if the version is in myVersions
-        if (this.myVersions.has(rawData.version)) {
-          return;
-        }
-        // Convert raw data into the app Document
-        const document = this.documentFactory.createDocument(rawData)
-        this.documentMap.get(documentId).next(document);
+        const document = this.parseNotification(notification);
+        document$.next(document);
       } catch (error) {
-        console.error(error);
-        this.subscriptionMap.delete(documentId);
+        document$.error(error);
       }
     });
+
     this.subscriptionMap.set(documentId, subscription);
+  }
+
+  private parseNotification(notification: any): Document {
+    let rawData: any;
+    let document: Document;
+    try {
+      rawData = notification.value.data.onSpecificDocumentUpdate;
+    } catch (error) {
+      throw new Error(`Unable to parse data: ${error.message}`);
+    }
+
+    try {
+      document = this.documentFactory.createDocument(rawData);
+    } catch (error) {
+      throw new Error(`DocumentFactory failed to create document: ${error.message}`);
+    }
+
+    return document;
   }
 
 }

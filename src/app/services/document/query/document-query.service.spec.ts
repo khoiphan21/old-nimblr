@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 
 import { DocumentQueryService } from './document-query.service';
 import { take, skip } from 'rxjs/operators';
@@ -9,17 +9,25 @@ import { UUID } from '../command/document-command.service';
 import { query } from '@angular/animations';
 import { DocumentFactoryService } from '../factory/document-factory.service';
 import { DocumentImpl } from 'src/app/classes/document-impl';
+import { onSpecificDocumentUpdate } from 'src/graphql/subscriptions';
+import { Document } from 'src/app/classes/document';
 
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentQueryService', () => {
+fdescribe('DocumentQueryService', () => {
   let service: DocumentQueryService;
+  let factory: DocumentFactoryService;
+  // mock data for testing
+  let backendResponse: any;
   let id: UUID;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.get(DocumentQueryService);
+    factory = TestBed.get(DocumentFactoryService);
+    // setup mock data
     id = uuidv4();
+    backendResponse = factory.createDocument({ id, ownerId: uuidv4() });
   });
 
   it('should be created', () => {
@@ -93,15 +101,11 @@ describe('DocumentQueryService', () => {
       });
 
       describe('[SUCCESS]', () => {
-        let factory: DocumentFactoryService;
-        let getDocumentResponse: any;
 
         beforeEach(() => {
-          factory = TestBed.get(DocumentFactoryService);
-          getDocumentResponse = factory.createDocument({ id, ownerId: uuidv4() });
           // setup querySpy to return the document
           querySpy.and.returnValue(Promise.resolve({
-            data: { getDocument: getDocumentResponse }
+            data: { getDocument: backendResponse }
           }));
         });
 
@@ -114,7 +118,7 @@ describe('DocumentQueryService', () => {
 
         it('should emit the document with the right id', done => {
           service.getDocument$(id).pipe(skip(1)).subscribe(document => {
-            expect(document.id).toBe(getDocumentResponse.id);
+            expect(document.id).toBe(backendResponse.id);
             done();
           });
         });
@@ -161,7 +165,7 @@ describe('DocumentQueryService', () => {
           const expectedMessage = `Unable to send query: test`;
           querySpy.and.returnValue(Promise.reject(Error('test')));
           // call service
-          service.getDocument$(id).subscribe(() => {}, error => {
+          service.getDocument$(id).subscribe(() => { }, error => {
             expect(error.message).toEqual(expectedMessage);
             done();
           });
@@ -169,6 +173,102 @@ describe('DocumentQueryService', () => {
       });
     });
 
+  });
+
+  /* tslint:disable:no-string-literal */
+  describe('registerUpdateVersion()', () => {
+    it('should store the given version', () => {
+      const version = uuidv4();
+      service.registerUpdateVersion(version);
+      expect(service['myVersions'].has(version)).toBe(true);
+    });
+  });
+
+  describe('subscribeToUpdate()', () => {
+    let getSubscriptionSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      // setup spy for getSubscription()
+      getSubscriptionSpy = spyOn(service['graphQlService'], 'getSubscription');
+      getSubscriptionSpy.and.returnValue(new Subject());
+    });
+
+    it('should store a subscription into the internal map', () => {
+      service['subscribeToUpdate'](id);
+      expect(service['subscriptionMap'].get(id) instanceof Subscription).toBe(true);
+    });
+
+    describe('calling getSubscription()', () => {
+      let backendSubject: Subject<any>;
+
+      function notify() {
+        backendSubject.next({
+          value: { data: { onSpecificDocumentUpdate: backendResponse } }
+        });
+      }
+
+      beforeEach(() => {
+        // Setup the subscription spy to return the monitored observable
+        backendSubject = new Subject();
+        getSubscriptionSpy.and.returnValue(backendSubject);
+        // setup the observable for the document
+        service['documentMap'].set(id, new BehaviorSubject<Document>(null));
+      });
+
+      describe('arguments checking', () => {
+        let callArgs: Array<any>;
+
+        beforeEach(() => {
+          // call the service and get the arguments
+          service['subscribeToUpdate'](id);
+          callArgs = getSubscriptionSpy.calls.mostRecent().args;
+        });
+
+        it('should call with the right subscription query', () => {
+          expect(callArgs[0]).toEqual(onSpecificDocumentUpdate);
+        });
+        it('should call with the right argument', () => {
+          expect(callArgs[1]).toEqual({ id });
+        });
+      });
+
+      describe('[SUCCESS]', () => {
+        it('should create and emit the notified document', done => {
+          service['subscribeToUpdate'](id);
+          service['documentMap'].get(id).pipe(skip(1)).subscribe(value => {
+            expect(value instanceof DocumentImpl).toBe(true);
+            done();
+          });
+          notify();
+        });
+      });
+
+      describe('[ERROR]', () => {
+        it('should emit an error if the data is null', done => {
+          service['subscribeToUpdate'](id);
+          service['documentMap'].get(id).subscribe(() => { }, error => {
+            const message = `Unable to parse data: Cannot read property 'value' of null`;
+            expect(error.message).toBe(message);
+            done();
+          });
+          backendSubject.next(null);
+        });
+        it('should emit the error thrown by factory', done => {
+          // setup factory to throw an error
+          const message = 'test';
+          spyOn(service['documentFactory'], 'createDocument')
+            .and.throwError(message);
+          // call the service
+          service['subscribeToUpdate'](id);
+          service['documentMap'].get(id).subscribe(() => { }, error => {
+            const value = `DocumentFactory failed to create document: ${message}`;
+            expect(error.message).toBe(value);
+            done();
+          });
+          notify();
+        });
+      });
+    });
   });
 
 });
