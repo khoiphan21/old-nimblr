@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockOptionComponent } from './block-option.component';
 
-fdescribe('BlockOptionComponent', () => {
+describe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
   let fixture: ComponentFixture<BlockOptionComponent>;
 
