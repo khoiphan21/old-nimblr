@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import { Observable, Subject } from 'rxjs';
 
 export interface ListQueryResponse {
@@ -17,10 +17,9 @@ export class GraphQLService {
 
   async query(query, params): Promise<any> {
     try {
-      const response = await API.graphql(graphqlOperation(query, params));
-      return Promise.resolve(response);
+      return await API.graphql(graphqlOperation(query, params));
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(Error(`Failed to send query: ${error.message}`));
     }
   }
 

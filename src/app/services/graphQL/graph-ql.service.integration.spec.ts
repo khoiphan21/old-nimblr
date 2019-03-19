@@ -127,7 +127,7 @@ describe('GraphQLService', () => {
             done();
           });
           return new Promise((resolve, reject) => {
-            // this delay is require to make sure that 
+            // this delay is require to make sure that
             // the subscription is set up properly first
             setTimeout(() => {
               service.query(updateTextBlock, { input: updateBlockInput })
