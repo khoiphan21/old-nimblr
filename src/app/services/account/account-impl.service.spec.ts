@@ -156,35 +156,7 @@ describe('AccountImplService', () => {
   });
 
   describe('awsConfirmAccount', () => {
-    beforeEach(() => {
-
-
-      // wish list -- happy path and sad path runner
-      /*
-
-      happy = {
-        spyReturn: new Promise.resolve('yeah'),
-        expectedResult: 'run ok!',
-      }
-
-      const paths = helper.AllPossiblePath('method', {
-        happy: happy,
-        sad: sad,
-        excited: excited,
-        wow: wow,
-      });
-
-      paths.runAllPath();
-      paths.run(path.happy);
-
-      for (path of paths.getIterator()){
-        const result = paths.run(path.path);
-        expect(result).toEqual(path.expectedResult);
-      };
-
-      */
-
-    });
+    beforeEach(() => {});
 
     it('should always return promise type', done => {
       spyOn(Auth, 'confirmSignUp').and.returnValue('test');
