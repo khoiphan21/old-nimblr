@@ -5,7 +5,7 @@ import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
-import { CognitoSignUpUser } from '../../classes/user';
+import { CognitoSignUpUser, CognitoUserAttributes } from '../../classes/user';
 import { UnverifiedUser } from './account.service';
 import { Subject } from 'rxjs';
 import { promised } from 'q';
@@ -161,17 +161,26 @@ describe('AccountImplService', () => {
 
       // wish list -- happy path and sad path runner
       /*
+
+      happy = {
+        spyReturn: new Promise.resolve('yeah'),
+        expectedResult: 'run ok!',
+      }
+
       const paths = helper.AllPossiblePath('method', {
-        happy: new Promise.resolve('yeah');
-        sad: new Promsie.reject();
-        excited: new Promise.resolve('haha');
-        wow: new Promise.resolve('woww');
+        happy: happy,
+        sad: sad,
+        excited: excited,
+        wow: wow,
       });
 
-      const test = () => {
-
-      };
       paths.runAllPath();
+      paths.run(path.happy);
+
+      for (path of paths.getIterator()){
+        const result = paths.run(path.path);
+        expect(result).toEqual(path.expectedResult);
+      };
 
       */
 
@@ -204,14 +213,81 @@ describe('AccountImplService', () => {
   });
 
   describe('registerAppUser', () => {
-    beforeEach(() => { });
+    let spyAuth;
+    let spyQuery;
+    let testUser;
 
-    it('should always return a promise', () => {
+    beforeEach(() => {
+      spyAuth = spyOn(Auth, 'signIn').and.returnValue(Promise.resolve('ok'));
+      spyQuery = spyOn(service['graphQLService'], 'query').and.returnValue(Promise.resolve('ok'));
 
+      const testAttr = {
+        email: 'test',
+        given_name: 'test',
+        family_name: 'test',
+      } as CognitoUserAttributes;
+
+      testUser = {
+        username: 'test',
+        attributes: testAttr,
+      } as CognitoSignUpUser;
     });
 
-    it('should call graphQL query api only after signIn api is called', () => {
+    async function makeSureItReturnsAPromise(returnObj){
+      expect(returnObj instanceof Promise).toBeTruthy();
+    };
 
+    it('should always return a promise', () => {
+      // Thought of the day: might need to test the return type after all path to 
+      // make sure it is always returning Promise type?
+      const data = service.registerAppUser(testUser, '');
+      expect(data instanceof Promise).toBeTruthy();
+    });
+
+    // it('should call graphQL query api only after signIn api is called', () => {
+    //   // call fake? attach to list?
+    //   service.registerAppUser(testUser, '').then(_=>{
+    //     expect(spyAuth.calls.count()).toBe(1);
+    //     expect(spyQuery.calls.count()).toBe(1);
+    //   });
+    // });
+
+    it('should send user details correctly to aws', done => {
+      const testId = 'testID';
+      service.registerAppUser(testUser, testId).then(data => {
+        const userInput = spyQuery.calls.mostRecent().args[1].input;
+        expect(userInput.id).toEqual(testId);
+        expect(userInput.username).toEqual(testUser.username);
+        expect(userInput.email).toEqual(testUser.attributes.email);
+        expect(userInput.firstName).toEqual(testUser.attributes.given_name);
+        expect(userInput.lastName).toEqual(testUser.attributes.family_name);
+        done();
+      });
+    });
+
+    it('should return api error message when singIn failed', done => {
+      const errMsg = 'testing';
+      spyAuth.and.returnValue(Promise.reject(new Error(errMsg)));
+
+      console.log(testUser);
+      const r = service.registerAppUser(testUser, '').catch(err => {
+        expect(err.message).toEqual(errMsg);
+        done();
+      });
+
+      makeSureItReturnsAPromise(r);
+    });
+
+    it('should return api error message when api query failed', done => {
+      const errMsg = 'testing';
+      spyQuery.and.returnValue(Promise.reject(new Error(errMsg)));
+
+      const r = service.registerAppUser(testUser, '').catch(err => {
+        expect(err.message).toEqual(errMsg);
+        done();
+      });
+
+      makeSureItReturnsAPromise(r);
     });
 
   });
