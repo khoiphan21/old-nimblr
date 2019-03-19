@@ -48,15 +48,23 @@ describe('NavigationBarService', () => {
     });
   });
 
+  /* tslint:disable:no-string-literal */
   describe('getNavigationBar$', () => {
-
-    it('should have an observable of Navigation Tabs', () => {
+    beforeEach(() => {
       // spy on the document service
       spyOn(service['documentService'], 'getUserDocuments$')
-        .and.returnValue(new Subject());
+      .and.returnValue(new BehaviorSubject([]));
+    });
+
+    it('should have an observable of Navigation Tabs', () => {
       expect(service.getNavigationBar$() instanceof BehaviorSubject).toBe(true);
     });
 
+    it('should process the documents into navigation tabs when data arrived', () => {
+      spyOn(service, 'processNavigationTab').and.returnValue([]);
+      service.getNavigationBar$();
+      expect(service.processNavigationTab).toHaveBeenCalled();
+    });
   });
 
   describe('processNavigationTab()', () => {

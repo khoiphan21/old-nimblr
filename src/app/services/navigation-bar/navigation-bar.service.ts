@@ -23,6 +23,7 @@ export class NavigationBarService {
     this.navigationBarStatus$.next(status);
   }
 
+  // TODO: Handle Error
   getNavigationBar$(): Observable<Array<NavigationTabDocument>> {
     if (!this.navigationBar$) {
       this.navigationBar$ = new BehaviorSubject([]);
@@ -30,8 +31,7 @@ export class NavigationBarService {
         const navigationTabs = this.processNavigationTab(documents);
         this.navigationBar$.next(navigationTabs);
       }, error => {
-        console.error('Error received in getNavigationBar$. Details below: ');
-        console.error(error);
+        console.error('Error received in getNavigationBar$', error);
       });
     }
     return this.navigationBar$;
