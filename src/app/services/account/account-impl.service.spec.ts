@@ -119,15 +119,37 @@ describe('AccountImplService', () => {
 
   });
 
-  describe('registerCognitoUser', () => {
-    beforeEach(() => { });
+  fdescribe('registerCognitoUser', () => {
+    let testValue: any;
+    let spySignup: jasmine.Spy;
+    let testUser: CognitoSignUpUser;
 
-    it('should return promise', () => {
+    beforeEach(() => {
+      testValue = { value: 'testing' };
+      spySignup = spyOn(Auth, 'signUp');
+      spySignup.and.returnValue(Promise.resolve(testValue));
+      testUser = {} as CognitoSignUpUser;
+    });
 
+    it('should return promise type', () => {
+      const response = service.registerCognitoUser(testUser);
+      expect(response instanceof Promise).toBeTruthy();
     });
 
     it('should call signup api', () => {
+      service.registerCognitoUser(testUser);
+      expect(spySignup.calls.count()).toEqual(1);
+    });
 
+    it('should return api error when signup api failed', done => {
+      const errorMessage = 'testing';
+      spySignup.and.returnValue(Promise.reject(new Error(errorMessage)));
+
+      const response = service.registerCognitoUser(testUser);
+      response.catch(err => {
+        expect(err.message).toEqual(errorMessage);
+        done();
+      });
     });
   });
 
@@ -192,10 +214,28 @@ describe('AccountImplService', () => {
   });
 
   describe('getUser', () => {
+    it('should always return an observable', () => {
+
+    });
+
+    it('should call signOut api', () => {
+
+    });
 
   });
 
   describe('isUserReady', () => {
+    it('should always return an observable', () => {
+
+    });
+
+    it('should resolve after getUser is called', () => {
+
+    });
+
+    it('should reject after getUser returns error', () => {
+
+    });
 
   });
 

@@ -31,7 +31,7 @@ export class AccountServiceImpl implements AccountService {
   }
 
   setUnverifiedUser(email: string, password: string) {
-    this.unverifiedUser = {email, password};
+    this.unverifiedUser = { email, password };
   }
 
   private async restoreSession(): Promise<User> {
@@ -46,11 +46,13 @@ export class AccountServiceImpl implements AccountService {
   }
 
   async registerCognitoUser(user: CognitoSignUpUser): Promise<any> {
-    return new Promise((resolve, reject) => {
-      Auth.signUp(user).then(data => {
-        resolve(data);
-      }).catch(error => reject(error));
-    });
+    return new Promise(
+      (resolve, reject) => {
+        Auth.signUp(user).then(data => {
+          resolve(data);
+        }).catch(error => reject(error));
+      }
+    );
   }
 
   async awsConfirmAccount(email: string, code: string): Promise<any> {
@@ -62,25 +64,25 @@ export class AccountServiceImpl implements AccountService {
   }
 
   async registerAppUser(user: CognitoSignUpUser, userId: string): Promise<any> {
-      // 2. Sign in to Cognito to perform graphql
-      return Auth.signIn(user.username, user.password).then(() => {
-        // 3. Register in App DB
-        const userDetails = {
-          input: {
-            id: userId,
-            username: user.username,
-            email: user.attributes.email,
-            firstName: user.attributes.given_name,
-            lastName: user.attributes.family_name,
-            documentIds: []
-          }
-        };
-        return this.graphQLService.query(createUser, userDetails);
-      }).then(result => {
-        return Promise.resolve(result);
-      }).catch(error => {
-        return Promise.reject(error);
-      });
+    // 2. Sign in to Cognito to perform graphql
+    return Auth.signIn(user.username, user.password).then(() => {
+      // 3. Register in App DB
+      const userDetails = {
+        input: {
+          id: userId,
+          username: user.username,
+          email: user.attributes.email,
+          firstName: user.attributes.given_name,
+          lastName: user.attributes.family_name,
+          documentIds: []
+        }
+      };
+      return this.graphQLService.query(createUser, userDetails);
+    }).then(result => {
+      return Promise.resolve(result);
+    }).catch(error => {
+      return Promise.reject(error);
+    });
   }
 
   private async getAppUser(cognitoUserId: string): Promise<User> {
