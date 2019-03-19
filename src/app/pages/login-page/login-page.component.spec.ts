@@ -53,47 +53,67 @@ describe('LoginPageComponent', () => {
     expect(component.passwordType).toBe('password');
   });
 
+  /* tslint:disable:no-string-literal */
   describe('signIn()', () => {
+    let navigationSpy;
+    const email = 'abcd@email.com';
+    const password = 'PAssword1234';
+    beforeEach(() => {
+      navigationSpy = spyOn(component['router'], 'navigate');
+      spyOn(console, 'error');
+      component.loginForm.controls.email.setValue(email);
+      component.loginForm.controls.password.setValue(password);
+    });
 
-    /* tslint:disable:no-string-literal */
+    it('should stop the function if the data returned is empty', done => {
+      spyOn(component['accountService'], 'login').and.returnValue(Promise.resolve(null));
+      component.signIn().then(() => {
+        fail('should not proceed signIn()');
+        done();
+      }).catch(() => {
+        const navigationCalls = navigationSpy.calls.count.length;
+        expect(navigationCalls).toBe(0);
+        done();
+      });
+    });
+
     it('should navigate to register page if the account is not verified', done => {
-      // spy on the router
-      const spy = spyOn(component['router'], 'navigate');
-      // spy on the accountService
       spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
         code: 'UserNotConfirmedException'
       }));
-
-      // Set the email and password for testing
-      const email = 'abcd@email.com';
-      const password = 'PAssword1234';
-      component.loginForm.controls.email.setValue(email);
-      component.loginForm.controls.password.setValue(password);
-      // Now try to sign in
       component.signIn().then(() => {
         fail('should not sign in successfully');
         done();
       }).catch(() => {
-        const navigatedPath = spy.calls.mostRecent().args[0][0];
+        const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
         expect(navigatedPath).toBe('register');
         done();
       });
     });
 
-    /* tslint:disable:no-string-literal */
-    it('should navigate to register page if the user have verified the account', done => {
-      const spy = spyOn(component['router'], 'navigate');
+    it('should console the error if the error is not specified yet', done => {
+      spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
+        code: 'IncorrectPasswordException'
+      }));
+      component.signIn().then(() => {
+        fail('should not sign in successfully');
+        done();
+      }).catch(() => {
+        expect(console.error).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should navigate to dashboard page if the user have verified the account', done => {
       const accountServiceSpy = spyOn(component['accountService'], 'login')
         .and.returnValues(Promise.resolve({ id: 'abcd' }));
-
       component.signIn().then(() => {
         expect(accountServiceSpy.calls.count()).toBe(1);
-        const navigatedPath = spy.calls.mostRecent().args[0][0];
+        const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
         expect(navigatedPath).toBe('dashboard');
         done();
       }).catch(error => {
         fail('should not fail to sign in');
-        console.error(error);
         done();
       });
     });

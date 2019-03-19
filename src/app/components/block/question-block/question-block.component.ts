@@ -27,8 +27,10 @@ export class QuestionBlockComponent implements OnInit {
     this.isQuestionOptionShown = this.isQuestionOptionShown ? false : true;
   }
 
-  selectType(type: string) {
+  selectType(type: string, event: Event) {
     this.currentType = type;
     this.toggleOptions();
+    this.isPreviewMode = false;
+    event.stopImmediatePropagation();
   }
 }

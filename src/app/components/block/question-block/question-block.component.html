@@ -25,21 +25,21 @@
                     QUESTION TYPES
                 </div>
                 <section class="document-options">
-                    <div class="option" (click)="selectType('short answer')">
+                    <div class="option" (click)="selectType('short answer', $event)">
                         <i class="fas fa-grip-lines"></i><span>Short Answer</span>
                     </div>
-                    <div class="option" (click)="selectType('paragraph')">
+                    <div class="option" (click)="selectType('paragraph', $event)">
                         <i class="fas fa-bars"></i><span>Paragraph</span>
                     </div>
                 </section>
                 <section class="document-options">
-                    <div class="option" (click)="selectType('checkbox')">
+                    <div class="option" (click)="selectType('checkbox', $event)">
                         <i class="fas fa-check-square"></i><span>Checkbox</span>
                     </div>
-                    <div class="option" (click)="selectType('multiple choice')">
+                    <div class="option" (click)="selectType('multiple choice', $event)">
                         <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
                     </div>
-                    <div class="option" (click)="selectType('dropdown')">
+                    <div class="option" (click)="selectType('dropdown', $event)">
                         <i class="fas fa-sort"></i><span>Dropdown</span>
                     </div>
                 </section>
