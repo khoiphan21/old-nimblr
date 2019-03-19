@@ -50,10 +50,14 @@ describe('NavigationBarService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('getNavigationBar$', () => {
+    let getUserDocumentsSpy: jasmine.Spy;
+    let backendSubject: BehaviorSubject<any>;
+
     beforeEach(() => {
       // spy on the document service
-      spyOn(service['documentService'], 'getUserDocuments$')
-      .and.returnValue(new BehaviorSubject([]));
+      backendSubject = new BehaviorSubject([]);
+      getUserDocumentsSpy = spyOn(service['documentService'], 'getUserDocuments$');
+      getUserDocumentsSpy.and.returnValue(backendSubject);
     });
 
     it('should have an observable of Navigation Tabs', () => {
@@ -64,6 +68,16 @@ describe('NavigationBarService', () => {
       spyOn(service, 'processNavigationTab').and.returnValue([]);
       service.getNavigationBar$();
       expect(service.processNavigationTab).toHaveBeenCalled();
+    });
+
+    it('should emit the error if unable to get user documents', done => {
+      const mockError = new Error('test');
+      service.getNavigationBar$().subscribe(() => {}, error => {
+        const message = `NavigationBarService failed: ${mockError.message}`;
+        expect(error.message).toEqual(message);
+        done();
+      });
+      backendSubject.error(mockError);
     });
   });
 
