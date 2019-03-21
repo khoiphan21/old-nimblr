@@ -2,9 +2,9 @@
     <app-header style="width:100%"></app-header>
     <div class="row no-pad no-gutters">
         <app-navigation-bar class="col-2"></app-navigation-bar>
-        <section class="content col-lg-8 pt-5 pt-lg-4">
-            <h1>The alchemist</h1>
-            <app-block *ngFor="let id of blockIds" [blockId]="id"></app-block>
+        <section class="content col-lg-8 pt-5 pt-lg-4" *ngIf="currentDocument">
+            <h1>(Title)</h1>
+            <app-block *ngFor="let id of currentDocument.blockIds" [blockId]="id"></app-block>
             <app-add-information (click)="addBlock()" style="width: 100%"></app-add-information>
         </section>
     </div>

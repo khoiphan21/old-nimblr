@@ -12,7 +12,7 @@ import { BlockQueryService } from '../../services/block/query/block-query.servic
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
 
-const uuidv5 = require('uuid/v5');
+const uuidv4 = require('uuid/v4');
 
 @Component({
   selector: 'app-document-page',
@@ -24,7 +24,7 @@ export class DocumentPageComponent implements OnInit {
   private currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
-  blockIds: Array<string>;
+  // blockIds: Array<string>;
 
   constructor(
     private documentQueryService: DocumentQueryService,
@@ -47,28 +47,34 @@ export class DocumentPageComponent implements OnInit {
     });
   }
 
-  checkUser(): Promise<User> {
+  async checkUser(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.accountService.getUser$().subscribe(user => {
         if (user) {
           resolve(user);
         }
-      }, error => reject(error));
+      }, error => {
+        reject(Error(`DocumentPage failed to load: ${error.message}`));
+      });
     });
   }
 
   private retrieveDocumentData() {
+    // get the id from the route and then retrieve the document observable
     this.document$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) =>
         this.documentQueryService.getDocument$(params.get('id'))
       )
     );
+    // subscribe to and process the document from the observable
     this.document$.subscribe(document => {
       if (document === null) { return; }
       this.currentDocument = document;
-      this.blockIds = document.blockIds;
+      // this.blockIds = document.blockIds;
       this.setupBlockUpdateSubscription();
-    }, () => console.error('error getting document in DocumentPage'));
+    }, error => {
+      console.error(`DocumentPage failed to get document: ${error.message}`);
+    });
   }
 
   private setupBlockUpdateSubscription() {
@@ -89,19 +95,14 @@ export class DocumentPageComponent implements OnInit {
       await this.blockCommandService.createBlock(block);
       // update document
       this.currentDocument.blockIds.push(block.id);
-      this.currentDocument.version = uuidv5(this.currentDocument.ownerId, this.currentDocument.id);
+      this.currentDocument.version = uuidv4();
       this.currentDocument.lastUpdatedBy = this.currentUser.id;
       // send update command to DocumentCommandService
       this.documentCommandService.updateDocument(this.currentDocument);
     } catch (error) {
-      this.printAddBlockError(error);
+      const message = `DocumentPage failed to add block: ${error.message}`;
+      throw new Error(message);
     }
-  }
-
-  private printAddBlockError(error) {
-    console.error('DocumentPage unable to add block');
-    console.error(error);
-    throw (error);
   }
 
 }
