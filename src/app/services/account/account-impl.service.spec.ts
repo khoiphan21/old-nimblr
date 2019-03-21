@@ -281,15 +281,17 @@ describe('AccountImplService', () => {
     });
 
     it('should call signIn api', done => {
-      service.login('', '');
-      expect(spyAuth.calls.count()).toBe(1);
-      done();
+      service.login('', '').then(()=>{
+        expect(spyAuth.calls.count()).toBe(1);
+        done();
+      });
     });
 
     it('should call getAppUser api', done => {
-      service.login('', '');
-      expect(spyGetAppUser.calls.count()).toBe(1);
-      done();
+      service.login('', '').then(()=>{
+        expect(spyGetAppUser.calls.count()).toBe(1);
+        done();
+      });
     });
 
     it('should resolve with correct user info emitted by getAppUser', done => {
@@ -441,6 +443,12 @@ describe('AccountImplService', () => {
   });
 
   describe('getUser', () => {
+    beforeEach(() => { });
+
+    async function makeSureItReturnsObservable() {
+
+    }
+
     it('should always return an observable', () => {
 
     });
