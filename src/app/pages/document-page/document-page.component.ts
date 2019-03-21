@@ -36,11 +36,15 @@ export class DocumentPageComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-    this.checkUser().then(user => {
+  async ngOnInit() {
+    return this.checkUser().then(user => {
       this.currentUser = user;
       this.retrieveDocumentData();
-    }).catch(error => console.error(error));
+      return Promise.resolve();
+    }).catch(error => {
+      const message = `DocumentPage failed to load: ${error.message}`;
+      return Promise.reject(Error(message));
+    });
   }
 
   checkUser(): Promise<User> {
@@ -97,7 +101,7 @@ export class DocumentPageComponent implements OnInit {
   private printAddBlockError(error) {
     console.error('DocumentPage unable to add block');
     console.error(error);
-    throw(error);
+    throw (error);
   }
 
 }
