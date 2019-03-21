@@ -167,22 +167,6 @@ export class AccountServiceImpl implements AccountService {
     }).catch(err => {
       return Promise.reject(err);
     });
-
-    // try {
-    //   // update info in Cognito
-    //   const userDB = await Auth.currentAuthenticatedUser();
-    //   await Auth.updateUserAttributes(userDB, {
-    //     email: user.email
-    //   });
-
-    //   // update info in dynamodb
-    //   const response = await API.graphql(graphqlOperation(updateUser, input));
-    //   return Promise.resolve(response);
-
-    // } catch (err) {
-    //   return Promise.reject(err);
-    // }
-
   }
 
   getUser$(): Observable<User> {
