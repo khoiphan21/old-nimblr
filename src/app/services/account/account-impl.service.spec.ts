@@ -4,12 +4,14 @@ import { AccountServiceImpl } from './account-impl.service';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
-import { Auth } from 'aws-amplify';
-import { CognitoSignUpUser, CognitoUserAttributes } from '../../classes/user';
+import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { CognitoSignUpUser, CognitoUserAttributes, User } from '../../classes/user';
 import { UnverifiedUser } from './account.service';
 import { Subject } from 'rxjs';
 import { promised } from 'q';
 import { onErrorResumeNext } from 'rxjs/operators';
+import { domRendererFactory3 } from '@angular/core/src/render3/interfaces/renderer';
+import { updateUser } from 'src/graphql/mutations';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 
@@ -156,7 +158,7 @@ describe('AccountImplService', () => {
   });
 
   describe('awsConfirmAccount', () => {
-    beforeEach(() => {});
+    beforeEach(() => { });
 
     it('should always return promise type', done => {
       spyOn(Auth, 'confirmSignUp').and.returnValue('test');
@@ -205,7 +207,7 @@ describe('AccountImplService', () => {
       } as CognitoSignUpUser;
     });
 
-    async function makeSureItReturnsAPromise(returnObj){
+    async function makeSureItReturnsAPromise(returnObj) {
       expect(returnObj instanceof Promise).toBeTruthy();
     };
 
@@ -213,16 +215,8 @@ describe('AccountImplService', () => {
       // Thought of the day: might need to test the return type after all path to 
       // make sure it is always returning Promise type?
       const data = service.registerAppUser(testUser, '');
-      expect(data instanceof Promise).toBeTruthy();
+      makeSureItReturnsAPromise(data);
     });
-
-    // it('should call graphQL query api only after signIn api is called', () => {
-    //   // call fake? attach to list?
-    //   service.registerAppUser(testUser, '').then(_=>{
-    //     expect(spyAuth.calls.count()).toBe(1);
-    //     expect(spyQuery.calls.count()).toBe(1);
-    //   });
-    // });
 
     it('should send user details correctly to aws', done => {
       const testId = 'testID';
@@ -265,14 +259,62 @@ describe('AccountImplService', () => {
   });
 
   describe('login', () => {
-    beforeEach(() => { });
+    let spyAuth;
+    let spyGetAppUser;
+    let mockUserData;
+    let mockSignUp;
 
-    it('should always return a promise', () => {
+    beforeEach(() => {
 
+      mockUserData = 'user test';
+      mockSignUp = {
+        signInUserSession: { idToken: { payload: { sub: mockUserData } } }
+      };
+
+      spyAuth = spyOn(Auth, 'signIn').and.returnValue(Promise.resolve(mockSignUp));
+      spyGetAppUser = spyOn<any>(service, 'getAppUser').and.returnValue(Promise.resolve(mockUserData));
     });
 
-    it('should call signIn api', () => {
+    it('should always return a promise', () => {
+      const data = service.login('', '');
+      expect(data instanceof Promise).toBeTruthy();
+    });
 
+    it('should call signIn api', done => {
+      service.login('', '');
+      expect(spyAuth.calls.count()).toBe(1);
+      done();
+    });
+
+    it('should call getAppUser api', done => {
+      service.login('', '');
+      expect(spyGetAppUser.calls.count()).toBe(1);
+      done();
+    });
+
+    it('should resolve with correct user info emitted by getAppUser', done => {
+      service.login('', '').then(response => {
+        expect(response).toEqual(mockUserData);
+        done();
+      });
+    });
+
+    it('should reject when getAppUser failed', done => {
+      const mockErr = 'test err';
+      spyGetAppUser.and.returnValue(Promise.reject(new Error(mockErr)));
+      service.login('', '').catch(err => {
+        expect(err.message).toEqual(mockErr);
+        done();
+      });
+    });
+
+    it('should reject when signIn failed', done => {
+      const mockErr = 'test err';
+      spyAuth.and.returnValue(Promise.reject(new Error(mockErr)));
+      service.login('', '').catch(err => {
+        expect(err.message).toEqual(mockErr);
+        done();
+      });
     });
 
   });
@@ -280,24 +322,120 @@ describe('AccountImplService', () => {
   describe('logout', () => {
     beforeEach(() => { });
 
-    it('should always return a promise', () => {
-
+    it('should call signOut', () => {
+      const spyAuth = spyOn(Auth, 'signOut').and.returnValue(Promise.resolve('test'));
+      service.logout();
+      expect(spyAuth.calls.count()).toBe(1);
     });
 
-    it('should call signOut api', () => {
+    it('should resolve with bool when signout successfully', () => {
+      spyOn(Auth, 'signOut').and.returnValue(Promise.resolve('test'));
+      service.logout().then(data => {
+        expect(data).toBe(true);
+      });
+    });
 
+    it('should reject with error emitted by signout if failed', () => {
+      const consterrMsg = 'test err';
+      spyOn(Auth, 'signOut').and.returnValue(Promise.reject(new Error(consterrMsg)));
+      service.logout().then(data => {
+        expect(data).toBe(true);
+      });
     });
   });
 
   describe('update', () => {
-    beforeEach(() => { });
+    let mockUser: User;
 
-    it('should always return a promise', () => {
+    let spyAuthAuthUser;
+    let spyAuthUpdateuser;
+    let spyAPI;
 
+
+    beforeEach(() => {
+      mockUser = {
+        id: 'testID',
+        email: 'testEmail',
+        firstName: 'testFirstName',
+        lastName: 'testLastName',
+      };
+
+      spyAuthAuthUser = spyOn(Auth, 'currentAuthenticatedUser').and.returnValue(Promise.resolve());
+      spyAuthUpdateuser = spyOn(Auth, 'updateUserAttributes').and.returnValue(Promise.resolve());
+      spyAPI = spyOn(API, 'graphql').and.returnValue(Promise.resolve());
     });
 
-    it('should call signOut api', () => {
+    async function makeSureItReturnsAPromise(returnObj) {
+      expect(returnObj instanceof Promise).toBeTruthy();
+    };
 
+    it('should return promise', () => {
+      const data = service.update(mockUser);
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should call currentAuthenticatedUser', done => {
+      const data = service.update(mockUser).then(() => {
+        expect(spyAuthAuthUser.calls.count()).toBe(1);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should call updateUserAttributes', done => {
+      const data = service.update(mockUser).then(() => {
+        expect(spyAuthUpdateuser.calls.count()).toBe(1);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should call graphQl query api', done => {
+      const data = service.update(mockUser).then(() => {
+        expect(spyAPI.calls.count()).toBe(1);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should call graphQl query api with correct parameters', done => {
+      const data = service.update(mockUser).then(() => {
+        const input = spyAPI.calls.mostRecent().args[0];
+        const compareObj = graphqlOperation(updateUser, { input: mockUser });
+        expect(input).toEqual(compareObj);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should reject with correct err if currentAuthenticatedUser failed', done => {
+      const testErr = 'test err';
+      spyAuthAuthUser.and.returnValue(Promise.reject(new Error(testErr)));
+      const data = service.update(mockUser).catch(err => {
+        expect(err.message).toEqual(testErr);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should reject with correct err if updateUserAttributes failed', done => {
+      const testErr = 'test err';
+      spyAuthUpdateuser.and.returnValue(Promise.reject(new Error(testErr)));
+      const data = service.update(mockUser).catch(err => {
+        expect(err.message).toEqual(testErr);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
+    });
+
+    it('should reject with correct err if graphql update failed', done => {
+      const testErr = 'test err';
+      spyAPI.and.returnValue(Promise.reject(new Error(testErr)));
+      const data = service.update(mockUser).catch(err => {
+        expect(err.message).toEqual(testErr);
+        done();
+      });
+      makeSureItReturnsAPromise(data);
     });
 
   });

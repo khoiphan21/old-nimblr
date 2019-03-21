@@ -117,8 +117,7 @@ export class AccountServiceImpl implements AccountService {
           }).catch(error => {
             reject(error);
           });
-        }
-      ).catch(error => reject(error));
+        }).catch(error => reject(error));
     });
   }
 
@@ -133,9 +132,9 @@ export class AccountServiceImpl implements AccountService {
           this.user$.next(null);
           resolve(true);
         })
-        .catch(err => {
-          reject(err);
-        });
+      // .catch(err => {
+      //   reject(err);
+      // });
     });
   }
 
@@ -153,20 +152,36 @@ export class AccountServiceImpl implements AccountService {
       }
     };
 
-    try {
+    return await Auth.currentAuthenticatedUser().then(
+      () => { return; }
+    ).then(userDB => {
       // update info in Cognito
-      const userDB = await Auth.currentAuthenticatedUser();
-      await Auth.updateUserAttributes(userDB, {
+      return Auth.updateUserAttributes(userDB, {
         email: user.email
       });
-
+    }).then(async () => {
       // update info in dynamodb
       const response = await API.graphql(graphqlOperation(updateUser, input));
       return Promise.resolve(response);
 
-    } catch (err) {
+    }).catch(err => {
       return Promise.reject(err);
-    }
+    });
+
+    // try {
+    //   // update info in Cognito
+    //   const userDB = await Auth.currentAuthenticatedUser();
+    //   await Auth.updateUserAttributes(userDB, {
+    //     email: user.email
+    //   });
+
+    //   // update info in dynamodb
+    //   const response = await API.graphql(graphqlOperation(updateUser, input));
+    //   return Promise.resolve(response);
+
+    // } catch (err) {
+    //   return Promise.reject(err);
+    // }
 
   }
 
