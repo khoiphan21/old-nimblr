@@ -298,7 +298,7 @@ describe('DocumentService', () => {
       subscriptionSpy = spyOn<any>(service, 'setupSubscriptionForUserDocuments');
       // Setup spy for getDocumentsForUserId
       getDocumentsSpy = spyOn<any>(service, 'getDocumentsForUserId');
-      getDocumentsSpy.and.returnValue(new Promise((_, __) => { }));
+      getDocumentsSpy.and.returnValue(new Promise(() => { }));
     });
 
     it('should return an observable with an initially empty array', done => {

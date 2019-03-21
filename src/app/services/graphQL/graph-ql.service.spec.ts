@@ -82,7 +82,7 @@ describe('GraphQLService', () => {
           limit: MOCK_LIMIT
         };
         // setup the sendQuery to return a never resolving promise
-        sendQuerySpy.and.returnValue(new Promise((_, __) => { }));
+        sendQuerySpy.and.returnValue(new Promise(() => { }));
         // call the service
         service.list(listArgument);
         args = sendQuerySpy.calls.mostRecent().args;

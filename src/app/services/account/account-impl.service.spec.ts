@@ -20,10 +20,10 @@ export class MockAccountService {
     return new Subject();
   }
   isUserReady() {
-    return new Promise((_, __) => { }); // a promise that never returns
+    return new Promise(() => { }); // a promise that never returns
   }
   login() {
-    return new Promise((_, __) => { }); // a promise that never returns
+    return new Promise(() => { }); // a promise that never returns
   }
   setUnverifiedUser(_, __) { }
   getUnverifiedUser() { }

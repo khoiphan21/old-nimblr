@@ -42,7 +42,7 @@ describe('DocumentQueryService', () => {
       subscribeToUpdateSpy = spyOn<any>(service, 'subscribeToUpdate');
       // setup query spy to return an promise that never resolves
       querySpy = spyOn(service['graphQlService'], 'query');
-      querySpy.and.returnValue(new Promise((_, __) => { }));
+      querySpy.and.returnValue(new Promise(() => { }));
     });
 
     describe('creating and returning an observable', () => {

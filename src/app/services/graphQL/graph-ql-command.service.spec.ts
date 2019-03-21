@@ -128,7 +128,7 @@ describe('GraphQlCommandService - Unit Tests', () => {
 
     it('should have a pending item in the queue while API call is running', () => {
       // setup spy to return a promise that never resolves
-      apiSpy.and.returnValue(new Promise((_, __) => { }));
+      apiSpy.and.returnValue(new Promise(() => { }));
 
       service['enqueueQuery'](mockQuery);
       expect(service['queue'].pending).toBe(1);
