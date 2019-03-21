@@ -14,7 +14,7 @@ import { take, skip } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { DocumentFactoryService } from './factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
-
+import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
 describe('DocumentService', () => {
@@ -28,8 +28,7 @@ describe('DocumentService', () => {
   let documentData: any;
   let userId: UUID;
 
-
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [
         DocumentServiceImpl,
@@ -42,7 +41,9 @@ describe('DocumentService', () => {
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
 
+  beforeEach(() => {
     service = TestBed.get(DocumentServiceImpl);
     documentFactory = TestBed.get(DocumentFactoryService);
 

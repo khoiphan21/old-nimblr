@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockTextComponent } from './block-text.component';
 import { FormsModule } from '@angular/forms';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
-
+import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 describe('BlockTextComponent', () => {
   let component: BlockTextComponent;
@@ -21,7 +21,7 @@ describe('BlockTextComponent', () => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ BlockTextComponent ],
       imports: [
@@ -31,9 +31,8 @@ describe('BlockTextComponent', () => {
         BlockFactoryService,
         BlockCommandService,
       ]
-    })
-    .compileComponents();
-  }));
+    });
+});
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockTextComponent);

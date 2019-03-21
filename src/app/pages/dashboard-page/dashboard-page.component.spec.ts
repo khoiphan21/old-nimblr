@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DashboardPageComponent } from './dashboard-page.component';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -6,8 +6,8 @@ import { DocumentService } from 'src/app/services/document/document.service';
 import { BehaviorSubject } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
+import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
-
 class MockDocumentService {
   getUserDocuments$() {
     return new BehaviorSubject(false);
@@ -21,7 +21,7 @@ describe('DashboardPageComponent', () => {
   let documentFactory: DocumentFactoryService;
   let documentService;
   let document;
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         DashboardPageComponent
@@ -36,9 +36,8 @@ describe('DashboardPageComponent', () => {
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardPageComponent);

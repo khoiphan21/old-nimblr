@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoginPageComponent } from './login-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -7,12 +7,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AccountService } from '../../services/account/account.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('LoginPageComponent', () => {
   let component: LoginPageComponent;
   let fixture: ComponentFixture<LoginPageComponent>;
   let accountService: AccountService;
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         LoginPageComponent
@@ -29,9 +30,8 @@ describe('LoginPageComponent', () => {
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginPageComponent);

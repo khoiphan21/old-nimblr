@@ -6,8 +6,9 @@ import { AccountService } from '../account/account.service';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../document/factory/document-factory.service';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { skip } from 'rxjs/operators';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -16,13 +17,16 @@ describe('NavigationBarService', () => {
   let documentService: DocumentService;
   let service: NavigationBarService;
   let documentFactory: DocumentFactoryService;
-  beforeEach(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         ServicesModule,
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+  beforeEach(() => {
     accountService = TestBed.get(AccountService);
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);

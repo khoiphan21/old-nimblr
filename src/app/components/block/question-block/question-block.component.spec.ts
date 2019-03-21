@@ -1,14 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionBlockComponent } from './question-block.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { QuestionOptionComponent } from './question-option/question-option.component';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
   let fixture: ComponentFixture<QuestionBlockComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         QuestionBlockComponent,
@@ -18,9 +19,8 @@ describe('QuestionBlockComponent', () => {
         FormsModule,
         ReactiveFormsModule
       ]
-    })
-    .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(QuestionBlockComponent);

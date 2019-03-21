@@ -1,17 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderOptionsComponent } from './header-options.component';
-
+import { configureTestSuite } from 'ng-bullet';
 describe('HeaderOptionsComponent', () => {
   let component: HeaderOptionsComponent;
   let fixture: ComponentFixture<HeaderOptionsComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ HeaderOptionsComponent ]
-    })
-    .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderOptionsComponent);

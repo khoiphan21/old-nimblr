@@ -3,12 +3,12 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MobileQuestionBlockComponent } from './mobile-question-block.component';
 import { QuestionOptionComponent } from '../question-block/question-option/question-option.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('MobileQuestionBlockComponent', () => {
   let component: MobileQuestionBlockComponent;
   let fixture: ComponentFixture<MobileQuestionBlockComponent>;
-
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         MobileQuestionBlockComponent,
@@ -18,9 +18,8 @@ describe('MobileQuestionBlockComponent', () => {
         FormsModule,
         ReactiveFormsModule
       ]
-    })
-      .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MobileQuestionBlockComponent);

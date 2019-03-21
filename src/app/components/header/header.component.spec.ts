@@ -8,13 +8,13 @@ import { HeaderOptionsComponent } from './header-options/header-options.componen
 import { DocumentService } from 'src/app/services/document/document.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject } from 'rxjs';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let userFactory: UserFactoryService;
-
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         HeaderComponent,
@@ -30,9 +30,8 @@ describe('HeaderComponent', () => {
           useClass: MockAccountService
         }
       ]
-    })
-      .compileComponents();
-  }));
+    });
+});
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
