@@ -1,16 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AccountServiceImpl } from './account-impl.service';
-import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { CognitoSignUpUser, CognitoUserAttributes, User } from '../../classes/user';
 import { UnverifiedUser } from './account.service';
-import { Subject } from 'rxjs';
-import { promised } from 'q';
-import { onErrorResumeNext } from 'rxjs/operators';
-import { domRendererFactory3 } from '@angular/core/src/render3/interfaces/renderer';
+import { Subject, Subscription } from 'rxjs';
 import { updateUser } from 'src/graphql/mutations';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
@@ -281,14 +277,14 @@ describe('AccountImplService', () => {
     });
 
     it('should call signIn api', done => {
-      service.login('', '').then(()=>{
+      service.login('', '').then(() => {
         expect(spyAuth.calls.count()).toBe(1);
         done();
       });
     });
 
     it('should call getAppUser api', done => {
-      service.login('', '').then(()=>{
+      service.login('', '').then(() => {
         expect(spyGetAppUser.calls.count()).toBe(1);
         done();
       });
@@ -442,36 +438,71 @@ describe('AccountImplService', () => {
 
   });
 
-  describe('getUser', () => {
+  fdescribe('getUser$', () => {
+    let spySession;
+
     beforeEach(() => { });
+    async function makeSureItReturnsObservable() { }
 
-    async function makeSureItReturnsObservable() {
-
-    }
-
-    it('should always return an observable', () => {
-
+    it('should call restoreSession when getUser$ is called', () => {
+      spySession = spyOn<any>(service, 'restoreSession').and.returnValue(Promise.resolve('test user'));
+      service.getUser$();
+      expect(spySession.calls.count()).toBe(1);
     });
 
-    it('should call signOut api', () => {
+    it('should restore the value of user$ correctly', async () => {
 
+      const mockUser: User = {
+        id: 'test1',
+        firstName: 'test1',
+        lastName: 'test1',
+        email: 'test1',
+      };
+
+      spySession = spyOn<any>(service, 'restoreSession').and.returnValue(Promise.resolve(mockUser));
+
+      await service.getUser$();
+      const observableCurrentValue = service['user$'].getValue();
+      expect(observableCurrentValue).toEqual(mockUser);
+    });
+
+    it('should return error when no user is identified', done => {
+      spySession = spyOn<any>(service, 'restoreSession').and.returnValue(Promise.reject(new Error('test err')));
+      spyOn<any>(service['router'], 'navigate').and.returnValue(Promise.resolve(true));
+
+      service.getUser$().subscribe(() => { }, err => {
+        expect(err).toEqual('User is not logged in');
+        done();
+      });
+    });
+
+    it('should triggle navigate in router when failed', done => {
+      spySession = spyOn<any>(service, 'restoreSession').and.returnValue(Promise.reject(new Error('test err')));
+      const spyRouter = spyOn<any>(service['router'], 'navigate').and.returnValue(Promise.resolve(true));
+
+      service.getUser$().subscribe(() => { }, err => {
+        expect(err).toEqual('User is not logged in');
+        expect(spyRouter.calls.count()).toBe(1);
+        done();
+      });
     });
 
   });
 
-  describe('isUserReady', () => {
-    it('should always return an observable', () => {
+  // describe('isUserReady', () => {
 
-    });
+  //   it('should always return an observable', () => {
 
-    it('should resolve after getUser is called', () => {
+  //   });
 
-    });
+  //   it('should resolve after getUser is called', () => {
 
-    it('should reject after getUser returns error', () => {
+  //   });
 
-    });
+  //   it('should reject after getUser returns error', () => {
 
-  });
+  //   });
+
+  // });
 
 });
