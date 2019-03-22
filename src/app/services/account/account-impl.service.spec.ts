@@ -32,7 +32,7 @@ export class MockAccountService {
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('AccountImplService', () => {
+describe('AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
 
@@ -519,28 +519,29 @@ fdescribe('AccountImplService', () => {
     });
   });
 
-  fdescribe('restoreSession()', () => {
+  describe('restoreSession()', () => {
+    let mockUser: User;
+    let cloudSession;
+
     beforeEach(() => {
-
-    });
-
-    it('should return a user when user is successfully retrieved', done => {
-      const mockUser: User = {
+      mockUser = {
         id: 'test1',
         firstName: 'test1',
         lastName: 'test1',
         email: 'test1',
       };
-      const someShit = {
+      cloudSession = {
         getIdToken: '',
       };
-
-      spyOn(someShit, 'getIdToken').and.returnValue({
+      spyOn(cloudSession, 'getIdToken').and.returnValue({
         payload: { sub: 'test' }
       });
-      spyOn(Auth, 'currentSession').and.returnValue(someShit);
-      spyOn<any>(service, 'getAppUser').and.returnValue(mockUser);
+      spyOn(Auth, 'currentSession').and.returnValue(cloudSession);
 
+    });
+
+    it('should return a user when user is successfully retrieved', done => {
+      spyOn<any>(service, 'getAppUser').and.returnValue(mockUser);
       service['restoreSession']().then(data => {
         expect(data).toEqual(mockUser);
         done();
@@ -548,24 +549,10 @@ fdescribe('AccountImplService', () => {
     });
 
     it('should be rejected a user when user is unsuccessfully retrieved', done => {
-      const mockUser: User = {
-        id: 'test1',
-        firstName: 'test1',
-        lastName: 'test1',
-        email: 'test1',
-      };
-      const someShit = {
-        getIdToken: '',
-      };
-
-      spyOn(someShit, 'getIdToken').and.returnValue({
-        payload: { sub: 'test' }
-      });
-      spyOn(Auth, 'currentSession').and.returnValue(someShit);
       spyOn<any>(service, 'getAppUser').and.returnValue(Promise.reject(new Error('test')));
 
-      service['restoreSession']().then(data => {
-        expect(data).toThrowError();
+      service['restoreSession']().catch(err => {
+        expect(err.message).toEqual('test');
         done();
       });
     });
