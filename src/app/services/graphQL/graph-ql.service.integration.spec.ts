@@ -178,7 +178,7 @@ describe('GraphQLService', () => {
                 }
               }
             },
-            limit: 1, // to get only 1 at a time for pagination testing
+            limit: 2, // to get only 1 at a time for pagination testing
             listAll: true
           });
         }).then(response => {

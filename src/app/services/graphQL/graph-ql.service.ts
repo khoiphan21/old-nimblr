@@ -55,8 +55,8 @@ export class GraphQLService {
         while (nextToken !== null) {
           params.nextToken = nextToken;
           ({ response, items, nextToken } = await this.sendQueryForListing(
-            query, params, queryName
-          ));
+            query, queryName, params
+            ));
           responses.push(response);
           returnItems = returnItems.concat(items);
         }
