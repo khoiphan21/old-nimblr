@@ -21,7 +21,7 @@ const uuidv4 = require('uuid/v4');
 })
 export class DocumentPageComponent implements OnInit {
 
-  private currentDocument: Document;
+  currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
   // blockIds: Array<string>;

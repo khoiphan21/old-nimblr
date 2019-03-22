@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 
 @Component({
   selector: 'app-navigation-tab',
@@ -7,6 +8,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./navigation-tab.component.scss']
 })
 export class NavigationTabComponent implements OnInit {
+
+  isQuestionOptionShown = false;
+  @Input() navigationTab: NavigationTabDocument;
 
   constructor(
     private router: Router

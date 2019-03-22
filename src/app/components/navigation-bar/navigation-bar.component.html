@@ -10,7 +10,7 @@
         <div class="user-name">De</div>
     </section>
     <ng-container *ngFor="let navigationTab of navigationTabs" class="">
-        <app-navigation-tab></app-navigation-tab>
+        <app-navigation-tab [navigationTab]="navigationTab"></app-navigation-tab>
     </ng-container>
 
 </section>

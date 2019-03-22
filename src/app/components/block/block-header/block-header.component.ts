@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BlockHeaderComponent implements OnInit {
 
+  block: any;
+
   constructor() { }
 
   ngOnInit() {
