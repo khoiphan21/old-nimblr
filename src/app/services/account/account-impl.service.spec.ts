@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { CognitoSignUpUser, CognitoUserAttributes, User } from '../../classes/user';
 import { UnverifiedUser } from './account.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, BehaviorSubject } from 'rxjs';
 import { updateUser } from 'src/graphql/mutations';
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
@@ -438,11 +438,10 @@ describe('AccountImplService', () => {
 
   });
 
-  fdescribe('getUser$', () => {
+  describe('getUser$', () => {
     let spySession;
 
     beforeEach(() => { });
-    async function makeSureItReturnsObservable() { }
 
     it('should call restoreSession when getUser$ is called', () => {
       spySession = spyOn<any>(service, 'restoreSession').and.returnValue(Promise.resolve('test user'));
@@ -480,29 +479,43 @@ describe('AccountImplService', () => {
       spySession = spyOn<any>(service, 'restoreSession').and.returnValue(Promise.reject(new Error('test err')));
       const spyRouter = spyOn<any>(service['router'], 'navigate').and.returnValue(Promise.resolve(true));
 
-      service.getUser$().subscribe(() => { }, err => {
-        expect(err).toEqual('User is not logged in');
-        expect(spyRouter.calls.count()).toBe(1);
-        done();
-      });
+      service.getUser$().subscribe(() => { },
+        err => {
+          expect(spyRouter.calls.count()).toBe(1);
+          done();
+        });
     });
 
   });
 
-  // describe('isUserReady', () => {
+  describe('isUserReady', () => {
+    let mockUser: User;
+    beforeEach(() => {
+      mockUser = {
+        id: 'test1',
+        firstName: 'test1',
+        lastName: 'test1',
+        email: 'test1',
+      };
+    });
 
-  //   it('should always return an observable', () => {
+    it('should resolve user when getUser$ obtained successfully', async done => {
+      const observableObj = new BehaviorSubject<User>(mockUser);
+      spyOn(service, 'getUser$').and.returnValue(observableObj);
+      const data = await service.isUserReady();
+      expect(data).toEqual(mockUser);
+      done();
+    });
 
-  //   });
-
-  //   it('should resolve after getUser is called', () => {
-
-  //   });
-
-  //   it('should reject after getUser returns error', () => {
-
-  //   });
-
-  // });
-
+    it('should emit error when getUser$ is rejected', done => {
+      const observableObj = new BehaviorSubject<User>(null);
+      // spyOn(observableObj, 'subscribe').and.returnValue(Promise.reject(new Error('test')));
+      observableObj.error('hellokitty');
+      spyOn(service, 'getUser$').and.returnValue(observableObj);
+      service.isUserReady().then(resp => {
+        expect(resp).toThrowError();
+      });
+      done();
+    });
+  });
 });

@@ -192,6 +192,7 @@ export class AccountServiceImpl implements AccountService {
             resolve(user);
           }
         }, error => {
+          console.log('err: ', error);
           reject(error);
         });
     });
