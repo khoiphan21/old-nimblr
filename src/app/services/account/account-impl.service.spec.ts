@@ -32,7 +32,7 @@ export class MockAccountService {
 
 const uuidv4 = require('uuid/v4');
 
-describe('AccountImplService', () => {
+fdescribe('AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
 
@@ -516,6 +516,58 @@ describe('AccountImplService', () => {
         expect(resp).toThrowError();
       });
       done();
+    });
+  });
+
+  fdescribe('restoreSession()', () => {
+    beforeEach(() => {
+
+    });
+
+    it('should return a user when user is successfully retrieved', done => {
+      const mockUser: User = {
+        id: 'test1',
+        firstName: 'test1',
+        lastName: 'test1',
+        email: 'test1',
+      };
+      const someShit = {
+        getIdToken: '',
+      };
+
+      spyOn(someShit, 'getIdToken').and.returnValue({
+        payload: { sub: 'test' }
+      });
+      spyOn(Auth, 'currentSession').and.returnValue(someShit);
+      spyOn<any>(service, 'getAppUser').and.returnValue(mockUser);
+
+      service['restoreSession']().then(data => {
+        expect(data).toEqual(mockUser);
+        done();
+      });
+    });
+
+    it('should be rejected a user when user is unsuccessfully retrieved', done => {
+      const mockUser: User = {
+        id: 'test1',
+        firstName: 'test1',
+        lastName: 'test1',
+        email: 'test1',
+      };
+      const someShit = {
+        getIdToken: '',
+      };
+
+      spyOn(someShit, 'getIdToken').and.returnValue({
+        payload: { sub: 'test' }
+      });
+      spyOn(Auth, 'currentSession').and.returnValue(someShit);
+      spyOn<any>(service, 'getAppUser').and.returnValue(Promise.reject(new Error('test')));
+
+      service['restoreSession']().then(data => {
+        expect(data).toThrowError();
+        done();
+      });
     });
   });
 });
