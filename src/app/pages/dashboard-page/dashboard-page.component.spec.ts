@@ -17,7 +17,7 @@ class MockDocumentService {
   createFormDocument() { }
 }
 
-fdescribe('DashboardPageComponent', () => {
+describe('DashboardPageComponent', () => {
   let component: DashboardPageComponent;
   let fixture: ComponentFixture<DashboardPageComponent>;
   let documentFactory: DocumentFactoryService;

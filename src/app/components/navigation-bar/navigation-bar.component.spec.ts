@@ -5,7 +5,7 @@ import { NavigationTabComponent } from './navigation-tab/navigation-tab.componen
 import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
 class MockNavigationBarService {
@@ -53,10 +53,13 @@ describe('NavigationBarComponent', () => {
   });
 
 
-  it('should receive get the right value for the navigation bar status when the data comes in', () => {
+  it('should receive get the right value for the navigation bar status', () => {
     const expectedResult = false;
     spyOn(navigationBarService, 'getNavigationBarStatus$').and.callFake(() => {
       return new BehaviorSubject(expectedResult);
+    });
+    spyOn(navigationBarService, 'getNavigationBar$').and.callFake(() => {
+      return new Subject();
     });
     component.ngOnInit();
     expect(component.isNavigationTabShown).toEqual(expectedResult);

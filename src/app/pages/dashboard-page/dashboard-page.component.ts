@@ -20,7 +20,6 @@ export class DashboardPageComponent implements OnInit {
   async ngOnInit() {
     return new Promise((resolve, reject) => {
       this.documentService.getUserDocuments$().subscribe(documents => {
-        console.log('documents retreived: ', documents);
         this.userDocuments = documents;
         resolve();
       }, error => {

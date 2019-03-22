@@ -99,6 +99,15 @@ describe('GraphQLService', () => {
         const expectedArgument = { foo: 'bar', limit: MOCK_LIMIT };
         expect(args[2]).toEqual(expectedArgument);
       });
+      it('should automatically set the limit to 10 if not given', () => {
+        // remove limit
+        delete listArgument.limit;
+        // call the service
+        service.list(listArgument);
+        args = sendQuerySpy.calls.mostRecent().args;
+        const expectedArgument = { foo: 'bar', limit: 10 };
+        expect(args[2]).toEqual(expectedArgument);
+      });
     });
 
     describe('return value checking', () => {

@@ -48,7 +48,6 @@ export class BlockOptionComponent implements OnChanges {
     }
   }
 
-  // TODO: Test
   private toggleSelectedOptionsStatus(status: boolean) {
     this.isSelectedOptionShown.emit(status);
   }

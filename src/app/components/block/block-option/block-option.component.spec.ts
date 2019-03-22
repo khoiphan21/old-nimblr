@@ -6,6 +6,9 @@ describe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
   let fixture: ComponentFixture<BlockOptionComponent>;
 
+  // Spies
+  let toggleSpy: jasmine.Spy;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ BlockOptionComponent ]
@@ -16,7 +19,7 @@ describe('BlockOptionComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockOptionComponent);
     component = fixture.componentInstance;
-    spyOn<any>(component, 'toggleSelectedOptionsStatus');
+    toggleSpy = spyOn<any>(component, 'toggleSelectedOptionsStatus');
     fixture.detectChanges();
   });
 
@@ -113,9 +116,9 @@ describe('BlockOptionComponent', () => {
   });
 
   it('toggleSelectedOptionsStatus() - should emit the right value to parent', () => {
-    component.isSelectedOptionShown.subscribe((value) => {
-      expect(value).toEqual(false);
-    });
+    toggleSpy.and.callThrough();
+    const spy = spyOn(component.isSelectedOptionShown, 'emit');
     component['toggleSelectedOptionsStatus'](false);
+    expect(spy).toHaveBeenCalledWith(false);
   });
 });
