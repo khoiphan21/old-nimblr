@@ -6,7 +6,10 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
+import { TextBlock } from 'src/app/classes/block';
+
 const uuidv4 = require('uuid/v4');
+
 describe('BlockTextComponent', () => {
   let component: BlockTextComponent;
   let fixture: ComponentFixture<BlockTextComponent>;
@@ -23,7 +26,7 @@ describe('BlockTextComponent', () => {
   };
   configureTestSuite(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockTextComponent ],
+      declarations: [BlockTextComponent],
       imports: [
         FormsModule
       ],
@@ -32,7 +35,7 @@ describe('BlockTextComponent', () => {
         BlockCommandService,
       ]
     });
-});
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockTextComponent);
@@ -65,23 +68,52 @@ describe('BlockTextComponent', () => {
 
   // TODO: Test this
   /* tslint:disable:no-string-literal */
-  xdescribe('updateValue', () => {
+  describe('updateValue', () => {
+    let blockCommandSpy: jasmine.Spy;
+
     beforeEach(() => {
+      // setup the spies
       spyOn(component['factoryService'], 'createAppBlock').and.callThrough();
-      spyOn(component['blockCommandService'], 'updateBlock');
+      blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
+      blockCommandSpy.and.returnValues(Promise.resolve());
+      // create a block for the component
       const block: any = blockFactroyService.createAppBlock(rawData);
-      component.block =  block;
-      fixture.detectChanges();
-      component.updateValue();
+      component.block = block;
+      component.value = 'test';
     });
 
-    it('should call `createAppBlock`', done => {
-      component.value = 'test';
-      setTimeout(() => {
-        expect(component['factoryService'].createAppBlock).toHaveBeenCalled();
-        done();
-      }, 500);
+    it('should call `createAppBlock` with the right argument', async () => {
+      await component.updateValue();
+      expect(component['factoryService'].createAppBlock).toHaveBeenCalledWith({
+        id: component.block.id,
+        type: component.block.type,
+        documentId: component.block.documentId,
+        lastUpdatedBy: component.block.lastUpdatedBy,
+        value: component.value,
+        createdAt: component.block.createdAt
+      });
     });
+
+    it('should resolve with the updated block', async () => {
+      const updatedBlock: TextBlock = await component.updateValue() as TextBlock;
+      expect(updatedBlock.value).toEqual(component.value);
+    });
+
+    it('should call block command service with the right argument', async () => {
+      const updatedBlock = await component.updateValue();
+      expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
+    });
+
+    it('should not call block command service again for consecutive updates', done => {
+      component.updateValue();
+      setTimeout(() => {
+        component.updateValue().then(() => {
+          expect(blockCommandSpy).toHaveBeenCalledTimes(1);
+          done();
+        });
+      }, 100);
+    });
+
   });
 
   describe('togglePlaceholder() - should toggle `isPlaceholderShown` into the right value when', () => {
