@@ -25,8 +25,9 @@ export class BlockComponent implements OnInit {
         this.block = block;
       }
     }, error => {
-      console.error(`BlockComponent unable to get block: ${this.blockId}. Details below`);
-      console.error(error);
+      const newError = new Error(`BlockComponent failed to get block: ${error.message}`);
+      // TODO: Handle error in UI
+      console.error(newError);
     });
   }
 

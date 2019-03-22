@@ -11,7 +11,8 @@ describe('DocumentCardComponent', () => {
   let component: DocumentCardComponent;
   let fixture: ComponentFixture<DocumentCardComponent>;
   let documentFactory: DocumentFactoryService;
-
+  let routerSpy;
+  const documentId = uuidv4();
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -19,7 +20,7 @@ describe('DocumentCardComponent', () => {
         DocumentOptionsComponent
        ],
        imports: [
-         RouterTestingModule
+        RouterTestingModule.withRoutes([])
        ]
     })
     .compileComponents();
@@ -30,7 +31,7 @@ describe('DocumentCardComponent', () => {
     component = fixture.componentInstance;
     documentFactory = TestBed.get(DocumentFactoryService);
     component.document = documentFactory.createDocument({
-      id: uuidv4(),
+      id: documentId,
       ownerId: uuidv4()
     });
 
@@ -39,5 +40,26 @@ describe('DocumentCardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('ngOnInit()', () => {
+    it('should set the title if it exist', () => {
+      expect(component.title).toBe('Untitled');
+    });
+
+    it('should set the title if it exist', () => {
+      const ecpectedTitle = 'test document';
+      component.document.title = ecpectedTitle;
+      component.ngOnInit();
+      expect(component.title).toBe(ecpectedTitle);
+    });
+  });
+
+  /* tslint:disable:no-string-literal */
+  it('navigateToDocument() - should navigate to the right path', () => {
+    routerSpy = spyOn(component['router'], 'navigate');
+    component.navigateToDocument();
+    const navigatedPath = routerSpy.calls.mostRecent().args[0];
+    expect(navigatedPath).toEqual(['/document', documentId]);
   });
 });

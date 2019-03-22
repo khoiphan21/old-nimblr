@@ -17,11 +17,15 @@ export class DashboardPageComponent implements OnInit {
   ) { }
 
   // TODO: handle error
-  ngOnInit() {
-    this.documentService.getUserDocuments$().subscribe(documents => {
-      this.userDocuments = documents;
-    }, error => {
-      console.error('Error received in DashboardPageComponent', error);
+  async ngOnInit() {
+    return new Promise((resolve, reject) => {
+      this.documentService.getUserDocuments$().subscribe(documents => {
+        this.userDocuments = documents;
+        resolve();
+      }, error => {
+        const message = `DashboardPage failed to get user documents: ${error.message}`;
+        reject(Error(message));
+      });
     });
   }
 

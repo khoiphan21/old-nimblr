@@ -1,16 +1,18 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DashboardPageComponent } from './dashboard-page.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentService } from 'src/app/services/document/document.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
+import { configureTestSuite } from 'ng-bullet';
+
 const uuidv4 = require('uuid/v4');
 
 class MockDocumentService {
   getUserDocuments$() {
-    return new BehaviorSubject(false);
+    return new BehaviorSubject(null);
   }
   createFormDocument() { }
 }
@@ -21,7 +23,7 @@ describe('DashboardPageComponent', () => {
   let documentFactory: DocumentFactoryService;
   let documentService;
   let document;
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         DashboardPageComponent
@@ -36,9 +38,8 @@ describe('DashboardPageComponent', () => {
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardPageComponent);
@@ -49,19 +50,40 @@ describe('DashboardPageComponent', () => {
       id: uuidv4(),
       ownerId: uuidv4()
     });
-    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should receive get the right value for the document list when the data comes in', () => {
-    spyOn(documentService, 'getUserDocuments$').and.callFake(() => {
-      return new BehaviorSubject([document]);
+  /* tslint:disable:no-string-literal */
+  describe('ngOnInit()', () => {
+    let document$: Subject<Array<Document>>;
+
+    beforeEach(() => {
+      document$ = new Subject();
+      spyOn(component['documentService'], 'getUserDocuments$').and.returnValue(document$);
     });
-    component.ngOnInit();
-    expect(component.userDocuments).toEqual([document]);
+
+    it('should receive get the list of documents when notified', done => {
+      component.ngOnInit().then(() => {
+        expect(component.userDocuments).toEqual([document]);
+        done();
+      });
+      document$.next([document]);
+    });
+
+    it('should throw an error if received', done => {
+      const mockError = new Error('test');
+      component.ngOnInit().catch(error => {
+        const message = 'DashboardPage failed to get user documents: '
+        + mockError.message;
+        expect(error.message).toEqual(message);
+        done();
+      });
+      // setup spy to throw an error
+      document$.error(mockError);
+    });
   });
 
   /* tslint:disable:no-string-literal */

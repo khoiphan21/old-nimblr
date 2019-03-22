@@ -6,8 +6,9 @@ import { AccountService } from '../account/account.service';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../document/factory/document-factory.service';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { skip } from 'rxjs/operators';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -16,13 +17,16 @@ describe('NavigationBarService', () => {
   let documentService: DocumentService;
   let service: NavigationBarService;
   let documentFactory: DocumentFactoryService;
-  beforeEach(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         ServicesModule,
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+  beforeEach(() => {
     accountService = TestBed.get(AccountService);
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);
@@ -50,10 +54,14 @@ describe('NavigationBarService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('getNavigationBar$', () => {
+    let getUserDocumentsSpy: jasmine.Spy;
+    let backendSubject: BehaviorSubject<any>;
+
     beforeEach(() => {
       // spy on the document service
-      spyOn(service['documentService'], 'getUserDocuments$')
-      .and.returnValue(new BehaviorSubject([]));
+      backendSubject = new BehaviorSubject([]);
+      getUserDocumentsSpy = spyOn(service['documentService'], 'getUserDocuments$');
+      getUserDocumentsSpy.and.returnValue(backendSubject);
     });
 
     it('should have an observable of Navigation Tabs', () => {
@@ -64,6 +72,16 @@ describe('NavigationBarService', () => {
       spyOn(service, 'processNavigationTab').and.returnValue([]);
       service.getNavigationBar$();
       expect(service.processNavigationTab).toHaveBeenCalled();
+    });
+
+    it('should emit the error if unable to get user documents', done => {
+      const mockError = new Error('test');
+      service.getNavigationBar$().subscribe(() => {}, error => {
+        const message = `NavigationBarService failed: ${mockError.message}`;
+        expect(error.message).toEqual(message);
+        done();
+      });
+      backendSubject.error(mockError);
     });
   });
 

@@ -22,11 +22,19 @@ export class DocumentImpl implements Document {
     this.type = input.type;
     this.title = input.title;
     this.ownerId = input.ownerId;
-    this.editorIds = input.editorIds === null ? [] : input.editorIds;
-    this.viewerIds = input.viewerIds === null ? [] : input.viewerIds;
-    this.blockIds = input.blockIds === null ? [] : input.blockIds;
     this.lastUpdatedBy = input.lastUpdatedBy;
-    this.createdAt = input.createdAt === null ? new Date().toISOString() : input.createdAt;
-    this.updatedAt = input.updatedAt === null ? new Date().toISOString() : input.updatedAt;
+    this.setIfNullOrUndefined(input, 'editorIds', []);
+    this.setIfNullOrUndefined(input, 'viewerIds', []);
+    this.setIfNullOrUndefined(input, 'blockIds', []);
+    this.setIfNullOrUndefined(input, 'createdAt', new Date().toISOString());
+    this.setIfNullOrUndefined(input, 'updatedAt', new Date().toISOString());
+  }
+
+  private setIfNullOrUndefined(input: any, name: string, defaultValue: any) {
+    if (input[name] === null || input[name] === undefined) {
+      this[name] = defaultValue;
+    } else {
+      this[name] = input[name];
+    }
   }
 }

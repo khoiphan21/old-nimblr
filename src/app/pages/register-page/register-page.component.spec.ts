@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RegisterPageComponent } from './register-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -8,15 +8,14 @@ import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { Auth } from 'aws-amplify';
-
+import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
 describe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
-
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         RegisterPageComponent
@@ -32,9 +31,8 @@ describe('RegisterPageComponent', () => {
           useClass: AccountServiceImpl
         }
       ]
-    })
-      .compileComponents();
-  }));
+    });
+});
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterPageComponent);

@@ -127,7 +127,7 @@ describe('GraphQLService', () => {
             done();
           });
           return new Promise((resolve, reject) => {
-            // this delay is require to make sure that 
+            // this delay is require to make sure that
             // the subscription is set up properly first
             setTimeout(() => {
               service.query(updateTextBlock, { input: updateBlockInput })
@@ -178,7 +178,7 @@ describe('GraphQLService', () => {
                 }
               }
             },
-            limit: 1, // to get only 1 at a time for pagination testing
+            limit: 2, // to get only 1 at a time for pagination testing
             listAll: true
           });
         }).then(response => {
