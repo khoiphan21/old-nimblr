@@ -26,7 +26,8 @@ export class GraphQLService {
     try {
       return await API.graphql(graphqlOperation(query, params));
     } catch (error) {
-      return Promise.reject(Error(`Failed to send query: ${error.message}`));
+      const message = error.errors[0].message;
+      return Promise.reject(Error(`Failed to send query: ${message}`));
     }
   }
 
@@ -56,7 +57,7 @@ export class GraphQLService {
           params.nextToken = nextToken;
           ({ response, items, nextToken } = await this.sendQueryForListing(
             query, queryName, params
-            ));
+          ));
           responses.push(response);
           returnItems = returnItems.concat(items);
         }
@@ -67,7 +68,8 @@ export class GraphQLService {
         responses
       };
     } catch (error) {
-      throw new Error(`GraphQLService failed to list: ${error.message}`);
+      const message = error.errors[0].message;
+      throw new Error(`GraphQLService failed to list: ${message}`);
     }
   }
 
@@ -92,8 +94,9 @@ export class GraphQLService {
 
     graphqlQuery.subscribe((response: any) => {
       observable.next(response);
-    }, (error: Error) => {
-      const newError = Error(`GraphQLService failed to subscribe: ${error.message}`);
+    }, error => {
+      const message = error.errors[0].message;
+      const newError = Error(`GraphQLService failed to subscribe: ${message}`);
       observable.error(newError);
     });
 

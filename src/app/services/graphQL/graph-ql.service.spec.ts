@@ -37,12 +37,14 @@ describe('GraphQLService', () => {
 
     it('should reject with the error thrown by backend', done => {
       // setup the spy to reject with an error
-      const mockError = new Error('test');
-      apiSpy.and.returnValue(Promise.reject(mockError));
+      const message = 'test';
+      apiSpy.and.returnValue(Promise.reject({
+        errors: [{message}]
+      }));
       // now call the service
       service.query(query, params).catch(error => {
-        const message = `Failed to send query: ${mockError.message}`;
-        expect(error.message).toEqual(message);
+        const errorMessage = `Failed to send query: ${message}`;
+        expect(error.message).toEqual(errorMessage);
         done();
       });
     });
@@ -179,12 +181,14 @@ describe('GraphQLService', () => {
     describe('[ERROR]', () => {
       it('should throw an error if unable to send query', done => {
         // setup spy to throw an error
-        const mockError = new Error('test');
-        sendQuerySpy.and.returnValue(Promise.reject(mockError));
+        const message = 'test';
+        sendQuerySpy.and.returnValue(Promise.reject({
+          errors: [{message}]
+        }));
         // call service
         service.list(listArgument).catch((error: Error) => {
-          const message = `GraphQLService failed to list: ${mockError.message}`;
-          expect(error.message).toEqual(message);
+          const errorMessage = `GraphQLService failed to list: ${message}`;
+          expect(error.message).toEqual(errorMessage);
           done();
         });
       });
@@ -246,13 +250,15 @@ describe('GraphQLService', () => {
     });
 
     it('should throw and error if backend fails', done => {
-      const mockError = new Error('test');
+      const message = 'test';
       service.getSubscription(query, params).subscribe(() => { }, error => {
-        const message = `GraphQLService failed to subscribe: ${mockError.message}`;
-        expect(error.message).toEqual(message);
+        const errorMessage = `GraphQLService failed to subscribe: ${message}`;
+        expect(error.message).toEqual(errorMessage);
         done();
       });
-      backendSubject.error(mockError);
+      backendSubject.error({
+        errors: [{message}]
+      });
     });
   });
 });
