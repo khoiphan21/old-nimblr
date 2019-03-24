@@ -154,6 +154,7 @@ export type ModelStringFilterInput = {
 export type ModelDocumentFilterInput = {
   id?: ModelIDFilterInput | null,
   version?: ModelStringFilterInput | null,
+  type?: ModelDocumentTypeFilterInput | null,
   title?: ModelStringFilterInput | null,
   ownerId?: ModelStringFilterInput | null,
   editorIds?: ModelStringFilterInput | null,
@@ -168,9 +169,15 @@ export type ModelDocumentFilterInput = {
   not?: ModelDocumentFilterInput | null,
 };
 
+export type ModelDocumentTypeFilterInput = {
+  eq?: DocumentType | null,
+  ne?: DocumentType | null,
+};
+
 export type ModelBlockFilterInput = {
   id?: ModelIDFilterInput | null,
   version?: ModelStringFilterInput | null,
+  type?: ModelBlockTypeFilterInput | null,
   documentId?: ModelStringFilterInput | null,
   lastUpdatedBy?: ModelStringFilterInput | null,
   createdAt?: ModelStringFilterInput | null,
@@ -179,6 +186,11 @@ export type ModelBlockFilterInput = {
   and?: Array< ModelBlockFilterInput | null > | null,
   or?: Array< ModelBlockFilterInput | null > | null,
   not?: ModelBlockFilterInput | null,
+};
+
+export type ModelBlockTypeFilterInput = {
+  eq?: BlockType | null,
+  ne?: BlockType | null,
 };
 
 export type CreateTextBlockMutationVariables = {

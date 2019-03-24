@@ -2,15 +2,17 @@ projects:
   irisa:
     schemaPath: src\graphql\schema.json
     includes:
-      - src\graphql\**\*.graphql
+      - src\graphql\**\*.ts
     excludes:
       - ./amplify/**
     extensions:
       amplify:
-        codeGenTarget: angular
-        generatedFileName: src\app\API.service.ts
-        docsFilePath: src\graphql
         graphQLApiId: upsw7nqiy5bl3hb4a3ckl77odi
+        codeGenTarget: typescript
+        generatedFileName: src\API.ts
+        docsFilePath: src\graphql
+        region: ap-southeast-2
+        maxDepth: 2
       endpoints:
         prod: >-
           https://sm4dmth2mrawtpurz4xum7vrx4.appsync-api.ap-southeast-2.amazonaws.com/graphql
