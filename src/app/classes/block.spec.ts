@@ -1,5 +1,6 @@
-import { BlockCreateError } from "./block";
+import { BlockCreateError } from './block';
 import { BlockType } from 'src/API';
+
 
 describe('BlockCreateError', () => {
   it('should create error with the extra params', () => {
