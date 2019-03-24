@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockFactoryService } from './block-factory.service';
-import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
+import { Block, TextBlock } from '../../../classes/block';
 import { isUuid } from '../../../classes/helpers';
-import { BlockType } from 'src/API';
+import { BlockType, QuestionType } from 'src/API';
+import { QuestionBlock } from 'src/app/classes/question-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -159,6 +160,48 @@ describe('BlockFactoryService', () => {
     });
   });
 
+  describe('Create app QuestionBlock with all parameters specified', () => {
+    let rawData;
+    let block: Block;
+    beforeEach(() => {
+      rawData = {
+        id: uuidv4(),
+        type: BlockType.QUESTION,
+        version: uuidv4(),
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        question: 'Is this a test value?',
+        questionType: QuestionType.PARAGRAPH,
+        options: [
+          {
+            answer: ''
+          }
+        ]
+      };
+      block = factory.createAppBlock(rawData);
+    });
+
+    it('should create a question block', () => {
+      expect(block instanceof QuestionBlock).toBe(true);
+    });
+
+    it('should have the right type', () => {
+      expect(block.type).toEqual(rawData.type);
+    });
+
+    it('should have the right value for question', () => {
+      const questionBlock: QuestionBlock = block as QuestionBlock;
+      expect(questionBlock.question).toEqual(rawData.question);
+    });
+
+    it('should have the right question type', () => {
+      const questionBlock: QuestionBlock = block as QuestionBlock;
+      expect(questionBlock.questionType).toEqual(rawData.questionType);
+    });
+  });
+
   describe('Create app TextBlock with minimal parameters', () => {
     let rawData;
     let block: Block;
@@ -190,8 +233,5 @@ describe('BlockFactoryService', () => {
       expect(typeof block.updatedAt).toEqual('string');
       expect(new Date(block.updatedAt) instanceof Date).toBe(true);
     });
-
-
   });
-
 });

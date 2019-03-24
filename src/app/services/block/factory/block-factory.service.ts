@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
 import { isUuid } from 'src/app/classes/helpers';
-import { CreateBlockInput, CreateTextBlockInput, BlockType } from '../../../../API';
+import { CreateBlockInput, CreateTextBlockInput, BlockType, QuestionType } from '../../../../API';
+import { QuestionBlock } from 'src/app/classes/question-block';
 
 const uuidv4 = require('uuid/v4');
 @Injectable({
@@ -27,10 +28,13 @@ export class BlockFactoryService {
     value = '',
     createdAt = new Date().toISOString(),
     updatedAt = new Date().toISOString(),
+    question = '',
+    questionType = QuestionType.SHORT_ANSWER,
+    options = [{answer: ''}]
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
-      value, updatedAt, createdAt
+      value, updatedAt, createdAt, question, questionType, options
     };
 
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
@@ -50,6 +54,8 @@ export class BlockFactoryService {
     switch (type) {
       case BlockType.TEXT:
         return new TextBlock(input);
+      case BlockType.QUESTION:
+        return new QuestionBlock(input);
       default:
         throw new BlockCreateError(null, 'BlockType not supported');
     }
