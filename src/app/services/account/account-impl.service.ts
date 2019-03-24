@@ -31,26 +31,29 @@ export class AccountServiceImpl implements AccountService {
   }
 
   setUnverifiedUser(email: string, password: string) {
-    this.unverifiedUser = {email, password};
-  }
-
-  private async restoreSession(): Promise<User> {
-    try {
-      const data = await Auth.currentSession();
-      const user = await this.getAppUser(data.getIdToken().payload.sub);
-      this.user$.next(user);
-      return Promise.resolve(user);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    this.unverifiedUser = { email, password };
   }
 
   async registerCognitoUser(user: CognitoSignUpUser): Promise<any> {
-    return new Promise((resolve, reject) => {
-      Auth.signUp(user).then(data => {
-        resolve(data);
-      }).catch(error => reject(error));
-    });
+    return await Auth.signUp(user);
+  }
+
+  async registerAppUser(user: CognitoSignUpUser, userId: string): Promise<any> {
+    // Sign in to Cognito to perform graphql
+    await Auth.signIn(user.username, user.password);
+    // Register in App DB
+    const userDetails = {
+      input: {
+        id: userId,
+        username: user.username,
+        email: user.attributes.email,
+        firstName: user.attributes.given_name,
+        lastName: user.attributes.family_name,
+        documentIds: []
+      }
+    };
+    // query GraphQL to create a new user
+    return await this.graphQLService.query(createUser, userDetails);
   }
 
   async awsConfirmAccount(email: string, code: string): Promise<any> {
@@ -61,87 +64,36 @@ export class AccountServiceImpl implements AccountService {
     });
   }
 
-  async registerAppUser(user: CognitoSignUpUser, userId: string): Promise<any> {
-      // 2. Sign in to Cognito to perform graphql
-      return Auth.signIn(user.username, user.password).then(() => {
-        // 3. Register in App DB
-        const userDetails = {
-          input: {
-            id: userId,
-            username: user.username,
-            email: user.attributes.email,
-            firstName: user.attributes.given_name,
-            lastName: user.attributes.family_name,
-            documentIds: []
-          }
-        };
-        return this.graphQLService.query(createUser, userDetails);
-      }).then(result => {
-        return Promise.resolve(result);
-      }).catch(error => {
-        return Promise.reject(error);
-      });
-  }
-
-  private async getAppUser(cognitoUserId: string): Promise<User> {
-    try {
-      const response: any = await this.graphQLService.query(
-        getUser, {
-          id: cognitoUserId
-        }
-      );
-
-      const rawUser = response.data.getUser;
-      // convert the raw user object to the app's format
-      const user: User = this.userFactory.createUser(
-        rawUser.id,
-        rawUser.firstName,
-        rawUser.lastName,
-        rawUser.email
-      );
-
-      return Promise.resolve(user);
-    } catch (error) { return Promise.reject(error); }
-  }
-
   async login(username: string, password: string): Promise<User> {
-    return new Promise((resolve, reject) => {
-      Auth.signIn(username, password).then(
-        cognitoUser => {
-          const userId = cognitoUser.signInUserSession.idToken.payload.sub;
-          this.getAppUser(userId).then(user => {
-            this.user$.next(user);
-            resolve(user);
-          }).catch(error => {
-            reject(error);
-          });
-        }
-      ).catch(error => reject(error));
-    });
+    const cognitoUser = await Auth.signIn(username, password);
+
+    const userId = cognitoUser.signInUserSession.idToken.payload.sub;
+
+    const appUser = await this.getAppUser(userId);
+    this.user$.next(appUser);
+
+    return appUser;
   }
 
-  async logout(): Promise<boolean> {
-    // Change state of Auth class and class vairable
-    // Has to return a promise, because it gives feedback to user
-    // about whether they are actually logged out safely.
+  async logout(): Promise<any> {
+    await Auth.signOut();
+    this.user$.next(null);
+  }
 
-    return new Promise((resolve, reject) => {
-      Auth.signOut()
-        .then(() => {
-          this.user$.next(null);
-          resolve(true);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
+  private async getAppUser(id: string): Promise<User> {
+    const response: any = await this.graphQLService.query(getUser, { id });
+
+    const rawUser = response.data.getUser;
+
+    return this.userFactory.createUser(
+      rawUser.id,
+      rawUser.firstName,
+      rawUser.lastName,
+      rawUser.email
+    );
   }
 
   async update(user: User): Promise<any> {
-    // Purpose: update the details of a user who have already been registered
-    // Case: Auth already signed in
-    // Otherwise shoudl throw error saying that user not signin
-
     const input = {
       input: {
         id: user.id,
@@ -151,36 +103,32 @@ export class AccountServiceImpl implements AccountService {
       }
     };
 
-    try {
-      // update info in Cognito
-      const userDB = await Auth.currentAuthenticatedUser();
-      await Auth.updateUserAttributes(userDB, {
-        email: user.email
-      });
+    const cognitoUser = await Auth.currentAuthenticatedUser();
 
-      // update info in dynamodb
-      const response = await API.graphql(graphqlOperation(updateUser, input));
-      return Promise.resolve(response);
+    await Auth.updateUserAttributes(cognitoUser, { email: user.email });
 
-    } catch (err) {
-      return Promise.reject(err);
-    }
-
+    return await API.graphql(graphqlOperation(updateUser, input));
   }
 
   getUser$(): Observable<User> {
     this.user$.pipe(take(1)).subscribe(user => {
       if (user === null) {
-        // retrieve user from session if possible, otherwise reroute to 'login'
+        // retrieve user from session
         this.restoreSession().then((loggedInUser: User) => {
           this.user$.next(loggedInUser);
         }).catch(() => {
-          this.router.navigate(['login']);
           this.user$.error('User is not logged in');
         });
       }
     });
     return this.user$;
+  }
+
+  private async restoreSession(): Promise<User> {
+    const data = await Auth.currentSession();
+    const user = await this.getAppUser(data.getIdToken().payload.sub);
+    this.user$.next(user);
+    return user;
   }
 
   async isUserReady(): Promise<User> {
