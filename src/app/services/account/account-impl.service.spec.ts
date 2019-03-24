@@ -14,9 +14,9 @@ import { skip } from 'rxjs/operators';
 
 const uuidv4 = require('uuid/v4');
 
-export const TEST_USERNAME = 'p1354930@nwytg.net';
-export const TEST_PASSWORD = 'Test1234';
-export const TEST_USER_ID = '88627eeb-f992-477f-8728-cfc01929c379';
+export const TEST_USERNAME = 'q2466954@nwytg.net';
+export const TEST_PASSWORD = 'Password1234';
+export const TEST_USER_ID = '64da1ba6-ed57-4ea5-ac93-129b7739a33c';
 
 export class MockAccountService {
   getUser$() {
