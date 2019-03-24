@@ -12,7 +12,7 @@ import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
-describe('NavigationBarService', () => {
+fdescribe('NavigationBarService', () => {
   let accountService: AccountService;
   let documentService: DocumentService;
   let service: NavigationBarService;
@@ -74,15 +74,23 @@ describe('NavigationBarService', () => {
       expect(service.processNavigationTab).toHaveBeenCalled();
     });
 
-    it('should emit the error if unable to get user documents', done => {
-      const mockError = new Error('test');
-      service.getNavigationBar$().subscribe(() => {}, error => {
-        const message = `NavigationBarService failed: ${mockError.message}`;
-        expect(error.message).toEqual(message);
-        done();
+    describe('(User not logged in)', () => {
+
+      it('should get for the one document only', done => {
+        const spy = spyOn<any>(service, 'getForDocument');
+        service.getNavigationBar$();
+        backendSubject.error('error');
+        setTimeout(() => {
+          expect(spy).toHaveBeenCalled();
+          done();
+        }, 5);
       });
-      backendSubject.error(mockError);
+
     });
+  });
+
+  describe('getForDocument()', () => {
+
   });
 
   describe('processNavigationTab()', () => {

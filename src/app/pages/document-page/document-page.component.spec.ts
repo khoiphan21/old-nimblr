@@ -10,7 +10,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { configureTestSuite } from 'ng-bullet';
 import { User } from 'src/app/classes/user';
-import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
@@ -70,10 +70,13 @@ describe('DocumentPageComponent', () => {
   /* tslint:disable:no-string-literal */
   describe('ngOnInit()', () => {
     let checkUserSpy: jasmine.Spy;
+    let retrieveDocumentSpy: jasmine.Spy;
 
     beforeEach(() => {
-      // setup the spy
+      // setup the spies
       checkUserSpy = spyOn(component, 'checkUser');
+      retrieveDocumentSpy = spyOn<any>(component, 'retrieveDocumentData');
+      checkUserSpy.and.returnValue(Promise.resolve(testUser));
     });
 
     it('should call to check the user', () => {
@@ -84,18 +87,17 @@ describe('DocumentPageComponent', () => {
     });
 
     describe('[SUCCESS]', () => {
-      let retrieveDocumentSpy: jasmine.Spy;
-
-      beforeEach(() => {
-        retrieveDocumentSpy = spyOn<any>(component, 'retrieveDocumentData');
-        checkUserSpy.and.returnValue(Promise.resolve(testUser));
-      });
 
       it('should store the retrieved user', done => {
         component.ngOnInit().then(() => {
           expect(component['currentUser']).toEqual(testUser);
           done();
         });
+      });
+
+      it('should set user to be logged in', async () => {
+        await component.ngOnInit();
+        expect(component.isUserLoggedIn).toBe(true);
       });
 
       it('should call retrieveDocumentData', done => {
@@ -107,15 +109,23 @@ describe('DocumentPageComponent', () => {
     });
 
     describe('[ERROR]', () => {
-      it('should throw the error received', done => {
-        const mockError = new Error('test');
-        checkUserSpy.and.returnValue(Promise.reject(mockError));
+
+      it('should set isUserLoggedIn to false if not logged in', async () => {
+        checkUserSpy.and.returnValue(Promise.reject());
+        await component.ngOnInit();
+        expect(component.isUserLoggedIn).toBe(false);
+      });
+
+      it('should throw an error if failed to retrieve document data', done => {
+        const errorMessage = 'test';
+        retrieveDocumentSpy.and.throwError(errorMessage);
         component.ngOnInit().catch(error => {
-          const message = `DocumentPage failed to load: ${mockError.message}`;
+          const message = `DocumentPage failed to load: ${errorMessage}`;
           expect(error.message).toEqual(message);
           done();
         });
       });
+
     });
 
   });

@@ -3,6 +3,8 @@ import { DocumentService } from '../document/document.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Document } from '../../classes/document';
 import { NavigationTabDocument } from '../../classes/navigation-tab';
+import { ActivatedRoute } from '@angular/router';
+import { DocumentQueryService } from '../document/query/document-query.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,9 @@ export class NavigationBarService {
   private navigationBarStatus$ = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private documentQueryService: DocumentQueryService,
+    private route: ActivatedRoute
   ) { }
 
   getNavigationBarStatus$(): Observable<boolean> {
@@ -29,12 +33,16 @@ export class NavigationBarService {
       this.documentService.getUserDocuments$().subscribe((documents) => {
         const navigationTabs = this.processNavigationTab(documents);
         this.navigationBar$.next(navigationTabs);
-      }, error => {
-        const newError = Error(`NavigationBarService failed: ${error.message}`);
-        this.navigationBar$.error(newError);
+      }, () => {
+        // User is not logged in
+        this.getForDocument();
       });
     }
     return this.navigationBar$;
+  }
+
+  private getForDocument() {
+
   }
 
   processNavigationTab(documents: Array<Document>): Array<NavigationTabDocument> {

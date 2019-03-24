@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentServiceImpl } from './document-impl.service';
+import { DocumentService } from './document.service';
 import { AccountService } from '../account/account.service';
 
 import { RouterTestingModule } from '@angular/router/testing';
@@ -17,8 +17,8 @@ import { Document } from 'src/app/classes/document';
 import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentService', () => {
-  let service: DocumentServiceImpl;
+fdescribe('DocumentService', () => {
+  let service: DocumentService;
   let documentFactory: DocumentFactoryService;
   // spies
   let querySpy: jasmine.Spy;
@@ -31,7 +31,7 @@ describe('DocumentService', () => {
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [
-        DocumentServiceImpl,
+        DocumentService,
         {
           provide: AccountService,
           useClass: AccountServiceImpl
@@ -44,7 +44,7 @@ describe('DocumentService', () => {
   });
 
   beforeEach(() => {
-    service = TestBed.get(DocumentServiceImpl);
+    service = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);
 
     // setup variables for testing

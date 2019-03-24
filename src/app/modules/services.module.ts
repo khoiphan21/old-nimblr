@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DocumentService } from '../services/document/document.service';
-import { DocumentServiceImpl } from '../services/document/document-impl.service';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import Amplify from '@aws-amplify/core';
 
@@ -25,10 +23,6 @@ Amplify.configure(awsmobile);
     AmplifyService,
     GraphQLService,
     GraphQlCommandService,
-    {
-      provide: DocumentService,
-      useClass: DocumentServiceImpl
-    },
     {
       provide: AccountService,
       useClass: AccountServiceImpl

@@ -21,6 +21,8 @@ const uuidv4 = require('uuid/v4');
 })
 export class DocumentPageComponent implements OnInit {
 
+  isUserLoggedIn: boolean;
+
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
@@ -37,14 +39,18 @@ export class DocumentPageComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    return this.checkUser().then(user => {
-      this.currentUser = user;
+    try {
+      this.currentUser = await this.checkUser();
+      this.isUserLoggedIn = true;
+    } catch {
+      this.isUserLoggedIn = false;
+    }
+    try {
       this.retrieveDocumentData();
-      return Promise.resolve();
-    }).catch(error => {
+    } catch (error) {
       const message = `DocumentPage failed to load: ${error.message}`;
-      return Promise.reject(Error(message));
-    });
+      throw new Error(message);
+    }
   }
 
   async checkUser(): Promise<User> {

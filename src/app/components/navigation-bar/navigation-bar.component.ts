@@ -7,9 +7,10 @@ import { slideLeftToRightAnimation, fadeInOutAnimation } from 'src/app/animation
   selector: 'app-navigation-bar',
   templateUrl: './navigation-bar.component.html',
   styleUrls: ['./navigation-bar.component.scss'],
-  animations: [slideLeftToRightAnimation , fadeInOutAnimation]
+  animations: [slideLeftToRightAnimation, fadeInOutAnimation]
 })
 export class NavigationBarComponent implements OnInit {
+
   isNavigationTabShown = false;
   navigationTabs: NavigationTabDocument[] = [];
   constructor(
