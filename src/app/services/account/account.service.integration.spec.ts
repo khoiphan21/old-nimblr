@@ -297,18 +297,6 @@ describe('(Integration) AccountImplService', () => {
       });
     });
 
-    it(`should reroute to 'login' if a session doesn't exist`, done => {
-      const routerSpy = spyOn(service['router'], 'navigate');
-      Auth.signOut()
-        .then(() => {
-          service.getUser$().subscribe(() => {
-          }, () => {
-            expect(routerSpy).toHaveBeenCalled();
-            done();
-          });
-        })
-        .catch(error => processTestError('failed to sign out', error, done));
-    });
   });
 
   describe('isUserReady()', () => {
@@ -323,13 +311,10 @@ describe('(Integration) AccountImplService', () => {
     });
 
     it('should reject if no user available', done => {
-      const routerSpy = spyOn(service['router'], 'navigate');
       Auth.signOut().then(() => {
         service.isUserReady().then(() => {
           fail('error must occur');
         }).catch(() => {
-          expect(routerSpy.calls.count()).toBe(1);
-          expect(routerSpy.calls.mostRecent().args[0][0]).toEqual('login');
           done();
         });
       }).catch(error => processTestError('unable to sign out', error, done));

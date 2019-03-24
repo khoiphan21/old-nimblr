@@ -84,7 +84,7 @@
 				"TemplateURL": "https://s3.amazonaws.com/irisa-20190227103613-deployment/amplify-cfn-templates/auth/irisa-cloudformation-template.yml",
 				"Parameters": {
 					"identityPoolName": "irisa_identity_pool",
-					"allowUnauthenticatedIdentities": false,
+					"allowUnauthenticatedIdentities": true,
 					"thirdPartyAuth": false,
 					"lambdaLogPolicy": "irisa_lambda_log_policy",
 					"openIdLambdaRoleName": "irisa_openid_lambda_role",
@@ -141,10 +141,11 @@
 							"Outputs.UserPoolId"
 						]
 					},
-					"schemaGraphql": "s3://irisa-20190227103613-deployment/amplify-appsync-files/schema.graphql.1551854856709",
+					"schemaGraphql": "s3://irisa-20190227103613-deployment/amplify-appsync-files/schema.graphql.1553315279904",
 					"ResolverBucket": "irisa-20190227103613-deployment",
 					"ResolverRootKey": "amplify-appsync-files",
-					"DeploymentTimestamp": "1551854856709"
+					"DeploymentTimestamp": "1553315279904",
+					"APIKeyExpirationEpoch": -1
 				}
 			}
 		}

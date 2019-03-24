@@ -1,6 +1,6 @@
 {
     "identityPoolName": "irisa_identity_pool",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "thirdPartyAuth": false,
     "lambdaLogPolicy": "irisa_lambda_log_policy",
     "openIdLambdaRoleName": "irisa_openid_lambda_role",
