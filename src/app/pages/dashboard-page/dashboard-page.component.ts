@@ -29,9 +29,9 @@ export class DashboardPageComponent implements OnInit {
     });
   }
 
-  createNewFormDocument() {
-    this.documentService.createFormDocument();
-    this.router.navigate(['/document']);
+  async createNewFormDocument() {
+    const document = await this.documentService.createFormDocument();
+    this.router.navigate([`/document/${document.id}`]);
   }
 
 }

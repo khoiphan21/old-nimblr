@@ -6,13 +6,13 @@ import { AccountService } from '../account/account.service';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../document/factory/document-factory.service';
-import { BehaviorSubject } from 'rxjs';
-import { skip } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { skip, take } from 'rxjs/operators';
 import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('NavigationBarService', () => {
+describe('NavigationBarService', () => {
   let accountService: AccountService;
   let documentService: DocumentService;
   let service: NavigationBarService;
@@ -54,44 +54,138 @@ fdescribe('NavigationBarService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('getNavigationBar$', () => {
-    let getUserDocumentsSpy: jasmine.Spy;
-    let backendSubject: BehaviorSubject<any>;
+    let getAllSpy: jasmine.Spy;
+    let getOneSpy: jasmine.Spy;
+    let accountServiceSpy: jasmine.Spy;
+
+    const documentId = uuidv4();
 
     beforeEach(() => {
-      // spy on the document service
-      backendSubject = new BehaviorSubject([]);
-      getUserDocumentsSpy = spyOn(service['documentService'], 'getUserDocuments$');
-      getUserDocumentsSpy.and.returnValue(backendSubject);
+      // setup spies
+      getAllSpy = spyOn<any>(service, 'getAllUserDocuments');
+      getOneSpy = spyOn<any>(service, 'getForDocument');
+      accountServiceSpy = spyOn(service['accountService'], 'isUserReady');
+      accountServiceSpy.and.returnValue(new Promise(() => { }));
     });
 
     it('should have an observable of Navigation Tabs', () => {
-      expect(service.getNavigationBar$() instanceof BehaviorSubject).toBe(true);
+      const navigationBar$ = service.getNavigationBar$(documentId);
+      expect(navigationBar$ instanceof BehaviorSubject).toBe(true);
     });
 
-    it('should process the documents into navigation tabs when data arrived', () => {
-      spyOn(service, 'processNavigationTab').and.returnValue([]);
+    it('should return an initial value of an empty array', done => {
+      service.getNavigationBar$().pipe(take(1)).subscribe(value => {
+        expect(value).toEqual([]);
+        done();
+      });
+    });
+
+    it('should call to get all documents if user is logged in', done => {
+      accountServiceSpy.and.returnValue(Promise.resolve());
       service.getNavigationBar$();
-      expect(service.processNavigationTab).toHaveBeenCalled();
+
+      setTimeout(() => {
+        expect(getAllSpy).toHaveBeenCalled();
+        done();
+      }, 5);
     });
 
-    describe('(User not logged in)', () => {
+    it('should call to get for the given document if not logged in', done => {
+      accountServiceSpy.and.returnValue(Promise.reject());
+      service.getNavigationBar$(documentId);
 
-      it('should get for the one document only', done => {
-        const spy = spyOn<any>(service, 'getForDocument');
-        service.getNavigationBar$();
-        backendSubject.error('error');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalled();
-          done();
-        }, 5);
+      setTimeout(() => {
+        expect(getOneSpy).toHaveBeenCalledWith(documentId);
+        done();
+      }, 5);
+    });
+
+  });
+
+  describe('getNavigationBar$ helpers', () => {
+    let document$: Subject<any>;
+    const document = { foo: 'bar' };
+
+    beforeEach(() => {
+      // Setup the navigation bar observable in the service
+      service['navigationBar$'] = new BehaviorSubject([]);
+      // setup mock data for testing
+      document$ = new Subject();
+      spyOn(service['documentService'], 'getUserDocuments$').and.returnValue(document$);
+      spyOn(service['documentQueryService'], 'getDocument$').and.returnValue(document$);
+    });
+
+    describe('getAllUserDocuments()', () => {
+      let processSpy: jasmine.Spy;
+
+      beforeEach(() => {
+        processSpy = spyOn(service, 'processNavigationTab');
       });
 
+      it('should call to process with the right argument', done => {
+        service['getAllUserDocuments']().then(() => {
+          expect(processSpy).toHaveBeenCalledWith(document);
+          done();
+        });
+        document$.next(document);
+      });
+
+      it('should emit the processed navigation tabs', done => {
+        const processedDocs = [document];
+        processSpy.and.returnValue(processedDocs);
+        service['getAllUserDocuments']().then(() => {
+          expect(service['navigationBar$'].getValue() as any).toEqual(processedDocs);
+          done();
+        });
+        document$.next(document);
+      });
+
+      it('should emit the error if unable to get documents', done => {
+        const errMessage = 'test';
+        service['getAllUserDocuments']().catch(() => {
+          try {
+            service['navigationBar$'].getValue();
+          } catch (error) {
+            expect(error).toEqual(errMessage);
+            done();
+          }
+        });
+        document$.error(errMessage);
+      });
     });
+
+    describe('getForDocument()', () => {
+      let processSpy: jasmine.Spy;
+
+      beforeEach(() => {
+        processSpy = spyOn<any>(service, 'processDocuments');
+      });
+
+      it('should call to process with the right argument', done => {
+        service['getForDocument']('').then(() => {
+          expect(processSpy).toHaveBeenCalledWith([document]);
+          done();
+        });
+        document$.next(document);
+      });
+
+      it('should emit any error given', done => {
+        const errMessage = 'test';
+
+        service['getForDocument']('').catch(() => {
+          try {
+            service['navigationBar$'].getValue();
+          } catch (error) {
+            expect(error).toEqual(errMessage);
+            done();
+          }
+        });
+        document$.error(errMessage);
+      });
+    });
+
   });
 
-  describe('getForDocument()', () => {
-
-  });
 
   describe('processNavigationTab()', () => {
     it('should extract the right details from `Document` object to `NavigationTab`', () => {

@@ -17,7 +17,7 @@ import { Document } from 'src/app/classes/document';
 import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
-fdescribe('DocumentService', () => {
+describe('DocumentService', () => {
   let service: DocumentService;
   let documentFactory: DocumentFactoryService;
   // spies
