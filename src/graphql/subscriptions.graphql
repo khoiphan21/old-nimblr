@@ -1,0 +1,143 @@
+# this is an auto generated file. This will be overwritten
+subscription OnUpdateBlockInDocument($documentId: ID!) {
+  onUpdateBlockInDocument(documentId: $documentId) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
+subscription OnSpecificDocumentUpdate($id: ID!) {
+  onSpecificDocumentUpdate(id: $id) {
+    id
+    version
+    type
+    title
+    ownerId
+    editorIds
+    viewerIds
+    order
+    blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
+  }
+}
+subscription OnCreateUser {
+  onCreateUser {
+    id
+    username
+    email
+    firstName
+    lastName
+    documentIds
+  }
+}
+subscription OnUpdateUser {
+  onUpdateUser {
+    id
+    username
+    email
+    firstName
+    lastName
+    documentIds
+  }
+}
+subscription OnDeleteUser {
+  onDeleteUser {
+    id
+    username
+    email
+    firstName
+    lastName
+    documentIds
+  }
+}
+subscription OnCreateDocument {
+  onCreateDocument {
+    id
+    version
+    type
+    title
+    ownerId
+    editorIds
+    viewerIds
+    order
+    blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
+  }
+}
+subscription OnUpdateDocument {
+  onUpdateDocument {
+    id
+    version
+    type
+    title
+    ownerId
+    editorIds
+    viewerIds
+    order
+    blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
+  }
+}
+subscription OnDeleteDocument {
+  onDeleteDocument {
+    id
+    version
+    type
+    title
+    ownerId
+    editorIds
+    viewerIds
+    order
+    blockIds
+    lastUpdatedBy
+    createdAt
+    updatedAt
+  }
+}
+subscription OnCreateBlock {
+  onCreateBlock {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
+subscription OnUpdateBlock {
+  onUpdateBlock {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
+subscription OnDeleteBlock {
+  onDeleteBlock {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+  }
+}
