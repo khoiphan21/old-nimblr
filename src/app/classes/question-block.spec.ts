@@ -2,7 +2,7 @@ import { BlockType, QuestionType } from 'src/API';
 import { QuestionBlock, ParagraphOption, ShortAnswerOption, MultiplceChoiceOption, CheckBoxOption } from './question-block';
 const uuidv4 = require('uuid/v4');
 
-fdescribe('QuestionBlock -', () => {
+describe('QuestionBlock -', () => {
   const input = {
     id: uuidv4(),
     type: BlockType.QUESTION,
