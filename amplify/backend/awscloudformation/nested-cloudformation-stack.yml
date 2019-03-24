@@ -141,10 +141,10 @@
 							"Outputs.UserPoolId"
 						]
 					},
-					"schemaGraphql": "s3://irisa-20190227103613-deployment/amplify-appsync-files/schema.graphql.1553315279904",
+					"schemaGraphql": "s3://irisa-20190227103613-deployment/amplify-appsync-files/schema.graphql.1553429595815",
 					"ResolverBucket": "irisa-20190227103613-deployment",
 					"ResolverRootKey": "amplify-appsync-files",
-					"DeploymentTimestamp": "1553315279904",
+					"DeploymentTimestamp": "1553429595815",
 					"APIKeyExpirationEpoch": -1
 				}
 			}
