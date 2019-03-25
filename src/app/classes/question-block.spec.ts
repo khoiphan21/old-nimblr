@@ -32,7 +32,7 @@ describe('QuestionBlock -', () => {
 
   it('should set the right value for `question`', () => {
     input.question = 'This is a question';
-    input.answers = 'answer';
+    input.answers = ['answer'];
     const block = new QuestionBlock(input);
     const questionBlock: QuestionBlock = block as QuestionBlock;
     expect(questionBlock.question).toEqual('This is a question');
@@ -99,34 +99,13 @@ describe('QuestionBlock -', () => {
         expect(error.message).toEqual('numbers of `answers` should not be more than `options` in CHECKBOX');
       }
     });
-
-    it('`answers` should be an array', () => {
-      input.questionType = QuestionType.CHECKBOX;
-      input.answers = 'this is the answer 2';
-      try {
-        const block = new QuestionBlock(input);
-        fail(`Error must be thrown for invalid properties`);
-      } catch (error) {
-        expect(error.message).toEqual('`answers` should be an array in CHECKBOX');
-      }
-    });
   });
 
   describe('MULTIPLE_CHOICE type -', () => {
-    it('`answers` should not be an array`', () => {
-      input.questionType = QuestionType.MULTIPLE_CHOICE;
-      input.answers = ['this is the answer 1'];
-      try {
-        const block = new QuestionBlock(input);
-        fail(`Error must be thrown for invalid properties`);
-      } catch (error) {
-        expect(error.message).toEqual('`answers` should not be an array in MULTIPLE_CHOICE');
-      }
-    });
 
     it('options` should not be empty if answers exists`', () => {
       input.questionType = QuestionType.MULTIPLE_CHOICE;
-      input.answers = 'this is the answer 1';
+      input.answers = ['this is the answer 1'];
       input.options = [];
       try {
         const block = new QuestionBlock(input);

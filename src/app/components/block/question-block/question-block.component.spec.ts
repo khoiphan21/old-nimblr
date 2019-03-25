@@ -4,6 +4,7 @@ import { QuestionBlockComponent } from './question-block.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { QuestionOptionComponent } from './question-option/question-option.component';
 import { configureTestSuite } from 'ng-bullet';
+import { QuestionType } from 'src/API';
 
 describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
@@ -49,12 +50,12 @@ describe('QuestionBlockComponent', () => {
   describe('selectType()', () => {
     const event = new Event('click');
     it('should change the `currentType` to the right value', () => {
-      component.selectType('multiple choice', event);
-      expect(component.currentType).toBe('multiple choice');
+      component.selectType(QuestionType.MULTIPLE_CHOICE, event);
+      expect(component.currentType).toBe('MULTIPLE_CHOICE');
     });
 
     it('should toggle the option', () => {
-      component.selectType('multiple choice', event);
+      component.selectType(QuestionType.MULTIPLE_CHOICE, event);
       expect(component.toggleOptions).toHaveBeenCalled();
     });
   });

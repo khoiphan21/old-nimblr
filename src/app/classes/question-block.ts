@@ -11,7 +11,7 @@ export class QuestionBlock implements Block {
     readonly updatedAt: ISOTimeString;
     // Question Block specific
     readonly question: string;
-    readonly answers: string | Array<string>;
+    readonly answers: Array<string>;
     readonly questionType: QuestionType;
     readonly options?: Array<string>;
 
@@ -42,7 +42,7 @@ export class QuestionBlock implements Block {
         this.checkQuestionBlockValidation(questionType, answers, options);
     }
 
-    private checkQuestionBlockValidation(questionType: QuestionType, answers: string | Array<string>, options: Array<string>) {
+    private checkQuestionBlockValidation(questionType: QuestionType, answers: Array<string>, options: Array<string>) {
         switch (questionType) {
             case QuestionType.PARAGRAPH:
                 return this.validateSingleTextAnswerQuestion(questionType, options);
@@ -53,8 +53,8 @@ export class QuestionBlock implements Block {
             case QuestionType.MULTIPLE_CHOICE:
                 return this.validateMultipleChoice(answers, options);
             default:
-              return Promise.reject('QuestionType not supported');
-          }
+                return Promise.reject('QuestionType not supported');
+        }
     }
 
     private validateSingleTextAnswerQuestion(questionType: QuestionType, options: Array<string>) {
@@ -63,24 +63,16 @@ export class QuestionBlock implements Block {
         }
     }
 
-    private validateCheckbox(answers: string | Array<string>, options: Array<string>) {
-        if (Array.isArray(answers)) {
-            if (answers.length > options.length) {
-                throw new Error('numbers of `answers` should not be more than `options` in CHECKBOX');
-            }
-        } else {
-            throw new Error('`answers` should be an array in CHECKBOX');
+    private validateCheckbox(answers: Array<string>, options: Array<string>) {
+        if (answers.length > options.length) {
+            throw new Error('numbers of `answers` should not be more than `options` in CHECKBOX');
         }
     }
 
-    private validateMultipleChoice(answers: string | Array<string>, options: Array<string>) {
-        if (Array.isArray(answers)) {
-            throw new Error('`answers` should not be an array in MULTIPLE_CHOICE');
-        } else {
-            if (answers) {
-                if (options.length < 1) {
-                    throw new Error('`options` should not be empty in MULTIPLE_CHOICE if answers exists');
-                }
+    private validateMultipleChoice(answers: Array<string>, options: Array<string>) {
+        if (answers.length === 1) {
+            if (options.length < 1) {
+                throw new Error('`options` should not be empty in MULTIPLE_CHOICE if answers exists');
             }
         }
     }
