@@ -3,20 +3,17 @@
         <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" [(ngModel)]="question" class="col-7">
         <div *ngIf="isPreviewMode === false" class="dropdown col-2" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
-                <div *ngSwitchCase="'short answer'">
+                <div *ngSwitchCase="'SHORT_ANSWER'">
                     <i class="fas fa-grip-lines"></i><span>Short Answer</span>
                 </div>
-                <div *ngSwitchCase="'paragraph'">
+                <div *ngSwitchCase="'PARAGRAPH'">
                     <i class="fas fa-bars"></i><span>Paragraph</span>
                 </div>
-                <div *ngSwitchCase="'checkbox'">
+                <div *ngSwitchCase="'CHECKBOX'">
                     <i class="fas fa-check-square"></i><span>Checkbox</span>
                 </div>
-                <div *ngSwitchCase="'multiple choice'">
+                <div *ngSwitchCase="'MULTIPLCE_CHOICE'">
                     <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
-                </div>
-                <div *ngSwitchCase="'dropdown'">
-                    <i class="fas fa-sort"></i> <span>Dropdown</span>
                 </div>
                 <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isQuestionOptionShown === true}"></i>
             </div>
@@ -25,22 +22,19 @@
                     QUESTION TYPES
                 </div>
                 <section class="document-options">
-                    <div class="option" (click)="selectType('short answer', $event)">
+                    <div class="option" (click)="selectType('SHORT_ANSWER', $event)">
                         <i class="fas fa-grip-lines"></i><span>Short Answer</span>
                     </div>
-                    <div class="option" (click)="selectType('paragraph', $event)">
+                    <div class="option" (click)="selectType('PARAGRAPH', $event)">
                         <i class="fas fa-bars"></i><span>Paragraph</span>
                     </div>
                 </section>
                 <section class="document-options">
-                    <div class="option" (click)="selectType('checkbox', $event)">
+                    <div class="option" (click)="selectType('CHECKBOX', $event)">
                         <i class="fas fa-check-square"></i><span>Checkbox</span>
                     </div>
-                    <div class="option" (click)="selectType('multiple choice', $event)">
+                    <div class="option" (click)="selectType('MULTIPLCE_CHOICE', $event)">
                         <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
-                    </div>
-                    <div class="option" (click)="selectType('dropdown', $event)">
-                        <i class="fas fa-sort"></i><span>Dropdown</span>
                     </div>
                 </section>
             </section>

@@ -12,8 +12,15 @@ export type CreateTextBlockInput = {
 
 export enum BlockType {
   TEXT = "TEXT",
+  QUESTION = "QUESTION"
 }
 
+export enum QuestionType {
+  PARAGRAPH = "PARAGRAPH",
+  SHORT_ANSWER = "SHORT_ANSWER",
+  MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
+  CHECKBOX = "CHECKBOX",
+}
 
 export type UpdateTextBlockInput = {
   id: string,

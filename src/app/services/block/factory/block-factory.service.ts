@@ -31,7 +31,7 @@ export class BlockFactoryService {
     question = '',
     answers = '',
     questionType = QuestionType.SHORT_ANSWER,
-    options = ''
+    options = null
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,

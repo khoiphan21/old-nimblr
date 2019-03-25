@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionType } from 'src/API';
 
 @Component({
   selector: 'app-question-block',
@@ -6,10 +8,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./question-block.component.scss']
 })
 export class QuestionBlockComponent implements OnInit {
+  @Input() questionBlock: QuestionBlock;
   isPreviewMode = true;
   isQuestionOptionShown = false;
   question = '';
-  currentType = 'short answer';
+  currentType = QuestionType.SHORT_ANSWER;
   data = {
     options: [
       {
@@ -27,7 +30,7 @@ export class QuestionBlockComponent implements OnInit {
     this.isQuestionOptionShown = this.isQuestionOptionShown ? false : true;
   }
 
-  selectType(type: string, event: Event) {
+  selectType(type: QuestionType, event: Event) {
     this.currentType = type;
     this.toggleOptions();
     this.isPreviewMode = false;
