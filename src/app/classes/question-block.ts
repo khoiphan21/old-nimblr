@@ -45,17 +45,13 @@ export class QuestionBlock implements Block {
     private checkQuestionBlockValidation(questionType: QuestionType, answers: string | Array<string>, options: Array<string>) {
         switch (questionType) {
             case QuestionType.PARAGRAPH:
-                this.validateSingleTextAnswerQuestion(questionType, options);
-                break;
+                return this.validateSingleTextAnswerQuestion(questionType, options);
             case QuestionType.SHORT_ANSWER:
-                this.validateSingleTextAnswerQuestion(questionType, options);
-                break;
+                return this.validateSingleTextAnswerQuestion(questionType, options);
             case QuestionType.CHECKBOX:
-                this.validateCheckbox(answers, options);
-                break;
+                return this.validateCheckbox(answers, options);
             case QuestionType.MULTIPLE_CHOICE:
-                this.validateMultipleChoice(answers, options);
-                break;
+                return this.validateMultipleChoice(answers, options);
             default:
               return Promise.reject('QuestionType not supported');
           }
