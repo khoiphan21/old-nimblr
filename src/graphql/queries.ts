@@ -81,6 +81,10 @@ export const getBlock = `query GetBlock($id: ID!) {
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;
@@ -99,6 +103,10 @@ export const listBlocks = `query ListBlocks(
       createdAt
       updatedAt
       value
+      question
+      answers
+      questionType
+      options
     }
     nextToken
   }

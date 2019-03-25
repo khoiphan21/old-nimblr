@@ -12,8 +12,9 @@ export type CreateTextBlockInput = {
 
 export enum BlockType {
   TEXT = "TEXT",
-  QUESTION = "QUESTION"
+  QUESTION = "QUESTION",
 }
+
 
 export enum QuestionType {
   PARAGRAPH = "PARAGRAPH",
@@ -21,6 +22,7 @@ export enum QuestionType {
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
   CHECKBOX = "CHECKBOX",
 }
+
 
 export type UpdateTextBlockInput = {
   id: string,
@@ -30,6 +32,30 @@ export type UpdateTextBlockInput = {
   lastUpdatedBy: string,
   updatedAt: string,
   value?: string | null,
+};
+
+export type CreateQuestionBlockInput = {
+  id?: string | null,
+  version: string,
+  type: BlockType,
+  documentId: string,
+  lastUpdatedBy: string,
+  question?: string | null,
+  answers?: Array< string | null > | null,
+  questionType?: QuestionType | null,
+  options?: Array< string | null > | null,
+};
+
+export type UpdateQuestionBlockInput = {
+  id?: string | null,
+  version: string,
+  type: BlockType,
+  documentId: string,
+  lastUpdatedBy: string,
+  question?: string | null,
+  answers?: Array< string | null > | null,
+  questionType?: QuestionType | null,
+  options?: Array< string | null > | null,
 };
 
 export type CreateUserInput = {
@@ -103,6 +129,10 @@ export type CreateBlockInput = {
   createdAt?: string | null,
   updatedAt?: string | null,
   value?: string | null,
+  question?: string | null,
+  answers?: Array< string | null > | null,
+  questionType?: QuestionType | null,
+  options?: Array< string | null > | null,
 };
 
 export type UpdateBlockInput = {
@@ -114,6 +144,10 @@ export type UpdateBlockInput = {
   createdAt?: string | null,
   updatedAt?: string | null,
   value?: string | null,
+  question?: string | null,
+  answers?: Array< string | null > | null,
+  questionType?: QuestionType | null,
+  options?: Array< string | null > | null,
 };
 
 export type DeleteBlockInput = {
@@ -190,6 +224,10 @@ export type ModelBlockFilterInput = {
   createdAt?: ModelStringFilterInput | null,
   updatedAt?: ModelStringFilterInput | null,
   value?: ModelStringFilterInput | null,
+  question?: ModelStringFilterInput | null,
+  answers?: ModelStringFilterInput | null,
+  questionType?: ModelQuestionTypeFilterInput | null,
+  options?: ModelStringFilterInput | null,
   and?: Array< ModelBlockFilterInput | null > | null,
   or?: Array< ModelBlockFilterInput | null > | null,
   not?: ModelBlockFilterInput | null,
@@ -198,6 +236,11 @@ export type ModelBlockFilterInput = {
 export type ModelBlockTypeFilterInput = {
   eq?: BlockType | null,
   ne?: BlockType | null,
+};
+
+export type ModelQuestionTypeFilterInput = {
+  eq?: QuestionType | null,
+  ne?: QuestionType | null,
 };
 
 export type CreateTextBlockMutationVariables = {
@@ -215,6 +258,10 @@ export type CreateTextBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -233,6 +280,54 @@ export type UpdateTextBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
+  } | null,
+};
+
+export type CreateQuestionBlockMutationVariables = {
+  input: CreateQuestionBlockInput,
+};
+
+export type CreateQuestionBlockMutation = {
+  createQuestionBlock:  {
+    __typename: "Block",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
+  } | null,
+};
+
+export type UpdateQuestionBlockMutationVariables = {
+  input: UpdateQuestionBlockInput,
+};
+
+export type UpdateQuestionBlockMutation = {
+  updateQuestionBlock:  {
+    __typename: "Block",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -365,6 +460,10 @@ export type CreateBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -383,6 +482,10 @@ export type UpdateBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -401,6 +504,10 @@ export type DeleteBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -507,6 +614,10 @@ export type GetBlockQuery = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -529,6 +640,10 @@ export type ListBlocksQuery = {
       createdAt: string | null,
       updatedAt: string | null,
       value: string | null,
+      question: string | null,
+      answers: Array< string | null > | null,
+      questionType: QuestionType | null,
+      options: Array< string | null > | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -549,6 +664,10 @@ export type OnUpdateBlockInDocumentSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -675,6 +794,10 @@ export type OnCreateBlockSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -689,6 +812,10 @@ export type OnUpdateBlockSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
 
@@ -703,5 +830,9 @@ export type OnDeleteBlockSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
   } | null,
 };
