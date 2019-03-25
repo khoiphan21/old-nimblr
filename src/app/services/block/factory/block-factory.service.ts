@@ -29,12 +29,13 @@ export class BlockFactoryService {
     createdAt = new Date().toISOString(),
     updatedAt = new Date().toISOString(),
     question = '',
+    answers = '',
     questionType = QuestionType.SHORT_ANSWER,
-    options = [{answer: ''}]
+    options
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
-      value, updatedAt, createdAt, question, questionType, options
+      value, updatedAt, createdAt, question, answers, questionType, options
     };
 
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',

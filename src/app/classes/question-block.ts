@@ -1,4 +1,4 @@
-import { Block, BlockCreateError } from './block';
+import { Block } from './block';
 import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
 import { BlockType, QuestionType } from '../../API';
 export class QuestionBlock implements Block {
@@ -9,9 +9,11 @@ export class QuestionBlock implements Block {
     readonly lastUpdatedBy: UUID;
     readonly createdAt: ISOTimeString;
     readonly updatedAt: ISOTimeString;
+    // Question Block specific
     readonly question: string;
+    readonly answers: string | Array<string>;
     readonly questionType: QuestionType;
-    readonly options: Array<object>;
+    readonly options?: Array<string>;
 
     constructor({
         id,
@@ -22,6 +24,7 @@ export class QuestionBlock implements Block {
         createdAt,
         updatedAt,
         question,
+        answers,
         questionType,
         options
     }) {
@@ -33,73 +36,56 @@ export class QuestionBlock implements Block {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.question = question;
+        this.answers = answers;
         this.questionType = questionType;
-        if (options) {
-            this.options = options;
-        } else {
-            this.options = this.generateOptionsForQuestionType(questionType);
-        }
+        this.options = options;
+        this.checkQuestionBlockValidation(questionType, answers, options);
     }
 
-    private generateOptionsForQuestionType(questionType: QuestionType): Array<QuestionOption> {
+    private checkQuestionBlockValidation(questionType: QuestionType, answers: string | Array<string>, options: Array<string>) {
         switch (questionType) {
             case QuestionType.PARAGRAPH:
-                return [new ParagraphOption('')];
+                this.validateSingleTextAnswerQuestion(questionType, options);
+                break;
             case QuestionType.SHORT_ANSWER:
-                return [new ShortAnswerOption('')];
-            case QuestionType.MULTIPLE_CHOICE:
-                return [new MultiplceChoiceOption('', '')];
+                this.validateSingleTextAnswerQuestion(questionType, options);
+                break;
             case QuestionType.CHECKBOX:
-                return [new CheckBoxOption('', false)];
+                this.validateCheckbox(answers, options);
+                break;
+            case QuestionType.MULTIPLE_CHOICE:
+                this.validateMultipleChoice(answers, options);
+                break;
             default:
-                throw new BlockCreateError(null, 'QuestionType not supported');
+              return Promise.reject('QuestionType not supported');
+          }
+    }
+
+    private validateSingleTextAnswerQuestion(questionType: QuestionType, options: Array<string>) {
+        if (options) {
+            throw new Error(`Options should not exist in ${questionType} type`);
         }
     }
-}
 
-
-export interface QuestionOption {
-    answer: string;
-}
-
-export class ParagraphOption implements QuestionOption {
-    answer: string;
-    constructor(
-        answer: string,
-    ) {
-        this.answer = answer;
+    private validateCheckbox(answers: string | Array<string>, options: Array<string>) {
+        if (Array.isArray(answers)) {
+            if (answers.length > options.length) {
+                throw new Error('numbers of `answers` should not be more than `options` in CHECKBOX');
+            }
+        } else {
+            throw new Error('`answers` should be an array in CHECKBOX');
+        }
     }
-}
 
-export class ShortAnswerOption implements QuestionOption {
-    answer: string;
-    constructor(
-        answer: string,
-    ) {
-        this.answer = answer;
-    }
-}
-
-export class CheckBoxOption implements QuestionOption {
-    checked: boolean;
-    answer: string;
-    constructor(
-        answer: string,
-        checked: boolean
-    ) {
-        this.answer = answer;
-        this.checked = checked;
-    }
-}
-
-export class MultiplceChoiceOption implements QuestionOption {
-    selected: string;
-    answer: string;
-    constructor(
-        answer: string,
-        selected: string
-    ) {
-        this.answer = answer;
-        this.answer = selected;
+    private validateMultipleChoice(answers: string | Array<string>, options: Array<string>) {
+        if (Array.isArray(answers)) {
+            throw new Error('`answers` should not be an array in MULTIPLE_CHOICE');
+        } else {
+            if (answers) {
+                if (options.length < 1) {
+                    throw new Error('`options` should not be empty in MULTIPLE_CHOICE if answers exists');
+                }
+            }
+        }
     }
 }
