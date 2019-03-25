@@ -44,6 +44,8 @@ export class BlockFactoryService {
       this.checkForNullOrUndefined(input[paramName], paramName)
     );
 
+    // TODO MODIFY THIS TO ALLOW lastUpdatedBy to not be uuid
+    // lastUpdatedBy MUST be either a uuid, or 'ANONYMOUS'
     ['id', 'version', 'documentId', 'lastUpdatedBy'].forEach(paramName => {
       this.checkIfUuid(input[paramName], paramName);
     });

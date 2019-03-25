@@ -111,13 +111,22 @@ input CreateQuestionBlockInput {
 }
 
 input UpdateQuestionBlockInput {
-  id: ID
+  id: ID!
   version: String!
-  type: BlockType!
-  documentId: String!
+  type: BlockType
+  documentId: String
   lastUpdatedBy: String!
   question: String
   answers: [String]
   questionType: QuestionType
   options: [String]
+}
+
+input UpdateQuestionBlockAnswerInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  answers: [String]!
 }
