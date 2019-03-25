@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
 import { isUuid } from 'src/app/classes/helpers';
-import { CreateBlockInput, CreateTextBlockInput, BlockType, QuestionType } from '../../../../API';
+import { BlockType, QuestionType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/question-block';
 
 const uuidv4 = require('uuid/v4');
