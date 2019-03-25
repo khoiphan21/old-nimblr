@@ -29,7 +29,7 @@ export class BlockFactoryService {
     createdAt = new Date().toISOString(),
     updatedAt = new Date().toISOString(),
     question = '',
-    answers = '',
+    answers = [''],
     questionType = QuestionType.SHORT_ANSWER,
     options = null
   }): Block {
