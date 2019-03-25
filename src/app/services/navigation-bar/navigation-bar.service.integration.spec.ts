@@ -35,10 +35,12 @@ describe('NavigationBarService', () => {
         let navigationTabCount = 0;
         let documentCount = 0;
         const documentSubscription = documentService.getUserDocuments$();
-        documentSubscription.pipe(skip(1)).pipe(take(1)).subscribe((documents) => {
+        documentSubscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {
           documentCount = documents.length;
           const navigationSubscription = service.getNavigationBar$();
-          navigationSubscription.pipe(take(1)).subscribe((navigationTabs) => {
+
+          // now check if the navigation tabs count are corrent
+          navigationSubscription.pipe(skip(1)).pipe(take(1)).subscribe((navigationTabs) => {
             navigationTabCount = navigationTabs.length;
             expect(navigationTabCount).toBe(documentCount);
             done();
@@ -47,12 +49,11 @@ describe('NavigationBarService', () => {
       });
     });
 
-
     it('should update the navigation bar when a new document is created', done => {
       accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-        const navigationSubscription = service.getNavigationBar$();
         let navigationTabCount = 0;
-        navigationSubscription.pipe(skip(1)).subscribe(navigationTabs => {
+
+        service.getNavigationBar$().pipe(skip(2)).subscribe(navigationTabs => {
           navigationTabCount = navigationTabs.length;
           switch (navigationTabCount) {
             case 0:

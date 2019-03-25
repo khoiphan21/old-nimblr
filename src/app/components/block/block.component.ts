@@ -14,6 +14,7 @@ export class BlockComponent implements OnInit {
   block: Block;
 
   @Input() blockId: string;
+  @Input() isUserLoggedIn: boolean;
 
   constructor(
     private blockQueryService: BlockQueryService

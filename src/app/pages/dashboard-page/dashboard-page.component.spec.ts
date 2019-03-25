@@ -77,7 +77,7 @@ describe('DashboardPageComponent', () => {
       const mockError = new Error('test');
       component.ngOnInit().catch(error => {
         const message = 'DashboardPage failed to get user documents: '
-        + mockError.message;
+          + mockError.message;
         expect(error.message).toEqual(message);
         done();
       });
@@ -88,20 +88,23 @@ describe('DashboardPageComponent', () => {
 
   /* tslint:disable:no-string-literal */
   describe('createNewFormDocument()', () => {
-    let routerSpy;
+    let routerSpy: jasmine.Spy;
+    const id = 'abcde';
+
     beforeEach(() => {
       routerSpy = spyOn(component['router'], 'navigate');
+      spyOn(component['documentService'], 'createFormDocument')
+        .and.returnValue({ id });
     });
 
-    it('should call createFormDocument() from Document Service', () => {
-      spyOn(documentService, 'createFormDocument');
-      component.createNewFormDocument();
+    it('should call createFormDocument() from Document Service', async () => {
+      await component.createNewFormDocument();
       expect(documentService.createFormDocument).toHaveBeenCalled();
     });
 
-    it('should navigate to "document" page when the function is called', () => {
-      component.createNewFormDocument();
-      expect(routerSpy.calls.count()).toBe(1);
+    it('should navigate to the right "document" page when done', async () => {
+      await component.createNewFormDocument();
+      expect(routerSpy).toHaveBeenCalledWith([`/document/abcde`]);
     });
   });
 });

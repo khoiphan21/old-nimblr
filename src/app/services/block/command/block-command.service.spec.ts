@@ -89,6 +89,15 @@ describe('BlockCommandService', () => {
       );
     });
 
+    it('should change the value to null if is an empty string', async () => {
+      input.value = '';
+      await service.updateBlock(input);
+      // graphQlService must be called with the right arguments
+      const queryArg = graphQlSpy.calls.mostRecent().args[1];
+      // the queryArg should have a valid 'updatedAt' date string
+      expect(queryArg.input.value).toBe(null);
+    });
+
     /* tslint:disable:no-string-literal */
     it(`should store the updated block's version in the query service`, done => {
       service.updateBlock(input).then(() => {

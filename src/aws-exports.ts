@@ -2,11 +2,11 @@
 
 const awsmobile = {
     aws_project_region: 'ap-southeast-2',
-    aws_cognito_identity_pool_id: 'ap-southeast-2:6ee302a4-8036-47fd-90c0-6455f4cd75b7',
+    aws_cognito_identity_pool_id: 'ap-southeast-2:4eaece48-adff-49b9-af9e-61979512e141',
     aws_cognito_region: 'ap-southeast-2',
-    aws_user_pools_id: 'ap-southeast-2_d6cypRasd',
-    aws_user_pools_web_client_id: '30aaqa11def8pv48lbg18iu8f9',
-    aws_appsync_graphqlEndpoint: 'https://a7rqkgkj4fhtbjxdfjrdmqgj34.appsync-api.ap-southeast-2.amazonaws.com/graphql',
+    aws_user_pools_id: 'ap-southeast-2_v9SBczqwj',
+    aws_user_pools_web_client_id: '6po8dmjkcshvhf7s2jm0cm6ja9',
+    aws_appsync_graphqlEndpoint: 'https://sm4dmth2mrawtpurz4xum7vrx4.appsync-api.ap-southeast-2.amazonaws.com/graphql',
     aws_appsync_region: 'ap-southeast-2',
     aws_appsync_authenticationType: 'AWS_IAM'
 };

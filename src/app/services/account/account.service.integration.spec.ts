@@ -40,8 +40,8 @@ describe('(Integration) AccountImplService', () => {
 
   describe('registerCognitoUser()', () => {
     const poolData = {
-      UserPoolId: 'ap-southeast-2_d6cypRasd',
-      ClientId: '30aaqa11def8pv48lbg18iu8f9'
+      UserPoolId: awsmobile.aws_user_pools_id,
+      ClientId: awsmobile.aws_user_pools_web_client_id
     };
     let userPool;
 

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentServiceImpl } from './document-impl.service';
+import { DocumentService } from './document.service';
 import { AccountService } from '../account/account.service';
 import { ServicesModule } from 'src/app/modules/services.module';
 
@@ -16,14 +16,14 @@ import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
 
 describe('(Integration) DocumentService', () => {
-  let service: DocumentServiceImpl;
+  let service: DocumentService;
   let accountService: AccountService;
   let graphQlService: GraphQLService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        DocumentServiceImpl
+        DocumentService
       ],
       imports: [
         ServicesModule,
@@ -32,7 +32,7 @@ describe('(Integration) DocumentService', () => {
     });
 
     accountService = TestBed.get(AccountService);
-    service = TestBed.get(DocumentServiceImpl);
+    service = TestBed.get(DocumentService);
     graphQlService = TestBed.get(GraphQLService);
   });
 
@@ -73,7 +73,7 @@ describe('(Integration) DocumentService', () => {
     }).then(() => done()
     ).catch(error => processTestError('failed to retrieve docs', error, done));
 
-    function getFirstDocumentSet(service: DocumentServiceImpl): Promise<Array<Document>> {
+    function getFirstDocumentSet(service: DocumentService): Promise<Array<Document>> {
       return new Promise((resolve, reject) => {
         const subscription = service.getUserDocuments$();
         subscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {
