@@ -1,5 +1,5 @@
 import { BlockType, QuestionType } from 'src/API';
-import { QuestionBlock, ParagraphOption, ShortAnswerOption, MultiplceChoiceOption, CheckBoxOption } from './question-block';
+import { QuestionBlock} from './question-block';
 const uuidv4 = require('uuid/v4');
 
 describe('QuestionBlock -', () => {
@@ -12,61 +12,128 @@ describe('QuestionBlock -', () => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     question: 'Is this a test value?',
+    answers: null,
     questionType: null,
     options: null
   };
 
-  describe('with existing values, should set the right content in `options` to different question type', () => {
-    it('should set the right value for `options` if it exists', () => {
-      input.options = [{ answer: 'this is the answer' }];
-      input.questionType = QuestionType.PARAGRAPH;
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.options[0]).toEqual({ answer: 'this is the answer' });
-    });
+  beforeEach(() => {
+    input.options = null;
   });
 
-  describe('without existing value, should generate different content in `options` for different qustion type', () => {
-    beforeEach(() => {
-      input.options = null;
-    });
+  it('should throw error if question type is not supported', () => {
+    input.questionType = 'abcd';
+    try {
+      const block = new QuestionBlock(input);
+    } catch (error) {
+      expect(error.message).toEqual('QuestionType not supported');
+    }
+  });
 
-    it('should throw error if question type is not supported', () => {
-      input.questionType = 'abcd';
+  it('should set the right value for `question`', () => {
+    input.question = 'This is a question';
+    input.answers = 'answer';
+    const block = new QuestionBlock(input);
+    const questionBlock: QuestionBlock = block as QuestionBlock;
+    expect(questionBlock.question).toEqual('This is a question');
+  });
+
+  it('should set the right value for `questionType`', () => {
+    input.questionType = QuestionType.PARAGRAPH;
+    const block = new QuestionBlock(input);
+    const questionBlock: QuestionBlock = block as QuestionBlock;
+    expect(questionBlock.questionType).toEqual(QuestionType.PARAGRAPH);
+  });
+
+  it('should set the right value for `options`', () => {
+    input.questionType = QuestionType.CHECKBOX;
+    input.answers = ['this is the answer 1'];
+    input.options = ['this is the answer 1', 'this is the answer 2'];
+    const block = new QuestionBlock(input);
+    const questionBlock: QuestionBlock = block as QuestionBlock;
+    expect(questionBlock.options[0]).toEqual('this is the answer 1');
+  });
+
+  it('should set the right value for `answers` ', () => {
+    input.questionType = QuestionType.CHECKBOX;
+    input.answers = ['this is the answer 2'];
+    input.options = ['this is the answer 2'];
+    const block = new QuestionBlock(input);
+    const questionBlock: QuestionBlock = block as QuestionBlock;
+    expect(questionBlock.answers[0]).toEqual('this is the answer 2');
+  });
+
+  describe('PARAGRAPH & SHORT_ANSWER type -', () => {
+    it('should not have `options` if it is PARAGRAPH type', () => {
+      input.questionType = QuestionType.PARAGRAPH;
+      input.options = ['this is the answer 1'];
       try {
         const block = new QuestionBlock(input);
+        fail(`Error must be thrown for invalid properties`);
       } catch (error) {
-        expect(error.message).toEqual('QuestionType not supported');
+        expect(error.message).toEqual(`Options should not exist in PARAGRAPH type`);
       }
     });
 
-    it('should be ParagraphOption type for `PARAGRAPH` type', () => {
-      input.questionType = QuestionType.PARAGRAPH;
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.options[0] instanceof ParagraphOption).toBe(true);
-    });
-
-    it('should be ShortAnswerOption type for `SHORT_ANSWER` type', () => {
+    it('should not have `options` if it is SHORT ANSWER type', () => {
       input.questionType = QuestionType.SHORT_ANSWER;
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.options[0] instanceof ShortAnswerOption).toBe(true);
+      input.options = ['this is the answer 1'];
+      try {
+        const block = new QuestionBlock(input);
+        fail(`Error must be thrown for invalid properties`);
+      } catch (error) {
+        expect(error.message).toEqual(`Options should not exist in SHORT_ANSWER type`);
+      }
     });
+  });
 
-    it('should be MultiplceChoiceOption type for `MULTIPLE_CHOICE` type', () => {
-      input.questionType = QuestionType.MULTIPLE_CHOICE;
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.options[0] instanceof MultiplceChoiceOption).toBe(true);
-    });
-
-    it('should be CheckBoxOption type for `CHECKBOX` type', () => {
+  describe('CHECKBOX type -', () => {
+    it('numbers of `answers` should not be more than `options`', () => {
       input.questionType = QuestionType.CHECKBOX;
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.options[0] instanceof CheckBoxOption).toBe(true);
+      input.answers = ['this is the answer 1', 'this is the answer 2'];
+      input.options = ['this is the answer 1'];
+      try {
+        const block = new QuestionBlock(input);
+        fail(`Error must be thrown for invalid properties`);
+      } catch (error) {
+        expect(error.message).toEqual('numbers of `answers` should not be more than `options` in CHECKBOX');
+      }
     });
 
+    it('`answers` should be an array', () => {
+      input.questionType = QuestionType.CHECKBOX;
+      input.answers = 'this is the answer 2';
+      try {
+        const block = new QuestionBlock(input);
+        fail(`Error must be thrown for invalid properties`);
+      } catch (error) {
+        expect(error.message).toEqual('`answers` should be an array in CHECKBOX');
+      }
+    });
+  });
+
+  describe('MULTIPLE_CHOICE type -', () => {
+    it('`answers` should not be an array`', () => {
+      input.questionType = QuestionType.MULTIPLE_CHOICE;
+      input.answers = ['this is the answer 1'];
+      try {
+        const block = new QuestionBlock(input);
+        fail(`Error must be thrown for invalid properties`);
+      } catch (error) {
+        expect(error.message).toEqual('`answers` should not be an array in MULTIPLE_CHOICE');
+      }
+    });
+
+    it('options` should not be empty if answers exists`', () => {
+      input.questionType = QuestionType.MULTIPLE_CHOICE;
+      input.answers = 'this is the answer 1';
+      input.options = [];
+      try {
+        const block = new QuestionBlock(input);
+        fail(`Error must be thrown for invalid properties`);
+      } catch (error) {
+        expect(error.message).toEqual('`options` should not be empty in MULTIPLE_CHOICE if answers exists');
+      }
+    });
   });
 });

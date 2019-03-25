@@ -173,12 +173,8 @@ describe('BlockFactoryService', () => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         question: 'Is this a test value?',
+        answers: '',
         questionType: QuestionType.PARAGRAPH,
-        options: [
-          {
-            answer: ''
-          }
-        ]
       };
       block = factory.createAppBlock(rawData);
     });
