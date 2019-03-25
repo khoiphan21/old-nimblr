@@ -42,6 +42,9 @@ export class BlockCommandService {
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'UpdateTextBlockInput');
 
+      // Now do a convert for empty string in 'value'
+      input.value = input.value === '' ? null : input.value;
+
       this.blockQueryService.registerUpdateVersion(input.version);
 
       return this.graphQLService.query(updateTextBlock, { input });
