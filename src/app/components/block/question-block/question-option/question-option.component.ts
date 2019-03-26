@@ -12,6 +12,7 @@ export class QuestionOptionComponent implements OnChanges {
   @Input() options: Array<string>;
   @Input() currentType: QuestionType;
   @Input() isPreviewMode: boolean;
+  @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
 
   constructor(private formBuilder: FormBuilder) {
@@ -19,9 +20,12 @@ export class QuestionOptionComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const type = changes.currentType;
+    const previewMode = changes.isPreviewMode;
     if (type) {
       this.manageQuestionTypeChange(type.previousValue, type.currentValue);
       this.setupForm();
+    } else if (previewMode.currentValue === true) {
+      this.emitQuestionValues();
     }
   }
 
@@ -88,5 +92,27 @@ export class QuestionOptionComponent implements OnChanges {
       this.options = [];
       this.addNewOption();
     }
+  }
+
+  /* tslint:disable:no-string-literal */
+  emitQuestionValues() {
+    const value = {};
+    value['questionType'] = this.currentType;
+    value['answers'] = this.answers;
+    if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
+      value['options'] = this.getOptionsValue();
+    }
+    this.valueToBeSaved.emit(value);
+  }
+
+  getOptionsValue() {
+    const formArray = this.formGroup.controls.options as FormArray;
+    const controls = formArray.controls;
+    const index = 0;
+    for (const control of controls) {
+      const formGroup = control as FormGroup;
+      this.options[index] = formGroup.value.option;
+    }
+    return this.options;
   }
 }

@@ -55,10 +55,19 @@ describe('QuestionOptionComponent', () => {
     let formSpy: jasmine.Spy;
     let clearAnswersSpy: jasmine.Spy;
     let clearOptionsSpy: jasmine.Spy;
+    let emitValueSpy: jasmine.Spy;
     beforeEach(() => {
       formSpy = spyOn(component, 'setupForm');
       clearAnswersSpy = spyOn<any>(component, 'clearAnswers');
       clearOptionsSpy = spyOn<any>(component, 'clearOptions');
+      emitValueSpy = spyOn<any>(component, 'emitQuestionValues');
+    });
+
+    it('should emit all the corresponding values if the preview mode is true', () => {
+      component.ngOnChanges({
+        isPreviewMode: new SimpleChange(null, true, true)
+      });
+      expect(emitValueSpy).toHaveBeenCalled();
     });
 
     it('should setup the form if the QuestionType has changed', () => {
@@ -150,5 +159,61 @@ describe('QuestionOptionComponent', () => {
     component.deleteOption(0);
     const newOptionCount = component.options.length;
     expect(newOptionCount).toBe(optionCount - 1);
+  });
+
+  describe('emitQuestionValues()', () => {
+    it('should emit the right question type', done => {
+      component.currentType = QuestionType.PARAGRAPH;
+      component.valueToBeSaved.subscribe((data) => {
+        expect(data.questionType).toEqual(QuestionType.PARAGRAPH);
+        done();
+      });
+      component.emitQuestionValues();
+    });
+
+    it('should only emit `answers` for PARAGRAPH type', done => {
+      component.currentType = QuestionType.PARAGRAPH;
+      component.valueToBeSaved.subscribe((data) => {
+        expect(data.hasOwnProperty('answers')).toBe(true);
+        done();
+      });
+      component.emitQuestionValues();
+    });
+
+    it('should only emit `answers` for SHORT_ANSWER type', done => {
+      component.currentType = QuestionType.SHORT_ANSWER;
+      component.valueToBeSaved.subscribe((data) => {
+        expect(data.hasOwnProperty('answers')).toBe(true);
+        done();
+      });
+      component.emitQuestionValues();
+    });
+
+    it('should emit `answers` and `options` for MULTIPLE_CHOICE type', done => {
+      component.currentType = QuestionType.MULTIPLE_CHOICE;
+      component.valueToBeSaved.subscribe((data) => {
+        expect(data.hasOwnProperty('answers')).toBe(true);
+        expect(data.hasOwnProperty('options')).toBe(true);
+        done();
+      });
+      component.emitQuestionValues();
+    });
+
+    it('should  emit `answers` and `options` for CHECKBOX type', done => {
+      component.currentType = QuestionType.CHECKBOX;
+      component.valueToBeSaved.subscribe((data) => {
+        expect(data.hasOwnProperty('answers')).toBe(true);
+        expect(data.hasOwnProperty('options')).toBe(true);
+        done();
+      });
+      component.emitQuestionValues();
+    });
+  });
+
+  it('getOptionsValue() - should get the right values from the form', () => {
+    component.setupForm();
+    component.addNewOption();
+    const options = component.getOptionsValue();
+    expect(options.length).toEqual(component.options.length);
   });
 });
