@@ -190,6 +190,15 @@ describe('BlockCommandService', () => {
         expect(queryArg.input.question).toBe(null);
       });
 
+      it('should change the value to null if is undefined', async () => {
+        questionInput.options = undefined;
+        await service.updateBlock(questionInput);
+        // graphQlService must be called with the right arguments
+        const queryArg = graphQlSpy.calls.mostRecent().args[1];
+        // the queryArg should have a valid 'updatedAt' date string
+        expect(queryArg.input.options).toBe(null);
+      });
+
       describe('(error pathways)', () => {
         const requiredParams = [
           'id', 'version', 'documentId', 'lastUpdatedBy', 'question', 'answers', 'questionType'
@@ -332,6 +341,18 @@ describe('BlockCommandService', () => {
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
           // the queryArg must have the same values
           expect(queryArg.input.question).toBe(null);
+          done();
+        });
+      });
+
+      it('should change "options" to be null if given undefined', done => {
+        questionInput.options = undefined;
+        // Now call the service
+        service.createBlock(questionInput).then(() => {
+          // graphQlService must be called with the right arguments
+          const queryArg = graphQlSpy.calls.mostRecent().args[1];
+          // the queryArg must have the same values
+          expect(queryArg.input.options).toBe(null);
           done();
         });
       });

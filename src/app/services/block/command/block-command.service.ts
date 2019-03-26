@@ -77,6 +77,7 @@ export class BlockCommandService {
 
       // Now do a convert for empty string in 'question'
       input.question = input.question === '' ? null : input.question;
+      input.options = input.options === undefined ? null : input.options;
 
       this.blockQueryService.registerUpdateVersion(input.version);
 
@@ -151,8 +152,8 @@ export class BlockCommandService {
 
       this.blockQueryService.registerUpdateVersion(input.version);
 
-      // Now do a convert for empty string in 'question'
       input.question = input.question === '' ? null : input.question;
+      input.options = input.options === undefined ? null : input.options;
 
       return this.graphQLService.query(createQuestionBlock, { input });
     } catch (error) {
