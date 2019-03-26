@@ -8,7 +8,7 @@ import { processTestError, isValidDateString } from 'src/app/classes/test-helper
 const uuidv4 = require('uuid/v4');
 
 
-fdescribe('BlockCommandService', () => {
+describe('BlockCommandService', () => {
   let service: BlockCommandService;
   let textInput: any;
   let questionInput: any;
@@ -67,7 +67,6 @@ fdescribe('BlockCommandService', () => {
       });
     });
 
-
     /* tslint:disable:no-string-literal */
     it(`should store the updated block's version in the query service`, done => {
       service.updateBlock(textInput).then(() => {
@@ -77,15 +76,6 @@ fdescribe('BlockCommandService', () => {
         done();
       }).catch(error =>
         processTestError('unable to update block', error, done)
-      );
-    });
-
-    describe('(error pathways)', () => {
-      const requiredParams = [
-        'id', 'version', 'documentId', 'lastUpdatedBy', 'value'
-      ];
-      runTestForMissingParams(
-        requiredParams, 'updateBlock', 'UpdateTextBlockInput'
       );
     });
 
@@ -137,6 +127,15 @@ fdescribe('BlockCommandService', () => {
         const queryArg = graphQlSpy.calls.mostRecent().args[1];
         // the queryArg should have a valid 'updatedAt' date string
         expect(queryArg.input.value).toBe(null);
+      });
+
+      describe('(error pathways)', () => {
+        const requiredParams = [
+          'id', 'version', 'documentId', 'lastUpdatedBy', 'value'
+        ];
+        runTestForTextMissingParams(
+          requiredParams, 'updateBlock', 'UpdateTextBlockInput'
+        );
       });
     });
 
@@ -190,6 +189,15 @@ fdescribe('BlockCommandService', () => {
         // the queryArg should have a valid 'updatedAt' date string
         expect(queryArg.input.question).toBe(null);
       });
+
+      describe('(error pathways)', () => {
+        const requiredParams = [
+          'id', 'version', 'documentId', 'lastUpdatedBy', 'question', 'answers', 'questionType'
+        ];
+        runTestForQuestionMissingParams(
+          requiredParams, 'updateBlock', 'UpdateTextBlockInput'
+        );
+      });
     });
 
 
@@ -215,13 +223,6 @@ fdescribe('BlockCommandService', () => {
           .has(textInput.version)).toBe(true);
         done();
       });
-    });
-
-    describe('(error pathways)', () => {
-      const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
-      runTestForMissingParams(
-        requiredParams, 'createBlock', 'CreateTextBlockInput'
-      );
     });
 
     describe('TextBlock -', () => {
@@ -280,6 +281,13 @@ fdescribe('BlockCommandService', () => {
           expect(error).toEqual(mockError);
           done();
         });
+      });
+
+      describe('(error pathways)', () => {
+        const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+        runTestForTextMissingParams(
+          requiredParams, 'createBlock', 'CreateTextBlockInput'
+        );
       });
     });
 
@@ -343,10 +351,17 @@ fdescribe('BlockCommandService', () => {
           done();
         });
       });
+
+      describe('(error pathways)', () => {
+        const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+        runTestForQuestionMissingParams(
+          requiredParams, 'createBlock', 'CreateQuestionBlockInput'
+        );
+      });
     });
   });
 
-  function runTestForMissingParams(
+  function runTestForTextMissingParams(
     params: Array<string>, functionName: string, context: string
   ) {
     params.forEach(param => {
@@ -361,6 +376,33 @@ fdescribe('BlockCommandService', () => {
           }
           // call the service
           service[functionName](textInput).then(() => {
+            fail('error should occur'); done();
+          }).catch(error => {
+            expect(error.message).toEqual(
+              `Missing argument "${param}" in ${context}`
+            );
+            done();
+          });
+        });
+      });
+    });
+  }
+
+  function runTestForQuestionMissingParams(
+    params: Array<string>, functionName: string, context: string
+  ) {
+    params.forEach(param => {
+      // run test for each type of error: 'undefined' and 'null' values
+      ['undefined', 'null'].forEach(errorType => {
+        it(`should throw an error if ${param} is ${errorType}`, done => {
+          // edit the input based on what type of error is being checked
+          if (errorType === 'undefined') {
+            delete questionInput[param];
+          } else {
+            questionInput[param] = null;
+          }
+          // call the service
+          service[functionName](questionInput).then(() => {
             fail('error should occur'); done();
           }).catch(error => {
             expect(error.message).toEqual(
