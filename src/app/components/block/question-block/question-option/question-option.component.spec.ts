@@ -162,15 +162,6 @@ describe('QuestionOptionComponent', () => {
   });
 
   describe('emitQuestionValues()', () => {
-    it('should emit the right question type', done => {
-      component.currentType = QuestionType.PARAGRAPH;
-      component.valueToBeSaved.subscribe((data) => {
-        expect(data.questionType).toEqual(QuestionType.PARAGRAPH);
-        done();
-      });
-      component.emitQuestionValues();
-    });
-
     it('should only emit `answers` for PARAGRAPH type', done => {
       component.currentType = QuestionType.PARAGRAPH;
       component.valueToBeSaved.subscribe((data) => {

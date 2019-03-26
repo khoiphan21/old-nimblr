@@ -78,4 +78,43 @@ describe('QuestionBlockComponent', () => {
       expect(component.toggleOptions).toHaveBeenCalled();
     });
   });
+
+  /* tslint:disable:no-string-literal */
+  describe('updateValue', () => {
+    let blockCommandSpy: jasmine.Spy;
+    const emittedValue = {
+      answers: [],
+    };
+    beforeEach(() => {
+      // setup the spies
+      spyOn(component['blockFactoryService'], 'createAppBlock').and.callThrough();
+      blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
+      blockCommandSpy.and.returnValues(Promise.resolve());
+    });
+
+    it('should call `createAppBlock` with the right argument', async () => {
+      await component.updateQuestionValue(emittedValue);
+      expect(component['blockFactoryService'].createAppBlock).toHaveBeenCalledWith({
+        id: component.questionBlock.id,
+        type: component.questionBlock.type,
+        documentId: component.questionBlock.documentId,
+        // createdAt: component.block.createdAt
+        lastUpdatedBy: component.questionBlock.lastUpdatedBy,
+        question: component.questionBlock.question,
+        answers: [],
+        questionType: component.questionBlock.questionType,
+        options: undefined
+      });
+    });
+
+    it('should resolve with the updated block', async () => {
+      const updatedBlock: QuestionBlock = await component.updateQuestionValue(emittedValue) as QuestionBlock;
+      expect(updatedBlock.question).toEqual(component.questionBlock.question);
+    });
+
+    it('should call block command service with the right argument', async () => {
+      const updatedBlock = await component.updateQuestionValue(emittedValue);
+      expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
+    });
+  });
 });

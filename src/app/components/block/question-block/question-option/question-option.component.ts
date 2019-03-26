@@ -97,7 +97,6 @@ export class QuestionOptionComponent implements OnChanges {
   /* tslint:disable:no-string-literal */
   emitQuestionValues() {
     const value = {};
-    value['questionType'] = this.currentType;
     value['answers'] = this.answers;
     if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
       value['options'] = this.getOptionsValue();

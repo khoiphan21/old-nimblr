@@ -1,6 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { QuestionBlock } from 'src/app/classes/question-block';
 import { QuestionType } from 'src/API';
+import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
+import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
+import { Block } from 'src/app/classes/block';
 
 @Component({
   selector: 'app-question-block',
@@ -14,7 +17,10 @@ export class QuestionBlockComponent implements OnInit {
   question = '';
   currentType: QuestionType;
 
-  constructor() { }
+  constructor(
+    private blockFactoryService: BlockFactoryService,
+    private blockCommandService: BlockCommandService
+  ) { }
 
   ngOnInit() {
     this.question = this.questionBlock.question;
@@ -30,5 +36,24 @@ export class QuestionBlockComponent implements OnInit {
     this.toggleOptions();
     this.isPreviewMode = false;
     event.stopImmediatePropagation();
+  }
+
+  updateQuestionValue(event: any): Promise<Block> {
+    return new Promise(resolve => {
+      const updatedBlock: Block = this.blockFactoryService.createAppBlock({
+        id: this.questionBlock.id,
+        type: this.questionBlock.type,
+        documentId: this.questionBlock.documentId,
+        lastUpdatedBy: this.questionBlock.lastUpdatedBy,
+        // createdAt: this.block.createdAt
+        question: this.question,
+        answers: event.answers,
+        questionType: this.currentType,
+        options: event.options
+      });
+      this.blockCommandService.updateBlock(updatedBlock).then(() => {
+        resolve(updatedBlock);
+      });
+    });
   }
 }
