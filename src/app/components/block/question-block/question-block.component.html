@@ -12,7 +12,7 @@
                 <div *ngSwitchCase="'CHECKBOX'">
                     <i class="fas fa-check-square"></i><span>Checkbox</span>
                 </div>
-                <div *ngSwitchCase="'MULTIPLCE_CHOICE'">
+                <div *ngSwitchCase="'MULTIPLE_CHOICE'">
                     <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
                 </div>
                 <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isQuestionOptionShown === true}"></i>
@@ -33,12 +33,12 @@
                     <div class="option" (click)="selectType('CHECKBOX', $event)">
                         <i class="fas fa-check-square"></i><span>Checkbox</span>
                     </div>
-                    <div class="option" (click)="selectType('MULTIPLCE_CHOICE', $event)">
+                    <div class="option" (click)="selectType('MULTIPLE_CHOICE', $event)">
                         <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
                     </div>
                 </section>
             </section>
         </div>
     </div>
-    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style="width: 100%;"></app-question-option>
+    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [options]="questionBlock.options" [answers]="questionBlock.answers" style="width: 100%;"></app-question-option>
 </section>

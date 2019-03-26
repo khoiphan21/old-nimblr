@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { QuestionBlock } from 'src/app/classes/question-block';
 import { QuestionType } from 'src/API';
 
@@ -12,18 +12,13 @@ export class QuestionBlockComponent implements OnInit {
   isPreviewMode = true;
   isQuestionOptionShown = false;
   question = '';
-  currentType = QuestionType.SHORT_ANSWER;
-  data = {
-    options: [
-      {
-        checked: false,
-        answer: ''
-      }
-    ]
-  };
+  currentType: QuestionType;
+
   constructor() { }
 
   ngOnInit() {
+    this.question = this.questionBlock.question;
+    this.currentType = this.questionBlock.questionType;
   }
 
   toggleOptions() {

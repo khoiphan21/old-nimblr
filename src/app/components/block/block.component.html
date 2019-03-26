@@ -1,14 +1,17 @@
-<!-- Remember to add margin for different type of blocks in this component -->
-<!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
+<ng-container *ngIf="block" [ngSwitch]=block.type>
+    <!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
     <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
     <app-block-header [block]="block"></app-block-header>
 </div> -->
-<div class="block" *ngIf="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-    <app-block-option *ngIf="isUserLoggedIn" class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
-    <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn"></app-block-text>
-</div>
-<!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-    <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
-    <app-question-block class="desktop"></app-question-block>
-    <app-mobile-question-block class="mobile"></app-mobile-question-block>
-</div> -->
+    <div class="block" *ngSwitchCase="'TEXT'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
+        <app-block-option *ngIf="isUserLoggedIn" class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
+        </app-block-option>
+        <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn"></app-block-text>
+    </div>
+    <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
+        <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
+        </app-block-option>
+        <app-question-block [questionBlock]="block" class="desktop"></app-question-block>
+        <!-- <app-mobile-question-block class="mobile"></app-mobile-question-block> -->
+    </div>
+</ng-container>
