@@ -1,2 +1,10 @@
-## Pass back the result from DynamoDB. **
-$util.toJson($context.result)
+#if( 
+    $context.identity.cognitoIdentityAuthProvider.toString().contains($context.result.ownerId)
+    or 
+    $context.result["sharingStatus"] == "PUBLIC" 
+)
+    ## User is logged in, or the document is public
+	 $utils.toJson($context.result);
+#else
+    $utils.unauthorized()
+#end

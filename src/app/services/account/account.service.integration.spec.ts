@@ -14,7 +14,8 @@ import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
-import { TEST_USERNAME, TEST_PASSWORD, TEST_USER_ID } from './account-impl.service.spec';
+import { TEST_USERNAME, TEST_PASSWORD } from './account-impl.service.spec';
+import { UUID } from '../document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -237,49 +238,35 @@ describe('(Integration) AccountImplService', () => {
 
   describe('update()', () => {
 
-    it('should update the attributes on dynamodb', done => {
-
-      const userBefore: User = {
-        id: TEST_USER_ID,
-        firstName: 'test1',
-        lastName: 'test1',
+    it('should update the attributes on dynamodb', async () => {
+      const details: User = {
+        id: '',
+        firstName: 'first',
+        lastName: 'last',
         email: 'testing1@test.com'
       };
 
-      const userAfter: User = {
-        id: TEST_USER_ID,
-        firstName: 'test2',
-        lastName: 'test2',
-        email: 'testing2@test.com'
-      };
-
       // step 0: sign in
-      service.login(TEST_USERNAME, TEST_PASSWORD).then(data => {
-        return data;
+      const user = await service.login(TEST_USERNAME, TEST_PASSWORD);
 
-      }).then(() => {
-        return service.update(userBefore);
-      }).then(() => {
-        return service.update(userAfter);
-      }).then(() => {
-        const input = {
-          id: TEST_USER_ID
-        };
+      // update the user id in the mock inputs
+      details.id = user.id;
 
-        async function getApiCall() {
-          const response: any = await API.graphql(graphqlOperation(getUser, input));
-          return Promise.resolve(response);
-        }
+      await service.update(details);
 
-        getApiCall().then(response => {
-          expect(response).toBeTruthy();
-          expect(response.data.getUser.email).toEqual(userAfter.email);
-          expect(response.data.getUser.firstName).toEqual(userAfter.firstName);
-          expect(response.data.getUser.lastName).toEqual(userAfter.lastName);
-          done();
-        });
+      // Change details
+      details.firstName = 'first2';
+      details.lastName = 'last2';
+      details.email = 'email2@test.com';
+      await service.update(details);
 
-      });
+      // Now retrieve the details and check
+      const response: any = await API.graphql(graphqlOperation(getUser, { id: user.id }));
+      expect(response).toBeTruthy();
+      expect(response.data.getUser.email).toEqual(details.email);
+      expect(response.data.getUser.firstName).toEqual(details.firstName);
+      expect(response.data.getUser.lastName).toEqual(details.lastName);
+
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
   });
 

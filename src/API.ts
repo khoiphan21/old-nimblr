@@ -60,11 +60,17 @@ export type CreateDocumentInput = {
   lastUpdatedBy?: string | null,
   createdAt?: string | null,
   updatedAt?: string | null,
+  sharingStatus?: SharingStatus | null,
 };
 
 export enum DocumentType {
   GENERIC = "GENERIC",
   FORM = "FORM",
+}
+
+
+export enum SharingStatus {
+  PUBLIC = "PUBLIC",
 }
 
 
@@ -81,6 +87,7 @@ export type UpdateDocumentInput = {
   lastUpdatedBy?: string | null,
   createdAt?: string | null,
   updatedAt?: string | null,
+  sharingStatus?: SharingStatus | null,
 };
 
 export type DeleteDocumentInput = {
@@ -164,6 +171,7 @@ export type ModelDocumentFilterInput = {
   lastUpdatedBy?: ModelStringFilterInput | null,
   createdAt?: ModelStringFilterInput | null,
   updatedAt?: ModelStringFilterInput | null,
+  sharingStatus?: ModelSharingStatusFilterInput | null,
   and?: Array< ModelDocumentFilterInput | null > | null,
   or?: Array< ModelDocumentFilterInput | null > | null,
   not?: ModelDocumentFilterInput | null,
@@ -172,6 +180,11 @@ export type ModelDocumentFilterInput = {
 export type ModelDocumentTypeFilterInput = {
   eq?: DocumentType | null,
   ne?: DocumentType | null,
+};
+
+export type ModelSharingStatusFilterInput = {
+  eq?: SharingStatus | null,
+  ne?: SharingStatus | null,
 };
 
 export type ModelBlockFilterInput = {
@@ -296,6 +309,7 @@ export type CreateDocumentMutation = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -318,6 +332,7 @@ export type UpdateDocumentMutation = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -340,6 +355,7 @@ export type DeleteDocumentMutation = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -454,6 +470,7 @@ export type GetDocumentQuery = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -480,6 +497,7 @@ export type ListDocumentsQuery = {
       lastUpdatedBy: string | null,
       createdAt: string | null,
       updatedAt: string | null,
+      sharingStatus: SharingStatus | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -564,6 +582,7 @@ export type OnSpecificDocumentUpdateSubscription = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -618,6 +637,7 @@ export type OnCreateDocumentSubscription = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -636,6 +656,7 @@ export type OnUpdateDocumentSubscription = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 
@@ -654,6 +675,7 @@ export type OnDeleteDocumentSubscription = {
     lastUpdatedBy: string | null,
     createdAt: string | null,
     updatedAt: string | null,
+    sharingStatus: SharingStatus | null,
   } | null,
 };
 

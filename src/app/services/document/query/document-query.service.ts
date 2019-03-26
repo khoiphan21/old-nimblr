@@ -47,7 +47,7 @@ export class DocumentQueryService {
       }
 
     }).catch(error =>
-      document$.error(Error(`Unable to send query: ${error.message}`))
+      document$.error(Error(`[DocumentQueryService] Unable to send query: ${error.message}`))
     );
 
     return document$;

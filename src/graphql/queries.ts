@@ -44,6 +44,7 @@ export const getDocument = `query GetDocument($id: ID!) {
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
@@ -66,6 +67,7 @@ export const listDocuments = `query ListDocuments(
       lastUpdatedBy
       createdAt
       updatedAt
+      sharingStatus
     }
     nextToken
   }

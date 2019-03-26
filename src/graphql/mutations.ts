@@ -74,6 +74,7 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
@@ -91,6 +92,7 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
@@ -108,6 +110,7 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;

@@ -28,6 +28,7 @@ export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
@@ -78,6 +79,7 @@ export const onCreateDocument = `subscription OnCreateDocument {
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
@@ -95,6 +97,7 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
@@ -112,6 +115,7 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     lastUpdatedBy
     createdAt
     updatedAt
+    sharingStatus
   }
 }
 `;
