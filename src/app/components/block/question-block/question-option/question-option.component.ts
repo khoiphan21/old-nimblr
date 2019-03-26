@@ -23,10 +23,10 @@ export class QuestionOptionComponent implements OnChanges {
     const previewMode = changes.isPreviewMode;
     if (type) {
       this.manageQuestionTypeChange(type.previousValue, type.currentValue);
-      this.setupForm();
-    } else if (previewMode.currentValue === true) {
-      this.emitQuestionValues();
+    } else if (previewMode) {
+      this.emitQuestionValues(previewMode.currentValue);
     }
+    this.setupForm();
   }
 
   manageQuestionTypeChange(previousType: QuestionType, currentType: QuestionType) {
@@ -66,12 +66,12 @@ export class QuestionOptionComponent implements OnChanges {
 
   addNewOption() {
     const control = this.formGroup.controls.options as FormArray;
-    this.options.push('');
     control.push(
       this.formBuilder.group({
         option: ''
       })
     );
+    this.options.push('');
   }
 
   deleteOption(index) {
@@ -95,22 +95,25 @@ export class QuestionOptionComponent implements OnChanges {
   }
 
   /* tslint:disable:no-string-literal */
-  emitQuestionValues() {
-    const value = {};
-    value['answers'] = this.answers;
-    if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
-      value['options'] = this.getOptionsValue();
+  emitQuestionValues(shouldEmit: boolean) {
+    if (shouldEmit === true) {
+      const value = {};
+      value['answers'] = this.answers;
+      if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
+        value['options'] = this.getOptionsValue();
+      }
+      this.valueToBeSaved.emit(value);
     }
-    this.valueToBeSaved.emit(value);
   }
 
   getOptionsValue() {
     const formArray = this.formGroup.controls.options as FormArray;
     const controls = formArray.controls;
-    const index = 0;
+    let index = 0;
     for (const control of controls) {
       const formGroup = control as FormGroup;
       this.options[index] = formGroup.value.option;
+      index++;
     }
     return this.options;
   }

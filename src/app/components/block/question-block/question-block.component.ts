@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { QuestionBlock } from 'src/app/classes/question-block';
 import { QuestionType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
@@ -10,10 +10,12 @@ import { Block } from 'src/app/classes/block';
   templateUrl: './question-block.component.html',
   styleUrls: ['./question-block.component.scss']
 })
-export class QuestionBlockComponent implements OnInit {
+export class QuestionBlockComponent implements OnChanges {
   @Input() questionBlock: QuestionBlock;
   isPreviewMode = true;
   isQuestionOptionShown = false;
+  answers = [];
+  options = [];
   question = '';
   currentType: QuestionType;
 
@@ -22,7 +24,9 @@ export class QuestionBlockComponent implements OnInit {
     private blockCommandService: BlockCommandService
   ) { }
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.answers = this.questionBlock.answers;
+    this.options = this.questionBlock.options;
     this.question = this.questionBlock.question;
     this.currentType = this.questionBlock.questionType;
   }

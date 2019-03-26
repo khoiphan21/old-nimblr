@@ -77,13 +77,6 @@ describe('QuestionOptionComponent', () => {
       expect(formSpy).toHaveBeenCalled();
     });
 
-    it('should not setup the form if the QuestionType has not changed', () => {
-      component.ngOnChanges({
-        isPreviewMode: new SimpleChange(null, false, true)
-      });
-      expect(formSpy).not.toHaveBeenCalled();
-    });
-
     describe('manageQuestionTypeChange()', () => {
       it('should clear both options and answers if it is from `MULTIPLE_CHOICE` or `CHECKBOX` to `SHORT_ANSWER`', () => {
         component.ngOnChanges({
@@ -168,7 +161,7 @@ describe('QuestionOptionComponent', () => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitQuestionValues(true);
     });
 
     it('should only emit `answers` for SHORT_ANSWER type', done => {
@@ -177,7 +170,7 @@ describe('QuestionOptionComponent', () => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitQuestionValues(true);
     });
 
     it('should emit `answers` and `options` for MULTIPLE_CHOICE type', done => {
@@ -187,7 +180,7 @@ describe('QuestionOptionComponent', () => {
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitQuestionValues(true);
     });
 
     it('should  emit `answers` and `options` for CHECKBOX type', done => {
@@ -197,7 +190,7 @@ describe('QuestionOptionComponent', () => {
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitQuestionValues(true);
     });
   });
 

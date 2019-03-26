@@ -84,6 +84,9 @@ form.question-setup {
     input[type=text].long-input {
         width: 100%;
     }
+    &::placeholder {
+        color: $color-grey-3;
+    }
 }
 
 @include media(lg) {

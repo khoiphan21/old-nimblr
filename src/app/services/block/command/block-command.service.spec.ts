@@ -345,15 +345,24 @@ describe('BlockCommandService', () => {
         });
       });
 
-      it('should change "options" to be null if given undefined', done => {
-        questionInput.options = undefined;
-        // Now call the service
-        service.createBlock(questionInput).then(() => {
-          // graphQlService must be called with the right arguments
-          const queryArg = graphQlSpy.calls.mostRecent().args[1];
-          // the queryArg must have the same values
-          expect(queryArg.input.options).toBe(null);
-          done();
+      describe('cleanQuestionOptions()', () => {
+
+        it('should change "options" to be null if given undefined', done => {
+          questionInput.options = undefined;
+          // Now call the service
+          service.createBlock(questionInput).then(() => {
+            // graphQlService must be called with the right arguments
+            const queryArg = graphQlSpy.calls.mostRecent().args[1];
+            // the queryArg must have the same values
+            expect(queryArg.input.options).toBe(null);
+            done();
+          });
+        });
+
+        it('should convert items that consists empty string to null', () => {
+          const dirtyOptions = [''];
+          const cleanedOptions = service['cleanQuestionOptions'](dirtyOptions);
+          expect(cleanedOptions[0]).toBe(null);
         });
       });
 

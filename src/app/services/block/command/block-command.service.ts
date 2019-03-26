@@ -37,6 +37,7 @@ export class BlockCommandService {
         const questionInput = input as UpdateQuestionBlockInput;
         return this.updateQuestionBlock({
           id: questionInput.id,
+          type: BlockType.QUESTION,
           documentId: questionInput.documentId,
           version: questionInput.version,
           lastUpdatedBy: questionInput.lastUpdatedBy,
@@ -77,7 +78,7 @@ export class BlockCommandService {
 
       // Now do a convert for empty string in 'question'
       input.question = input.question === '' ? null : input.question;
-      input.options = input.options === undefined ? null : input.options;
+      input.options = this.cleanQuestionOptions(input.options);
 
       this.blockQueryService.registerUpdateVersion(input.version);
 
@@ -87,6 +88,17 @@ export class BlockCommandService {
     }
   }
 
+  private cleanQuestionOptions(options: Array<string>) {
+    options = options === undefined ? null : options;
+    if (options) {
+      options.forEach((option, index) => {
+        if (option === '') {
+          options[index] = null;
+        }
+      });
+    }
+    return options;
+  }
 
   /**
    * Create a block in the database based on the input.
@@ -153,7 +165,7 @@ export class BlockCommandService {
       this.blockQueryService.registerUpdateVersion(input.version);
 
       input.question = input.question === '' ? null : input.question;
-      input.options = input.options === undefined ? null : input.options;
+      input.options = this.cleanQuestionOptions(input.options);
 
       return this.graphQLService.query(createQuestionBlock, { input });
     } catch (error) {

@@ -1,6 +1,6 @@
 <div class="row no-pad" *ngIf="currentType" [ngSwitch]=currentType>
-    <form class="question-setup" [formGroup]="formGroup" *ngIf="formGroup">
-        <div formArrayName="options" *ngIf="currentType === 'CHECKBOX' || currentType === 'MULTIPLE_CHOICE'">
+    <form class="question-setup" [formGroup]="formGroup" *ngIf="formGroup && (currentType === 'CHECKBOX' || currentType === 'MULTIPLE_CHOICE')">
+        <div formArrayName="options">
             <div *ngFor="let option of formGroup.get('options').controls; let i=index">
                 <div class="option checkbox" [formGroupName]="i" *ngSwitchCase="'CHECKBOX'">
                     <input type="checkbox" id="{{i}}">

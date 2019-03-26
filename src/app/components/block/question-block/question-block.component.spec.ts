@@ -46,6 +46,7 @@ describe('QuestionBlockComponent', () => {
     component = fixture.componentInstance;
     spyOn(component, 'toggleOptions').and.callThrough();
     component.questionBlock = block as QuestionBlock;
+    component.ngOnChanges();
     fixture.detectChanges();
   });
 
@@ -80,7 +81,7 @@ describe('QuestionBlockComponent', () => {
   });
 
   /* tslint:disable:no-string-literal */
-  describe('updateValue', () => {
+  describe('updateQuestionValue', () => {
     let blockCommandSpy: jasmine.Spy;
     const emittedValue = {
       answers: [],
@@ -90,6 +91,7 @@ describe('QuestionBlockComponent', () => {
       spyOn(component['blockFactoryService'], 'createAppBlock').and.callThrough();
       blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
       blockCommandSpy.and.returnValues(Promise.resolve());
+      component.currentType = QuestionType.PARAGRAPH;
     });
 
     it('should call `createAppBlock` with the right argument', async () => {
