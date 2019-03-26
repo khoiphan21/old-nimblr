@@ -10,7 +10,7 @@ import { skip, take } from 'rxjs/operators';
 import { DocumentFactoryService } from '../document/factory/document-factory.service';
 import { environment } from '../../../environments/environment';
 
-describe('NavigationBarService', () => {
+describe('(Integration) NavigationBarService', () => {
   let accountService: AccountService;
   let documentService: DocumentService;
   let service: NavigationBarService;
@@ -52,23 +52,27 @@ describe('NavigationBarService', () => {
     it('should update the navigation bar when a new document is created', done => {
       accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         let navigationTabCount = 0;
+        let originalCount;
 
-        service.getNavigationBar$().pipe(skip(2)).subscribe(navigationTabs => {
+        service.getNavigationBar$().pipe(skip(2)).pipe(take(2)).subscribe(navigationTabs => {
           navigationTabCount = navigationTabs.length;
+          if (!originalCount) {
+            originalCount = navigationTabCount;
+          }
           switch (navigationTabCount) {
-            case 0:
+            case originalCount:
               setTimeout(() => {
                 documentService.createFormDocument();
               }, environment.WAIT_TIME_BEFORE_UPDATE);
               break;
-            case 1:
+            case originalCount + 1:
               const docId = navigationTabs[0].id;
               documentService.deleteDocument(docId).then(() => {
               });
               done();
               break;
             default:
-              fail();
+              fail('Number of tabs counted is wrong: ' + navigationTabCount);
               done();
               break;
           }
