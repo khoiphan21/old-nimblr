@@ -20,11 +20,16 @@ type Document @model {
   lastUpdatedBy: String
   createdAt: String
   updatedAt: String
+  sharingStatus: SharingStatus
 }
 
 enum DocumentType {
   GENERIC
   FORM
+}
+
+enum SharingStatus {
+  PUBLIC
 }
 
 type Block @model {

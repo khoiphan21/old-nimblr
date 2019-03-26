@@ -14,7 +14,7 @@ import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentQueryService', () => {
+fdescribe('(Integration) DocumentQueryService', () => {
   const service$ = new BehaviorSubject<DocumentQueryService>(null);
   let graphQlService: GraphQLService;
   TestBed.configureTestingModule({});
@@ -151,6 +151,37 @@ describe('DocumentQueryService', () => {
             setTimeout(() => done(), 500); // register the test as completed
           }
         }, error => processTestError('Error setting up subscription', error, done));
+      }
+    });
+
+    describe('[ANONYMOUS ACCESS]', () => {
+      beforeEach(async () => {
+        await Auth.signOut();
+      });
+
+      it('should not be able to query a non-public document ', async () => {
+        const service = await getService();
+
+        await helper.sendCreateDocument(input);
+        await Auth.signOut();
+
+        try {
+          await getFirstDocument(service);
+          fail('error must be thrown');
+        } catch (error) {
+          console.error(error);
+        }
+
+        await helper.deleteDocument();
+      });
+
+      async function getFirstDocument(service: DocumentQueryService): Promise<any> {
+        return new Promise((resolve, reject) => {
+          service.getDocument$(helper.getCreatedDocument().id).subscribe(document => {
+            if (document === null) { return; }
+            resolve(document);
+          }, error => reject(error));
+        });
       }
     });
 
