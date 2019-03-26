@@ -12,9 +12,6 @@ import { BlockQueryService } from '../../services/block/query/block-query.servic
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
 
-
-
-
 const uuidv4 = require('uuid/v4');
 
 @Component({
@@ -25,6 +22,8 @@ const uuidv4 = require('uuid/v4');
 export class DocumentPageComponent implements OnInit {
 
   isUserLoggedIn: boolean;
+  isPlaceholderShown: boolean;
+  docTitle: string;
 
   currentDocument: Document;
   private document$: Observable<Document>;
@@ -116,17 +115,6 @@ export class DocumentPageComponent implements OnInit {
 
   async updateValue(): Promise<any> {
     return new Promise((resolve, reject) => {
-      //   clearTimeout(this.timeout);
-      //   this.timeout = setTimeout(() => {
-      //     const updatedBlock: Block = this.factoryService.createAppBlock({
-      //       id: this.block.id,
-      //       type: this.block.type,
-      //       documentId: this.block.documentId,
-      //       lastUpdatedBy: this.block.lastUpdatedBy,
-      //       value: this.value,
-      //       createdAt: this.block.createdAt
-      //     });
-
       const input: UpdateDocumentInput = {
         id: '',
         title: '',
@@ -142,11 +130,11 @@ export class DocumentPageComponent implements OnInit {
   }
 
   togglePlaceholder(status: boolean) {
-    // if (this.value.length > 0 || status === false) {
-    //   this.isPlaceholderShown = false;
-    // } else {
-    //   this.isPlaceholderShown = true;
-    // }
+    if (this.docTitle.length > 0 || status === false) {
+      this.isPlaceholderShown = false;
+    } else {
+      this.isPlaceholderShown = true;
+    }
   }
 
 }
