@@ -71,6 +71,21 @@ form.question-setup {
     }
 }
 
+.form-input {
+    width: 100%;
+    height: auto;
+    margin-top: $answer-margin-top;
+    input[type=text] {
+        width: 60%;
+        border: 0;
+        border-bottom: 1px solid #979797;
+        pointer-events: none;
+    }
+    input[type=text].long-input {
+        width: 100%;
+    }
+}
+
 @include media(lg) {
     form.question-setup {
         width: 100%;

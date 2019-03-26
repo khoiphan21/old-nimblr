@@ -3,7 +3,7 @@
     <div class="question">
         {{question}}
     </div>
-    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style=" width: 100%;"></app-question-option>
+    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" style=" width: 100%;"></app-question-option>
 </section>
 <section class="mobile edit-question" *ngIf="!isPreviewMode" [@slideBottomToTopAnimation]>
     <div class="row no-pad header">
@@ -16,7 +16,7 @@
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style=" width: 100%;"></app-question-option>
+        <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" style=" width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">
@@ -30,7 +30,7 @@
                 <div *ngSwitchCase="'CHECKBOX'">
                     <i class="fas fa-check-square"></i><span>Checkbox</span>
                 </div>
-                <div *ngSwitchCase="'MULTIPLCE_CHOICE'">
+                <div *ngSwitchCase="'MULTIPLE_CHOICE'">
                     <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
                 </div>
                 <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isQuestionOptionShown === true}"></i>
@@ -51,7 +51,7 @@
                     <div class="option" (click)="selectType('CHECKBOX')">
                         <i class="fas fa-check-square"></i><span>Checkbox</span>
                     </div>
-                    <div class="option" (click)="selectType('MULTIPLCE_CHOICE')">
+                    <div class="option" (click)="selectType('MULTIPLE_CHOICE')">
                         <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
                     </div>
                 </section>

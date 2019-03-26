@@ -9,7 +9,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { QuestionBlock } from 'src/app/classes/question-block';
 const uuidv4 = require('uuid/v4');
 
-fdescribe('QuestionBlockComponent', () => {
+describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
   let fixture: ComponentFixture<QuestionBlockComponent>;
   let blockFactoryService: BlockFactoryService;
