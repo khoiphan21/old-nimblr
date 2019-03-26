@@ -15,6 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
+import { DocumentCommandService } from 'src/app/services/document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -290,22 +291,32 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  describe('updateValue()', () => {
+  fdescribe('updateValue()', () => {
+    let spyUpdate: jasmine.Spy;
 
     beforeEach(() => {
 
     });
 
-    it('should send graphql query via service updateDocument', () => {
-
+    fit('should send graphql query via service updateDocument', () => {
+      // TODO: Why wrap 'documentCommandService' with 'component'?
+      // I think i didnt do that in service? what so special about compoent
+      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument');
+      component.updateValue().then(() => {
+        expect(spyUpdate.calls.count()).toBe(1);
+      })
     });
 
     it('should resolve with response from graphql ??', () => {
 
     });
 
-    it('should reject when failed', () => {
-
+    fit('should reject when failed', () => {
+      const errMsg = 'test err';
+      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.reject(new Error(errMsg)));
+      component.updateValue().catch(response => {
+        expect(response).toThrowError(errMsg);
+      });
     });
   });
 
