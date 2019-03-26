@@ -289,4 +289,38 @@ describe('DocumentPageComponent', () => {
       }
     });
   });
+
+  describe('updateValue()', () => {
+
+    beforeEach(() => {
+
+    });
+
+    it('should send graphql query via service updateDocument', () => {
+
+    });
+
+    it('should resolve with response from graphql ??', () => {
+
+    });
+
+    it('should reject when failed', () => {
+
+    });
+  });
+
+  describe('togglePlaceholder()', () => {
+
+    beforeEach(() => {
+
+    });
+
+    it('should change isPlaceholderShown to false', () => {
+
+    });
+
+    it('should change isPlaceholderShown to true', () => {
+
+    });
+  });
 });
