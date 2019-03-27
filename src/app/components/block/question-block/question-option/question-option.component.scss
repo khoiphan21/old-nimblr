@@ -41,7 +41,7 @@ form.question-setup {
             border-radius: 3px;
             padding-left: 5px;
             &::placeholder {
-                color: $color-grey-1;
+                color: $color-grey-3;
             }
         }
         .add-option {
@@ -129,7 +129,7 @@ form.question-setup {
                 border-radius: 3px;
                 padding-left: 5px;
                 &::placeholder {
-                    color: $color-grey-1;
+                    color: $color-grey-3;
                 }
             }
             .add-option {
