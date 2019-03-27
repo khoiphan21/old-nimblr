@@ -203,6 +203,14 @@ describe('DocumentPageComponent', () => {
       }, 3);
     });
 
+    it('should change docTitle', done => {
+      getDocument$.next(document);
+      setTimeout(() => {
+        expect(component['docTitle']).toEqual(document.title);
+        done();
+      }, 3);
+    });
+
     it('should not do anything if document returned is null', done => {
       getDocument$.next(null);
       setTimeout(() => {
