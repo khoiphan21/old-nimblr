@@ -24,10 +24,12 @@ export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
   isPlaceholderShown: boolean;
   docTitle: string;
-  
+
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
+  private timeout: any;
+
   // blockIds: Array<string>;
 
   @Input() block: TextBlock;
@@ -125,24 +127,27 @@ export class DocumentPageComponent implements OnInit {
   }
 
   async updateDocTitle(): Promise<any> {
+    const timeoutlimit = 500;
+
     return new Promise((resolve, reject) => {
-      const input: UpdateDocumentInput = {
-        id: this.currentDocument.id,
-        version: this.currentDocument.version,
-        type: this.currentDocument.type,
-        lastUpdatedBy: this.currentDocument.lastUpdatedBy,
-        title: this.docTitle,
-        createdAt: this.currentDocument.createdAt,
-        updatedAt: this.currentDocument.updatedAt,
-      };
-
-      console.log(this.docTitle);
-
-      this.documentCommandService.updateDocument(input).then(data => {
-        resolve(input);
-      }).catch(err => {
-        reject(err);
-      });
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        const input: UpdateDocumentInput = {
+          id: this.currentDocument.id,
+          version: this.currentDocument.version,
+          type: this.currentDocument.type,
+          lastUpdatedBy: this.currentDocument.lastUpdatedBy,
+          title: this.docTitle,
+          createdAt: this.currentDocument.createdAt,
+          updatedAt: this.currentDocument.updatedAt,
+        };
+        console.log(this.docTitle);
+        this.documentCommandService.updateDocument(input).then(data => {
+          resolve(input);
+        }).catch(err => {
+          reject(err);
+        });
+      }, timeoutlimit);
     });
   }
 

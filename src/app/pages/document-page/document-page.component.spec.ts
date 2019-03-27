@@ -299,9 +299,10 @@ describe('DocumentPageComponent', () => {
       }
     });
   });
-  
-  describe('updateDocTitle()', () => {
+
+  fdescribe('updateDocTitle()', () => {
     let spyUpdate: jasmine.Spy;
+    let spyUpdateDocTitle: jasmine.Spy;
 
     let testId;
     let testTitle;
@@ -309,16 +310,28 @@ describe('DocumentPageComponent', () => {
     beforeEach(() => {
       // TODO: Why wrap 'documentCommandService' with 'component'?
       // I think i didnt do that in service? what so special about compoent
+      // TODO: all tests failed after setting up timeout
       testId = 'test id';
       testTitle = 'test title';
       spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('ok'));
+      spyUpdateDocTitle = spyOn(component, 'updateDocTitle');
+
     });
 
-    it('should call service updateDocument', done => {
+    fit('should return a promise', () => {
+      // I realized this test help me identify the problem of using timeout
+      const data = component.updateDocTitle();
+      console.log(typeof data);
+      expect(data instanceof Promise).toBeTruthy();
+    });
+
+    it('should call service updateDocument', async done => {
+      console.log(component.updateDocTitle());
       component.updateDocTitle().then(() => {
         expect(spyUpdate.calls.count()).toBe(1);
         done();
       });
+
     });
 
     // TODO: the actual challenging part
@@ -338,8 +351,14 @@ describe('DocumentPageComponent', () => {
       });
     });
 
-    it('should have a timeout... ', () => {
-
+    it('should not call updateDocTitle again for consecutive updates', done => {
+      component.updateDocTitle();
+      setTimeout(() => {
+        component.updateDocTitle().then(() => {
+          expect(spyUpdateDocTitle).toHaveBeenCalledTimes(1);
+          done();
+        });
+      }, 100);
     });
 
     it('should reject when failed', done => {
@@ -352,7 +371,7 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  fdescribe('togglePlaceholder()', () => {
+  describe('togglePlaceholder()', () => {
 
     let spyPlaceholderFlag: jasmine.Spy;
     let spyTitle: jasmine.Spy;
