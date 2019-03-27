@@ -8,8 +8,11 @@ import { fadeInOutAnimation } from 'src/app/animation';
   animations: [fadeInOutAnimation]
 })
 export class HeaderSharingComponent implements OnInit {
+  isPublic = true;
+
   @Input() isSharingShown: boolean;
   @Output() hideSharingEvent = new EventEmitter<boolean>();
+
   constructor() { }
 
   ngOnInit() {
@@ -23,8 +26,8 @@ export class HeaderSharingComponent implements OnInit {
 
   }
 
-  toggleSharing(event: Event) {
-    event.stopPropagation();
+  toggleSharing() {
+    this.isPublic = !this.isPublic;
   }
 
 }

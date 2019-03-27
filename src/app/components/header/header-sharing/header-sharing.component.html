@@ -11,8 +11,8 @@
         <p class="sub-status">Anyone with the link can access the page</p>
       </div>
       <div class="sharing-button">
-        <input type="checkbox" id="switch"/>
-        <label for="switch" (click)="toggleSharing($event)"></label>
+        <input type="checkbox" [checked]="isPublic" (change)="toggleSharing()" id="switch"/>
+        <label for="switch"></label>
       </div>
     </div>
   </div>

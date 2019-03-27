@@ -28,27 +28,28 @@ section.container {
           width: 0;
           visibility: hidden;
         }
-        
+        $height: 28px;
         label {
           cursor: pointer;
           text-indent: -9999px;
-          width: 200px;
-          height: 100px;
+          width: $height * 2;
+          height: $height;
           background: grey;
           display: block;
-          border-radius: 100px;
+          border-radius: $height;
           position: relative;
         }
-        
+        $button-height: $height * 0.9;
+        $margin: $height * 0.05;
         label:after {
           content: '';
           position: absolute;
-          top: 5px;
-          left: 5px;
-          width: 90px;
-          height: 90px;
+          top: $margin;
+          left: $margin;
+          width: $button-height;
+          height: $button-height;
           background: #fff;
-          border-radius: 90px;
+          border-radius: $button-height;
           transition: 0.3s;
         }
         
@@ -57,20 +58,12 @@ section.container {
         }
         
         input:checked + label:after {
-          left: calc(100% - 5px);
+          left: calc(100% - 2px);
           transform: translateX(-100%);
         }
         
         label:active:after {
-          width: 130px;
-        }
-        
-        // centering
-        body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
+          width: $height * 1.3;
         }
       }
     }
