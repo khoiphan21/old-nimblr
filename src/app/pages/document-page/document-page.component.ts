@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
-import { BlockType } from 'src/API';
+import { BlockType, SharingStatus } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
@@ -22,6 +22,7 @@ const uuidv4 = require('uuid/v4');
 export class DocumentPageComponent implements OnInit {
 
   isUserLoggedIn: boolean;
+  currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
   private document$: Observable<Document>;
@@ -76,7 +77,8 @@ export class DocumentPageComponent implements OnInit {
     this.document$.subscribe(document => {
       if (document === null) { return; }
       this.currentDocument = document;
-      // this.blockIds = document.blockIds;
+      this.currentSharingStatus = this.currentDocument.sharingStatus;
+
       this.setupBlockUpdateSubscription();
     }, error => {
       console.error(`DocumentPage failed to get document: ${error.message}`);
@@ -109,6 +111,12 @@ export class DocumentPageComponent implements OnInit {
       const message = `DocumentPage failed to add block: ${error.message}`;
       throw new Error(message);
     }
+  }
+
+  changeSharingStatus(status: SharingStatus) {
+    this.currentSharingStatus = status;
+    this.currentDocument.sharingStatus = status;
+    this.documentCommandService.updateDocument(this.currentDocument);
   }
 
 }

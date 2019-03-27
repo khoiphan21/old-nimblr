@@ -20,27 +20,114 @@ section.container {
     background: white;
     top: 31px;
     right: 24px;
-    width: 177px !important;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      border-bottom: #DDD solid 1px;
+
+      button {
+        height: 32px;
+        border-radius: 40px;
+        width: 50%;
+        font-size: 0.75rem;
+        padding: 1px 5px;
+
+        &:focus {
+          outline: none;
+        }
+
+        &.invite-person {
+          background-color: $color-blue-2;
+          color: white;
+
+          &:hover {
+            // background-color: lighten($color-blue-2, 3);
+            filter: brightness(110%);
+          }
+
+        }
+
+        &.copy-page-link {
+          color: $color-grey-1;
+          background-color: transparent;
+
+          &:hover {
+            color: $color-blue-2;
+          }
+        }
+      }
+    }
+
     .change-sharing-status {
+      min-height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 15px;
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          font-size: 20px;
+          color: $color-light-steel-blue;
+        }
+      }
+
+      .status {
+        margin-right: 20px;
+        margin-left: 4px;
+
+        p {
+          margin: 0;
+        }
+
+        .status-detail {
+          font-size: 0.8rem;
+          font-weight: 400;
+        }
+
+        .sub-status {
+          margin-top: 5px;
+          font-size: 0.7rem;
+        }
+      }
+
       .sharing-button {
-        input[type=checkbox]{
+        display: flex;
+        align-items: center;
+
+        input[type=checkbox] {
           height: 0;
           width: 0;
           visibility: hidden;
         }
-        $height: 28px;
+
+        $height: 20px;
+
         label {
           cursor: pointer;
           text-indent: -9999px;
-          width: $height * 2;
+          width: $height * 1.8;
           height: $height;
-          background: grey;
+          background: $color-blue-3;
           display: block;
           border-radius: $height;
           position: relative;
+          margin: 0;
         }
-        $button-height: $height * 0.9;
-        $margin: $height * 0.05;
+
+        $button-height: $height * 0.8;
+        $margin: $height * 0.1;
+
         label:after {
           content: '';
           position: absolute;
@@ -48,20 +135,22 @@ section.container {
           left: $margin;
           width: $button-height;
           height: $button-height;
-          background: #fff;
+          background: $color-light-steel-blue;
           border-radius: $button-height;
           transition: 0.3s;
+          margin: 0;
         }
-        
-        input:checked + label {
-          background: #bada55;
+
+        input:checked+label {
+          background: $color-blue-2;
         }
-        
-        input:checked + label:after {
+
+        input:checked+label:after {
           left: calc(100% - 2px);
           transform: translateX(-100%);
+          background: white;
         }
-        
+
         label:active:after {
           width: $height * 1.3;
         }
