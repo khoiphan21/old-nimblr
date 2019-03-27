@@ -4,8 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { CreateDocumentInput, DocumentType } from '../../../API';
+import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../API';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
+
+const uuidv4 = require('uuid/v4');
 
 describe('DocumentQueryTestHelper', () => {
   const helper$ = new BehaviorSubject<DocumentQueryTestHelper>(null);
@@ -22,7 +24,12 @@ describe('DocumentQueryTestHelper', () => {
       if (helper === null) { return; }
       let createdId: string;
       const input: CreateDocumentInput = {
-        type: DocumentType.FORM
+        id: uuidv4(),
+        version: uuidv4(),
+        ownerId: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        sharingStatus: SharingStatus.PRIVATE,
+        type: DocumentType.GENERIC
       };
       const testTitle = 'Updated title (testing Helper)';
       helper.sendCreateDocument(input).then(createdDocument => {
@@ -46,8 +53,8 @@ describe('DocumentQueryTestHelper', () => {
         expect(deletedResponse.id).toEqual(createdId);
         done();
       }).catch(error => processTestError('error creating document', error, done));
-    }, error => processTestError('unable to get helper', error, done) );
+    }, error => processTestError('unable to get helper', error, done));
   });
 
-  
+
 });

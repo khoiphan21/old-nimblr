@@ -160,7 +160,7 @@ describe('DocumentQueryService', () => {
       describe('[ERROR]', () => {
         it('should emit the error thrown by the query method', done => {
           // setup query spy to throw an error
-          const expectedMessage = `Unable to send query: test`;
+          const expectedMessage = `[DocumentQueryService] Unable to send query: test`;
           querySpy.and.returnValue(Promise.reject(Error('test')));
           // call service
           service.getDocument$(id).subscribe(() => { }, error => {

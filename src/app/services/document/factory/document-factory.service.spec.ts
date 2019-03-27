@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { DocumentFactoryService } from './document-factory.service';
 import { isUuid } from '../../../classes/helpers';
-import { DocumentType } from 'src/API';
+import { DocumentType, SharingStatus } from 'src/API';
 
 const uuidv4 = require('uuid/v4');
 
@@ -56,6 +56,9 @@ describe('DocumentFactoryService', () => {
       it('should set updatedAt', () => {
         expect(new Date(document.updatedAt) instanceof Date).toBe(true);
       });
+      it('should set sharingStatus', () => {
+        expect(document.sharingStatus).toBe(null);
+      });
     });
 
     it('should store the id', () => {
@@ -81,7 +84,7 @@ describe('DocumentFactoryService', () => {
     });
 
     it('should store the type if given', () => {
-      input.type = DocumentType.FORM;
+      input.type = DocumentType.GENERIC;
       const document = service.createDocument(input);
       expect(document.type).toEqual(input.type);
     });
@@ -120,6 +123,12 @@ describe('DocumentFactoryService', () => {
       input.updatedAt = new Date().toISOString();
       const document = service.createDocument(input);
       expect(document.updatedAt).toEqual(input.updatedAt);
+    });
+
+    it('should store the sharingStatus if given', () => {
+      input.sharingStatus = SharingStatus.PUBLIC;
+      const document = service.createDocument(input);
+      expect(document.sharingStatus).toEqual(input.sharingStatus);
     });
 
   });

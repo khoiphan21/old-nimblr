@@ -8,20 +8,6 @@ import { DocumentQueryService } from '../query/document-query.service';
 export type UUID = string;
 export type ISOTimeString = string;
 
-export interface UpdateFormDocumentInput {
-  id: UUID;
-  title: string;
-  version: UUID;
-  lastUpdatedBy: UUID;
-  updatedAt: ISOTimeString;
-  type?: DocumentType | null;
-  ownerId?: UUID | null;
-  editorIds?: Array< UUID | null > | null;
-  viewerIds?: Array< UUID | null > | null;
-  order?: Array< string | null > | null;
-  blockIds?: Array< UUID | null > | null;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -33,23 +19,21 @@ export class DocumentCommandService {
   ) { }
 
   async createDocument(input: CreateDocumentInput): Promise<any> {
-    try {
-      this.validateCreateInput(input);
+    this.validateCreateInput(input);
 
-      const response: any = await this.graphQlService.query(createDocument, { input });
-      return Promise.resolve(response.data.createDocument);
-    } catch (error) {
-      return Promise.reject(error);
+    // Change title to null if an empty string
+    if (input.title === '') {
+      input.title = null;
     }
+
+    const response: any = await this.graphQlService.query(createDocument, { input });
+
+    return response.data.createDocument;
   }
 
   private validateCreateInput(input: any) {
     this.checkIfMissing(input.type, 'type');
-    switch (input.type) {
-      case DocumentType.FORM:
-        this.validateCreateInputForForm(input);
-        return;
-    }
+    this.validateCreateInputGeneral(input);
   }
 
   private checkIfMissing(input: any, propertyName) {
@@ -58,10 +42,10 @@ export class DocumentCommandService {
     }
   }
 
-  private validateCreateInputForForm(input: any) {
+  private validateCreateInputGeneral(input: any) {
     // Check for general missing arguments
     const requiredArgs = [
-      'version', 'ownerId', 'lastUpdatedBy'
+      'version', 'ownerId', 'lastUpdatedBy', 'sharingStatus'
     ];
     requiredArgs.forEach(arg => {
       this.checkIfMissing(input[arg], arg);
@@ -72,11 +56,6 @@ export class DocumentCommandService {
       'version', 'ownerId', 'lastUpdatedBy'
     ];
     this.checkIfUuid(input, shouldBeUuids);
-
-    // Checks for some specific properties
-    if (input.title === '') {
-      throw new Error('Invalid parameter: Document title cannot be an empty string');
-    }
   }
 
   private checkIfUuid(input, shouldBeUuids: Array<string>) {
@@ -87,9 +66,9 @@ export class DocumentCommandService {
     });
   }
 
-  async updateDocument(input: UpdateDocumentInput | UpdateFormDocumentInput): Promise<any> {
+  async updateDocument(input: UpdateDocumentInput): Promise<any> {
     try {
-      this.validateUpdateInput(input as UpdateFormDocumentInput);
+      this.validateUpdateInput(input);
 
       // Update the list of versions to be ignored
       this.queryService.registerUpdateVersion(input.version);
@@ -101,7 +80,7 @@ export class DocumentCommandService {
     }
   }
 
-  private validateUpdateInput(input: UpdateFormDocumentInput) {
+  private validateUpdateInput(input: UpdateDocumentInput) {
     // Check for general missing arguments
     const requiredArgs = [
       'version', 'id', 'lastUpdatedBy', 'updatedAt'

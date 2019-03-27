@@ -5,29 +5,28 @@ import { BehaviorSubject } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
 import { deleteDocument } from '../../../../graphql/mutations';
-import { processTestError } from '../../../classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 
 describe('(Integration) DocumentCommandService', () => {
   const service$ = new BehaviorSubject<DocumentCommandService>(null);
   let graphQlService: GraphQLService;
-  TestBed.configureTestingModule({});
 
   let input: CreateDocumentInput;
   let storedDocument: any;
 
   beforeEach(() => {
+    TestBed.configureTestingModule({});
     input = {
-      type: DocumentType.FORM,
+      type: DocumentType.GENERIC,
       version: uuidv4(),
       ownerId: uuidv4(),
-      lastUpdatedBy: uuidv4()
+      lastUpdatedBy: uuidv4(),
+      sharingStatus: SharingStatus.PRIVATE
     };
     graphQlService = TestBed.get(GraphQLService);
-
   });
 
   interface RunTestInput {
@@ -52,10 +51,9 @@ describe('(Integration) DocumentCommandService', () => {
     });
   }
 
-  describe('createDocument for FORM', () => {
+  describe('createDocument', () => {
 
-
-    it('should create a form document', done => {
+    it('should create a GENERIC document', done => {
       getService().then(service => {
         return service.createDocument(input);
       }).then(createdDocument => {
@@ -67,7 +65,7 @@ describe('(Integration) DocumentCommandService', () => {
         expect(deletedDocument.id).toEqual(storedDocument.id);
         done();
       }).catch(error => console.error(error));
-    });
+    }, 10000);
 
   });
 
