@@ -16,6 +16,7 @@ import { DocumentFactoryService } from 'src/app/services/document/factory/docume
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
 import { DocumentCommandService } from 'src/app/services/document/command/document-command.service';
+import { domRendererFactory3 } from '@angular/core/src/render3/interfaces/renderer';
 
 const uuidv4 = require('uuid/v4');
 
@@ -290,35 +291,55 @@ describe('DocumentPageComponent', () => {
       }
     });
   });
-
-  describe('updateValue()', () => {
+  
+  describe('updateDocTitle()', () => {
     let spyUpdate: jasmine.Spy;
+
+    let testId;
+    let testTitle;
 
     beforeEach(() => {
       // TODO: Why wrap 'documentCommandService' with 'component'?
       // I think i didnt do that in service? what so special about compoent
-      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument');
+      testId = 'test id';
+      testTitle = 'test title';
+      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('ok'));
     });
 
-    it('should call service updateDocument', () => {
-      component.updateValue().then(() => {
+    it('should call service updateDocument', done => {
+      component.updateDocTitle().then(() => {
         expect(spyUpdate.calls.count()).toBe(1);
+        done();
       });
     });
 
-    it('should send correct graphql query via service updateDocument', () => {
+    // TODO: the actual challenging part
+    it('should send correct graphql query via service updateDocument', async done => {
+      component['docTitle'] = testTitle;
+      component['currentDocument'] = {
+        id: testId,
+      } as Document;
+
+      const expInput = {
+        id: testId,
+        title: testTitle,
+      };
+      await component.updateDocTitle().then(() => {
+        expect(spyUpdate).toHaveBeenCalledWith(expInput);
+        done();
+      });
+    });
+
+    it('should have a timeout... ', () => {
 
     });
 
-    it('should resolve with response from graphql ??', () => {
-
-    });
-
-    it('should reject when failed', () => {
+    it('should reject when failed', done => {
       const errMsg = 'test err';
       spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.reject(new Error(errMsg)));
-      component.updateValue().catch(response => {
+      component.updateDocTitle().catch(response => {
         expect(response).toThrowError(errMsg);
+        done();
       });
     });
   });
@@ -329,26 +350,29 @@ describe('DocumentPageComponent', () => {
     let spyTitle: jasmine.Spy;
 
     beforeEach(() => {
-      spyTitle = spyOn<any>(component['documentCommandService'], 'docTitle');
-      spyPlaceholderFlag = spyOn<any>(component['documentCommandService'], 'isPlaceholderShown');
+      // spyTitle = spyOn<any>(component, 'docTitle');
+      // spyPlaceholderFlag = spyOn<any>(component['documentCommandService'], 'isPlaceholderShown');
     });
 
-    it('should change isPlaceholderShown to false when title is not empty', () => {
-      spyTitle.and.returnValue('hello');
-      component.togglePlaceholder(false);
+    it('should change isPlaceholderShown to false when title is not empty', done => {
+      component['docTitle'] = 'hello';
+      component.togglePlaceholder();
       expect(component['documentCommandService.isPlaceholderShown']).toBeFalsy();
+      done();
     });
 
-    it('should change isPlaceholderShown to true', () => {
-      spyTitle.and.returnValue('');
-      component.togglePlaceholder(false);
+    it('should change isPlaceholderShown to true', done => {
+      component['docTitle'] = '';
+      component.togglePlaceholder();
       expect(component['documentCommandService.isPlaceholderShown']).toBeTruthy();
+      done();
     });
 
-    it('should remain true when title is empty and status is true', () => {
-      spyTitle.and.returnValue('');
-      component.togglePlaceholder(true);
-      expect(component['documentCommandService.isPlaceholderShown']).toBeTruthy();
-    });
+    // it('should remain true when title is empty and status is true', done => {
+    //   spyTitle.and.returnValue('');
+    //   component.togglePlaceholder();
+    //   expect(component['documentCommandService.isPlaceholderShown']).toBeTruthy();
+    //   done();
+    // });
   });
 });

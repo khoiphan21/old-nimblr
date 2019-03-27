@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
@@ -11,6 +11,7 @@ import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
+import { Block, TextBlock } from 'src/app/classes/block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -20,15 +21,16 @@ const uuidv4 = require('uuid/v4');
   styleUrls: ['./document-page.component.scss']
 })
 export class DocumentPageComponent implements OnInit {
-
   isUserLoggedIn: boolean;
   isPlaceholderShown: boolean;
   docTitle: string;
-
+  
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
   // blockIds: Array<string>;
+
+  @Input() block: TextBlock;
 
   constructor(
     private documentQueryService: DocumentQueryService,
@@ -53,6 +55,11 @@ export class DocumentPageComponent implements OnInit {
       const message = `DocumentPage failed to load: ${error.message}`;
       throw new Error(message);
     }
+
+
+    // Title placeholder
+    this.docTitle = null;
+    this.togglePlaceholder();
   }
 
   async checkUser(): Promise<User> {
@@ -78,6 +85,10 @@ export class DocumentPageComponent implements OnInit {
     this.document$.subscribe(document => {
       if (document === null) { return; }
       this.currentDocument = document;
+
+      // added in for edit title
+      this.docTitle = document.title;
+
       // this.blockIds = document.blockIds;
       this.setupBlockUpdateSubscription();
     }, error => {
@@ -113,24 +124,30 @@ export class DocumentPageComponent implements OnInit {
     }
   }
 
-  async updateValue(): Promise<any> {
+  async updateDocTitle(): Promise<any> {
     return new Promise((resolve, reject) => {
       const input: UpdateDocumentInput = {
-        id: '',
-        title: '',
+        id: this.currentDocument.id,
+        version: this.currentDocument.version,
+        type: this.currentDocument.type,
+        lastUpdatedBy: this.currentDocument.lastUpdatedBy,
+        title: this.docTitle,
+        createdAt: this.currentDocument.createdAt,
+        updatedAt: this.currentDocument.updatedAt,
       };
-      this.documentCommandService.updateDocument(input).then(() => {
 
-        resolve();
+      console.log(this.docTitle);
+
+      this.documentCommandService.updateDocument(input).then(data => {
+        resolve(input);
       }).catch(err => {
-
-        reject();
+        reject(err);
       });
     });
   }
 
-  togglePlaceholder(status: boolean) {
-    if (this.docTitle.length > 0 || status === false) {
+  togglePlaceholder() {
+    if (this.docTitle.length > 0) {
       this.isPlaceholderShown = false;
     } else {
       this.isPlaceholderShown = true;
