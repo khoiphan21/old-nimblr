@@ -20,7 +20,6 @@ class MockDocumentService {
   getUserDocuments$() {
     return new BehaviorSubject(null);
   }
-  createFormDocument() { }
 }
 
 describe('DashboardPageComponent', () => {

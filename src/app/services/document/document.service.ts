@@ -17,7 +17,6 @@ import { GraphQLError } from '../graphQL/error';
 })
 export class DocumentService {
 
-  private currentDocument$: BehaviorSubject<Document>;
   private userDocuments$: BehaviorSubject<Array<Document>>;
 
   constructor(
@@ -25,7 +24,6 @@ export class DocumentService {
     private documentFactory: DocumentFactoryService,
     private graphQlService: GraphQLService
   ) {
-    this.currentDocument$ = new BehaviorSubject(null);
   }
 
   /**
@@ -68,54 +66,6 @@ export class DocumentService {
     );
 
     return parsedDocuments;
-  }
-
-  /**
-   * Create a new form document and set the current document to
-   * be that newly created document
-   */
-  async createFormDocument(): Promise<Document> {
-    let response: any; // the response from GraphQL query
-
-    const user = await this.accountService.isUserReady();
-
-    const queryArg = {
-      input: {
-        type: DocumentType.GENERIC,
-        title: null,
-        ownerId: user.id,
-        editorIds: [],
-        viewerIds: [],
-        order: []
-      }
-    };
-
-    try {
-      response = await this.graphQlService.query(
-        createDocument, queryArg
-      );
-    } catch (error) {
-      throw new GraphQLError({
-        message: `failed to create form document`,
-        query: createDocument,
-        params: queryArg,
-        backendResponse: error
-      });
-    }
-
-    const rawDocument = response.data.createDocument;
-
-    // Create a document, then emit the newly created document
-    const document = this.documentFactory.createDocument(rawDocument);
-
-    this.currentDocument$.next(document);
-
-
-    return document;
-  }
-
-  getCurrentDocument$(): Observable<Document> {
-    return this.currentDocument$;
   }
 
   getUserDocuments$(): Observable<Array<Document>> {

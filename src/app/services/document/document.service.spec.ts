@@ -84,10 +84,6 @@ describe('DocumentService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should have an observable current document', () => {
-      expect(service.getCurrentDocument$()).toBeTruthy();
-    });
-
   });
 
 
@@ -171,120 +167,6 @@ describe('DocumentService', () => {
         });
       });
 
-    });
-
-  });
-
-  describe('createFormDocument()', () => {
-    let createdDocumentResponse: any;
-    let documentId: UUID;
-    let version: UUID;
-
-    beforeEach(() => {
-      setupResponse();
-      setupSpies();
-    });
-
-    function setupResponse() {
-      documentId = uuidv4();
-      version = uuidv4();
-
-      createdDocumentResponse = {
-        id: documentId,
-        type: DocumentType.GENERIC,
-        title: null,
-        ownerId: userId,
-        editorIds: [],
-        viewerIds: [],
-        blockIds: [],
-        lastUpdatedBy: userId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-    }
-
-    function setupSpies() {
-      // Setup the graphql servicespy
-      querySpy.and.returnValue(Promise.resolve({
-        data: {
-          createDocument: createdDocumentResponse
-        }
-      }));
-    }
-
-    it('should resolve a document with the right details', done => {
-      service.createFormDocument().then(createdDocument => {
-        // Check generic properties
-        ['id', 'type', 'title', 'ownerId', 'editorIds', 'viewerIds',
-          'blockIds', 'lastUpdatedBy', 'createdAt', 'updatedAt'
-        ].forEach(property => {
-          expect(createdDocument[property]).toEqual(createdDocumentResponse[property]);
-        });
-        done();
-      });
-    });
-
-    describe('[ERROR - GraphQLService]', () => {
-
-      let backendResponse: any;
-
-      beforeEach(() => {
-        // Setup the spy to fail the promise
-        backendResponse = new Error('test');
-        querySpy.and.returnValue(Promise.reject(backendResponse));
-      });
-
-      it('should throw an error with the right message', done => {
-        const expectedMessage = `failed to create form document`;
-        // Now call the service
-        service.createFormDocument().then(() => {
-          fail('error must occur'); done();
-        }).catch(error => {
-          expect(error.message).toEqual(expectedMessage);
-          done();
-        });
-      });
-
-
-      it('should throw an error with query createDocument', done => {
-        // Now call the service
-        service.createFormDocument().then(() => {
-          fail('error must occur'); done();
-        }).catch(error => {
-          expect(error.query).toEqual(createDocument);
-          done();
-        });
-      });
-
-      it('should throw an error with the right argument', done => {
-        const expectedArg = {
-          input: {
-            type: DocumentType.GENERIC,
-            title: null,
-            ownerId: userId,
-            editorIds: [],
-            viewerIds: [],
-            order: []
-          }
-        };
-        // Now call the service
-        service.createFormDocument().then(() => {
-          fail('error must occur'); done();
-        }).catch((error: GraphQLError) => {
-          expect(error.params).toEqual(expectedArg);
-          done();
-        });
-      });
-
-      it('should throw an error with the right backend response', done => {
-        // Now call the service
-        service.createFormDocument().then(() => {
-          fail('error must occur'); done();
-        }).catch((error: GraphQLError) => {
-          expect(error.backendResponse).toEqual(backendResponse);
-          done();
-        });
-      });
     });
 
   });

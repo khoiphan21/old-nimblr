@@ -11,7 +11,7 @@ export abstract class AccountService {
     abstract async registerCognitoUser(user: CognitoSignUpUser): Promise<any>;
     abstract async awsConfirmAccount(email: string, code: string): Promise<any>;
     abstract async registerAppUser(user: CognitoSignUpUser, userId: string): Promise<any>;
-    abstract async login(email: string, password: string): Promise<any>;
+    abstract async login(email: string, password: string): Promise<User>;
     abstract logout(): Promise<any>;
     abstract update(user: User): Promise<any>;
     abstract getUser$(): Observable<User>;

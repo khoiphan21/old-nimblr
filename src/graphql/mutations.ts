@@ -65,16 +65,16 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
-    sharingStatus
   }
 }
 `;
@@ -83,16 +83,16 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
-    sharingStatus
   }
 }
 `;
@@ -101,16 +101,16 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
-    sharingStatus
   }
 }
 `;

@@ -13,12 +13,12 @@ const uuidv4 = require('uuid/v4');
 describe('(Integration) DocumentCommandService', () => {
   const service$ = new BehaviorSubject<DocumentCommandService>(null);
   let graphQlService: GraphQLService;
-  TestBed.configureTestingModule({});
 
   let input: CreateDocumentInput;
   let storedDocument: any;
 
   beforeEach(() => {
+    TestBed.configureTestingModule({});
     input = {
       type: DocumentType.GENERIC,
       version: uuidv4(),
@@ -27,7 +27,6 @@ describe('(Integration) DocumentCommandService', () => {
       sharingStatus: SharingStatus.PRIVATE
     };
     graphQlService = TestBed.get(GraphQLService);
-
   });
 
   interface RunTestInput {
@@ -52,10 +51,9 @@ describe('(Integration) DocumentCommandService', () => {
     });
   }
 
-  describe('createDocument for FORM', () => {
+  describe('createDocument', () => {
 
-
-    it('should create a form document', done => {
+    it('should create a GENERIC document', done => {
       getService().then(service => {
         return service.createDocument(input);
       }).then(createdDocument => {
@@ -67,7 +65,7 @@ describe('(Integration) DocumentCommandService', () => {
         expect(deletedDocument.id).toEqual(storedDocument.id);
         done();
       }).catch(error => console.error(error));
-    });
+    }, 10000);
 
   });
 

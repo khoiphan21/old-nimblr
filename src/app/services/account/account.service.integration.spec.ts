@@ -9,13 +9,12 @@ import { Router } from '@angular/router';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { User } from 'src/app/classes/user';
 import { CognitoSignUpUser } from '../../classes/user';
-import awsmobile from 'src/aws-exports';
+import awsmobile from 'src/aws-exports.js';
 import { environment } from '../../../environments/environment';
 import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { TEST_USERNAME, TEST_PASSWORD } from './account-impl.service.spec';
-import { UUID } from '../document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -66,16 +65,12 @@ describe('(Integration) AccountImplService', () => {
       }
     });
 
-    it('should register a user in cognito successfully and then delete it', done => {
-      service.registerCognitoUser(newCognitoUser).then(() => {
-        return adminConfirmUser(newCognitoUser.username);
-      }).then(() => {
-        return adminDeleteCognitoUser(newCognitoUser);
-      }).then(message => {
-        expect(message).toEqual('SUCCESS');
-        done();
-      }).catch(error => { fail(error); done(); });
-    }, 20000);
+    it('should register a user in cognito successfully and then delete it', async () => {
+      await service.registerCognitoUser(newCognitoUser);
+      await adminConfirmUser(newCognitoUser.username);
+      const message = await adminDeleteCognitoUser(newCognitoUser);
+      expect(message).toEqual('SUCCESS');
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     async function adminConfirmUser(username: any): Promise<any> {
 
@@ -197,7 +192,7 @@ describe('(Integration) AccountImplService', () => {
       service.login(TEST_USERNAME, password).then(() =>
         processTestError(errorMessage, errorMessage, done)
       ).catch(() => done());
-    });
+    }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     it('should emit a new user object if successfully logged in', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {

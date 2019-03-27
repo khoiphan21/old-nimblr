@@ -14,11 +14,13 @@ import { createDocument, deleteDocument } from '../../../graphql/mutations';
 import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../API';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
+import { DocumentCommandService } from './command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
 
 describe('(Integration) DocumentService', () => {
   let service: DocumentService;
+  let commandService: DocumentCommandService;
   let accountService: AccountService;
   let graphQlService: GraphQLService;
 
@@ -35,25 +37,8 @@ describe('(Integration) DocumentService', () => {
 
     accountService = TestBed.get(AccountService);
     service = TestBed.get(DocumentService);
+    commandService = TestBed.get(DocumentCommandService);
     graphQlService = TestBed.get(GraphQLService);
-  });
-
-  it('should emit a new document object upon successful creation', done => {
-    accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      service.getCurrentDocument$().subscribe(document => {
-        if (!document) { return; }
-        // some result is returned. success.
-        expect(document instanceof DocumentImpl).toBe(true);
-        service.deleteDocument(document.id).then(() => {
-          done();
-        });
-      }, error => {
-        console.error(error);
-        fail('Error occurred. View console for more details.');
-        done();
-      });
-      service.createFormDocument();
-    });
   });
 
   it('should retrieve all documents for a user', done => {
@@ -90,39 +75,4 @@ describe('(Integration) DocumentService', () => {
     }
   });
 });
-
-  // it('should subscribe to the list of backend documents', done => {
-  //   accountService.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
-  //     let count = 0;
-  //     let documentCount = 0;
-  //     // let documentCount;
-  //     const newDocumentId = new BehaviorSubject<string>(null);
-  //     accountService.login(TEST_USERNAME, TEST_PASSWORD);
-
-  //     service.getUserDocuments$().subscribe(documents => {
-  //       switch (count) {
-  //         case 0: // First value should be []
-  //           return count++;
-  //         case 1: // Get the first array of documents
-  //           documentCount = documents.length;
-  //           service.createFormDocument().then(document => {
-  //             newDocumentId.next(document.id);
-  //           });
-  //           return count++;
-  //         case 2: // After a new document is created
-  //           expect(documentCount + 1).toBe(documents.length);
-  //           newDocumentId.subscribe(id => {
-  //             if (id) {
-  //               service.deleteDocument(id).then(deletedDoc => {
-  //                 done();
-  //               });
-  //             }
-  //           });
-  //           return count++;
-  //         default:
-  //           return;
-  //       }
-  //     });
-  //   });
-  // }, environment.TIMEOUT_FOR_UPDATE_TEST);
 

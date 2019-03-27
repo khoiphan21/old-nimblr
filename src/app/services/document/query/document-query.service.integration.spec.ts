@@ -185,7 +185,7 @@ describe('(Integration) DocumentQueryService', () => {
 
         const service = await getService();
         if (input.sharingStatus) {
-          delete input.sharingStatus;
+          input.sharingStatus = SharingStatus.PRIVATE;
         }
         await helper.sendCreateDocument(input);
 
