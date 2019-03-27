@@ -1,6 +1,6 @@
 import { User } from './user';
 import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
-import { DocumentType } from 'src/API';
+import { DocumentType, SharingStatus } from 'src/API';
 
 export interface Document {
   id: UUID;
@@ -14,4 +14,5 @@ export interface Document {
   lastUpdatedBy: UUID;
   createdAt: ISOTimeString;
   updatedAt: ISOTimeString;
+  sharingStatus: SharingStatus;
 }

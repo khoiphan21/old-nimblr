@@ -15,5 +15,5 @@ export abstract class AccountService {
     abstract logout(): Promise<any>;
     abstract update(user: User): Promise<any>;
     abstract getUser$(): Observable<User>;
-    abstract isUserReady(): Promise<any>;
+    abstract isUserReady(): Promise<User>;
 }

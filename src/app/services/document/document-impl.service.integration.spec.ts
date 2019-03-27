@@ -11,9 +11,11 @@ import { skip, take } from 'rxjs/operators';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { createDocument, deleteDocument } from '../../../graphql/mutations';
-import { CreateDocumentInput, DocumentType } from '../../../API';
+import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../API';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
+
+const uuidv4 = require('uuid/v4');
 
 describe('(Integration) DocumentService', () => {
   let service: DocumentService;
@@ -57,7 +59,11 @@ describe('(Integration) DocumentService', () => {
   it('should retrieve all documents for a user', done => {
     let document: Document;
     const input: CreateDocumentInput = {
-      type: DocumentType.FORM
+      type: DocumentType.GENERIC,
+      version: uuidv4(),
+      ownerId: uuidv4(),
+      lastUpdatedBy: uuidv4(),
+      sharingStatus: SharingStatus.PRIVATE
     };
 
     accountService.login(TEST_USERNAME, TEST_PASSWORD).then((user: User) => {

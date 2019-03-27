@@ -191,7 +191,7 @@ describe('DocumentService', () => {
 
       createdDocumentResponse = {
         id: documentId,
-        type: DocumentType.FORM,
+        type: DocumentType.GENERIC,
         title: null,
         ownerId: userId,
         editorIds: [],
@@ -259,7 +259,7 @@ describe('DocumentService', () => {
       it('should throw an error with the right argument', done => {
         const expectedArg = {
           input: {
-            type: DocumentType.FORM,
+            type: DocumentType.GENERIC,
             title: null,
             ownerId: userId,
             editorIds: [],

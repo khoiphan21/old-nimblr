@@ -81,7 +81,7 @@ export class DocumentService {
 
     const queryArg = {
       input: {
-        type: DocumentType.FORM,
+        type: DocumentType.GENERIC,
         title: null,
         ownerId: user.id,
         editorIds: [],

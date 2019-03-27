@@ -19,8 +19,11 @@ describe('(Integration) DocumentQueryService', () => {
   let graphQlService: GraphQLService;
   const input: CreateDocumentInput = {
     id: uuidv4(),
-    ownerId: '',
-    type: DocumentType.FORM
+    version: uuidv4(),
+    ownerId: uuidv4(),
+    lastUpdatedBy: uuidv4(),
+    sharingStatus: SharingStatus.PRIVATE,
+    type: DocumentType.GENERIC
   };
 
   TestBed.configureTestingModule({});

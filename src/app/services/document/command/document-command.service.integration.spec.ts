@@ -5,9 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
 import { deleteDocument } from '../../../../graphql/mutations';
-import { processTestError } from '../../../classes/test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
 
@@ -21,10 +20,11 @@ describe('(Integration) DocumentCommandService', () => {
 
   beforeEach(() => {
     input = {
-      type: DocumentType.FORM,
+      type: DocumentType.GENERIC,
       version: uuidv4(),
       ownerId: uuidv4(),
-      lastUpdatedBy: uuidv4()
+      lastUpdatedBy: uuidv4(),
+      sharingStatus: SharingStatus.PRIVATE
     };
     graphQlService = TestBed.get(GraphQLService);
 

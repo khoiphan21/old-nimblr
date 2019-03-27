@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
 import { processTestError } from '../../../classes/test-helpers.spec';
 import { createDocument } from 'src/graphql/mutations';
 
@@ -23,37 +23,40 @@ describe('DocumentCommandService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     input = {
-      type: DocumentType.FORM,
+      type: DocumentType.GENERIC,
       version: uuidv4(),
       ownerId: uuidv4(),
-      lastUpdatedBy: uuidv4()
+      lastUpdatedBy: uuidv4(),
+      sharingStatus: SharingStatus.PRIVATE
     };
     service = TestBed.get(DocumentCommandService);
+    // setup graphQlService to return some results
     querySpy = spyOn(service['graphQlService'], 'query');
+    querySpy.and.returnValue(Promise.resolve({
+      data: { createDocument: null }
+    }));
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('createDocument for FORM', () => {
+  describe('createDocument', () => {
+
+    it('should change the title to null if given empty string', () => {
+      input.title = '';
+      service.createDocument(input);
+      expect(querySpy.calls.mostRecent().args[1].input.title).toBe(null);
+    });
 
     describe('(checking GraphQlService.query arguments)', () => {
-      beforeEach(() => {
-        // setup graphQlService to return some results
-        querySpy.and.returnValue(Promise.resolve({
-          data: { createDocument: null }
-        }));
-      });
-      it('should call with the right query', done => {
+      it('should call with the right query', () => {
         service.createDocument(input);
         expect(querySpy.calls.mostRecent().args[0]).toEqual(createDocument);
-        done();
       });
-      it('should call with the right argument', done => {
+      it('should call with the right argument', () => {
         service.createDocument(input);
         expect(querySpy.calls.mostRecent().args[1]).toEqual({ input });
-        done();
       });
     });
 
@@ -119,14 +122,6 @@ describe('DocumentCommandService', () => {
         runTestWithInput({ input, done, property: 'version' });
       });
 
-      it('should throw an error if the title is an empty string', done => {
-        input.title = '';
-        runTestWithInput({
-          input, done,
-          fullMessage: 'Invalid parameter: Document title cannot be an empty string'
-        });
-      });
-
       it('should throw an error if the ownerId is not a uuid', done => {
         input.ownerId = 'abcde';
         runTestWithInput({
@@ -171,11 +166,25 @@ describe('DocumentCommandService', () => {
         });
       });
 
+      it('should throw an error if sharingStatus is undefined', done => {
+        delete input.sharingStatus;
+        runTestWithInput({
+          input, done, property: 'sharingStatus'
+        });
+      });
+
+      it('should throw an error if sharingStatus is null', done => {
+        input.sharingStatus = null;
+        runTestWithInput({
+          input, done, property: 'sharingStatus'
+        });
+      });
+
     });
 
   });
 
-  describe('updateDocument for FORM', () => {
+  describe('updateDocument', () => {
 
     /* tslint:disable:no-string-literal */
     describe('[SUCCESS]', () => {
