@@ -10,8 +10,9 @@
     </section>
     <section class="document-tab pr-4" *ngIf="currentUrl === 'document'">
         <span class="mobile"><i class="fas fa-share-alt"></i></span>
-        <span class="share clickable desktop">Share</span>
+        <span class="share clickable desktop" (click)="isSharingShown = !isSharingShown">Share</span>
         <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = !isOptionShown"></i>
         <app-header-options [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event"></app-header-options>
+        <app-header-sharing [isSharingShown]="isSharingShown" (hideSharingEvent)="isSharingShown = $event"></app-header-sharing>
     </section>
 </div>
