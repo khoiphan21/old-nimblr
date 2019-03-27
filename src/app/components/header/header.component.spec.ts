@@ -9,7 +9,8 @@ import { DocumentService } from 'src/app/services/document/document.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject } from 'rxjs';
 import { configureTestSuite } from 'ng-bullet';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler/src/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { SharingStatus } from 'src/API';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -90,6 +91,16 @@ describe('HeaderComponent', () => {
     it('when url is not dashboard', () => {
       component['manageHeaderContent']('/document');
       expect(component.currentUrl).toBe('document');
+    });
+  });
+
+  describe('changeSharingStatus()', () => {
+    it('should emit the new status', done => {
+      component.sharingChange.subscribe(status => {
+        expect(status).toEqual(SharingStatus.PUBLIC);
+        done();
+      });
+      component.changeSharingStatus(SharingStatus.PUBLIC);
     });
   });
 });

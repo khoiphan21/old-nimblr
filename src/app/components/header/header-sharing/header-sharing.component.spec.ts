@@ -36,6 +36,15 @@ describe('HeaderSharingComponent', () => {
     });
   });
 
+  /* tslint:disable:no-string-literal */
+  describe('ngOnChanges()', () => {
+    it('should call to check status', () => {
+      spyOn<any>(component, 'checkStatus');
+      component.ngOnChanges();
+      expect(component['checkStatus']).toHaveBeenCalled();
+    });
+  });
+
   describe('hideSharing()', () => {
     it('should emit the event value as false', done => {
       component.hideSharingEvent.subscribe(value => {
