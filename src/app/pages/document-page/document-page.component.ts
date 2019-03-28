@@ -62,7 +62,6 @@ export class DocumentPageComponent implements OnInit {
 
     // Initialize page display status
     this.docTitle = '';
-    this.togglePlaceholder();
 
     this.isPlaceholderShown = true;
   }
@@ -93,7 +92,7 @@ export class DocumentPageComponent implements OnInit {
 
       // added in for edit title
       this.docTitle = document.title;
-      
+
       // For monitoring sharing status
       this.currentSharingStatus = this.currentDocument.sharingStatus;
 
@@ -156,13 +155,6 @@ export class DocumentPageComponent implements OnInit {
     });
   }
 
-  togglePlaceholder() {
-    if (this.docTitle.length > 0) {
-      this.isPlaceholderShown = false;
-    } else {
-      this.isPlaceholderShown = true;
-    }
-  }
   changeSharingStatus(status: SharingStatus) {
     this.currentSharingStatus = status;
     this.currentDocument.sharingStatus = status;
