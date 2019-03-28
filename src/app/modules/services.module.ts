@@ -7,9 +7,9 @@ import awsmobile from '../../aws-exports.js';
 import { AccountService } from '../services/account/account.service';
 import { AccountServiceImpl } from '../services/account/account-impl.service';
 import { GraphQLService } from '../services/graphQL/graph-ql.service';
-import { NavigationBarService } from '../services/navigation-bar/navigation-bar.service';
 import { GraphQlCommandService } from '../services/graphQL/graph-ql-command.service';
 
+// Update the authentication type to IAM
 awsmobile.aws_appsync_authenticationType = 'AWS_IAM';
 Amplify.configure(awsmobile);
 

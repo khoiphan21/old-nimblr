@@ -41,7 +41,7 @@ form.question-setup {
             border-radius: 3px;
             padding-left: 5px;
             &::placeholder {
-                color: $color-grey-1;
+                color: $color-grey-3;
             }
         }
         .add-option {
@@ -68,6 +68,24 @@ form.question-setup {
         input[type=text].long-input {
             width: 100%;
         }
+    }
+}
+
+.form-input {
+    width: 100%;
+    height: auto;
+    margin-top: $answer-margin-top;
+    input[type=text] {
+        width: 60%;
+        border: 0;
+        border-bottom: 1px solid #979797;
+        pointer-events: none;
+    }
+    input[type=text].long-input {
+        width: 100%;
+    }
+    &::placeholder {
+        color: $color-grey-3;
     }
 }
 
@@ -111,7 +129,7 @@ form.question-setup {
                 border-radius: 3px;
                 padding-left: 5px;
                 &::placeholder {
-                    color: $color-grey-1;
+                    color: $color-grey-3;
                 }
             }
             .add-option {

@@ -25,11 +25,12 @@ export class DocumentFactoryService {
     blockIds = [],
     lastUpdatedBy = ownerId,
     createdAt = new Date().toUTCString(),
-    updatedAt = new Date().toUTCString()
+    updatedAt = new Date().toUTCString(),
+    sharingStatus = null
   }): Document {
     const input: CreateDocumentInput = {
       id, version, type, title, ownerId, editorIds, viewerIds,
-      blockIds, lastUpdatedBy, createdAt, updatedAt
+      blockIds, lastUpdatedBy, createdAt, updatedAt, sharingStatus
     };
 
     this.checkForNullOrUndefined(input);

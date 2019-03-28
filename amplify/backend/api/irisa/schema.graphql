@@ -3,28 +3,34 @@ type User @model {
   username: String!
   email: String!
   firstName: String
-  lastName: String 
+  lastName: String
   documentIds: [String]
 }
 
 type Document @model {
   id: ID!
-  version: String
+  version: String!
   type: DocumentType!
+  ownerId: String!
+  lastUpdatedBy: String!
+  sharingStatus: SharingStatus!
   title: String
-  ownerId: String
   editorIds: [String]
   viewerIds: [String]
   order: [String]
   blockIds: [String]
-  lastUpdatedBy: String
   createdAt: String
   updatedAt: String
 }
 
 enum DocumentType {
   GENERIC
-  FORM
+  FORM_TEMPLATE
+}
+
+enum SharingStatus {
+  PRIVATE
+  PUBLIC
 }
 
 type Block @model {
@@ -38,20 +44,45 @@ type Block @model {
   updatedAt: String
   # Attributes from TextBlock
   value: String
+  question: String
+  answers: [String]
+  questionType: QuestionType
+  options: [String]
 }
 
 enum BlockType {
   TEXT
+  QUESTION
+}
+
+enum QuestionType {
+  PARAGRAPH
+  SHORT_ANSWER
+  MULTIPLE_CHOICE
+  CHECKBOX
 }
 
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block
   updateTextBlock(input: UpdateTextBlockInput!): Block
+  createQuestionBlock(input: CreateQuestionBlockInput!): Block
+  updateQuestionBlock(input: UpdateQuestionBlockInput!): Block
 }
 
 type Subscription {
-  onUpdateBlockInDocument(documentId: ID!): Block @aws_subscribe(mutations: ["updateBlock", "createTextBlock", "updateTextBlock", "deleteBlock"])
-  onSpecificDocumentUpdate(id: ID!): Document @aws_subscribe(mutations: ["updateDocument"])
+  onUpdateBlockInDocument(documentId: ID!): Block
+    @aws_subscribe(
+      mutations: [
+        "updateBlock"
+        "createTextBlock"
+        "updateTextBlock"
+        "deleteBlock"
+        "createQuestionBlock"
+        "updateQuestionBlock"
+      ]
+    )
+  onSpecificDocumentUpdate(id: ID!): Document
+    @aws_subscribe(mutations: ["updateDocument"])
 }
 
 input CreateTextBlockInput {
@@ -71,4 +102,38 @@ input UpdateTextBlockInput {
   lastUpdatedBy: String!
   updatedAt: String!
   value: String
+}
+
+input CreateQuestionBlockInput {
+  id: ID
+  version: String!
+  type: BlockType!
+  documentId: String!
+  lastUpdatedBy: String!
+  question: String
+  answers: [String]
+  questionType: QuestionType
+  options: [String]
+}
+
+input UpdateQuestionBlockInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  question: String
+  updatedAt: String
+  answers: [String]
+  questionType: QuestionType
+  options: [String]
+}
+
+input UpdateQuestionBlockAnswerInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  answers: [String]!
 }

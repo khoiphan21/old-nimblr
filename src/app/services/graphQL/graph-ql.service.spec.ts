@@ -43,7 +43,7 @@ describe('GraphQLService', () => {
       }));
       // now call the service
       service.query(query, params).catch(error => {
-        const errorMessage = `Failed to send query: ${message}`;
+        const errorMessage = `[GraphQLService] Failed to send query: ${message}`;
         expect(error.message).toEqual(errorMessage);
         done();
       });

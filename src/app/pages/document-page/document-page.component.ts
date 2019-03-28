@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
-import { BlockType, UpdateDocumentInput } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
@@ -24,6 +24,7 @@ export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
   isPlaceholderShown: boolean;
   docTitle: string;
+  currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
   private document$: Observable<Document>;
@@ -92,8 +93,10 @@ export class DocumentPageComponent implements OnInit {
 
       // added in for edit title
       this.docTitle = document.title;
+      
+      // For monitoring sharing status
+      this.currentSharingStatus = this.currentDocument.sharingStatus;
 
-      // this.blockIds = document.blockIds;
       this.setupBlockUpdateSubscription();
     }, error => {
       console.error(`DocumentPage failed to get document: ${error.message}`);
@@ -159,6 +162,11 @@ export class DocumentPageComponent implements OnInit {
     } else {
       this.isPlaceholderShown = true;
     }
+  }
+  changeSharingStatus(status: SharingStatus) {
+    this.currentSharingStatus = status;
+    this.currentDocument.sharingStatus = status;
+    this.documentCommandService.updateDocument(this.currentDocument);
   }
 
 }

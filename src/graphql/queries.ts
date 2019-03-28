@@ -35,13 +35,14 @@ export const getDocument = `query GetDocument($id: ID!) {
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
   }
@@ -57,13 +58,14 @@ export const listDocuments = `query ListDocuments(
       id
       version
       type
-      title
       ownerId
+      lastUpdatedBy
+      sharingStatus
+      title
       editorIds
       viewerIds
       order
       blockIds
-      lastUpdatedBy
       createdAt
       updatedAt
     }
@@ -81,6 +83,10 @@ export const getBlock = `query GetBlock($id: ID!) {
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;
@@ -99,6 +105,10 @@ export const listBlocks = `query ListBlocks(
       createdAt
       updatedAt
       value
+      question
+      answers
+      questionType
+      options
     }
     nextToken
   }

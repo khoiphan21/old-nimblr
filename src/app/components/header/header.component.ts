@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from '../../classes/user';
 import { AccountService } from '../../services/account/account.service';
 import { Router } from '@angular/router';
 import { NavigationBarService } from 'src/app/services/navigation-bar/navigation-bar.service';
+import { SharingStatus } from 'src/API';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,12 @@ export class HeaderComponent implements OnInit {
   currentUrl: string;
   initialName: string;
   isOptionShown = false;
+  isSharingShown = false;
+
   @Input() currentUser: User;
+  @Input() sharingStatus: SharingStatus;
+
+  @Output() sharingChange = new EventEmitter<SharingStatus>();
 
   constructor(
     private navigationBarService: NavigationBarService,
@@ -46,6 +52,10 @@ export class HeaderComponent implements OnInit {
   }
 
   showNavigationBar() {
-      this.navigationBarService.setNavigationBarStatus(true);
+    this.navigationBarService.setNavigationBarStatus(true);
+  }
+
+  changeSharingStatus(status: SharingStatus) {
+    this.sharingChange.emit(status);
   }
 }

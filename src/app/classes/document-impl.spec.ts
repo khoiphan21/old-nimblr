@@ -1,5 +1,5 @@
 import { DocumentImpl } from './document-impl';
-import { DocumentType } from 'src/API';
+import { DocumentType, SharingStatus } from 'src/API';
 import { isValidDateString } from './test-helpers.spec';
 
 const uuidv4 = require('uuid/v4');
@@ -12,7 +12,7 @@ describe('DocumentImpl', () => {
     argument = {
       id: uuidv4(),
       version: uuidv4(),
-      type: DocumentType.FORM,
+      type: DocumentType.GENERIC,
       title: 'abc',
       ownerId: uuidv4(),
       editorIds: [],
@@ -20,7 +20,8 @@ describe('DocumentImpl', () => {
       blockIds: [],
       lastUpdatedBy: uuidv4(),
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      sharingStatus: SharingStatus.PUBLIC
     };
   });
 
@@ -49,6 +50,11 @@ describe('DocumentImpl', () => {
       delete argument.updatedAt;
       document = new DocumentImpl(argument);
       expect(isValidDateString(document.updatedAt)).toBe(true);
+    });
+    it('should set sharingStatus to null if undefined', () => {
+      delete argument.sharingStatus;
+      document = new DocumentImpl(argument);
+      expect(document.sharingStatus).toBe(null);
     });
   });
 

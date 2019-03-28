@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput } from '../../../../API';
-import { createTextBlock, updateTextBlock } from '../../../../graphql/mutations';
+/* tslint:disable:max-line-length */
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput } from '../../../../API';
+import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +20,31 @@ export class BlockCommandService {
    * This will also notify BlockQueryService of the updated block's version
    * @param input the input to the update query
    */
-  updateBlock(input: UpdateBlockInput | UpdateTextBlockInput): Promise<any> {
+  updateBlock(input: UpdateTextBlockInput | UpdateQuestionBlockInput): Promise<any> {
     switch (input.type) {
       case BlockType.TEXT:
+        const textInput = input as UpdateTextBlockInput;
         return this.updateTextBlock({
-          id: input.id,
-          documentId: input.documentId,
-          version: input.version,
-          lastUpdatedBy: input.lastUpdatedBy,
+          id: textInput.id,
+          documentId: textInput.documentId,
+          version: textInput.version,
+          lastUpdatedBy: textInput.lastUpdatedBy,
           updatedAt: new Date().toISOString(),
-          value: input.value
+          value: textInput.value
+        });
+
+      case BlockType.QUESTION:
+        const questionInput = input as UpdateQuestionBlockInput;
+        return this.updateQuestionBlock({
+          id: questionInput.id,
+          documentId: questionInput.documentId,
+          version: questionInput.version,
+          lastUpdatedBy: questionInput.lastUpdatedBy,
+          updatedAt: new Date().toISOString(),
+          question: questionInput.question,
+          questionType: questionInput.questionType,
+          answers: questionInput.answers,
+          options: questionInput.options
         });
       default:
         return Promise.reject('BlockType not supported');
@@ -53,21 +69,54 @@ export class BlockCommandService {
     }
   }
 
+  private async updateQuestionBlock(input: UpdateQuestionBlockInput): Promise<any> {
+    const requiredParams = [
+      'id', 'documentId', 'version', 'lastUpdatedBy', 'answers', 'questionType'
+    ];
+    try {
+      this.checkForNullOrUndefined(input, requiredParams, 'UpdateQuestionBlockInput');
+
+      // Now do a convert for empty string in 'question'
+      input.question = input.question === '' ? null : input.question;
+      input.options = this.cleanQuestionOptions(input.options);
+
+      this.blockQueryService.registerUpdateVersion(input.version);
+
+      return this.graphQLService.query(updateQuestionBlock, { input });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  private cleanQuestionOptions(options: Array<string>) {
+    options = options === undefined ? null : options;
+    if (options) {
+      options.forEach((option, index) => {
+        if (option === '') {
+          options[index] = null;
+        }
+      });
+    }
+    return options;
+  }
 
   /**
    * Create a block in the database based on the input.
    * This will also notify BlockQueryService of the created block's version
    * @param input the input to the create query
    */
-  createBlock(input: CreateBlockInput | CreateTextBlockInput): Promise<any> {
+  // Why do you need `CreateBlockInput`
+  // createBlock(input: CreateBlockInput | CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
+  createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
     switch (input.type) {
       case BlockType.TEXT:
         return this.createTextBlock(input);
+      case BlockType.QUESTION:
+        return this.createQuestionBlock(input);
       default:
         return Promise.reject('BlockType not supported');
     }
   }
-
   private async createTextBlock(originalInput: CreateBlockInput): Promise<any> {
     const input = {
       id: originalInput.id,
@@ -89,6 +138,36 @@ export class BlockCommandService {
       input.value = input.value === '' ? null : input.value;
 
       return this.graphQLService.query(createTextBlock, { input });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+
+  private async createQuestionBlock(originalInput: CreateQuestionBlockInput): Promise<any> {
+    const input = {
+      id: originalInput.id,
+      version: originalInput.version,
+      type: originalInput.type,
+      documentId: originalInput.documentId,
+      lastUpdatedBy: originalInput.lastUpdatedBy,
+      question: originalInput.question,
+      answers: originalInput.answers,
+      questionType: originalInput.questionType,
+      options: originalInput.options,
+    };
+    const requiredParams = [
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
+    ];
+    try {
+      this.checkForNullOrUndefined(input, requiredParams, 'CreateQuestionBlockInput');
+
+      this.blockQueryService.registerUpdateVersion(input.version);
+
+      input.question = input.question === '' ? null : input.question;
+      input.options = this.cleanQuestionOptions(input.options);
+
+      return this.graphQLService.query(createQuestionBlock, { input });
     } catch (error) {
       return Promise.reject(error);
     }

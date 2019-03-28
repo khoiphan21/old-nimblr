@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { DocumentService } from '../../services/document/document.service';
 import { Document } from '../../classes/document';
 import { Router } from '@angular/router';
+import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
+import { AccountService } from 'src/app/services/account/account.service';
+import { DocumentCommandService } from 'src/app/services/document/command/document-command.service';
+import { CreateDocumentInput, DocumentType, SharingStatus } from 'src/API';
+
+const uuidv4 = require('uuid/v4');
 
 @Component({
   selector: 'app-dashboard-page',
@@ -12,7 +18,9 @@ export class DashboardPageComponent implements OnInit {
   userDocuments: Document[];
 
   constructor(
+    private documentCommandService: DocumentCommandService,
     private documentService: DocumentService,
+    private accountService: AccountService,
     private router: Router
   ) { }
 
@@ -29,8 +37,16 @@ export class DashboardPageComponent implements OnInit {
     });
   }
 
-  async createNewFormDocument() {
-    const document = await this.documentService.createFormDocument();
+  async createNewDocument() {
+    const user = await this.accountService.isUserReady();
+    const input: CreateDocumentInput = {
+      version: uuidv4(),
+      type: DocumentType.GENERIC,
+      ownerId: user.id,
+      lastUpdatedBy: user.id,
+      sharingStatus: SharingStatus.PRIVATE
+    };
+    const document = await this.documentCommandService.createDocument(input);
     this.router.navigate([`/document/${document.id}`]);
   }
 
