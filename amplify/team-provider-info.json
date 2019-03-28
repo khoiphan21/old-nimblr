@@ -15,7 +15,7 @@
 				"irisa": {}
 			}
 		}
-	}
+	},
     "question": {
         "awscloudformation": {
             "AuthRoleName": "irisa-20190328100242-authRole",
