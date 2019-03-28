@@ -14,17 +14,16 @@ export class QuestionOptionComponent implements OnChanges {
   @Input() isPreviewMode: boolean;
   @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
+  private timeout: any;
 
   constructor(private formBuilder: FormBuilder) {
   }
 
   ngOnChanges(changes: SimpleChanges) {
     const type = changes.currentType;
-    const previewMode = changes.isPreviewMode;
     if (type) {
       this.manageQuestionTypeChange(type.previousValue, type.currentValue);
-    } else if (previewMode) {
-      this.emitQuestionValues(previewMode.currentValue);
+      this.emitQuestionValues();
     }
     this.setupForm();
   }
@@ -43,7 +42,7 @@ export class QuestionOptionComponent implements OnChanges {
   }
 
   changeToSingleOptionType(previousType: QuestionType) {
-    if (previousType === QuestionType.MULTIPLE_CHOICE || previousType === QuestionType.CHECKBOX ) {
+    if (previousType === QuestionType.MULTIPLE_CHOICE || previousType === QuestionType.CHECKBOX) {
       this.clearOptions();
       this.clearAnswers();
     }
@@ -62,6 +61,9 @@ export class QuestionOptionComponent implements OnChanges {
       options: this.formBuilder.array([])
     });
     this.setOptions();
+    this.formGroup.valueChanges.subscribe((data) => {
+      this.triggerUpdateValue();
+    });
   }
 
   addNewOption() {
@@ -72,12 +74,14 @@ export class QuestionOptionComponent implements OnChanges {
       })
     );
     this.options.push('');
+    this.emitQuestionValues();
   }
 
   deleteOption(index) {
     const control = this.formGroup.controls.options as FormArray;
     control.removeAt(index);
     this.options.splice(index);
+    this.emitQuestionValues();
   }
 
   setOptions() {
@@ -94,16 +98,25 @@ export class QuestionOptionComponent implements OnChanges {
     }
   }
 
+
+  async triggerUpdateValue() {
+    return new Promise((resolve) => {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.emitQuestionValues();
+        resolve();
+      }, 500);
+    });
+  }
+
   /* tslint:disable:no-string-literal */
-  emitQuestionValues(shouldEmit: boolean) {
-    if (shouldEmit === true) {
-      const value = {};
-      value['answers'] = this.answers;
-      if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
-        value['options'] = this.getOptionsValue();
-      }
-      this.valueToBeSaved.emit(value);
+  emitQuestionValues() {
+    const value = {};
+    value['answers'] = this.answers;
+    if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
+      value['options'] = this.getOptionsValue();
     }
+    this.valueToBeSaved.emit(value);
   }
 
   getOptionsValue() {

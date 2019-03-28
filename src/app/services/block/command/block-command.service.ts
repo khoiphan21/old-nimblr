@@ -32,15 +32,15 @@ export class BlockCommandService {
           updatedAt: new Date().toISOString(),
           value: textInput.value
         });
-      // TODO: add updatedAt into the schema
+
       case BlockType.QUESTION:
         const questionInput = input as UpdateQuestionBlockInput;
         return this.updateQuestionBlock({
           id: questionInput.id,
-          type: BlockType.QUESTION,
           documentId: questionInput.documentId,
           version: questionInput.version,
           lastUpdatedBy: questionInput.lastUpdatedBy,
+          updatedAt: new Date().toISOString(),
           question: questionInput.question,
           questionType: questionInput.questionType,
           answers: questionInput.answers,
@@ -71,10 +71,10 @@ export class BlockCommandService {
 
   private async updateQuestionBlock(input: UpdateQuestionBlockInput): Promise<any> {
     const requiredParams = [
-      'id', 'documentId', 'version', 'lastUpdatedBy', 'question', 'answers', 'questionType'
+      'id', 'documentId', 'version', 'lastUpdatedBy', 'answers', 'questionType'
     ];
     try {
-      this.checkForNullOrUndefined(input, requiredParams, 'UpdateTextBlockInput');
+      this.checkForNullOrUndefined(input, requiredParams, 'UpdateQuestionBlockInput');
 
       // Now do a convert for empty string in 'question'
       input.question = input.question === '' ? null : input.question;

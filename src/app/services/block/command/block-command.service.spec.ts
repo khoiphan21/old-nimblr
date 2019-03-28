@@ -161,8 +161,7 @@ describe('BlockCommandService', () => {
         });
       });
 
-      // TODO: add updated at to the schema
-      xit('should call graphQlService with the right argument', done => {
+      it('should call graphQlService with the right argument', done => {
         service.updateBlock(questionInput).then(() => {
           // graphQlService must be called with the right arguments
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
@@ -201,10 +200,10 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = [
-          'id', 'version', 'documentId', 'lastUpdatedBy', 'question', 'answers', 'questionType'
+          'id', 'version', 'documentId', 'lastUpdatedBy', 'answers', 'questionType'
         ];
         runTestForQuestionMissingParams(
-          requiredParams, 'updateBlock', 'UpdateTextBlockInput'
+          requiredParams, 'updateBlock', 'UpdateQuestionBlockInput'
         );
       });
     });
