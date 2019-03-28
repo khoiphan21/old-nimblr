@@ -1,67 +1,72 @@
 import { BlockType, QuestionType } from 'src/API';
-import { QuestionBlock} from './question-block';
+import { QuestionBlock } from './question-block';
 const uuidv4 = require('uuid/v4');
 
 describe('QuestionBlock -', () => {
-  const input = {
-    id: uuidv4(),
-    type: BlockType.QUESTION,
-    version: uuidv4(),
-    documentId: uuidv4(),
-    lastUpdatedBy: uuidv4(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    question: 'Is this a test value?',
-    answers: null,
-    questionType: null,
-    options: null
-  };
+  let input: any;
 
   beforeEach(() => {
-    input.options = null;
+    input = {
+      id: uuidv4(),
+      type: BlockType.QUESTION,
+      version: uuidv4(),
+      documentId: uuidv4(),
+      lastUpdatedBy: uuidv4(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      question: 'Is this a test value?',
+      answers: [],
+      questionType: QuestionType.SHORT_ANSWER,
+      options: null
+    };
   });
 
   it('should throw error if question type is not supported', () => {
-    input.questionType = 'abcd';
+    const input2 = input as any;
+    input2.questionType = 'abcd';
     try {
-      const block = new QuestionBlock(input);
+      const block = new QuestionBlock(input2);
     } catch (error) {
       expect(error.message).toEqual('QuestionType not supported');
     }
   });
 
-  it('should set the right value for `question`', () => {
-    input.question = 'This is a question';
-    input.answers = ['answer'];
-    const block = new QuestionBlock(input);
-    const questionBlock: QuestionBlock = block as QuestionBlock;
-    expect(questionBlock.question).toEqual('This is a question');
+  describe('setting values', () => {
+
+    it('should set the right value for `question`', () => {
+      input.question = 'This is a question';
+      input.answers = ['answer'];
+      const block = new QuestionBlock(input);
+      const questionBlock: QuestionBlock = block as QuestionBlock;
+      expect(questionBlock.question).toEqual('This is a question');
+    });
+
+    it('should set the right value for `questionType`', () => {
+      input.questionType = QuestionType.PARAGRAPH;
+      const block = new QuestionBlock(input);
+      const questionBlock: QuestionBlock = block as QuestionBlock;
+      expect(questionBlock.questionType).toEqual(QuestionType.PARAGRAPH);
+    });
+
+    it('should set the right value for `options`', () => {
+      input.questionType = QuestionType.CHECKBOX;
+      input.answers = ['this is the answer 1'];
+      input.options = ['this is the answer 1', 'this is the answer 2'];
+      const block = new QuestionBlock(input);
+      const questionBlock: QuestionBlock = block as QuestionBlock;
+      expect(questionBlock.options[0]).toEqual('this is the answer 1');
+    });
+
+    it('should set the right value for `answers` ', () => {
+      input.questionType = QuestionType.CHECKBOX;
+      input.answers = ['this is the answer 2'];
+      input.options = ['this is the answer 2'];
+      const block = new QuestionBlock(input);
+      const questionBlock: QuestionBlock = block as QuestionBlock;
+      expect(questionBlock.answers[0]).toEqual('this is the answer 2');
+    });
   });
 
-  it('should set the right value for `questionType`', () => {
-    input.questionType = QuestionType.PARAGRAPH;
-    const block = new QuestionBlock(input);
-    const questionBlock: QuestionBlock = block as QuestionBlock;
-    expect(questionBlock.questionType).toEqual(QuestionType.PARAGRAPH);
-  });
-
-  it('should set the right value for `options`', () => {
-    input.questionType = QuestionType.CHECKBOX;
-    input.answers = ['this is the answer 1'];
-    input.options = ['this is the answer 1', 'this is the answer 2'];
-    const block = new QuestionBlock(input);
-    const questionBlock: QuestionBlock = block as QuestionBlock;
-    expect(questionBlock.options[0]).toEqual('this is the answer 1');
-  });
-
-  it('should set the right value for `answers` ', () => {
-    input.questionType = QuestionType.CHECKBOX;
-    input.answers = ['this is the answer 2'];
-    input.options = ['this is the answer 2'];
-    const block = new QuestionBlock(input);
-    const questionBlock: QuestionBlock = block as QuestionBlock;
-    expect(questionBlock.answers[0]).toEqual('this is the answer 2');
-  });
 
   describe('PARAGRAPH & SHORT_ANSWER type -', () => {
     it('should not have `options` if it is PARAGRAPH type', () => {

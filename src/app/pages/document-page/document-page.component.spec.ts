@@ -10,7 +10,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { configureTestSuite } from 'ng-bullet';
 import { User } from 'src/app/classes/user';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, UnsubscriptionError } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
@@ -304,62 +304,52 @@ describe('DocumentPageComponent', () => {
     let spyUpdateDocTitle: jasmine.Spy;
 
     let testId;
+    let userId;
     let testTitle;
 
     beforeEach(() => {
       // TODO: Why wrap 'documentCommandService' with 'component'?
       // I think i didnt do that in service? what so special about compoent
       // TODO: all tests failed after setting up timeout
-      testId = 'test id';
+      testId = uuidv4();
+      userId = uuidv4();
       testTitle = 'test title';
-      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('ok'));
       spyUpdateDocTitle = spyOn(component, 'updateDocTitle').and.callThrough();
+      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument'); spyUpdate.and.returnValue(Promise.resolve('ok'));
 
       component['docTitle'] = testTitle;
       // is there a way no to mock this entire thing in order to pass codes like
       // currentDocument.blah?
       component['currentDocument'] = {
         id: testId,
-        version: '',
-        type: DocumentType.FORM,
-        lastUpdatedBy: '',
+        version: uuidv4(),
+        type: DocumentType.GENERIC,
+        lastUpdatedBy: uuidv4(),
         createdAt: '',
         updatedAt: '',
       } as Document;
 
-      component['currentUser'] = { id: 'testUser' } as User;
+      component['currentUser'] = { id: userId } as User;
     });
 
-    it('should return a promise', () => {
-      const data = component.updateDocTitle();
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
-    it('should call service updateDocument', async done => {
-      component.updateDocTitle().then(() => {
-        expect(spyUpdate.calls.count()).toBe(1);
-        done();
-      });
+    it('should call service updateDocument', async () => {
+      await component.updateDocTitle(0);
+      expect(spyUpdate.calls.count()).toBe(1);
     });
 
     // TODO: the actual challenging part
-    it('should send correct graphql query via service updateDocument', async done => {
+    it('should send correct graphql query via service updateDocument', async () => {
       const expInput = {
         id: testId,
-        version: '',
-        lastUpdatedBy: '',
-        title: component['docTitle'],
-        updatedAt: '',
+        title: component['docTitle']
       };
-      await component.updateDocTitle().then(() => {
-        expect(spyUpdate.calls.mostRecent().args[0].id).toEqual(expInput.id);
-        expect(spyUpdate.calls.mostRecent().args[0].title).toEqual(expInput.title);
-        done();
-      });
+      await component.updateDocTitle(0);
+      expect(spyUpdate.calls.mostRecent().args[0].id).toEqual(expInput.id);
+      expect(spyUpdate.calls.mostRecent().args[0].title).toEqual(expInput.title);
     });
 
     it('should not call updateDocument again for consecutive updates', done => {
-      component.updateDocTitle();
+      component.updateDocTitle(0);
       setTimeout(() => {
         component.updateDocTitle().then(() => {
           expect(spyUpdate).toHaveBeenCalledTimes(1);
@@ -370,39 +360,17 @@ describe('DocumentPageComponent', () => {
 
     it('should reject when failed', done => {
       const errMsg = 'test err';
-      spyUpdate.and.returnValue(Promise.reject(new Error(errMsg)));
-      component.updateDocTitle().catch(response => {
-        expect(response.message).toEqual(errMsg);
+      spyOn(console, 'error'); // shouldn't log the error out!
+      spyUpdate.and.returnValue(Promise.reject(errMsg));
+      component.updateDocTitle(0).then(() => {
+        fail();
+      }).catch(err => {
+        expect(err).toEqual(errMsg);
         done();
       });
     });
   });
 
-  describe('togglePlaceholder()', () => {
-
-    let spyPlaceholderFlag: jasmine.Spy;
-    let spyTitle: jasmine.Spy;
-
-    beforeEach(() => {
-      // spyTitle = spyOn<any>(component, 'docTitle');
-      // spyPlaceholderFlag = spyOn<any>(component['documentCommandService'], 'isPlaceholderShown');
-    });
-
-    it('should change isPlaceholderShown to false when title is not empty', done => {
-      component['docTitle'] = 'hello';
-      component.togglePlaceholder();
-      expect(component['isPlaceholderShown']).toBeFalsy();
-      done();
-    });
-
-    it('should change isPlaceholderShown to true', done => {
-      component['docTitle'] = '';
-      component.togglePlaceholder();
-      expect(component['isPlaceholderShown']).toBeTruthy();
-      done();
-    });
-  });
-  
   describe('changeSharingStatus()', () => {
     let spy: jasmine.Spy;
 

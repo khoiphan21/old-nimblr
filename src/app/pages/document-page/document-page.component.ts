@@ -130,8 +130,7 @@ export class DocumentPageComponent implements OnInit {
     }
   }
 
-  async updateDocTitle(): Promise<any> {
-    const timeoutlimit = 500;
+  async updateDocTitle(limit = 500): Promise<any> {
 
     return new Promise((resolve, reject) => {
       clearTimeout(this.timeout);
@@ -151,7 +150,7 @@ export class DocumentPageComponent implements OnInit {
         }).catch(err => {
           reject(err);
         });
-      }, timeoutlimit);
+      }, limit);
     });
   }
 
