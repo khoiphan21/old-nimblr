@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
@@ -6,11 +6,12 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
+import { TextBlock } from 'src/app/classes/block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -20,14 +21,19 @@ const uuidv4 = require('uuid/v4');
   styleUrls: ['./document-page.component.scss']
 })
 export class DocumentPageComponent implements OnInit {
-
   isUserLoggedIn: boolean;
+  isPlaceholderShown: boolean;
+  docTitle: string;
   currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
+  private timeout: any;
+
   // blockIds: Array<string>;
+
+  @Input() block: TextBlock;
 
   constructor(
     private documentQueryService: DocumentQueryService,
@@ -52,6 +58,12 @@ export class DocumentPageComponent implements OnInit {
       const message = `DocumentPage failed to load: ${error.message}`;
       throw new Error(message);
     }
+
+
+    // Initialize page display status
+    this.docTitle = '';
+
+    this.isPlaceholderShown = true;
   }
 
   async checkUser(): Promise<User> {
@@ -77,6 +89,11 @@ export class DocumentPageComponent implements OnInit {
     this.document$.subscribe(document => {
       if (document === null) { return; }
       this.currentDocument = document;
+
+      // added in for edit title
+      this.docTitle = document.title;
+
+      // For monitoring sharing status
       this.currentSharingStatus = this.currentDocument.sharingStatus;
 
       this.setupBlockUpdateSubscription();
@@ -111,6 +128,31 @@ export class DocumentPageComponent implements OnInit {
       const message = `DocumentPage failed to add block: ${error.message}`;
       throw new Error(message);
     }
+  }
+
+  async updateDocTitle(): Promise<any> {
+    const timeoutlimit = 500;
+
+    return new Promise((resolve, reject) => {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        const input: UpdateDocumentInput = {
+          id: this.currentDocument.id,
+          version: uuidv4(),
+          lastUpdatedBy: this.currentUser.id,
+          title: this.docTitle,
+          updatedAt: new Date().toISOString(),
+        };
+
+        // TODO: @khoiphan21 change the update function to automatically create the version
+        // so that the user of this service doesn't need to worry about version or other related values
+        this.documentCommandService.updateDocument(input).then(data => {
+          resolve(input);
+        }).catch(err => {
+          reject(err);
+        });
+      }, timeoutlimit);
+    });
   }
 
   changeSharingStatus(status: SharingStatus) {

@@ -3,7 +3,16 @@
   <div class="row no-pad no-gutters">
     <app-navigation-bar *ngIf="currentDocument" [documentId]="currentDocument.id" class="col-2"></app-navigation-bar>
     <section class="content col-lg-8 pt-5 pt-lg-4" *ngIf="currentDocument">
-      <h1>(Title)</h1>
+      <h1>
+
+        <!-- When the user is logged in -->
+        <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder()"
+          (focus)="togglePlaceholder()" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
+        <!-- When the user is anonymous -->
+        <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
+        <div class="placeholder" *ngIf="docTitle === ''">Untitled</div>
+
+      </h1>
       <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of currentDocument.blockIds" [blockId]="id">
       </app-block>
       <app-add-information *ngIf="isUserLoggedIn" (click)="addBlock()" style="width: 100%"></app-add-information>

@@ -15,7 +15,6 @@ export class BlockTextComponent implements OnChanges {
 
   // To control whether it's editable or not
   @Input() isUserLoggedIn: boolean;
-
   @Input() block: TextBlock;
 
   constructor(
