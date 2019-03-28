@@ -8,6 +8,7 @@ import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../services/account/account-impl.service.spec';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
+import { environment } from 'src/environments/environment';
 
 describe('(Integration) RegisterPageComponent', () => {
   let component: RegisterPageComponent;
@@ -41,6 +42,7 @@ describe('(Integration) RegisterPageComponent', () => {
     fixture.detectChanges();
   });
 
+  /* tslint:disable:no-string-literal */
   it('should get the details of a AWS signed in user', done => {
     // setup spy on the router
     const routerSpy = spyOn(component['router'], 'navigate');
@@ -57,6 +59,6 @@ describe('(Integration) RegisterPageComponent', () => {
       expect(component.newCognitoUser.attributes).not.toBe(null);
       done();
     }).catch(error => processTestError('error during logic step', error, done));
-  });
+  }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
 });

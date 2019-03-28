@@ -9,22 +9,28 @@ type User @model {
 
 type Document @model {
   id: ID!
-  version: String
+  version: String!
   type: DocumentType!
+  ownerId: String!
+  lastUpdatedBy: String!
+  sharingStatus: SharingStatus!
   title: String
-  ownerId: String
   editorIds: [String]
   viewerIds: [String]
   order: [String]
   blockIds: [String]
-  lastUpdatedBy: String
   createdAt: String
   updatedAt: String
 }
 
 enum DocumentType {
   GENERIC
-  FORM
+  FORM_TEMPLATE
+}
+
+enum SharingStatus {
+  PRIVATE
+  PUBLIC
 }
 
 type Block @model {

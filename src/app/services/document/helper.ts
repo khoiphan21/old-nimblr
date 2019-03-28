@@ -18,45 +18,31 @@ export class DocumentQueryTestHelper {
    * @returns the response from the backend
    */
   async sendCreateDocument(input: CreateDocumentInput): Promise<any> {
-    try {
-      const response = await this.graphQlService.query(createDocument, { input });
+    const response = await this.graphQlService.query(createDocument, { input });
 
-      this.documentId = response.data.createDocument.id;
-      this.createdDocument = response.data.createDocument;
-      this.latestResponse = response;
+    this.documentId = response.data.createDocument.id;
+    this.createdDocument = response.data.createDocument;
+    this.latestResponse = response;
 
-      return Promise.resolve(response.data.createDocument);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    return response.data.createDocument;
   }
 
   async sendUpdateDocument(input: UpdateDocumentInput, delay = 0): Promise<any> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.graphQlService.query(updateDocument, { input }).then(response => {
-          this.latestResponse = response;
-          resolve(response.data.updateDocument);
-        }).catch(error => {
-          reject(error);
-        });
-      }, delay);
-    });
+    await sleep(delay);
+    const res = await this.graphQlService.query(updateDocument, { input });
+    this.latestResponse = res;
+    return res.data.updateDocument;
   }
 
   async deleteDocument(): Promise<any> {
-    try {
-      const response = await this.graphQlService.query(deleteDocument, {
-        input: { id: this.documentId }
-      });
+    const response = await this.graphQlService.query(deleteDocument, {
+      input: { id: this.documentId }
+    });
 
-      this.documentId = null;
-      this.latestResponse = response;
+    this.documentId = null;
+    this.latestResponse = response;
 
-      return Promise.resolve(response.data.deleteDocument);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    return response.data.deleteDocument;
   }
 
   getLatestResponse(): any {
@@ -66,4 +52,8 @@ export class DocumentQueryTestHelper {
   getCreatedDocument(): any {
     return this.createdDocument;
   }
+}
+
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

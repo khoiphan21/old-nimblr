@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { CreateDocumentInput, DocumentType } from '../../../../API';
+import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../../API';
 import { take } from 'rxjs/operators';
 import { DocumentQueryTestHelper } from '../helper';
 import { processTestError } from '../../../classes/test-helpers.spec';
@@ -14,13 +14,23 @@ import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentQueryService', () => {
+describe('(Integration) DocumentQueryService', () => {
   const service$ = new BehaviorSubject<DocumentQueryService>(null);
   let graphQlService: GraphQLService;
+  const input: CreateDocumentInput = {
+    id: uuidv4(),
+    version: uuidv4(),
+    ownerId: uuidv4(),
+    lastUpdatedBy: uuidv4(),
+    sharingStatus: SharingStatus.PRIVATE,
+    type: DocumentType.GENERIC
+  };
+
   TestBed.configureTestingModule({});
 
   beforeAll(() => {
-    Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
+    Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(user => {
+      input.ownerId = user.signInUserSession.idToken.payload.sub;
       service$.next(TestBed.get(DocumentQueryService));
     });
   });
@@ -46,16 +56,11 @@ describe('DocumentQueryService', () => {
   describe('getDocument$', () => {
     let helper: DocumentQueryTestHelper;
     let storedDocument: any;
-    let input: CreateDocumentInput;
     const title = 'title from getDocument$ subscription test';
 
     beforeEach(() => {
       helper = new DocumentQueryTestHelper(TestBed.get(GraphQLService));
-      input = {
-        id: uuidv4(),
-        ownerId: uuidv4(),
-        type: DocumentType.FORM
-      };
+      input.id = uuidv4();
     });
 
     it('should return a previously created document', done => {
@@ -69,8 +74,9 @@ describe('DocumentQueryService', () => {
           return helper.deleteDocument();
         }).then(() => done()
         ).catch(error => {
+          console.error(error);
           fail('Check console for more details');
-          console.error(error); done();
+          done();
         });
       }, error => { fail('unable to get service'); console.error(error); done(); });
 
@@ -82,7 +88,7 @@ describe('DocumentQueryService', () => {
           }, error => reject(error));
         });
       }
-    });
+    }, 10000);
 
     it('should subscribe to any changes from the backend', done => {
       getService().then(service => {
@@ -151,6 +157,61 @@ describe('DocumentQueryService', () => {
             setTimeout(() => done(), 500); // register the test as completed
           }
         }, error => processTestError('Error setting up subscription', error, done));
+      }
+    });
+
+    describe('[ANONYMOUS ACCESS]', () => {
+
+      it('should be able to access a public document', async () => {
+        await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+
+        const service = await getService();
+        // set the document sharing to be public
+        input.sharingStatus = SharingStatus.PUBLIC;
+        await helper.sendCreateDocument(input);
+
+        await Auth.signOut();
+
+        const document = await getFirstDocument(service);
+        expect(document.id).toEqual(input.id);
+
+        await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+
+        await helper.deleteDocument();
+      });
+
+      it('should not be able to query a non-public document ', async done => {
+        await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+
+        const service = await getService();
+        if (input.sharingStatus) {
+          input.sharingStatus = SharingStatus.PRIVATE;
+        }
+        await helper.sendCreateDocument(input);
+
+        await Auth.signOut();
+
+        try {
+          await getFirstDocument(service);
+          fail('error must be thrown');
+        } catch (error) {
+          expect(error).toBeTruthy();
+        }
+
+        await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+
+        await helper.deleteDocument();
+
+        done();
+      }, 10000);
+
+      async function getFirstDocument(service: DocumentQueryService): Promise<any> {
+        return new Promise((resolve, reject) => {
+          service.getDocument$(helper.getCreatedDocument().id).subscribe(document => {
+            if (document === null) { return; }
+            resolve(document);
+          }, error => reject(error));
+        });
       }
     });
 

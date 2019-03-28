@@ -1,0 +1,21 @@
+<section class="container" (click)="hideSharing()" *ngIf="isSharingShown" [@fadeInOutAnimation]>
+  <div class="popup options-block" (click)="$event.stopPropagation()">
+    <div class="buttons">
+      <button class="invite-person">invite person</button>
+      <button class="copy-page-link" (click)="copyPageLink()">copy page link</button>
+    </div>
+    <div class="change-sharing-status">
+      <div class="icon">
+          <i class="fas fa-globe-americas"></i>
+      </div>
+      <div class="status">
+        <p class="status-detail">Public Access</p>
+        <p class="sub-status">Anyone with the link can access the page</p>
+      </div>
+      <div class="sharing-button">
+        <input type="checkbox" [checked]="isPublic" (change)="toggleSharing()" id="switch"/>
+        <label for="switch"></label>
+      </div>
+    </div>
+  </div>
+</section>

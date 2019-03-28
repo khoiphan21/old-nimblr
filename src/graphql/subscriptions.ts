@@ -23,13 +23,14 @@ export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
   }
@@ -73,13 +74,14 @@ export const onCreateDocument = `subscription OnCreateDocument {
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
   }
@@ -90,13 +92,14 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
   }
@@ -107,13 +110,14 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     id
     version
     type
-    title
     ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
     editorIds
     viewerIds
     order
     blockIds
-    lastUpdatedBy
     createdAt
     updatedAt
   }

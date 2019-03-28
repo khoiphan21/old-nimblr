@@ -15,6 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
+import { SharingStatus } from 'src/API';
 
 const uuidv4 = require('uuid/v4');
 
@@ -287,6 +288,27 @@ describe('DocumentPageComponent', () => {
         const message = `DocumentPage failed to add block: ${mockError.message}`;
         expect(error.message).toEqual(message);
       }
+    });
+  });
+
+  describe('changeSharingStatus()', () => {
+    let spy: jasmine.Spy;
+
+    beforeEach(() => {
+      spy = spyOn(component['documentCommandService'], 'updateDocument');
+      component.currentDocument = documentFactory.createDocument({ id, ownerId: uuidv4() });
+    });
+
+    it('should set the current status to the new status', () => {
+      component.changeSharingStatus(SharingStatus.PUBLIC);
+      expect(component.currentSharingStatus).toEqual(SharingStatus.PUBLIC);
+      component.changeSharingStatus(SharingStatus.PRIVATE);
+      expect(component.currentSharingStatus).toEqual(SharingStatus.PRIVATE);
+    });
+    it('should call the documentCommandService with the right args', () => {
+      const status = SharingStatus.PUBLIC;
+      component.changeSharingStatus(status);
+      expect(spy.calls.mostRecent().args[0].sharingStatus).toEqual(status);
     });
   });
 });
