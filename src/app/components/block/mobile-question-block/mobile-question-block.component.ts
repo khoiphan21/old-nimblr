@@ -22,6 +22,9 @@ export class MobileQuestionBlockComponent implements OnChanges {
   options = [];
   question = '';
   currentType: QuestionType;
+  private timeout: any;
+  valueUpdated = true;
+
   constructor(
     private blockFactoryService: BlockFactoryService,
     private blockCommandService: BlockCommandService
@@ -34,6 +37,16 @@ export class MobileQuestionBlockComponent implements OnChanges {
     this.previewOptions = this.questionBlock.options;
     this.question = this.questionBlock.question;
     this.currentType = this.questionBlock.questionType;
+  }
+
+  async triggerUpdateValue() {
+    return new Promise((resolve) => {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.valueUpdated = false;
+        resolve();
+      }, 500);
+    });
   }
 
   toggleOptions() {
@@ -61,6 +74,7 @@ export class MobileQuestionBlockComponent implements OnChanges {
         options: event.options
       });
       this.blockCommandService.updateBlock(updatedBlock).then(() => {
+        this.valueUpdated = true;
         resolve(updatedBlock);
       });
     });

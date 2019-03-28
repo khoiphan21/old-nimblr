@@ -12,11 +12,11 @@
     </div>
     <div class="row no-pad question">
         <label>question</label>
-        <input type="text" placeholder="Type your question here" [(ngModel)]="question">
+        <input type="text" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()">
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style=" width: 100%;"></app-question-option>
+        <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style="width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">
