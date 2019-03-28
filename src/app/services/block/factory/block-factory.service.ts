@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
 import { isUuid } from 'src/app/classes/helpers';
-import { CreateBlockInput, CreateTextBlockInput, BlockType } from '../../../../API';
+import { BlockType, QuestionType } from '../../../../API';
+import { QuestionBlock } from 'src/app/classes/question-block';
 
 const uuidv4 = require('uuid/v4');
 @Injectable({
@@ -27,10 +28,14 @@ export class BlockFactoryService {
     value = '',
     createdAt = new Date().toISOString(),
     updatedAt = new Date().toISOString(),
+    question = '',
+    answers = [],
+    questionType = QuestionType.SHORT_ANSWER,
+    options = null
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
-      value, updatedAt, createdAt
+      value, updatedAt, createdAt, question, answers, questionType, options
     };
 
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
@@ -39,6 +44,8 @@ export class BlockFactoryService {
       this.checkForNullOrUndefined(input[paramName], paramName)
     );
 
+    // TODO MODIFY THIS TO ALLOW lastUpdatedBy to not be uuid
+    // lastUpdatedBy MUST be either a uuid, or 'ANONYMOUS'
     ['id', 'version', 'documentId', 'lastUpdatedBy'].forEach(paramName => {
       this.checkIfUuid(input[paramName], paramName);
     });
@@ -50,6 +57,8 @@ export class BlockFactoryService {
     switch (type) {
       case BlockType.TEXT:
         return new TextBlock(input);
+      case BlockType.QUESTION:
+        return new QuestionBlock(input);
       default:
         throw new BlockCreateError(null, 'BlockType not supported');
     }

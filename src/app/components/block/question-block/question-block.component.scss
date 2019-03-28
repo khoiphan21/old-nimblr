@@ -10,6 +10,7 @@ $dropdown-height: 41px;
         border: 1px solid #CECECE;
         border-radius: 3px;
         padding: 30px;
+        transition: 0.3s;
         .question-heading {
             height: 41px;
         }
@@ -65,6 +66,9 @@ $dropdown-height: 41px;
                     top: $dropdown-height;
                 }
             }
+        }
+        &:hover {
+            border: 1px solid #CECECE !important;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { trigger, style, animate, transition } from '@angular/animations';
+import { trigger, style, animate, transition, state } from '@angular/animations';
 
 export const fadeInOutAnimation = trigger(
     'fadeInOutAnimation', [
@@ -36,6 +36,15 @@ export const slideBottomToTopAnimation = trigger(
             style({ transform: 'translateY(0)' }),
             animate('150ms', style({ transform: 'translateY(100%)' }))
         ])
+    ]
+);
+
+export const slideBottomToTopAnimationDOM = trigger(
+    'slideBottomToTopAnimationDOM', [
+        state('false' , style({ visibility: 'visible', transform: 'translateY(0)' })),
+        state('true', style({visibility: 'hidden', transform: 'translateY(100%)'  })),
+        transition('1 => 0', animate('150ms')),
+        transition('0 => 1', animate('150ms'))
     ]
 );
 

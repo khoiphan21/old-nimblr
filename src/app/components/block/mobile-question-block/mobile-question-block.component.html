@@ -3,38 +3,35 @@
     <div class="question">
         {{question}}
     </div>
-    <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style=" width: 100%;"></app-question-option>
+    <app-question-option [isPreviewMode]="isPreviewMode" [currentType]="currentType" [options]="previewOptions" [answers]="previewAnswers" style=" width: 100%;"></app-question-option>
 </section>
-<section class="mobile edit-question" *ngIf="!isPreviewMode" [@slideBottomToTopAnimation]>
+<section class="mobile edit-question" [@slideBottomToTopAnimationDOM]="isPreviewMode">
     <div class="row no-pad header">
-        <div class="col-2" (click)="isPreviewMode = true" (click)="callBla()"><i class="fas fa-times"></i></div>
+        <div class="col-2" (click)="isPreviewMode = true"><i class="fas fa-times"></i></div>
         <div class="col-2"><i class="fas fa-check"></i></div>
     </div>
     <div class="row no-pad question">
         <label>question</label>
-        <input type="text" placeholder="Type your question here" [(ngModel)]="question">
+        <input type="text" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()">
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-question-option [currentType]="currentType" [isPreviewMode]="isPreviewMode" [data]="data" style=" width: 100%;"></app-question-option>
+        <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValueMobile($event)" style="width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
-                <div *ngSwitchCase="'short answer'">
+                <div *ngSwitchCase="'SHORT_ANSWER'">
                     <i class="fas fa-grip-lines"></i><span>Short Answer</span>
                 </div>
-                <div *ngSwitchCase="'paragraph'">
+                <div *ngSwitchCase="'PARAGRAPH'">
                     <i class="fas fa-bars"></i><span>Paragraph</span>
                 </div>
-                <div *ngSwitchCase="'checkbox'">
+                <div *ngSwitchCase="'CHECKBOX'">
                     <i class="fas fa-check-square"></i><span>Checkbox</span>
                 </div>
-                <div *ngSwitchCase="'multiple choice'">
+                <div *ngSwitchCase="'MULTIPLE_CHOICE'">
                     <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
-                </div>
-                <div *ngSwitchCase="'dropdown'">
-                    <i class="fas fa-sort"></i> <span>Dropdown</span>
                 </div>
                 <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isQuestionOptionShown === true}"></i>
             </div>
@@ -43,22 +40,19 @@
                     QUESTION TYPES
                 </div>
                 <section class="document-options">
-                    <div class="option" (click)="selectType('short answer')">
+                    <div class="option" (click)="selectType('SHORT_ANSWER')">
                         <i class="fas fa-grip-lines"></i><span>Short Answer</span>
                     </div>
-                    <div class="option" (click)="selectType('paragraph')">
+                    <div class="option" (click)="selectType('PARAGRAPH')">
                         <i class="fas fa-bars"></i><span>Paragraph</span>
                     </div>
                 </section>
                 <section class="document-options">
-                    <div class="option" (click)="selectType('checkbox')">
+                    <div class="option" (click)="selectType('CHECKBOX')">
                         <i class="fas fa-check-square"></i><span>Checkbox</span>
                     </div>
-                    <div class="option" (click)="selectType('multiple choice')">
+                    <div class="option" (click)="selectType('MULTIPLE_CHOICE')">
                         <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
-                    </div>
-                    <div class="option" (click)="selectType('dropdown')">
-                        <i class="fas fa-sort"></i><span>Dropdown</span>
                     </div>
                 </section>
             </section>

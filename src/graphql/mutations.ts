@@ -11,6 +11,10 @@ export const createTextBlock = `mutation CreateTextBlock($input: CreateTextBlock
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;
@@ -24,6 +28,44 @@ export const updateTextBlock = `mutation UpdateTextBlock($input: UpdateTextBlock
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
+  }
+}
+`;
+export const createQuestionBlock = `mutation CreateQuestionBlock($input: CreateQuestionBlockInput!) {
+  createQuestionBlock(input: $input) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+    question
+    answers
+    questionType
+    options
+  }
+}
+`;
+export const updateQuestionBlock = `mutation UpdateQuestionBlock($input: UpdateQuestionBlockInput!) {
+  updateQuestionBlock(input: $input) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;
@@ -124,6 +166,10 @@ export const createBlock = `mutation CreateBlock($input: CreateBlockInput!) {
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;
@@ -137,6 +183,10 @@ export const updateBlock = `mutation UpdateBlock($input: UpdateBlockInput!) {
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;
@@ -150,6 +200,10 @@ export const deleteBlock = `mutation DeleteBlock($input: DeleteBlockInput!) {
     createdAt
     updatedAt
     value
+    question
+    answers
+    questionType
+    options
   }
 }
 `;

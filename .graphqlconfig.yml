@@ -1,8 +1,8 @@
 projects:
   irisa:
-    schemaPath: src\graphql\schema.json
+    schemaPath: src/graphql/schema.json
     includes:
-      - src\graphql\**\*.ts
+      - src/graphql/**/*.ts
     excludes:
       - ./amplify/**
     extensions:
@@ -13,4 +13,4 @@ projects:
         graphQLApiId: upsw7nqiy5bl3hb4a3ckl77odi
       endpoints:
         prod: >-
-          https://sm4dmth2mrawtpurz4xum7vrx4.appsync-api.ap-southeast-2.amazonaws.com/graphql
+          https://tqs5aulffrc2he67xtidapropy.appsync-api.ap-southeast-2.amazonaws.com/graphql

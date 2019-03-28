@@ -125,3 +125,16 @@ section.mobile.edit-question {
         }
     }
 }
+
+.hide-question-block {
+    animation: slide-bottom-up 2s linear forwards
+}
+
+@keyframes example {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0%);
+    }
+}
