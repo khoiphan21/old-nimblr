@@ -7,9 +7,10 @@ import { configureTestSuite } from 'ng-bullet';
 import { QuestionType, BlockType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { QuestionBlock } from 'src/app/classes/question-block';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 const uuidv4 = require('uuid/v4');
 
-fdescribe('QuestionBlockComponent', () => {
+describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
   let fixture: ComponentFixture<QuestionBlockComponent>;
   let blockFactoryService: BlockFactoryService;
@@ -30,12 +31,12 @@ fdescribe('QuestionBlockComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         QuestionBlockComponent,
-        QuestionOptionComponent
       ],
       imports: [
         FormsModule,
         ReactiveFormsModule
-      ]
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
   });
 
@@ -80,11 +81,6 @@ fdescribe('QuestionBlockComponent', () => {
     });
   });
 
-  it('triggerUpdateValue() - should have call `emitQuestionValues()`', async () => {
-    await component.triggerUpdateValue();
-    expect(component.valueUpdated).toBe(false);
-  });
-
   /* tslint:disable:no-string-literal */
   describe('updateQuestionValue', () => {
     let blockCommandSpy: jasmine.Spy;
@@ -105,7 +101,7 @@ fdescribe('QuestionBlockComponent', () => {
         id: component.questionBlock.id,
         type: component.questionBlock.type,
         documentId: component.questionBlock.documentId,
-        // createdAt: component.block.createdAt
+        createdAt: component.questionBlock.createdAt,
         lastUpdatedBy: component.questionBlock.lastUpdatedBy,
         question: component.questionBlock.question,
         answers: [],
@@ -123,5 +119,11 @@ fdescribe('QuestionBlockComponent', () => {
       const updatedBlock = await component.updateQuestionValue(emittedValue);
       expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
     });
+  });
+
+  /* tslint:disable:no-string-literal */
+  it('should have set `valueUpdated` to be false`', async () => {
+    await component.triggerUpdateValue();
+    expect(component.valueUpdated).toBe(false);
   });
 });

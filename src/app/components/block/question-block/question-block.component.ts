@@ -61,7 +61,7 @@ export class QuestionBlockComponent implements OnChanges {
         type: this.questionBlock.type,
         documentId: this.questionBlock.documentId,
         lastUpdatedBy: this.questionBlock.lastUpdatedBy,
-        // createdAt: this.block.createdAt
+        createdAt: this.questionBlock.createdAt,
         question: this.question,
         answers: event.answers,
         questionType: this.currentType,
