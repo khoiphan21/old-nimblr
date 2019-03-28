@@ -15,8 +15,6 @@ import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
-import { DocumentCommandService } from 'src/app/services/document/command/document-command.service';
-import { domRendererFactory3 } from '@angular/core/src/render3/interfaces/renderer';
 import { DocumentType } from 'src/API';
 
 const uuidv4 = require('uuid/v4');

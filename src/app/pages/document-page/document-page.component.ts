@@ -11,7 +11,7 @@ import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
-import { Block, TextBlock } from 'src/app/classes/block';
+import { TextBlock } from 'src/app/classes/block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -154,7 +154,6 @@ export class DocumentPageComponent implements OnInit {
   }
 
   togglePlaceholder() {
-    console.log('toggle title value: ', this.docTitle);
     if (this.docTitle.length > 0) {
       this.isPlaceholderShown = false;
     } else {
