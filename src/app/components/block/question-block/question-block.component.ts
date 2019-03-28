@@ -19,7 +19,7 @@ export class QuestionBlockComponent implements OnChanges {
   options = [];
   question = '';
   currentType: QuestionType;
-  private timeout: any;
+  protected timeout: any;
 
   constructor(
     private blockFactoryService: BlockFactoryService,

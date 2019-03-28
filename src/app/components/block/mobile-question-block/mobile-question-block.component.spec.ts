@@ -54,19 +54,6 @@ describe('MobileQuestionBlockComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('toggleOptions()', () => {
-    it('should toggle isQuestionOptionShown() from false to true', () => {
-      component.toggleOptions();
-      expect(component.isQuestionOptionShown).toBe(true);
-    });
-
-    it('should toggle isQuestionOptionShown() from true to false', () => {
-      component.isQuestionOptionShown = true;
-      component.toggleOptions();
-      expect(component.isQuestionOptionShown).toBe(false);
-    });
-  });
-
   describe('selectType()', () => {
     it('should change the `currentType` to the right value', () => {
       component.selectType(QuestionType.MULTIPLE_CHOICE);
@@ -80,42 +67,26 @@ describe('MobileQuestionBlockComponent', () => {
   });
 
   /* tslint:disable:no-string-literal */
-  describe('updateQuestionValue', () => {
-    let blockCommandSpy: jasmine.Spy;
+  describe('updateQuestionValueMobile', () => {
+    let parentMethodSpy: jasmine.Spy;
     const emittedValue = {
       answers: [],
     };
     beforeEach(() => {
-      // setup the spies
-      spyOn(component['blockFactoryService'], 'createAppBlock').and.callThrough();
-      blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
-      blockCommandSpy.and.returnValues(Promise.resolve());
-      component.currentType = QuestionType.PARAGRAPH;
+      parentMethodSpy = spyOn(component, 'updateQuestionValue');
+      parentMethodSpy.and.returnValue(Promise.resolve());
     });
 
-    it('should call `createAppBlock` with the right argument', async () => {
-      await component.updateQuestionValue(emittedValue);
-      expect(component['blockFactoryService'].createAppBlock).toHaveBeenCalledWith({
-        id: component.questionBlock.id,
-        type: component.questionBlock.type,
-        documentId: component.questionBlock.documentId,
-        // createdAt: component.block.createdAt
-        lastUpdatedBy: component.questionBlock.lastUpdatedBy,
-        question: component.questionBlock.question,
-        answers: [],
-        questionType: component.questionBlock.questionType,
-        options: undefined
-      });
+    it('should update the preview answers and options', async () => {
+      await component.updateQuestionValueMobile(emittedValue);
+      expect(component.previewAnswers).toEqual(emittedValue.answers);
+      expect(component.previewOptions).toBe(undefined);
     });
 
-    it('should resolve with the updated block', async () => {
-      const updatedBlock: QuestionBlock = await component.updateQuestionValue(emittedValue) as QuestionBlock;
-      expect(updatedBlock.question).toEqual(component.questionBlock.question);
-    });
-
-    it('should call block command service with the right argument', async () => {
-      const updatedBlock = await component.updateQuestionValue(emittedValue);
-      expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
+    it('should call the parent method with the right argument', async () => {
+      await component.updateQuestionValueMobile(emittedValue);
+      expect(parentMethodSpy).toHaveBeenCalledWith(emittedValue);
     });
   });
+
 });
