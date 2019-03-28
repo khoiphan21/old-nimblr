@@ -70,11 +70,17 @@ describe('QuestionOptionComponent', () => {
       expect(formSpy).toHaveBeenCalled();
     });
 
+    it('should emit the values if `valueUpdated` exists and its false', () => {
+      component.ngOnChanges({
+        valueUpdated: new SimpleChange(true, false, false)
+      });
+      expect(emitValueSpy).toHaveBeenCalled();
+    });
+
     describe('manageQuestionTypeChange()', () => {
-      it('should emit all the corresponding values if the type has changed', () => {
-        component.ngOnChanges({
-          currentType: new SimpleChange(QuestionType.MULTIPLE_CHOICE, QuestionType.MULTIPLE_CHOICE, false)
-        });
+      it('should emit all the corresponding values if the function is called', () => {
+        component.manageQuestionTypeChange(QuestionType.MULTIPLE_CHOICE, QuestionType.SHORT_ANSWER);
+        expect(formSpy).toHaveBeenCalled();
         expect(emitValueSpy).toHaveBeenCalled();
       });
 

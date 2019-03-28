@@ -9,7 +9,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { QuestionBlock } from 'src/app/classes/question-block';
 const uuidv4 = require('uuid/v4');
 
-describe('QuestionBlockComponent', () => {
+fdescribe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
   let fixture: ComponentFixture<QuestionBlockComponent>;
   let blockFactoryService: BlockFactoryService;
@@ -78,6 +78,11 @@ describe('QuestionBlockComponent', () => {
       component.selectType(QuestionType.MULTIPLE_CHOICE, event);
       expect(component.toggleOptions).toHaveBeenCalled();
     });
+  });
+
+  it('triggerUpdateValue() - should have call `emitQuestionValues()`', async () => {
+    await component.triggerUpdateValue();
+    expect(component.valueUpdated).toBe(false);
   });
 
   /* tslint:disable:no-string-literal */

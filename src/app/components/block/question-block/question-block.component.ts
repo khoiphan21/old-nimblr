@@ -12,12 +12,14 @@ import { Block } from 'src/app/classes/block';
 })
 export class QuestionBlockComponent implements OnChanges {
   @Input() questionBlock: QuestionBlock;
+  valueUpdated = true;
   isPreviewMode = true;
   isQuestionOptionShown = false;
   answers = [];
   options = [];
   question = '';
   currentType: QuestionType;
+  private timeout: any;
 
   constructor(
     private blockFactoryService: BlockFactoryService,
@@ -42,6 +44,16 @@ export class QuestionBlockComponent implements OnChanges {
     event.stopImmediatePropagation();
   }
 
+  async triggerUpdateValue() {
+    return new Promise((resolve) => {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.valueUpdated = false;
+        resolve();
+      }, 500);
+    });
+  }
+
   updateQuestionValue(event: any): Promise<Block> {
     return new Promise(resolve => {
       const updatedBlock: Block = this.blockFactoryService.createAppBlock({
@@ -56,6 +68,7 @@ export class QuestionBlockComponent implements OnChanges {
         options: event.options
       });
       this.blockCommandService.updateBlock(updatedBlock).then(() => {
+        this.valueUpdated = true;
         resolve(updatedBlock);
       });
     });

@@ -8,6 +8,7 @@ import { QuestionType } from 'src/API';
   styleUrls: ['./question-option.component.scss']
 })
 export class QuestionOptionComponent implements OnChanges {
+  @Input() valueUpdated: boolean;
   @Input() answers: Array<string>;
   @Input() options: Array<string>;
   @Input() currentType: QuestionType;
@@ -21,8 +22,11 @@ export class QuestionOptionComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const type = changes.currentType;
+    const valueUpdated = changes.valueUpdated;
     if (type) {
       this.manageQuestionTypeChange(type.previousValue, type.currentValue);
+    }
+    if (valueUpdated && valueUpdated.currentValue === false) {
       this.emitQuestionValues();
     }
     this.setupForm();
@@ -31,14 +35,20 @@ export class QuestionOptionComponent implements OnChanges {
   manageQuestionTypeChange(previousType: QuestionType, currentType: QuestionType) {
     switch (currentType) {
       case QuestionType.PARAGRAPH:
-        return this.changeToSingleOptionType(previousType);
+        this.changeToSingleOptionType(previousType);
+        break;
       case QuestionType.SHORT_ANSWER:
-        return this.changeToSingleOptionType(previousType);
+        this.changeToSingleOptionType(previousType);
+        break;
       case QuestionType.MULTIPLE_CHOICE:
-        return this.clearAnswers();
+        this.clearAnswers();
+        break;
       case QuestionType.CHECKBOX:
-        return this.clearAnswers();
+        this.clearAnswers();
+        break;
     }
+    this.setupForm();
+    this.emitQuestionValues();
   }
 
   changeToSingleOptionType(previousType: QuestionType) {
