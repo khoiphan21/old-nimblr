@@ -59,9 +59,11 @@ export class DocumentPageComponent implements OnInit {
     }
 
 
-    // Title placeholder
-    this.docTitle = null;
+    // Initialize page display status
+    this.docTitle = '';
     this.togglePlaceholder();
+
+    this.isPlaceholderShown = true;
   }
 
   async checkUser(): Promise<User> {
@@ -134,14 +136,14 @@ export class DocumentPageComponent implements OnInit {
       this.timeout = setTimeout(() => {
         const input: UpdateDocumentInput = {
           id: this.currentDocument.id,
-          version: this.currentDocument.version,
-          type: this.currentDocument.type,
-          lastUpdatedBy: this.currentDocument.lastUpdatedBy,
+          version: uuidv4(),
+          lastUpdatedBy: this.currentUser.id,
           title: this.docTitle,
-          createdAt: this.currentDocument.createdAt,
-          updatedAt: this.currentDocument.updatedAt,
+          updatedAt: new Date().toISOString(),
         };
 
+        // TODO: @khoiphan21 change the update function to automatically create the version
+        // so that the user of this service doesn't need to worry about version or other related values
         this.documentCommandService.updateDocument(input).then(data => {
           resolve(input);
         }).catch(err => {
@@ -152,6 +154,7 @@ export class DocumentPageComponent implements OnInit {
   }
 
   togglePlaceholder() {
+    console.log('toggle title value: ', this.docTitle);
     if (this.docTitle.length > 0) {
       this.isPlaceholderShown = false;
     } else {
