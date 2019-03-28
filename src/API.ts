@@ -46,15 +46,14 @@ export type CreateQuestionBlockInput = {
   options?: Array< string | null > | null,
 };
 
-// TODO: add updatedAt into the schema
-// TODO: change type to optional
 export type UpdateQuestionBlockInput = {
-  id?: string | null,
+  id: string,
   version: string,
-  type?: BlockType,
-  documentId: string,
+  type?: BlockType | null,
+  documentId?: string | null,
   lastUpdatedBy: string,
   question?: string | null,
+  updatedAt?: string | null,
   answers?: Array< string | null > | null,
   questionType?: QuestionType | null,
   options?: Array< string | null > | null,

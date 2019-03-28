@@ -117,6 +117,7 @@ input UpdateQuestionBlockInput {
   documentId: String
   lastUpdatedBy: String!
   question: String
+  updatedAt: String
   answers: [String]
   questionType: QuestionType
   options: [String]
