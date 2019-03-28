@@ -17,10 +17,11 @@ import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
 import { DocumentCommandService } from 'src/app/services/document/command/document-command.service';
 import { domRendererFactory3 } from '@angular/core/src/render3/interfaces/renderer';
+import { DocumentType } from 'src/API';
 
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentPageComponent', () => {
+fdescribe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
   let fixture: ComponentFixture<DocumentPageComponent>;
   let documentFactory: DocumentFactoryService;
@@ -90,7 +91,7 @@ describe('DocumentPageComponent', () => {
 
     describe('[SUCCESS]', () => {
 
-      it('should store the retrieved user', done => {
+      fit('should store the retrieved user', done => {
         component.ngOnInit().then(() => {
           expect(component['currentUser']).toEqual(testUser);
           done();
@@ -300,7 +301,7 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  fdescribe('updateDocTitle()', () => {
+  describe('updateDocTitle()', () => {
     let spyUpdate: jasmine.Spy;
     let spyUpdateDocTitle: jasmine.Spy;
 
@@ -314,36 +315,43 @@ describe('DocumentPageComponent', () => {
       testId = 'test id';
       testTitle = 'test title';
       spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('ok'));
-      spyUpdateDocTitle = spyOn(component, 'updateDocTitle');
+      spyUpdateDocTitle = spyOn(component, 'updateDocTitle').and.callThrough();
 
+      component['docTitle'] = testTitle;
+      // is there a way no to mock this entire thing in order to pass codes like
+      // currentDocument.blah?
+      component['currentDocument'] = {
+        id: testId,
+        version: '',
+        type: DocumentType.FORM,
+        lastUpdatedBy: '',
+        createdAt: '',
+        updatedAt: '',
+      } as Document;
     });
 
-    fit('should return a promise', () => {
-      // I realized this test help me identify the problem of using timeout
+    it('should return a promise', () => {
       const data = component.updateDocTitle();
-      console.log(typeof data);
       expect(data instanceof Promise).toBeTruthy();
     });
 
     it('should call service updateDocument', async done => {
-      console.log(component.updateDocTitle());
       component.updateDocTitle().then(() => {
         expect(spyUpdate.calls.count()).toBe(1);
         done();
       });
-
     });
 
     // TODO: the actual challenging part
     it('should send correct graphql query via service updateDocument', async done => {
-      component['docTitle'] = testTitle;
-      component['currentDocument'] = {
-        id: testId,
-      } as Document;
-
       const expInput = {
         id: testId,
-        title: testTitle,
+        version: '',
+        type: DocumentType.FORM,
+        lastUpdatedBy: '',
+        title: component['docTitle'],
+        createdAt: '',
+        updatedAt: '',
       };
       await component.updateDocTitle().then(() => {
         expect(spyUpdate).toHaveBeenCalledWith(expInput);
@@ -351,11 +359,11 @@ describe('DocumentPageComponent', () => {
       });
     });
 
-    it('should not call updateDocTitle again for consecutive updates', done => {
+    it('should not call updateDocument again for consecutive updates', done => {
       component.updateDocTitle();
       setTimeout(() => {
         component.updateDocTitle().then(() => {
-          expect(spyUpdateDocTitle).toHaveBeenCalledTimes(1);
+          expect(spyUpdate).toHaveBeenCalledTimes(1);
           done();
         });
       }, 100);
@@ -363,9 +371,9 @@ describe('DocumentPageComponent', () => {
 
     it('should reject when failed', done => {
       const errMsg = 'test err';
-      spyUpdate = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.reject(new Error(errMsg)));
+      spyUpdate.and.returnValue(Promise.reject(new Error(errMsg)));
       component.updateDocTitle().catch(response => {
-        expect(response).toThrowError(errMsg);
+        expect(response.message).toEqual(errMsg);
         done();
       });
     });

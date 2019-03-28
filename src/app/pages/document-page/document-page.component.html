@@ -10,7 +10,7 @@
           (focus)="togglePlaceholder()" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
         <!-- When the user is anonymous -->
         <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
-        <div class="placeholder" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Your title...</div>
+        <div class="placeholder" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">(Title)</div>
 
       </h1>
       <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of currentDocument.blockIds" [blockId]="id">

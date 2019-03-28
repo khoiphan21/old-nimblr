@@ -15,5 +15,22 @@
                 "irisa": {}
             }
         }
+    },
+    "bruno": {
+        "awscloudformation": {
+            "AuthRoleName": "irisa-20190328120333-authRole",
+            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328120333-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328120333-authRole",
+            "Region": "ap-southeast-2",
+            "DeploymentBucketName": "irisa-20190328120333-deployment",
+            "UnauthRoleName": "irisa-20190328120333-unauthRole",
+            "StackName": "irisa-20190328120333",
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190328120333/b2143ed0-50fd-11e9-904a-06ec3aebdaac"
+        },
+        "categories": {
+            "auth": {
+                "irisa": {}
+            }
+        }
     }
 }

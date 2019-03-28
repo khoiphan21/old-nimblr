@@ -141,7 +141,7 @@ export class DocumentPageComponent implements OnInit {
           createdAt: this.currentDocument.createdAt,
           updatedAt: this.currentDocument.updatedAt,
         };
-        console.log(this.docTitle);
+
         this.documentCommandService.updateDocument(input).then(data => {
           resolve(input);
         }).catch(err => {
