@@ -17,18 +17,42 @@ describe('QuestionBlock -', () => {
       question: 'Is this a test value?',
       answers: [],
       questionType: QuestionType.SHORT_ANSWER,
-      options: null
+      options: []
     };
   });
 
-  it('should throw error if question type is not supported', () => {
-    const input2 = input as any;
-    input2.questionType = 'abcd';
-    try {
-      const block = new QuestionBlock(input2);
-    } catch (error) {
-      expect(error.message).toEqual('QuestionType not supported');
-    }
+  // tslint:disable:no-unused-expression
+  describe('Parameter Validation', () => {
+
+    it('should throw an error if createdAt is not a valid time string', () => {
+      input.createdAt = 'abcd';
+      try {
+        new QuestionBlock(input);
+        fail('error must be thrown');
+      } catch (error) {
+        const detail = 'createdAt must be a valid time string';
+        expect(error.message).toBe('QuestionBlock failed to create: ' + detail);
+      }
+    });
+    it('should throw an error if updatedAt is not a valid time string', () => {
+      input.updatedAt = 'abcd';
+      try {
+        new QuestionBlock(input);
+        fail('error must be thrown');
+      } catch (error) {
+        const detail = 'updatedAt must be a valid time string';
+        expect(error.message).toBe('QuestionBlock failed to create: ' + detail);
+      }
+    });
+    it('should throw error if question type is not supported', () => {
+      const input2 = input as any;
+      input2.questionType = 'abcd';
+      try {
+        new QuestionBlock(input2);
+      } catch (error) {
+        expect(error.message).toEqual('QuestionType not supported');
+      }
+    });
   });
 
   describe('setting values', () => {
@@ -36,15 +60,13 @@ describe('QuestionBlock -', () => {
     it('should set the right value for `question`', () => {
       input.question = 'This is a question';
       input.answers = ['answer'];
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
+      const questionBlock = new QuestionBlock(input);
       expect(questionBlock.question).toEqual('This is a question');
     });
 
     it('should set the right value for `questionType`', () => {
       input.questionType = QuestionType.PARAGRAPH;
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
+      const questionBlock = new QuestionBlock(input);
       expect(questionBlock.questionType).toEqual(QuestionType.PARAGRAPH);
     });
 
@@ -52,9 +74,9 @@ describe('QuestionBlock -', () => {
       input.questionType = QuestionType.CHECKBOX;
       input.answers = ['this is the answer 1'];
       input.options = ['this is the answer 1', 'this is the answer 2'];
-      const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
+      const questionBlock = new QuestionBlock(input);
       expect(questionBlock.options[0]).toEqual('this is the answer 1');
+      expect(questionBlock.options[1]).toEqual('this is the answer 2');
     });
 
     it('should set the right value for `answers` ', () => {
@@ -62,62 +84,80 @@ describe('QuestionBlock -', () => {
       input.answers = ['this is the answer 2'];
       input.options = ['this is the answer 2'];
       const block = new QuestionBlock(input);
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.answers[0]).toEqual('this is the answer 2');
+      expect(block.answers[0]).toEqual('this is the answer 2');
+    });
+
+    describe('handling "answers" and "options" arrays', () => {
+      it('should remove any answers that are not in options', () => {
+        input.questionType = QuestionType.CHECKBOX;
+        input.answers = ['this is the answer 2', 'EXTRA'];
+        input.options = ['this is the answer 2'];
+        const questionBlock = new QuestionBlock(input);
+        expect(questionBlock.answers.length).toBe(1);
+        expect(questionBlock.answers[0]).toEqual('this is the answer 2');
+      });
+      it('should remove all answers if options is empty', () => {
+        input.questionType = QuestionType.CHECKBOX;
+        input.answers = ['this is the answer 2', 'EXTRA'];
+        input.options = [];
+        const questionBlock = new QuestionBlock(input);
+        expect(questionBlock.answers.length).toBe(0);
+      });
+
+      describe('(null or empty)', () => {
+        it('should set answers to empty array if null or undefined', () => {
+          input.questionType = QuestionType.CHECKBOX;
+          input.answers = null;
+          input.options = [];
+          let questionBlock = new QuestionBlock(input);
+          expect(questionBlock.options.length).toBe(0);
+          input.answers = undefined;
+          questionBlock = new QuestionBlock(input);
+          expect(questionBlock.options.length).toBe(0);
+        });
+        it('should set options to empty array if null or undefined', () => {
+          input.questionType = QuestionType.CHECKBOX;
+          input.answers = [];
+          input.options = null;
+          let questionBlock = new QuestionBlock(input);
+          expect(questionBlock.options.length).toBe(0);
+          input.options = undefined;
+          questionBlock = new QuestionBlock(input);
+          expect(questionBlock.options.length).toBe(0);
+        });
+        it('should change both options and answers to empty array', () => {
+          input.questionType = QuestionType.CHECKBOX;
+          input.answers = null;
+          input.options = null;
+          let questionBlock = new QuestionBlock(input);
+          expect(questionBlock.options.length).toBe(0);
+          expect(questionBlock.answers.length).toBe(0);
+          input.answer = undefined;
+          input.options = undefined;
+          questionBlock = new QuestionBlock(input);
+          expect(questionBlock.options.length).toBe(0);
+          expect(questionBlock.answers.length).toBe(0);
+        });
+      });
+    });
+
+  });
+
+  describe('Immutability Testing', () => {
+    it('should not have mutable answers', () => {
+      input.answers = ['answer1'];
+      input.options = ['answer1', 'answer2'];
+      const block = new QuestionBlock(input);
+      block.answers.push('answer2');
+      expect(block.answers.length).toEqual(1);
+    });
+    it('should not have mutable options', () => {
+      input.answers = ['answer1'];
+      input.options = ['answer1'];
+      const block = new QuestionBlock(input);
+      block.options.push('answer2');
+      expect(block.options.length).toEqual(1);
     });
   });
 
-
-  describe('PARAGRAPH & SHORT_ANSWER type -', () => {
-    it('should not have `options` if it is PARAGRAPH type', () => {
-      input.questionType = QuestionType.PARAGRAPH;
-      input.options = ['this is the answer 1'];
-      try {
-        const block = new QuestionBlock(input);
-        fail(`Error must be thrown for invalid properties`);
-      } catch (error) {
-        expect(error.message).toEqual(`Options should not exist in PARAGRAPH type`);
-      }
-    });
-
-    it('should not have `options` if it is SHORT ANSWER type', () => {
-      input.questionType = QuestionType.SHORT_ANSWER;
-      input.options = ['this is the answer 1'];
-      try {
-        const block = new QuestionBlock(input);
-        fail(`Error must be thrown for invalid properties`);
-      } catch (error) {
-        expect(error.message).toEqual(`Options should not exist in SHORT_ANSWER type`);
-      }
-    });
-  });
-
-  describe('CHECKBOX type -', () => {
-    it('numbers of `answers` should not be more than `options`', () => {
-      input.questionType = QuestionType.CHECKBOX;
-      input.answers = ['this is the answer 1', 'this is the answer 2'];
-      input.options = ['this is the answer 1'];
-      try {
-        const block = new QuestionBlock(input);
-        fail(`Error must be thrown for invalid properties`);
-      } catch (error) {
-        expect(error.message).toEqual('numbers of `answers` should not be more than `options` in CHECKBOX');
-      }
-    });
-  });
-
-  describe('MULTIPLE_CHOICE type -', () => {
-
-    it('options` should not be empty if answers exists`', () => {
-      input.questionType = QuestionType.MULTIPLE_CHOICE;
-      input.answers = ['this is the answer 1'];
-      input.options = [];
-      try {
-        const block = new QuestionBlock(input);
-        fail(`Error must be thrown for invalid properties`);
-      } catch (error) {
-        expect(error.message).toEqual('`options` should not be empty in MULTIPLE_CHOICE if answers exists');
-      }
-    });
-  });
 });

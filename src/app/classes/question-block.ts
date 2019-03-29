@@ -1,6 +1,10 @@
 import { Block } from './block';
 import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
 import { BlockType, QuestionType } from '../../API';
+import { isValidDateString } from './test-helpers.spec';
+
+const BASE_ERROR_MESSAGE = 'QuestionBlock failed to create: ';
+
 export class QuestionBlock implements Block {
   readonly id: UUID;
   readonly version: UUID;
@@ -11,9 +15,9 @@ export class QuestionBlock implements Block {
   readonly updatedAt: ISOTimeString;
   // Question Block specific
   readonly question: string;
-  readonly answers: Array<string>;
+  private immutableAnswers: Array<string>;
   readonly questionType: QuestionType;
-  readonly options?: Array<string>;
+  readonly immutableOptions?: Array<string>;
 
   constructor({
     id,
@@ -28,6 +32,14 @@ export class QuestionBlock implements Block {
     questionType,
     options
   }) {
+    // Parameter validation
+    this.checkQuestionType(questionType);
+    this.validateTimeString({ createdAt, updatedAt }, ['createdAt', 'updatedAt']);
+    const { newAnswers, newOptions } = this.processOptionsAndAnswers(
+      { options, answers }
+    );
+
+    // Storing values
     this.id = id;
     this.version = version;
     this.type = type;
@@ -36,44 +48,60 @@ export class QuestionBlock implements Block {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.question = question;
-    this.answers = answers;
+    this.immutableAnswers = newAnswers;
     this.questionType = questionType;
-    this.options = options;
-    this.checkQuestionBlockValidation(questionType, answers, options);
+    this.immutableOptions = newOptions;
   }
 
-  private checkQuestionBlockValidation(questionType: QuestionType, answers: Array<string>, options: Array<string>) {
-    switch (questionType) {
-      case QuestionType.PARAGRAPH:
-        return this.validateSingleTextAnswerQuestion(questionType, options);
-      case QuestionType.SHORT_ANSWER:
-        return this.validateSingleTextAnswerQuestion(questionType, options);
-      case QuestionType.CHECKBOX:
-        return this.validateCheckbox(answers, options);
-      case QuestionType.MULTIPLE_CHOICE:
-        return this.validateMultipleChoice(answers, options);
-      default:
-        throw new Error('QuestionType not supported');
+  private checkQuestionType(questionType: any) {
+    if (!Object.values(QuestionType).includes(questionType)) {
+      throw new Error('QuestionType not supported');
     }
   }
 
-  private validateSingleTextAnswerQuestion(questionType: QuestionType, options: Array<string>) {
-    if (options) {
-      throw new Error(`Options should not exist in ${questionType} type`);
-    }
+  private validateTimeString(input: any, properties: Array<string>) {
+    properties.forEach(property => {
+      if (!isValidDateString(input[property])) {
+        const detail = `${property} must be a valid time string`;
+        throw new Error(BASE_ERROR_MESSAGE + detail);
+      }
+    });
   }
 
-  private validateCheckbox(answers: Array<string>, options: Array<string>) {
-    if (answers.length > options.length) {
-      throw new Error('numbers of `answers` should not be more than `options` in CHECKBOX');
-    }
-  }
+  private processOptionsAndAnswers({ options = [], answers = []}): OptionsAnswers {
+    options = options ? options : [];
+    answers = answers ? answers : [];
 
-  private validateMultipleChoice(answers: Array<string>, options: Array<string>) {
-    if (answers.length === 1) {
-      if (options.length < 1) {
-        throw new Error('`options` should not be empty in MULTIPLE_CHOICE if answers exists');
+    const newOptions = options;
+    const newAnswers = [];
+
+    for (const answer of answers) {
+      if (options.includes(answer)) {
+        newAnswers.push(answer);
       }
     }
+    return { newAnswers, newOptions };
   }
+
+  get answers(): Array<string> {
+    const list = [];
+    for (const answer of this.immutableAnswers) {
+      list.push(answer);
+    }
+    return list;
+  }
+
+  get options(): Array<string> {
+    const list = [];
+    for (const option of this.immutableOptions) {
+      list.push(option);
+    }
+    return list;
+  }
+
+}
+
+interface OptionsAnswers {
+  newOptions: Array<string>;
+  newAnswers: Array<string>;
 }
