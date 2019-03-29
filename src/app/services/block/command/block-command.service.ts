@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput } from '../../../../API';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 
 @Injectable({
@@ -143,7 +143,6 @@ export class BlockCommandService {
     }
   }
 
-
   private async createQuestionBlock(originalInput: CreateQuestionBlockInput): Promise<any> {
     const input = {
       id: originalInput.id,
@@ -179,6 +178,19 @@ export class BlockCommandService {
       if (value === undefined || value === null) {
         throw new Error(`Missing argument "${param}" in ${context}`);
       }
+    });
+  }
+
+  async deleteBlock(input: DeleteBlockInput): Promise<any> {
+    // ui disable block
+
+
+    return new Promise((resolve, reject) => {
+      // graphql delete block
+
+
+      // error path: reject with err
+
     });
   }
 }

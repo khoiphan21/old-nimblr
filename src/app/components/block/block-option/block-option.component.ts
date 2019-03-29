@@ -52,4 +52,11 @@ export class BlockOptionComponent implements OnChanges {
     this.isSelectedOptionShown.emit(status);
   }
 
+  triggerDeleteEvent() {
+    // disable block UI
+
+    // call command service
+
+  }
+
 }

@@ -390,6 +390,35 @@ describe('BlockCommandService', () => {
     });
   });
 
+  describe('deleteBlock', () => {
+
+    beforeEach(() => {
+
+    });
+
+    it('should return a promise', done => {
+
+    });
+
+    it('should call mutation deleteBlock', done => {
+
+    });
+
+    it('should call mutation deleteBlock with expected values', done => {
+
+    });
+
+    it('should reject with appropriate error from API when failed', done => {
+
+    });
+
+    it('should disable block in UI', done => {
+
+    });
+
+
+  });
+
   function runTestForTextMissingParams(
     params: Array<string>, functionName: string, context: string
   ) {

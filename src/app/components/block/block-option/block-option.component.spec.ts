@@ -11,9 +11,9 @@ describe('BlockOptionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockOptionComponent ]
+      declarations: [BlockOptionComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -115,10 +115,32 @@ describe('BlockOptionComponent', () => {
     });
   });
 
+
+
   it('toggleSelectedOptionsStatus() - should emit the right value to parent', () => {
     toggleSpy.and.callThrough();
     const spy = spyOn(component.isSelectedOptionShown, 'emit');
     component['toggleSelectedOptionsStatus'](false);
     expect(spy).toHaveBeenCalledWith(false);
+  });
+
+
+  describe('triggerDeleteEvent', () => {
+    beforeEach(() => {
+
+    });
+
+    it('should disable block UI', () => {
+
+    });
+
+    it('should call block command service', () => {
+
+    });
+
+    it('should call block command service with correct value', () => {
+
+    });
+
   });
 });
