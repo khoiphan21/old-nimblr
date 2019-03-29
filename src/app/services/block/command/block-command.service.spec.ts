@@ -391,7 +391,7 @@ describe('BlockCommandService', () => {
     });
   });
 
-  fdescribe('deleteBlock', () => {
+  describe('deleteBlock', () => {
     let mockInput: DeleteBlockInput;
 
     beforeEach(() => {
@@ -411,7 +411,7 @@ describe('BlockCommandService', () => {
       done();
     });
 
-    fit('should call graphQlservice query with expected arguments', async done => {
+    it('should call graphQlservice query with expected arguments', async done => {
       await service.deleteBlock(mockInput);
       const input = { id: 'test id' };
       expect(graphQlSpy.calls.mostRecent().args[1]).toEqual({ input });
