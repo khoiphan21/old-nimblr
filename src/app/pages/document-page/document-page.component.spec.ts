@@ -349,13 +349,11 @@ describe('DocumentPageComponent', () => {
     });
 
     it('should not call updateDocument again for consecutive updates', done => {
-      component.updateDocTitle(0);
-      setTimeout(() => {
-        component.updateDocTitle().then(() => {
-          expect(spyUpdate).toHaveBeenCalledTimes(1);
-          done();
-        });
-      }, 100);
+      component.updateDocTitle(50);
+      component.updateDocTitle().then(() => {
+        expect(spyUpdate).toHaveBeenCalledTimes(1);
+        done();
+      });
     });
 
     it('should reject when failed', done => {
