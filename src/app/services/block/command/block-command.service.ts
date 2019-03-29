@@ -3,7 +3,7 @@ import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
 import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
-import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
+import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
 
 @Injectable({
   providedIn: 'root'
@@ -182,15 +182,16 @@ export class BlockCommandService {
   }
 
   async deleteBlock(input: DeleteBlockInput): Promise<any> {
-    // ui disable block
-
-
     return new Promise((resolve, reject) => {
-      // graphql delete block
-
-
-      // error path: reject with err
-
+      try {
+        // graphql delete block
+        input = { id: input.id };
+        const response = this.graphQLService.query(deleteBlock, { input });
+        resolve(response);
+      } catch (err) {
+        // error path: reject with err
+        reject(err);
+      }
     });
   }
 }

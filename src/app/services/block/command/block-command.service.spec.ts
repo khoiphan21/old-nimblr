@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType } from 'src/API';
+import { BlockType, QuestionType, DeleteBlockInput } from 'src/API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 import { processTestError, isValidDateString } from 'src/app/classes/test-helpers.spec';
+import { GraphQLService } from '../../graphQL/graph-ql.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -390,33 +391,41 @@ describe('BlockCommandService', () => {
     });
   });
 
-  describe('deleteBlock', () => {
+  fdescribe('deleteBlock', () => {
+    let mockInput: DeleteBlockInput;
 
     beforeEach(() => {
-
+      graphQlSpy.and.returnValue(Promise.resolve('ok'));
+      mockInput = { id: 'test id' };
     });
 
     it('should return a promise', done => {
-
+      const data = service.deleteBlock(mockInput);
+      expect(data instanceof Promise).toBeTruthy();
+      done();
     });
 
-    it('should call mutation deleteBlock', done => {
-
+    it('should call graphQlservice query', async done => {
+      await service.deleteBlock(mockInput);
+      expect(graphQlSpy.calls.count()).toBe(1);
+      done();
     });
 
-    it('should call mutation deleteBlock with expected values', done => {
-
+    fit('should call graphQlservice query with expected arguments', async done => {
+      await service.deleteBlock(mockInput);
+      const input = { id: 'test id' };
+      expect(graphQlSpy.calls.mostRecent().args[1]).toEqual({ input });
+      done();
     });
 
-    it('should reject with appropriate error from API when failed', done => {
-
+    it('should reject with appropriate error from API when failed', async done => {
+      const expectedError = 'test err';
+      graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));
+      await service.deleteBlock(mockInput).catch(err => {
+        expect(err.message).toEqual(expectedError);
+        done();
+      });
     });
-
-    it('should disable block in UI', done => {
-
-    });
-
-
   });
 
   function runTestForTextMissingParams(
