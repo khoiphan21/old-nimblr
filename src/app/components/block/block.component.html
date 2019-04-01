@@ -4,12 +4,12 @@
     <app-block-header [block]="block"></app-block-header>
 </div> -->
     <div class="block" *ngSwitchCase="'TEXT'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-        <app-block-option *ngIf="isUserLoggedIn" class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
+        <app-block-option [block]="block" *ngIf="isUserLoggedIn" class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
         </app-block-option>
         <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn"></app-block-text>
     </div>
     <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-        <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
+        <app-block-option [block]="block" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
         </app-block-option>
         <app-question-block [questionBlock]="block" class="desktop"></app-question-block>
         <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>

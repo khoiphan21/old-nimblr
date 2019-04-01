@@ -1,5 +1,10 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
+import { Block } from 'src/app/classes/block';
+import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
+
+import { DeleteBlockInput } from '../../../../API';
+import { DocumentPageComponent } from 'src/app/pages/document-page/document-page.component';
 
 @Component({
   selector: 'app-block-option',
@@ -15,7 +20,12 @@ export class BlockOptionComponent implements OnChanges {
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
-  constructor() { }
+  @Input() block: Block;
+
+  constructor(
+    private blockCommandService: BlockCommandService,
+    private documentPageComponent: DocumentPageComponent
+  ) { }
 
   ngOnChanges() {
     this.isAddBlockContainerShown = false;
@@ -53,9 +63,19 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   triggerDeleteEvent() {
-    // disable block UI
+    // identify block id
+    const blockId = this.block.id;
+
+    // interface: remove registered block id from internal document array
+    let blockIds = this.documentPageComponent.currentDocument.blockIds;
+    const index = blockIds.indexOf(blockId);
+    blockIds.splice(index, 1);
 
     // call command service
+    let input: DeleteBlockInput;
+    input = { id: blockId };
+    this.blockCommandService.deleteBlock(input).then(() => {
+    });
 
   }
 

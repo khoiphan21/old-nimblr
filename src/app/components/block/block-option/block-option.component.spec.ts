@@ -115,8 +115,6 @@ describe('BlockOptionComponent', () => {
     });
   });
 
-
-
   it('toggleSelectedOptionsStatus() - should emit the right value to parent', () => {
     toggleSpy.and.callThrough();
     const spy = spyOn(component.isSelectedOptionShown, 'emit');
@@ -124,23 +122,35 @@ describe('BlockOptionComponent', () => {
     expect(spy).toHaveBeenCalledWith(false);
   });
 
-
-  describe('triggerDeleteEvent', () => {
+  fdescribe('triggerDeleteEvent', () => {
+    let spyDelete: jasmine.Spy;
     beforeEach(() => {
-
+      spyDelete = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
     });
 
-    it('should disable block UI', () => {
-
+    fit('should call block command service', () => {
+      component['triggerDeleteEvent']();
+      expect(spyDelete.calls.count()).toBe(1);
     });
 
-    it('should call block command service', () => {
-
+    fit('should call block command service with correct value', () => {
+      const expectedInput = { id: 'test id' };
+      component['block.id'] = 'test id';
+      component['triggerDeleteEvent']();
+      expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
     });
 
-    it('should call block command service with correct value', () => {
+    // fit('should remove correct id from currentDocument', () => {
+    //   const expectedInput = { id: 'test id' };
+    //   component['block.id'] = 'test id';
+    //   component['triggerDeleteEvent']();
+    //   expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
+    // });
 
-    });
+    // fit('should throw error when deleteBlock cannot be performed', () => {
+    //   // component['triggerDeleteEvent']();
+    //   // expect(spyDelete.calls.count()).toBe(1);
+    // });
 
   });
 });
