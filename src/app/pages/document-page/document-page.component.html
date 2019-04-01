@@ -12,7 +12,7 @@
             </h1>
             <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of currentDocument.blockIds" [blockId]="id">
             </app-block>
-            <app-add-information *ngIf="isUserLoggedIn" (click)="addBlock()" style="width: 100%"></app-add-information>
+            <app-add-information *ngIf="isUserLoggedIn && currentDocument.blockIds.length === 0" (click)="addBlock()" style="width: 100%"></app-add-information>
         </section>
     </div>
 </div>
