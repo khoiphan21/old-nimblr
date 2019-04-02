@@ -3,13 +3,17 @@
     <div class="row no-pad no-gutters">
         <app-navigation-bar *ngIf="currentDocument" [documentId]="currentDocument.id" class="col-2"></app-navigation-bar>
         <section class="content col-lg-8 pt-5 pt-lg-4" *ngIf="currentDocument">
-            <h1 class="title">
-                <!-- When the user is logged in -->
-                <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder()" (focus)="togglePlaceholder()" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
-                <!-- When the user is anonymous -->
-                <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
-                <div class="placeholder" *ngIf="docTitle === ''">Untitled</div>
-            </h1>
+            <div class="title">
+                <h1>
+                    <!-- When the user is logged in -->
+                    <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder()" (focus)="togglePlaceholder()" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
+                    <!-- When the user is anonymous -->
+                    <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
+                    <div class="template-tag">(Template)</div>
+                    <div class="placeholder" *ngIf="docTitle === ''">Untitled</div>
+                    <button class="filled-button-primary" (click)="showSendForm()">SEND FORM</button>
+                </h1>
+            </div>
             <section class="document-tab">
                 <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
                     template</div>
@@ -33,7 +37,7 @@
         </section>
     </div>
 </div>
-<section class="overlay" (click)="isInviteCollaboratorShown = false" (click)="isSendFormShown = false" *ngIf="isInviteCollaboratorShown || isSendFormShown">
+<section class="overlay" (click)="isInviteCollaboratorShown = false" (click)="isSendFormShown = false" *ngIf="isInviteCollaboratorShown || isSendFormShown" [@fadeInOutAnimation]>
     <app-send-form (click)="$event.stopPropagation()" *ngIf="isSendFormShown"></app-send-form>
     <app-invite-collaborator (click)="$event.stopPropagation()" *ngIf="isInviteCollaboratorShown"></app-invite-collaborator>
 </section>

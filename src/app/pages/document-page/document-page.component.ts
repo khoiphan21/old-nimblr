@@ -12,13 +12,15 @@ import { BlockQueryService } from '../../services/block/query/block-query.servic
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
 import { TextBlock } from 'src/app/classes/block';
+import { fadeInOutAnimation } from 'src/app/animation';
 
 const uuidv4 = require('uuid/v4');
 
 @Component({
   selector: 'app-document-page',
   templateUrl: './document-page.component.html',
-  styleUrls: ['./document-page.component.scss']
+  styleUrls: ['./document-page.component.scss'],
+  animations: [fadeInOutAnimation]
 })
 export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
