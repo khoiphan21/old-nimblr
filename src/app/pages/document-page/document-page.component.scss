@@ -132,6 +132,10 @@ div.fluid-container {
     }
 }
 
+.overlay {
+    @include row-center;
+}
+
 @include media(lg) {
     div.fluid-container {
         width: 100%;
