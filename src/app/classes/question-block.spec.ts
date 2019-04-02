@@ -24,34 +24,49 @@ describe('QuestionBlock -', () => {
   // tslint:disable:no-unused-expression
   describe('Parameter Validation', () => {
 
-    it('should throw an error if createdAt is not a valid time string', () => {
-      input.createdAt = 'abcd';
+    function runValidationTest(newInput, message) {
       try {
-        new QuestionBlock(input);
+        new QuestionBlock(newInput);
         fail('error must be thrown');
       } catch (error) {
-        const detail = 'createdAt must be a valid time string';
-        expect(error.message).toBe('QuestionBlock failed to create: ' + detail);
+        const base = 'QuestionBlock failed to create: ';
+        expect(error.message).toBe(base + message);
       }
+    }
+
+    it('should throw an error if createdAt is not a valid time string', () => {
+      input.createdAt = 'abcd';
+      const message = 'createdAt must be a valid time string';
+      runValidationTest(input, message);
     });
     it('should throw an error if updatedAt is not a valid time string', () => {
       input.updatedAt = 'abcd';
-      try {
-        new QuestionBlock(input);
-        fail('error must be thrown');
-      } catch (error) {
-        const detail = 'updatedAt must be a valid time string';
-        expect(error.message).toBe('QuestionBlock failed to create: ' + detail);
-      }
+      const message = 'updatedAt must be a valid time string';
+      runValidationTest(input, message);
     });
     it('should throw error if question type is not supported', () => {
       const input2 = input as any;
       input2.questionType = 'abcd';
-      try {
-        new QuestionBlock(input2);
-      } catch (error) {
-        expect(error.message).toEqual('QuestionType not supported');
-      }
+      runValidationTest(input, 'QuestionType not supported');
+    });
+
+    describe(' - Validating options and answers', () => {
+      it('should throw error if answers is not an array', () => {
+        input.answers = '';
+        runValidationTest(input, '"answers" must be an array');
+      });
+      it('should throw error if options is not an array', () => {
+        input.options = '';
+        runValidationTest(input, '"options" must be an array');
+      });
+      it('should throw error if a value in answers is not a string', () => {
+        input.answers = [1];
+        runValidationTest(input, '"answers" must contain only strings');
+      });
+      it('should throw error if a value in options is not a string', () => {
+        input.options = [1];
+        runValidationTest(input, '"options" must contain only strings');
+      });
     });
   });
 

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BlockFactoryService } from './block-factory.service';
+import { BlockFactoryService, NewQuestionBlockInput } from './block-factory.service';
 import { Block, TextBlock } from '../../../classes/block';
 import { isUuid } from '../../../classes/helpers';
 import { BlockType, QuestionType } from 'src/API';
@@ -19,6 +19,73 @@ describe('BlockFactoryService', () => {
 
   it('should be created', () => {
     expect(factory).toBeTruthy();
+  });
+
+  describe('createNewQuestionBlock()', () => {
+    let input: NewQuestionBlockInput;
+    let block: QuestionBlock;
+    beforeEach(() => {
+      input = {
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      };
+      block = factory.createNewQuestionBlock(input);
+    });
+
+    describe('initial values', () => {
+      it('should have the initial question of empty string', () => {
+        expect(block.question).toEqual('');
+      });
+      it('should have the initial questionType of SHORT_ANSWER', () => {
+        expect(block.questionType).toEqual(QuestionType.SHORT_ANSWER);
+      });
+    });
+
+    describe('parameter validation', () => {
+      const BASE_MESSAGE = 'BlockFactoryService failed to create new QuestionBlock: ';
+      it('should create an object of type QuestionBlock', () => {
+        expect(block instanceof QuestionBlock).toBe(true);
+      });
+      it('should have a UUID for id', () => {
+        expect(isUuid(block.id)).toBe(true);
+      });
+      it('should have a UUID for version', () => {
+        expect(isUuid(block.version)).toBe(true);
+      });
+      it('should have the right type', () => {
+        expect(block.type).toBe(BlockType.QUESTION);
+      });
+      it('show throw error if documentId is not a uuid', () => {
+        try {
+          input.documentId = 'asdf';
+          factory.createNewQuestionBlock(input);
+          fail('error must occur');
+        } catch (error) {
+          expect(error.message).toEqual(BASE_MESSAGE + '"documentId" must be a uuid');
+        }
+      });
+      it('show throw error if lastUpdatedBy is not a uuid', () => {
+        try {
+          input.lastUpdatedBy = 'asdf';
+          factory.createNewQuestionBlock(input);
+          fail('error must occur');
+        } catch (error) {
+          expect(error.message).toEqual(BASE_MESSAGE + '"lastUpdatedBy" must be a uuid');
+        }
+      });
+      // no need to check for createdAt, updatedAt, answers and options as the
+      // QuestionBlock class already handles validating these parameters
+    });
+
+    describe('storing values', () => {
+      it('should store the document ID', () => {
+        expect(block.documentId).toEqual(input.documentId);
+      });
+
+      it('should store the lastUpdatedBy', () => {
+        expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+      });
+    });
   });
 
   describe('Create app TextBlock with all parameters specified', () => {

@@ -5,6 +5,16 @@ import { isValidDateString } from './test-helpers.spec';
 
 const BASE_ERROR_MESSAGE = 'QuestionBlock failed to create: ';
 
+interface OptionsAnswers {
+  newOptions: Array<string>;
+  newAnswers: Array<string>;
+}
+
+/**
+ * A type of block to store data for a question and its answers.
+ *
+ * All properties of this class are immutable, including arrays.
+ */
 export class QuestionBlock implements Block {
   readonly id: UUID;
   readonly version: UUID;
@@ -55,7 +65,7 @@ export class QuestionBlock implements Block {
 
   private checkQuestionType(questionType: any) {
     if (!Object.values(QuestionType).includes(questionType)) {
-      throw new Error('QuestionType not supported');
+      throw new Error(BASE_ERROR_MESSAGE + 'QuestionType not supported');
     }
   }
 
@@ -68,9 +78,12 @@ export class QuestionBlock implements Block {
     });
   }
 
-  private processOptionsAndAnswers({ options = [], answers = []}): OptionsAnswers {
-    options = options ? options : [];
-    answers = answers ? answers : [];
+  private processOptionsAndAnswers({ options = [], answers = [] }): OptionsAnswers {
+    options = options !== null ? options : [];
+    answers = answers !== null ? answers : [];
+
+    this.validateStringArray(options, 'options');
+    this.validateStringArray(answers, 'answers');
 
     const newOptions = options;
     const newAnswers = [];
@@ -83,6 +96,23 @@ export class QuestionBlock implements Block {
     return { newAnswers, newOptions };
   }
 
+  private validateStringArray(value, name) {
+    if (value instanceof Array === false) {
+      throw new Error(BASE_ERROR_MESSAGE + `"${name}" must be an array`);
+    }
+    const arrayValue = value as Array<any>;
+    arrayValue.forEach(item => {
+      if (typeof item !== 'string') {
+        throw new Error(BASE_ERROR_MESSAGE + `"${name}" must contain only strings`);
+      }
+    });
+  }
+
+
+
+  /**
+   * Retrieve a **copy** of the list of answers in this question block
+   */
   get answers(): Array<string> {
     const list = [];
     for (const answer of this.immutableAnswers) {
@@ -91,6 +121,9 @@ export class QuestionBlock implements Block {
     return list;
   }
 
+  /**
+   * Retrieve a **copy** of the list of options in this question block
+   */
   get options(): Array<string> {
     const list = [];
     for (const option of this.immutableOptions) {
@@ -99,9 +132,4 @@ export class QuestionBlock implements Block {
     return list;
   }
 
-}
-
-interface OptionsAnswers {
-  newOptions: Array<string>;
-  newAnswers: Array<string>;
 }

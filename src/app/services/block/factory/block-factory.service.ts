@@ -3,14 +3,54 @@ import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
 import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/question-block';
+import { UUID } from '../../document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
+
+export interface NewQuestionBlockInput {
+  documentId: UUID;
+  lastUpdatedBy: UUID;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class BlockFactoryService {
 
   constructor() { }
+
+  /**
+   * Create a new QuestionBlock object. The parameters specified
+   * are the minimum number of parameters required to create this
+   * type of block.
+   *
+   * @returns a valid QuestionBlock object
+   */
+  createNewQuestionBlock(input: NewQuestionBlockInput): QuestionBlock {
+    const BASE_ERROR = 'BlockFactoryService failed to create new QuestionBlock: ';
+
+    if (!isUuid(input.documentId)) {
+      throw new Error(BASE_ERROR + '"documentId" must be a uuid');
+    }
+    if (!isUuid(input.lastUpdatedBy)) {
+      throw new Error(BASE_ERROR + '"lastUpdatedBy" must be a uuid');
+    }
+
+    const newInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      type: BlockType.QUESTION,
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      question: '',
+      answers: [],
+      questionType: QuestionType.SHORT_ANSWER,
+      options: []
+    };
+    return new QuestionBlock(newInput);
+  }
 
   /**
    * Create a Block object from the given raw data. All parameters must not be
