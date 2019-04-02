@@ -31,6 +31,7 @@ import { HeaderSharingComponent } from './components/header/header-sharing/heade
 import { SendFormComponent } from './components/send-form/send-form.component';
 import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
 import { DocumentLoginComponent } from './components/document-login/document-login.component';
+import { RequestAccessComponent } from './components/request-access/request-access.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { DocumentLoginComponent } from './components/document-login/document-log
     SendFormComponent,
     InviteCollaboratorComponent,
     DocumentLoginComponent,
+    RequestAccessComponent,
   ],
   imports: [
     BrowserModule,
