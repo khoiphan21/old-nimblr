@@ -2,33 +2,6 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 section.mobile.container.option-container {
-    width: 100vw;
-    height: 100vh;
-    background: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    padding: 0;
-    flex-direction: column;
-    div.header {
-        width: 100%;
-        @include row-center;
-        height: 50px;
-        justify-content: space-between;
-        border-bottom: $color-grey-5 solid 0.5px;
-        div {
-            text-align: center;
-            color: $color-grey-1;
-            font-weight: normal;
-            &:nth-last-child(1) {
-                font-weight: 300;
-                text-align: right;
-                color: $color-blue-2;
-                font-size: 15px;
-            }
-        }
-    }
     section.document-options {
         width: 100%;
         div.option {
@@ -47,24 +20,33 @@ section.mobile.container.option-container {
 
 @include media(lg) {
     $horizontal-padding: 10px;
-    section.container {
-        top: 31px;
-        right: 24px;
-        width: 177px !important;
-        .title {
-            padding: 5px $horizontal-padding;
-        }
-        .document-options {
-            border-bottom: 1px solid #DDD;
-            .option {
-                font-size: 0.75rem;
-                // span {
-                //     margin-left: 5px;
-                // }
+    section.blocker {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        section.container.options-block.popup {
+            top: 31px;
+            right: 24px;
+            width: 177px !important;
+            height: fit-content;
+            .title {
+                padding: 5px $horizontal-padding;
             }
-        }
-        .document-details {
-            font-size: 0.7rem;
+            .document-options {
+                border-bottom: 1px solid #DDD;
+                .option {
+                    font-size: 0.75rem;
+                    // span {
+                    //     margin-left: 5px;
+                    // }
+                }
+            }
+            .document-details {
+                font-size: 0.7rem;
+            }
         }
     }
 }

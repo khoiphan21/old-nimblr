@@ -1,38 +1,44 @@
-<section class="container options-block desktop" *ngIf="isOptionShown" [@fadeInOutAnimation]>
-    <section class="document-options">
-        <div class="option">
-            <i class="fas fa-trash-alt"></i><span>Delete</span>
-        </div>
+<ng-container *responsive="{sizes:{min:576, max:2000}}">
+    <section class="blocker" (click)="hideOption()" *ngIf="isOptionShown" [@fadeInOutAnimation]>
+        <section class="container options-block popup" (click)="$event.stopPropagation()">
+            <section class="document-options">
+                <div class="option">
+                    <i class="fas fa-trash-alt"></i><span>Delete</span>
+                </div>
+            </section>
+            <section class="document-options">
+                <div class="option">
+                    <i class="fas fa-file-pdf"></i><span>Export as PDF</span>
+                </div>
+                <div class="option">
+                    <i class="fas fa-clock"></i> <span>View document history</span>
+                </div>
+            </section>
+            <section class="document-details">
+                <div>Last edited by Mickey Mouse</div>
+                <div>Last Thursday at 15:35</div>
+            </section>
+        </section>
     </section>
-    <section class="document-options">
-        <div class="option">
-            <i class="fas fa-file-pdf"></i><span>Export as PDF</span>
+</ng-container>
+<!-- mobile  -->
+<ng-container *responsive="{sizes:{min:0,max:575}}">
+    <section class="mobile container option-container" *ngIf="isOptionShown" [@slideBottomToTopAnimation]>
+        <div class="row no-pad header">
+            <div class="col-3"></div>
+            <div class="col-3">Actions</div>
+            <div class="col-3" (click)="hideOption()">Cancel</div>
         </div>
-        <div class="option">
-            <i class="fas fa-clock"></i> <span>View document history</span>
-        </div>
+        <section class="row no-pad document-options">
+            <div class="col-10 option">
+                <i class="fas fa-trash-alt"></i><span>Delete</span>
+            </div>
+            <div class="col-10 option">
+                <i class="fas fa-file-pdf"></i><span>Export as PDF</span>
+            </div>
+            <div class="col-10 option">
+                <i class="fas fa-clock"></i> <span>View document history</span>
+            </div>
+        </section>
     </section>
-    <section class="document-details">
-        <div>Last edited by Mickey Mouse</div>
-        <div>Last Thursday at 15:35</div>
-    </section>
-</section>
-
-<section class="mobile container option-container" *ngIf="isOptionShown" [@slideBottomToTopAnimation]>
-    <div class="row no-pad header">
-        <div class="col-3"></div>
-        <div class="col-3">Actions</div>
-        <div class="col-3" (click)="hideOption()">Cancel</div>
-    </div>
-    <section class="row no-pad document-options">
-        <div class="col-10 option">
-            <i class="fas fa-trash-alt"></i><span>Delete</span>
-        </div>
-        <div class="col-10 option">
-            <i class="fas fa-file-pdf"></i><span>Export as PDF</span>
-        </div>
-        <div class="col-10 option">
-            <i class="fas fa-clock"></i> <span>View document history</span>
-        </div>
-    </section>
-</section>
+</ng-container>
