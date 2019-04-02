@@ -4,7 +4,6 @@ import { HeaderComponent } from './header.component';
 import { AccountService } from '../../services/account/account.service';
 import { MockAccountService } from '../../services/account/account-impl.service.spec';
 import { UserFactoryService } from '../../services/user/user-factory.service';
-import { HeaderOptionsComponent } from './header-options/header-options.component';
 import { DocumentService } from 'src/app/services/document/document.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject } from 'rxjs';
@@ -80,6 +79,17 @@ describe('HeaderComponent', () => {
     spyOn(component['navigationBarService'], 'setNavigationBarStatus');
     component.showNavigationBar();
     expect(component['navigationBarService'].setNavigationBarStatus).toHaveBeenCalled();
+  });
+
+
+  describe('showInvite()', () => {
+    it('should emit the event value as true', done => {
+      component.showInviteEvent.subscribe(value => {
+        expect(value).toBe(true);
+        done();
+      });
+      component.showInvite();
+    });
   });
 
   describe('manageHeaderContent should set `currentUrl` to the right value', () => {

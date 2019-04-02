@@ -10,7 +10,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { configureTestSuite } from 'ng-bullet';
 import { User } from 'src/app/classes/user';
-import { Subject, BehaviorSubject, UnsubscriptionError } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
@@ -390,5 +390,15 @@ describe('DocumentPageComponent', () => {
       component.changeSharingStatus(status);
       expect(spy.calls.mostRecent().args[0].sharingStatus).toEqual(status);
     });
+  });
+
+  it('showInviteCollaborator() - should set `isInviteCollaboratorShown` to true', () => {
+    component.showInviteCollaborator();
+    expect(component.isInviteCollaboratorShown).toBe(true);
+  });
+
+  it('showSendForm() - should set `isSendFormShown` to true', () => {
+    component.showSendForm();
+    expect(component.isSendFormShown).toBe(true);
   });
 });

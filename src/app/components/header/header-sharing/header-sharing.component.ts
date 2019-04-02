@@ -16,6 +16,7 @@ export class HeaderSharingComponent implements OnInit, OnChanges {
 
   @Output() hideSharingEvent = new EventEmitter<boolean>();
   @Output() changeSharingStatus = new EventEmitter<SharingStatus>();
+  @Output() showInviteEvent = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -37,6 +38,10 @@ export class HeaderSharingComponent implements OnInit, OnChanges {
 
   hideSharing() {
     this.hideSharingEvent.emit(false);
+  }
+
+  showInvite() {
+    this.showInviteEvent.emit(true);
   }
 
   copyPageLink() {

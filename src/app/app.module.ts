@@ -29,6 +29,7 @@ import { MobileQuestionBlockComponent } from './components/block/mobile-question
 import { QuestionOptionComponent } from './components/block/question-block/question-option/question-option.component';
 import { HeaderSharingComponent } from './components/header/header-sharing/header-sharing.component';
 import { SendFormComponent } from './components/send-form/send-form.component';
+import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { SendFormComponent } from './components/send-form/send-form.component';
     QuestionOptionComponent,
     HeaderSharingComponent,
     SendFormComponent,
+    InviteCollaboratorComponent,
   ],
   imports: [
     BrowserModule,

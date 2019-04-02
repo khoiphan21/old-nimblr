@@ -22,6 +22,8 @@ const uuidv4 = require('uuid/v4');
 })
 export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
+  isSendFormShown = false;
+  isInviteCollaboratorShown = false;
   isPlaceholderShown: boolean;
   docTitle: string;
   currentSharingStatus: SharingStatus;
@@ -159,6 +161,16 @@ export class DocumentPageComponent implements OnInit {
     this.currentSharingStatus = status;
     this.currentDocument.sharingStatus = status;
     this.documentCommandService.updateDocument(this.currentDocument);
+  }
+
+  showInviteCollaborator() {
+    this.isInviteCollaboratorShown = true;
+    this.isSendFormShown = false;
+  }
+
+  showSendForm() {
+    this.isSendFormShown = true;
+    this.isInviteCollaboratorShown = false;
   }
 
 }

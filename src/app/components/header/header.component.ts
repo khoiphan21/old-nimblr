@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit {
   @Input() sharingStatus: SharingStatus;
 
   @Output() sharingChange = new EventEmitter<SharingStatus>();
+  @Output() showInviteEvent = new EventEmitter<boolean>();
 
   constructor(
     private navigationBarService: NavigationBarService,
@@ -53,6 +54,10 @@ export class HeaderComponent implements OnInit {
 
   showNavigationBar() {
     this.navigationBarService.setNavigationBarStatus(true);
+  }
+
+  showInvite() {
+    this.showInviteEvent.emit(true);
   }
 
   changeSharingStatus(status: SharingStatus) {

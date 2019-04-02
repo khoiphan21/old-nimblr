@@ -55,6 +55,16 @@ describe('HeaderSharingComponent', () => {
     });
   });
 
+  describe('showInvite()', () => {
+    it('should emit the event value as true', done => {
+      component.showInviteEvent.subscribe(value => {
+        expect(value).toBe(true);
+        done();
+      });
+      component.showInvite();
+    });
+  });
+
   describe('copyPageLink()', () => {
     it('should call document to copy', () => {
       const execSpy = spyOn(document, 'execCommand');
