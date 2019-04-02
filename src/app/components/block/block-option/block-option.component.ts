@@ -20,7 +20,7 @@ export class BlockOptionComponent implements OnChanges {
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
-  
+  @Output() deleteEvent = new EventEmitter<string>();
   @Input() block: Block;
 
   constructor( ) { }
@@ -58,6 +58,11 @@ export class BlockOptionComponent implements OnChanges {
 
   private toggleSelectedOptionsStatus(status: boolean) {
     this.isSelectedOptionShown.emit(status);
+  }
+
+  triggerDelete() {
+    console.log('i am clicked, id: ', this.block.id);
+    this.deleteEvent.emit(this.block.id);
   }
 
 }

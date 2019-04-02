@@ -16,7 +16,7 @@ export class BlockComponent implements OnInit {
   @Input() blockId: string;
   @Input() isUserLoggedIn: boolean;
 
-  @Output() deleteEvent = new EventEmitter<string>();
+  // @Output() deleteEvent = new EventEmitter<string>();
 
   constructor(
     private blockQueryService: BlockQueryService
@@ -44,8 +44,8 @@ export class BlockComponent implements OnInit {
     this.isSelectedOptionShown = event;
   }
 
-  triggerDelete() {
-    this.deleteEvent.emit(this.blockId);
-  }
+  // triggerDelete() {
+  //   this.deleteEvent.emit(this.blockId);
+  // }
 
 }

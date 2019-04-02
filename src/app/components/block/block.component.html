@@ -9,7 +9,14 @@
         <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn"></app-block-text>
     </div>
     <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-        <app-block-option [block]="block" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event) (deleteEvent)="triggerDelete()">
+        <!-- 
+            1. the deleteEvent is emmited from block-option.component
+            2. but now I want to send deleteEvent emmition back up to document-page.component
+            3. however document-page component only detect change from block component (block-option's parent)
+            4. Is there a way we can emit value to block, so document-page can rekonize the change?
+        -->
+        <!-- <app-block-option [block]="block" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event) (deleteEvent)="triggerDelete()"> -->
+        <app-block-option [block]="block" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
         </app-block-option>
         <app-question-block [questionBlock]="block" class="desktop"></app-question-block>
         <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>

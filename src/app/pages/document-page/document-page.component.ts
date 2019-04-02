@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
@@ -25,14 +25,14 @@ export class DocumentPageComponent implements OnInit {
   isPlaceholderShown: boolean;
   docTitle: string;
   currentSharingStatus: SharingStatus;
-  
+
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
-  
+
   // blockIds: Array<string>;
-  @Output() deleteEvent = new EventEmitter<any>();
+  // @Output() deleteEvent = new EventEmitter<any>();
   @Input() block: TextBlock;
 
   constructor(
@@ -161,21 +161,17 @@ export class DocumentPageComponent implements OnInit {
   }
 
   deleteBlock(blockId: string) {
-    console.log(this.deleteEvent.emit());
-    // // identify block id
-    // const blockId = this.block.id;
 
-    // // interface: remove registered block id from internal document array
-    // let blockIds = this.documentPageComponent.currentDocument.blockIds;
-    // const index = blockIds.indexOf(blockId);
-    // blockIds.splice(index, 1);
+    console.log('deleteBlock is called...');
+    // interface: remove registered block id from internal document array
+    let blockIds = this.currentDocument.blockIds;
+    const index = blockIds.indexOf(blockId);
+    blockIds.splice(index, 1);
 
-    // // call command service
-    // let input: DeleteBlockInput;
-    // input = { id: blockId };
-    // this.blockCommandService.deleteBlock(input).then(() => {
-    // });
-
+    // call command service
+    let input: DeleteBlockInput;
+    input = { id: blockId };
+    this.blockCommandService.deleteBlock(input);
   }
 
 }

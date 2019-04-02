@@ -395,18 +395,24 @@ describe('DocumentPageComponent', () => {
   // add:
   fdescribe('deleteBlock', () => {
     let spyDelete: jasmine.Spy;
+    let testId: string;
+    let data: any;
+
     beforeEach(() => {
-      // spyDelete = spyOn<any>(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
-      // component.triggerDeleteEvent();
+      spyDelete = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
+      component['currentDocument'] = { blockIds: ['t1', 't2', 't3'] } as Document;
+      testId = 't1';
     });
 
-    fit('should call block command service', () => {
-      // expect(spyDelete.calls.count()).toBe(1);
+    it('should call block command service', () => {
+      data = component.deleteBlock(testId);
+      expect(spyDelete.calls.count()).toBe(1);
     });
 
     it('should call block command service with correct value', () => {
-      const expectedInput = { id: 'test id' };
-      component['block.id'] = 'test id';
+      const expectedInput = { id: testId };
+      component['block.id'] = testId;
+      data = component.deleteBlock(testId);
       expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
     });
 
@@ -417,12 +423,14 @@ describe('DocumentPageComponent', () => {
     //   expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
     // });
 
-    it('should throw error when deleteBlock cannot be performed', () => {
-      // How should the error been thrown?
+    fit('should throw error when deleteBlock cannot be performed', async () => {
+      const spyEvent = spyOn(component['deleteEvent'], 'emit');
       const expectedError = 'test err';
       spyDelete.and.returnValue(Promise.reject(new Error(expectedError)));
-      // expect(spyDelete.calls.count()).toBe(1);
-    });
 
+      component.deleteBlock(testId);
+      console.log(spyEvent.calls);
+      expect(spyEvent.calls.mostRecent().args[0]).toHaveBeenCalledWith(expectedError);
+    });
   });
 });
