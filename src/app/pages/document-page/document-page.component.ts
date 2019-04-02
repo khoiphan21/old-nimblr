@@ -27,7 +27,7 @@ export class DocumentPageComponent implements OnInit {
   isPlaceholderShown: boolean;
   docTitle: string;
   currentSharingStatus: SharingStatus;
-  currentTab = 'submissions';
+  currentTab = 'template';
 
   currentDocument: Document;
   private document$: Observable<Document>;
