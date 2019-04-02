@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { fadeInOutAnimation } from 'src/app/animation';
+import { fadeInOutAnimation, slideBottomToTopAnimation } from 'src/app/animation';
 import { SharingStatus } from 'src/API';
 
 @Component({
   selector: 'app-header-sharing',
   templateUrl: './header-sharing.component.html',
   styleUrls: ['./header-sharing.component.scss'],
-  animations: [fadeInOutAnimation]
+  animations: [fadeInOutAnimation, slideBottomToTopAnimation]
 })
 export class HeaderSharingComponent implements OnInit, OnChanges {
   isPublic: boolean;

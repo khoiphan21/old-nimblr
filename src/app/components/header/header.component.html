@@ -9,7 +9,7 @@
         <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
     </section>
     <section class="document-tab pr-4" *ngIf="currentUrl === 'document'">
-        <span class="mobile"><i class="fas fa-share-alt"></i></span>
+        <span class="mobile" (click)="isSharingShown = !isSharingShown"><i class="fas fa-share-alt"></i></span>
         <span class="share clickable desktop" (click)="isSharingShown = !isSharingShown">Share</span>
         <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = !isOptionShown"></i>
         <app-header-sharing [sharingStatus]="sharingStatus" [isSharingShown]="isSharingShown" (showInviteEvent)="showInvite()" (hideSharingEvent)="isSharingShown = $event" (changeSharingStatus)="changeSharingStatus($event)"></app-header-sharing>

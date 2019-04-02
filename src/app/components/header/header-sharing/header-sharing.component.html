@@ -1,21 +1,56 @@
-<section class="container" (click)="hideSharing()" *ngIf="isSharingShown" [@fadeInOutAnimation]>
-    <div class="popup options-block" (click)="$event.stopPropagation()">
-        <div class="buttons">
-            <button class="invite-person" (click)="showInvite()" (click)="hideSharing()">invite person</button>
-            <button class="copy-page-link" (click)="copyPageLink()">copy page link</button>
+<ng-container *responsive="{sizes:{min:576, max:2000}}">
+    <section class="container" (click)="hideSharing()" *ngIf="isSharingShown" [@fadeInOutAnimation]>
+        <div class="popup options-block" (click)="$event.stopPropagation()">
+            <div class="buttons">
+                <button class="invite-person" (click)="showInvite()" (click)="hideSharing()">invite person</button>
+                <button class="copy-page-link" (click)="copyPageLink()">copy page link</button>
+            </div>
+            <div class="change-sharing-status">
+                <div class="icon">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <div class="status">
+                    <p class="status-detail">Public Access</p>
+                    <p class="sub-status">Anyone with the link can access the page</p>
+                </div>
+                <div class="sharing-button">
+                    <input type="checkbox" [checked]="isPublic" (change)="toggleSharing()" id="switch" />
+                    <label for="switch"></label>
+                </div>
+            </div>
         </div>
-        <div class="change-sharing-status">
-            <div class="icon">
-                <i class="fas fa-globe-americas"></i>
-            </div>
-            <div class="status">
-                <p class="status-detail">Public Access</p>
-                <p class="sub-status">Anyone with the link can access the page</p>
-            </div>
-            <div class="sharing-button">
-                <input type="checkbox" [checked]="isPublic" (change)="toggleSharing()" id="switch" />
-                <label for="switch"></label>
-            </div>
+    </section>
+</ng-container>
+<!-- mobile  -->
+<ng-container *responsive="{sizes:{min:0,max:575}}">
+    <section class="mobile container option-container" *ngIf="isSharingShown" [@slideBottomToTopAnimation]>
+        <div class="row no-pad header">
+            <div class="col-3"></div>
+            <div class="col-3">Actions</div>
+            <div class="col-3" (click)="hideSharing()">Cancel</div>
         </div>
-    </div>
-</section>
+        <section class="row no-pad document-options">
+            <div class="col-10 option">
+                <button class="filled-button-primary" (click)="showInvite()" (click)="hideSharing()">invite person</button>
+            </div>
+            <div class="col-10 option" (click)="copyPageLink()">
+                <span>COPY PAGE LINK</span>
+            </div>
+            <div class="col-10 option">
+                <div class="change-sharing-status">
+                    <div class="icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <div class="status">
+                        <p class="status-detail">Public Access</p>
+                        <p class="sub-status">Anyone with the link can <br> access the page</p>
+                    </div>
+                    <div class="sharing-button">
+                        <input type="checkbox" [checked]="isPublic" (change)="toggleSharing()" id="switch" />
+                        <label for="switch"></label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</ng-container>
