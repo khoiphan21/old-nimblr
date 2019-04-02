@@ -30,6 +30,7 @@ import { QuestionOptionComponent } from './components/block/question-block/quest
 import { HeaderSharingComponent } from './components/header/header-sharing/header-sharing.component';
 import { SendFormComponent } from './components/send-form/send-form.component';
 import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
+import { DocumentLoginComponent } from './components/document-login/document-login.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { InviteCollaboratorComponent } from './components/invite-collaborator/in
     HeaderSharingComponent,
     SendFormComponent,
     InviteCollaboratorComponent,
+    DocumentLoginComponent,
   ],
   imports: [
     BrowserModule,
