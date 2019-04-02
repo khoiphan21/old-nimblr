@@ -165,6 +165,7 @@ input {
     height: 100vh;
     background: rgba(0, 0, 0, 0.46);
     z-index: 3;
+    @include row-center;
 }
 
 .content.text-block {
@@ -191,5 +192,37 @@ input {
         justify-content: flex-start;
         white-space: pre-wrap;
         word-break: break-word;
+    }
+}
+
+section.mobile.container.option-container {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    padding: 0;
+    flex-direction: column;
+    div.header {
+        width: 100%;
+        @include row-center;
+        height: 50px;
+        justify-content: space-between;
+        border-bottom: $color-grey-5 solid 0.5px;
+        div {
+            text-align: center;
+            color: $color-grey-1;
+            font-weight: normal;
+            &:nth-child(odd) {
+                text-align: right;
+                color: $color-blue-2;
+                font-size: 15px;
+            }
+            &:nth-child(1) {
+                text-align: left;
+            }
+        }
     }
 }

@@ -37,9 +37,7 @@
         </section>
     </div>
 </div>
-<section class="overlay" (click)="isInviteCollaboratorShown = false" (click)="isSendFormShown = false" *ngIf="isInviteCollaboratorShown || isSendFormShown" [@fadeInOutAnimation]>
-    <app-send-form (click)="$event.stopPropagation()" *ngIf="isSendFormShown"></app-send-form>
-    <app-invite-collaborator (click)="$event.stopPropagation()" *ngIf="isInviteCollaboratorShown"></app-invite-collaborator>
-</section>
+<app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown" (hideSendFormEvent)="isSendFormShown = false"></app-send-form>
+<app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown" (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
 <!-- <app-document-login></app-document-login> -->
 <!-- <app-request-access></app-request-access> -->

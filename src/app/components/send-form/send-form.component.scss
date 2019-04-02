@@ -1,49 +1,89 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
-$horizontal-padding: 20px;
-section.invitation.options-block {
-    width: 431px;
-    height: 385px;
-    font-family: $font-roboto;
-    font-size: 12px;
-    padding: 10px 0;
-    .title {
-        padding: 10px $horizontal-padding 5px $horizontal-padding;
-        color: #97A0BF;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-weight: 500;
-    }
-    .description {
-        padding: 0 $horizontal-padding 10px $horizontal-padding;
-        font-weight: normal;
-        color: #B2B9D0;
-        border-bottom: 1px solid #DDD;
-    }
+$horizontal-padding: 40px;
+section.mobile.container.option-container {
     input[type=text] {
         width: 100%;
-        font-size: 12px;
+        font-size: 16px;
         border: 0;
         border-bottom: 1px solid #DDD;
-        padding: 10px $horizontal-padding;
+        padding: 20px $horizontal-padding;
         &::placeholder {
             color: $color-grey-3;
             opacity: 0.8;
         }
     }
+    .title {
+        padding: 25px $horizontal-padding 20px $horizontal-padding;
+        color: #97A0BF;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 500;
+        font-size: 13px;
+    }
     .recipient {
         @include row-center;
         justify-content: flex-start;
         color: $color-grey-2;
-        padding: 10px $horizontal-padding;
+        padding: 15px $horizontal-padding;
         font-weight: normal;
+        font-size: 16px;
         i.fa-circle {
-            font-size: 24px;
+            font-size: 30px;
             margin-right: 20px;
         }
         &:nth-child(1) {
-            padding-top: 5px;
+            padding-top: 10px;
+        }
+    }
+}
+
+@include media(lg) {
+    $horizontal-padding: 20px;
+    section.invitation.options-block {
+        width: 431px;
+        height: 385px;
+        font-family: $font-roboto;
+        font-size: 12px;
+        padding: 10px 0;
+        .title {
+            padding: 10px $horizontal-padding 5px $horizontal-padding;
+            color: #97A0BF;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+        }
+        .description {
+            padding: 0 $horizontal-padding 10px $horizontal-padding;
+            font-weight: normal;
+            color: #B2B9D0;
+            border-bottom: 1px solid #DDD;
+        }
+        input[type=text] {
+            width: 100%;
+            font-size: 12px;
+            border: 0;
+            border-bottom: 1px solid #DDD;
+            padding: 10px $horizontal-padding;
+            &::placeholder {
+                color: $color-grey-3;
+                opacity: 0.8;
+            }
+        }
+        .recipient {
+            @include row-center;
+            justify-content: flex-start;
+            color: $color-grey-2;
+            padding: 10px $horizontal-padding;
+            font-weight: normal;
+            i.fa-circle {
+                font-size: 24px;
+                margin-right: 20px;
+            }
+            &:nth-child(1) {
+                padding-top: 5px;
+            }
         }
     }
 }

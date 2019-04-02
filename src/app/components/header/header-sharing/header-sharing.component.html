@@ -1,7 +1,7 @@
 <section class="container" (click)="hideSharing()" *ngIf="isSharingShown" [@fadeInOutAnimation]>
     <div class="popup options-block" (click)="$event.stopPropagation()">
         <div class="buttons">
-            <button class="invite-person" (click)="showInvite()">invite person</button>
+            <button class="invite-person" (click)="showInvite()" (click)="hideSharing()">invite person</button>
             <button class="copy-page-link" (click)="copyPageLink()">copy page link</button>
         </div>
         <div class="change-sharing-status">

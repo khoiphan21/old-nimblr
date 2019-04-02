@@ -32,6 +32,7 @@ import { SendFormComponent } from './components/send-form/send-form.component';
 import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
 import { DocumentLoginComponent } from './components/document-login/document-login.component';
 import { RequestAccessComponent } from './components/request-access/request-access.component';
+import { ResponsiveModule } from 'ngx-responsive';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { RequestAccessComponent } from './components/request-access/request-acce
     ServicesModule,
     ClickOutsideModule,
     BrowserAnimationsModule,
-    ContenteditableModule
+    ContenteditableModule,
+    ResponsiveModule.forRoot()
   ],
 
   bootstrap: [AppComponent]
