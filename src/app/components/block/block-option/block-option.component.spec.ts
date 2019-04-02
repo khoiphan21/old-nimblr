@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { BlockOptionComponent } from './block-option.component';
 
 describe('BlockOptionComponent', () => {
@@ -122,35 +121,4 @@ describe('BlockOptionComponent', () => {
     expect(spy).toHaveBeenCalledWith(false);
   });
 
-  fdescribe('triggerDeleteEvent', () => {
-    let spyDelete: jasmine.Spy;
-    beforeEach(() => {
-      spyDelete = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
-    });
-
-    fit('should call block command service', () => {
-      component['triggerDeleteEvent']();
-      expect(spyDelete.calls.count()).toBe(1);
-    });
-
-    fit('should call block command service with correct value', () => {
-      const expectedInput = { id: 'test id' };
-      component['block.id'] = 'test id';
-      component['triggerDeleteEvent']();
-      expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
-    });
-
-    // fit('should remove correct id from currentDocument', () => {
-    //   const expectedInput = { id: 'test id' };
-    //   component['block.id'] = 'test id';
-    //   component['triggerDeleteEvent']();
-    //   expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
-    // });
-
-    // fit('should throw error when deleteBlock cannot be performed', () => {
-    //   // component['triggerDeleteEvent']();
-    //   // expect(spyDelete.calls.count()).toBe(1);
-    // });
-
-  });
 });

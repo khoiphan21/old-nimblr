@@ -20,12 +20,10 @@ export class BlockOptionComponent implements OnChanges {
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
+  
   @Input() block: Block;
 
-  constructor(
-    private blockCommandService: BlockCommandService,
-    private documentPageComponent: DocumentPageComponent
-  ) { }
+  constructor( ) { }
 
   ngOnChanges() {
     this.isAddBlockContainerShown = false;
@@ -60,23 +58,6 @@ export class BlockOptionComponent implements OnChanges {
 
   private toggleSelectedOptionsStatus(status: boolean) {
     this.isSelectedOptionShown.emit(status);
-  }
-
-  triggerDeleteEvent() {
-    // identify block id
-    const blockId = this.block.id;
-
-    // interface: remove registered block id from internal document array
-    let blockIds = this.documentPageComponent.currentDocument.blockIds;
-    const index = blockIds.indexOf(blockId);
-    blockIds.splice(index, 1);
-
-    // call command service
-    let input: DeleteBlockInput;
-    input = { id: blockId };
-    this.blockCommandService.deleteBlock(input).then(() => {
-    });
-
   }
 
 }

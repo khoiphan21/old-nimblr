@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Block } from '../../classes/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 
@@ -15,6 +15,8 @@ export class BlockComponent implements OnInit {
 
   @Input() blockId: string;
   @Input() isUserLoggedIn: boolean;
+
+  @Output() deleteEvent = new EventEmitter<string>();
 
   constructor(
     private blockQueryService: BlockQueryService
@@ -40,6 +42,10 @@ export class BlockComponent implements OnInit {
 
   toggleSelectedOptionStatus(event: boolean) {
     this.isSelectedOptionShown = event;
+  }
+
+  triggerDelete() {
+    this.deleteEvent.emit(this.blockId);
   }
 
 }

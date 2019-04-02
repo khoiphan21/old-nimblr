@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
@@ -25,14 +25,14 @@ export class DocumentPageComponent implements OnInit {
   isPlaceholderShown: boolean;
   docTitle: string;
   currentSharingStatus: SharingStatus;
-
+  
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
-
+  
   // blockIds: Array<string>;
-
+  @Output() deleteEvent = new EventEmitter<any>();
   @Input() block: TextBlock;
 
   constructor(
@@ -158,6 +158,24 @@ export class DocumentPageComponent implements OnInit {
     this.currentSharingStatus = status;
     this.currentDocument.sharingStatus = status;
     this.documentCommandService.updateDocument(this.currentDocument);
+  }
+
+  deleteBlock(blockId: string) {
+    console.log(this.deleteEvent.emit());
+    // // identify block id
+    // const blockId = this.block.id;
+
+    // // interface: remove registered block id from internal document array
+    // let blockIds = this.documentPageComponent.currentDocument.blockIds;
+    // const index = blockIds.indexOf(blockId);
+    // blockIds.splice(index, 1);
+
+    // // call command service
+    // let input: DeleteBlockInput;
+    // input = { id: blockId };
+    // this.blockCommandService.deleteBlock(input).then(() => {
+    // });
+
   }
 
 }

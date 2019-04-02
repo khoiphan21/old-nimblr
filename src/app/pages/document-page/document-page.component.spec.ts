@@ -391,4 +391,38 @@ describe('DocumentPageComponent', () => {
       expect(spy.calls.mostRecent().args[0].sharingStatus).toEqual(status);
     });
   });
+
+  // add:
+  fdescribe('deleteBlock', () => {
+    let spyDelete: jasmine.Spy;
+    beforeEach(() => {
+      // spyDelete = spyOn<any>(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
+      // component.triggerDeleteEvent();
+    });
+
+    fit('should call block command service', () => {
+      // expect(spyDelete.calls.count()).toBe(1);
+    });
+
+    it('should call block command service with correct value', () => {
+      const expectedInput = { id: 'test id' };
+      component['block.id'] = 'test id';
+      expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
+    });
+
+    // fit('should remove correct id from currentDocument', () => {
+    //   const expectedInput = { id: 'test id' };
+    //   component['block.id'] = 'test id';
+    //   component['triggerDeleteEvent']();
+    //   expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
+    // });
+
+    it('should throw error when deleteBlock cannot be performed', () => {
+      // How should the error been thrown?
+      const expectedError = 'test err';
+      spyDelete.and.returnValue(Promise.reject(new Error(expectedError)));
+      // expect(spyDelete.calls.count()).toBe(1);
+    });
+
+  });
 });
