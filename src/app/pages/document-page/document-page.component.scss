@@ -17,7 +17,7 @@ div.fluid-container {
                 font-size: 2.2rem;
                 font-weight: normal;
                 letter-spacing: 1.5px;
-                padding: 0 100px;
+                padding: 0 $mobile-frame-horizontal-padding;
                 position: relative;
                 font-family: $font-roboto;
                 .text-input {
@@ -25,6 +25,7 @@ div.fluid-container {
                     border: 0;
                 }
                 .placeholder {
+                    padding: 0 $mobile-frame-horizontal-padding;
                     width: 100%;
                     height: 100%;
                     position: absolute;
@@ -35,7 +36,96 @@ div.fluid-container {
                     justify-content: flex-start;
                     white-space: pre-wrap;
                     word-break: break-word;
-                    padding: 0 100px;
+                }
+            }
+            section.document-tab {
+                width: 95%;
+                padding: 0 $mobile-frame-horizontal-padding;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 30px;
+                margin-bottom: 30px;
+                @include row-center;
+                text-transform: uppercase;
+                font-weight: normal;
+                letter-spacing: 1.5px;
+                font-size: 17px;
+                .template,
+                .submissions {
+                    padding: 10px 0;
+                    width: 50%;
+                    border-bottom: 1px solid #97A0BF;
+                    color: #97A0BF;
+                    @include row-center;
+                }
+                .current-tab {
+                    border-bottom: 3px solid #97A0BF;
+                    font-weight: bold;
+                }
+            }
+            section.template {
+                width: 100%;
+                padding: 0 $mobile-frame-horizontal-padding;
+            }
+            table.submissions {
+                width: 70%;
+                margin-left: auto;
+                margin-right: auto;
+                .title {
+                    font-weight: 500;
+                    color: #97A0BF;
+                    text-transform: uppercase;
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
+                    padding-bottom: 10px;
+                }
+                .recipient {
+                    width: 100%;
+                    height: 40px;
+                    border-top: $color-grey-5 solid 1px;
+                    border-bottom: $color-grey-5 solid 1px;
+                    @include row-center;
+                    justify-content: space-between;
+                    padding: 0 10px;
+                    font-size: 14px;
+                    .name {
+                        width: 30%;
+                        @include row-center;
+                        justify-content: flex-start;
+                        color: $color-grey-1;
+                        i.fa-circle {
+                            font-size: 24px;
+                            margin-right: 20px;
+                        }
+                    }
+                    .information {
+                        width: 30%;
+                        @include row-center;
+                        justify-content: flex-start;
+                        font-size: 12px;
+                        font-weight: normal;
+                        color: #B2B9D0;
+                    }
+                    .view-submission {
+                        width: 40%;
+                        @include row-center;
+                        justify-content: flex-end;
+                        color: $color-grey-1;
+                        button {
+                            opacity: 0;
+                            text-transform: none;
+                            height: 28px;
+                            background-color: #9B9B9B;
+                            padding: 0 1.75rem;
+                        }
+                    }
+                    &:hover {
+                        .view-submission {
+                            button {
+                                opacity: 1;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -54,12 +144,36 @@ div.fluid-container {
             flex-grow: 1;
             section.content {
                 height: 100%;
-                h1 {
+                h1.title {
                     font-size: 2.2rem;
                     font-weight: normal;
                     letter-spacing: 1.5px;
-                    padding-left: 100px;
-                    padding-right: 100px;
+                    padding: 0 100px;
+                    position: relative;
+                    font-family: $font-roboto;
+                    .text-input {
+                        width: 100%;
+                        border: 0;
+                    }
+                    .placeholder {
+                        width: 100%;
+                        height: 100%;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        color: #C7C7C7;
+                        @include row-center;
+                        justify-content: flex-start;
+                        white-space: pre-wrap;
+                        word-break: break-word;
+                        padding: 0 100px;
+                    }
+                }
+                section.document-tab {
+                    padding: 0 100px;
+                }
+                section.template {
+                    padding: 0 100px;
                 }
             }
         }

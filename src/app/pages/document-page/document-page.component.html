@@ -10,9 +10,27 @@
                 <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
                 <div class="placeholder" *ngIf="docTitle === ''">Untitled</div>
             </h1>
-            <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of currentDocument.blockIds" [blockId]="id">
-            </app-block>
-            <app-add-information *ngIf="isUserLoggedIn && currentDocument.blockIds.length === 0" (click)="addBlock()" style="width: 100%"></app-add-information>
+            <section class="document-tab">
+                <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
+                    template</div>
+                <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}" (click)="currentTab = 'submissions'">submissions</div>
+            </section>
+            <section class="template" *ngIf="currentTab === 'template'">
+                <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of currentDocument.blockIds" [blockId]="id">
+                </app-block>
+                <app-add-information *ngIf="isUserLoggedIn && currentDocument.blockIds.length === 0" (click)="addBlock()" style="width: 100%"></app-add-information>
+            </section>
+            <table class="submissions" *ngIf="currentTab === 'submissions'">
+                <tr>
+                    <td class="title">recipients</td>
+                </tr>
+                <tr class="recipient">
+                    <td class="name"><i class="fas fa-circle"></i>Marvin the Martian</td>
+                    <td class="information">Last edited on 19 Mar, 2019 </td>
+                    <td class="view-submission"><button class="filled-button-primary">View submission</button></td>
+                </tr>
+            </table>
         </section>
     </div>
 </div>
+<!-- <section class="overlay"></section> -->
