@@ -1,34 +1,51 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BlockFactoryService, NewQuestionBlockInput } from './block-factory.service';
-import { Block, TextBlock } from '../../../classes/block';
+import { BlockFactoryService, CreateNewBlockInput } from './block-factory.service';
+import { Block } from '../../../classes/block';
+import { TextBlock } from "../../../classes/block/textBlock";
 import { isUuid } from '../../../classes/helpers';
 import { BlockType, QuestionType } from 'src/API';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 
 const uuidv4 = require('uuid/v4');
 
 describe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
+  let input: CreateNewBlockInput;
 
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
     factory = TestBed.get(BlockFactoryService);
+    input = {
+      documentId: uuidv4(),
+      lastUpdatedBy: uuidv4()
+    };
   });
 
   it('should be created', () => {
     expect(factory).toBeTruthy();
   });
 
-  describe('createNewQuestionBlock()', () => {
-    let input: NewQuestionBlockInput;
-    let block: QuestionBlock;
+  describe('createNewTextBlock()', () => {
+    let block: TextBlock;
+
     beforeEach(() => {
-      input = {
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4()
-      };
+      block = factory.createNewTextBlock(input);
+    });
+
+    describe('initial values', () => {
+      it('should have the initial value of an empty string', () => {
+        expect(block.value).toEqual('');
+      });
+    });
+
+  });
+
+  describe('createNewQuestionBlock()', () => {
+    let block: QuestionBlock;
+
+    beforeEach(() => {
       block = factory.createNewQuestionBlock(input);
     });
 

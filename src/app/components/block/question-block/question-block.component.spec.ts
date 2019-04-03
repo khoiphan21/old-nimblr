@@ -6,7 +6,7 @@ import { QuestionOptionComponent } from './question-option/question-option.compo
 import { configureTestSuite } from 'ng-bullet';
 import { QuestionType, BlockType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 const uuidv4 = require('uuid/v4');
 

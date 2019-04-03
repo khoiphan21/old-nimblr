@@ -1,7 +1,7 @@
-import { Block } from './block';
-import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
-import { BlockType, QuestionType } from '../../API';
-import { isValidDateString } from './test-helpers.spec';
+import { Block } from '../block';
+import { UUID, ISOTimeString } from '../../services/document/command/document-command.service';
+import { BlockType, QuestionType } from '../../../API';
+import { isValidDateString } from '../test-helpers.spec';
 
 const BASE_ERROR_MESSAGE = 'QuestionBlock failed to create: ';
 

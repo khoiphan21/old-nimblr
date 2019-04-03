@@ -1,9 +1,9 @@
-import { BlockCreateError, BlockImpl } from './block';
 import { BlockType } from 'src/API';
+import { TextBlock } from './textBlock';
 
 const uuidv4 = require('uuid/v4');
 
-describe('BlockImpl', () => {
+describe('TextBlock', () => {
   let input: any;
 
   // This is called first so that Object.keys(input) can be used later
@@ -18,7 +18,8 @@ describe('BlockImpl', () => {
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      value: 'abcd'
     };
   }
 
@@ -47,10 +48,10 @@ describe('BlockImpl', () => {
     function runValidationTest(newInput, message) {
       try {
         /* tslint:disable:no-unused-expression */
-        new BlockImpl(newInput);
+        new TextBlock(newInput);
         fail('error must be thrown');
       } catch (error) {
-        const base = 'BlockImpl failed to create: ';
+        const base = 'TextBlock failed to create: ';
         expect(error.message).toBe(base + message);
       }
     }
@@ -71,26 +72,13 @@ describe('BlockImpl', () => {
       });
     });
 
-    it('should throw error if the block type is not supported', () => {
-      const input2 = input as any;
-      const message = 'BlockType not supported';
-
-      input2.type = 'abcd';
-      runValidationTest(input, message);
-
-      input2.type = null;
-      runValidationTest(input, message);
-
-      input2.type = undefined;
-      runValidationTest(input, message);
-    });
   });
 
   describe('Storing Values', () => {
-    let block: BlockImpl;
+    let block: TextBlock;
 
     beforeEach(() => {
-      block = new BlockImpl(input);
+      block = new TextBlock(input);
     });
 
     Object.keys(input).forEach(property => {
@@ -99,14 +87,18 @@ describe('BlockImpl', () => {
       });
     });
 
-  });
-});
+    describe('storing property "value"', () => {
+      it('should store value as empty string if null', () => {
+        input.value = null;
+        block = new TextBlock(input);
+        expect(block.value).toEqual('');
+      });
+      it('should store value as empty string if undefined', () => {
+        input.value = undefined;
+        block = new TextBlock(input);
+        expect(block.value).toEqual('');
+      });
+    });
 
-describe('BlockCreateError', () => {
-  it('should create error with the extra params', () => {
-    const type = BlockType.TEXT;
-    const message = 'error message';
-    const newError = new BlockCreateError(type, message);
-    expect(newError.message).toEqual(message);
   });
 });

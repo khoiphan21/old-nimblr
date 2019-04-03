@@ -11,7 +11,8 @@ import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
-import { TextBlock } from 'src/app/classes/block';
+import { BlockId, Block } from 'src/app/classes/block';
+import { TextBlock } from "src/app/classes/block/textBlock";
 
 const uuidv4 = require('uuid/v4');
 
@@ -128,6 +129,26 @@ export class DocumentPageComponent implements OnInit {
       const message = `DocumentPage failed to add block: ${error.message}`;
       throw new Error(message);
     }
+  }
+
+  /**
+   * Create a new block and add it to the list of blocks in the document
+   *
+   * @param type the type of the new block to be added
+   * @param after after a certain block. If not specified, the new block will be
+   *              added to the end
+   */
+  async addNewBlock(type: BlockType, after?: BlockId): Promise<Block> {
+    // create a new block object
+    let block: Block;
+    switch (type) {
+      case BlockType.TEXT:
+        break;
+    }
+    // register it to the BlockQueryService
+    // create a new block in backend with BlockCommandService
+    // update the document
+    return;
   }
 
   async updateDocTitle(limit = 500): Promise<any> {

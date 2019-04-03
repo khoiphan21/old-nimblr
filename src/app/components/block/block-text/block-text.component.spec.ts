@@ -6,7 +6,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
-import { TextBlock } from 'src/app/classes/block';
+import { TextBlock } from "src/app/classes/block/textBlock";
 
 const uuidv4 = require('uuid/v4');
 

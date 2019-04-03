@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { QuestionType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';

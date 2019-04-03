@@ -15,7 +15,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
-import { DocumentType, SharingStatus } from 'src/API';
+import { DocumentType, SharingStatus, BlockType } from 'src/API';
+import { TextBlock } from "src/app/classes/block/textBlock";
 
 const uuidv4 = require('uuid/v4');
 
@@ -296,6 +297,23 @@ describe('DocumentPageComponent', () => {
         const message = `DocumentPage failed to add block: ${mockError.message}`;
         expect(error.message).toEqual(message);
       }
+    });
+  });
+
+  describe('addNewBlock()', () => {
+    describe('creating TextBlock', () => {
+      let block: any;
+
+      beforeEach(async () => {
+        block = await component.addNewBlock(BlockType.TEXT);
+      });
+
+      it('should resolve a TextBlock if successful', () => {
+        expect(block instanceof TextBlock).toBe(true);
+      });
+      it('should create an empty TextBlock', async () => {
+        expect(block.value).toEqual('');
+      });
     });
   });
 

@@ -7,7 +7,7 @@ import { configureTestSuite } from 'ng-bullet';
 import { QuestionType, BlockType } from 'src/API';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 const uuidv4 = require('uuid/v4');
 describe('MobileQuestionBlockComponent', () => {
   let component: MobileQuestionBlockComponent;

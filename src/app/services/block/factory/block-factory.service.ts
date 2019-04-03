@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
+import { Block, BlockCreateError } from '../../../classes/block';
+import { TextBlock } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { UUID } from '../../document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
 
-export interface NewQuestionBlockInput {
+export interface CreateNewBlockInput {
   documentId: UUID;
   lastUpdatedBy: UUID;
 }
@@ -19,6 +20,10 @@ export class BlockFactoryService {
 
   constructor() { }
 
+  createNewTextBlock(input: CreateNewBlockInput): TextBlock {
+    return;
+  }
+
   /**
    * Create a new QuestionBlock object. The parameters specified
    * are the minimum number of parameters required to create this
@@ -26,7 +31,7 @@ export class BlockFactoryService {
    *
    * @returns a valid QuestionBlock object
    */
-  createNewQuestionBlock(input: NewQuestionBlockInput): QuestionBlock {
+  createNewQuestionBlock(input: CreateNewBlockInput): QuestionBlock {
     const BASE_ERROR = 'BlockFactoryService failed to create new QuestionBlock: ';
 
     if (!isUuid(input.documentId)) {
