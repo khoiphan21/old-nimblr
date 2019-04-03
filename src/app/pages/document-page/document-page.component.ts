@@ -5,14 +5,14 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
-import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
+import { BlockFactoryService, CreateNewBlockInput } from '../../services/block/factory/block-factory.service';
 import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
 import { BlockId, Block } from 'src/app/classes/block/block';
-import { TextBlock } from "src/app/classes/block/textBlock";
+import { TextBlock } from 'src/app/classes/block/textBlock';
 
 const uuidv4 = require('uuid/v4');
 
@@ -28,6 +28,8 @@ export class DocumentPageComponent implements OnInit {
   currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
+  blockIds: Array<string>;
+
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
@@ -91,6 +93,9 @@ export class DocumentPageComponent implements OnInit {
       if (document === null) { return; }
       this.currentDocument = document;
 
+      // Update the list of block ids
+      this.blockIds = this.currentDocument.blockIds;
+
       // added in for edit title
       this.docTitle = document.title;
 
@@ -135,20 +140,51 @@ export class DocumentPageComponent implements OnInit {
    * Create a new block and add it to the list of blocks in the document
    *
    * @param type the type of the new block to be added
-   * @param after after a certain block. If not specified, the new block will be
-   *              added to the end
+   * @param after after a certain block. If not specified or invalid, the new
+   *              block will be added to the end of the array
    */
   async addNewBlock(type: BlockType, after?: BlockId): Promise<Block> {
-    // create a new block object
-    let block: Block;
-    switch (type) {
-      case BlockType.TEXT:
-        break;
+    try {
+      // create a new block object
+      let block: Block;
+      const input: CreateNewBlockInput = {
+        documentId: this.currentDocument.id,
+        lastUpdatedBy: this.currentUser.id
+      };
+
+      switch (type) {
+        case BlockType.TEXT:
+          block = this.blockFactoryService.createNewTextBlock(input);
+          break;
+        case BlockType.QUESTION:
+          block = this.blockFactoryService.createNewQuestionBlock(input);
+          break;
+        default:
+          throw Error(`BlockType "${type}" is not supported`);
+      }
+      // register it to the BlockQueryService so that the backend notification
+      // will be ignored
+      this.blockQueryService.registerBlockCreatedByUI(block);
+      // create a new block in backend with BlockCommandService
+      await this.blockCommandService.createBlock(block);
+      // update the list of block IDs to be displayed
+      if (after && this.blockIds.indexOf(after) !== -1) {
+        const index = this.blockIds.indexOf(after) + 1;
+        this.blockIds.splice(index, 0, block.id);
+      } else {
+        this.blockIds.push(block.id);
+      }
+      // Update the document in the backend
+      await this.documentCommandService.updateDocument({
+        id: this.currentDocument.id,
+        lastUpdatedBy: this.currentUser.id,
+        blockIds: this.blockIds
+      });
+
+      return block;
+    } catch (error) {
+      throw new Error(`DocumentPage failed to add block: ${error}`);
     }
-    // register it to the BlockQueryService
-    // create a new block in backend with BlockCommandService
-    // update the document
-    return;
   }
 
   async updateDocTitle(limit = 500): Promise<any> {

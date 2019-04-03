@@ -8,6 +8,8 @@ import { DocumentQueryService } from '../query/document-query.service';
 export type UUID = string;
 export type ISOTimeString = string;
 
+const uuidv4 = require('uuid/v4');
+
 @Injectable({
   providedIn: 'root'
 })
@@ -68,7 +70,12 @@ export class DocumentCommandService {
 
   async updateDocument(input: UpdateDocumentInput): Promise<any> {
     try {
-      this.validateUpdateInput(input);
+      // TODO: TEST THIS
+      const newInput = input as any;
+      newInput.version = uuidv4();
+      newInput.updatedAt = new Date().toISOString();
+
+      this.validateUpdateInput(newInput);
 
       // Update the list of versions to be ignored
       this.queryService.registerUpdateVersion(input.version);
