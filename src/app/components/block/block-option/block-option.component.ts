@@ -57,7 +57,6 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   deleteHandler() {
-    console.log('i am clicked, id: ', this.block.id);
     this.deleteEvent.emit(this.block.id);
   }
 
