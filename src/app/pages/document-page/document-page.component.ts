@@ -34,7 +34,7 @@ export class DocumentPageComponent implements OnInit {
   private currentUser: User;
   private timeout: any;
 
-  // blockIds: Array<string>;
+  focusBlockId: BlockId; // the block that needs to be focused on after creation
 
   @Input() block: TextBlock;
 
@@ -167,6 +167,8 @@ export class DocumentPageComponent implements OnInit {
       this.blockQueryService.registerBlockCreatedByUI(block);
       // create a new block in backend with BlockCommandService
       await this.blockCommandService.createBlock(block);
+      // Update the block to be focused on
+      this.focusBlockId = block.id;
       // update the list of block IDs to be displayed
       if (after && this.blockIds.indexOf(after) !== -1) {
         const index = this.blockIds.indexOf(after) + 1;

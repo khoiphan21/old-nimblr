@@ -16,11 +16,13 @@ export interface CreateBlockEvent {
 export class BlockComponent implements OnInit {
   isBlockOptionsShown: boolean;
   isSelectedOptionShown = false;
+  isFocused = false;
 
   block: Block;
 
   @Input() blockId: string;
   @Input() isUserLoggedIn: boolean;
+  @Input() focusBlockId: BlockId; // To check if it should be focused
 
   @Output() createBlock = new EventEmitter<CreateBlockEvent>();
 
@@ -31,6 +33,11 @@ export class BlockComponent implements OnInit {
   ngOnInit() {
     this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
       if (block !== null) {
+
+        if (this.focusBlockId === block.id) {
+          this.isFocused = true; // to tell the children to focus
+        }
+        // Now store the block to display
         this.block = block;
       }
     }, error => {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { QuestionType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
@@ -10,8 +10,10 @@ import { Block } from 'src/app/classes/block/block';
   templateUrl: './question-block.component.html',
   styleUrls: ['./question-block.component.scss']
 })
-export class QuestionBlockComponent implements OnChanges {
+export class QuestionBlockComponent implements OnInit, OnChanges {
   @Input() questionBlock: QuestionBlock;
+  @Input() isFocused: boolean;
+
   valueUpdated = true;
   isPreviewMode = true;
   isQuestionOptionShown = false;
@@ -23,8 +25,22 @@ export class QuestionBlockComponent implements OnChanges {
 
   constructor(
     private blockFactoryService: BlockFactoryService,
-    private blockCommandService: BlockCommandService
+    private blockCommandService: BlockCommandService,
+    private changeDetector: ChangeDetectorRef
   ) { }
+
+  ngOnInit() {
+    if (this.isFocused) {
+      // Show the question options
+      this.isPreviewMode = false;
+
+      // needed to render the component
+      this.changeDetector.detectChanges();
+
+      // now then focus on the question
+      document.getElementById(this.questionBlock.id + '-question').focus();
+    }
+  }
 
   ngOnChanges() {
     this.answers = this.questionBlock.answers;

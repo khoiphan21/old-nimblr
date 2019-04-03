@@ -1,6 +1,6 @@
 <section class="question-block" (click)="isPreviewMode = false" (clickOutside)="isPreviewMode = true" [ngClass]="{'borderless': isPreviewMode === true}">
     <div class="row no-pad question-heading">
-        <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()" class="col-7">
+        <input [id]="questionBlock.id + '-question'" type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()" class="col-7">
         <div *ngIf="isPreviewMode === false" class="dropdown col-2" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
                 <div *ngSwitchCase="'SHORT_ANSWER'">

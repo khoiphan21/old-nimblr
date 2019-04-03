@@ -56,7 +56,6 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addTextBlock() {
-    console.log('adding text block');
     this.createBlock.emit(BlockType.TEXT);
     this.hideAddBlockContainer();
   }
