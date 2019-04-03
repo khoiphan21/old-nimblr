@@ -5,7 +5,7 @@
         </div>
         <div class="add-basic-blocks  options-block" *ngIf="isAddBlockContainerShown">
             <div class="title basic">BASIC BLOCKS</div>
-            <div class="block-type" (click)="createBlock('TEXT')">
+            <div class="block-type" (click)="addTextBlock()">
                 <div class="block-image text">
                     <!-- <img class="text" src="./assets/icons/text-block.png" alt=""> -->
                 </div>
@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="title form">FORM BLOCKS</div>
-            <div class="block-type" (click)="createBlock('TEXT')">
+            <div class="block-type" (click)="addQuestionBlock()">
                 <div class="block-image text">
                 </div>
                 <div class="block-text">

@@ -1,6 +1,6 @@
 import { BlockType } from 'src/API';
 import { UUID, ISOTimeString } from '../../services/document/command/document-command.service';
-import { isValidDateString } from '../test-helpers.spec';
+import { isValidDateString } from '../isValidDateString';
 import { isUuid } from '../helpers';
 
 export type BlockId = UUID;

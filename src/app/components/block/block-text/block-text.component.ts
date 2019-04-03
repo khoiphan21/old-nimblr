@@ -1,6 +1,6 @@
 import { Component, OnChanges, Input } from '@angular/core';
 import { Block } from '../../../classes/block/block';
-import { TextBlock } from "../../../classes/block/textBlock";
+import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 

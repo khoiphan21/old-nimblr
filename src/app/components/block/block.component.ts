@@ -1,6 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Block } from '../../classes/block/block';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Block, BlockId } from '../../classes/block/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
+import { BlockType } from 'src/API';
+
+export interface CreateBlockEvent {
+  id: BlockId;
+  type: BlockType;
+}
 
 @Component({
   selector: 'app-block',
@@ -15,6 +21,8 @@ export class BlockComponent implements OnInit {
 
   @Input() blockId: string;
   @Input() isUserLoggedIn: boolean;
+
+  @Output() createBlock = new EventEmitter<CreateBlockEvent>();
 
   constructor(
     private blockQueryService: BlockQueryService
@@ -40,6 +48,12 @@ export class BlockComponent implements OnInit {
 
   toggleSelectedOptionStatus(event: boolean) {
     this.isSelectedOptionShown = event;
+  }
+
+  addBlock(type: BlockType) {
+    this.createBlock.emit({
+      type, id: this.blockId
+    });
   }
 
 }

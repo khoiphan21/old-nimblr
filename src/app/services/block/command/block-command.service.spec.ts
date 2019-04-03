@@ -3,7 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { BlockCommandService } from './block-command.service';
 import { BlockType, QuestionType } from 'src/API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
-import { processTestError, isValidDateString } from 'src/app/classes/test-helpers.spec';
+import { processTestError } from 'src/app/classes/test-helpers.spec';
+import { isValidDateString } from 'src/app/classes/isValidDateString';
 
 const uuidv4 = require('uuid/v4');
 
