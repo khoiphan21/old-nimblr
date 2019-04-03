@@ -7,6 +7,7 @@ import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlock } from "src/app/classes/block/textBlock";
+import { Block } from 'src/app/classes/block/block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -46,6 +47,57 @@ describe('BlockTextComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  /* tslint:disable:no-string-literal */
+  describe('ngOnInit()', () => {
+    let block: TextBlock;
+
+    beforeEach(() => {
+      block = blockFactroyService.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      fixture = TestBed.createComponent(BlockTextComponent);
+      component = fixture.componentInstance;
+      component.block = block;
+      component.isUserLoggedIn = true;
+      fixture.detectChanges();
+    });
+
+    describe('if isFocused', () => {
+      it('should call changeDetector to detect changes', () => {
+        const changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
+        changeDetectorSpy.and.callThrough();
+
+        component.isFocused = true;
+        component.ngOnInit();
+
+        expect(changeDetectorSpy).toHaveBeenCalled();
+      });
+      it('should focus on the right element', () => {
+        component.isFocused = true;
+        component.ngOnInit();
+        const element = document.getElementById(block.id);
+
+        expect(document.activeElement === element).toBe(true);
+      });
+    });
+
+    describe('if not isFocused', () => {
+      it('should not call changeDetector', () => {
+        spyOn(component['changeDetector'], 'detectChanges');
+        component.isFocused = false;
+        component.ngOnInit();
+        expect(component['changeDetector'].detectChanges).not.toHaveBeenCalled();
+      });
+      it('should not call getElementById', () => {
+        spyOn(document, 'getElementById');
+        component.isFocused = false;
+        component.ngOnInit();
+        expect(document.getElementById).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('ngOnChanges() - should set `value` into the right value when', () => {

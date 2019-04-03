@@ -55,6 +55,61 @@ describe('QuestionBlockComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  /* tslint:disable:no-string-literal */
+  describe('ngOnInit()', () => {
+    let block: QuestionBlock;
+
+    beforeEach(() => {
+      block = TestBed.get(BlockFactoryService).createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      fixture = TestBed.createComponent(QuestionBlockComponent);
+      component = fixture.componentInstance;
+      component.questionBlock = block;
+      fixture.detectChanges();
+    });
+
+    describe('if isFocused', () => {
+      it('should call changeDetector to detect changes', () => {
+        const changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
+        changeDetectorSpy.and.callThrough();
+
+        component.isFocused = true;
+        component.ngOnInit();
+
+        expect(changeDetectorSpy).toHaveBeenCalled();
+      });
+      it('should focus on the right element', () => {
+        component.isFocused = true;
+        component.ngOnInit();
+        const element = document.getElementById(block.id + '-question');
+
+        expect(document.activeElement === element).toBe(true);
+      });
+      it('should set preview mode to false', () => {
+        component.isFocused = true;
+        component.ngOnInit();
+        expect(component.isPreviewMode).toBe(false);
+      });
+    });
+
+    describe('if not isFocused', () => {
+      it('should not call changeDetector', () => {
+        spyOn(component['changeDetector'], 'detectChanges');
+        component.isFocused = false;
+        component.ngOnInit();
+        expect(component['changeDetector'].detectChanges).not.toHaveBeenCalled();
+      });
+      it('should not call getElementById', () => {
+        spyOn(document, 'getElementById');
+        component.isFocused = false;
+        component.ngOnInit();
+        expect(document.getElementById).not.toHaveBeenCalled();
+      });
+    });
+  });
+
   describe('toggleOptions()', () => {
     it('should toggle isQuestionOptionShown() from false to true', () => {
       component.toggleOptions();

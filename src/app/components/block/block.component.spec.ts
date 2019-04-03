@@ -89,6 +89,13 @@ describe('BlockComponent', () => {
       // and check if console is called with the right message
       expect(consoleSpy.calls.mostRecent().args[0].message).toEqual(message);
     });
+
+    it('should set isFocused to true if focusBlockId matches', () => {
+      component.focusBlockId = block.id;
+      component.ngOnInit();
+      subject.next(block);
+      expect(component.isFocused).toBe(true);
+    });
   });
 
   it('toggleBlockOptions() - should set `isBlockOptionsShown` to the given value', () => {

@@ -139,12 +139,9 @@ describe('BlockOptionComponent', () => {
         });
         component.addTextBlock();
       });
-      it('should call to hide the container', done => {
-        component.createBlock.pipe(take(1)).subscribe(() => {
-          expect(hideSpy).toHaveBeenCalled();
-          done();
-        });
+      it('should call to hide the container', () => {
         component.addTextBlock();
+        expect(hideSpy).toHaveBeenCalled();
       });
     });
     describe('addQuestionBlock()', () => {
@@ -155,12 +152,9 @@ describe('BlockOptionComponent', () => {
         });
         component.addQuestionBlock();
       });
-      it('should call to hide the container', done => {
-        component.createBlock.pipe(take(1)).subscribe(() => {
-          expect(hideSpy).toHaveBeenCalled();
-          done();
-        });
+      it('should call to hide the container', () => {
         component.addQuestionBlock();
+        expect(hideSpy).toHaveBeenCalled();
       });
     });
   });
