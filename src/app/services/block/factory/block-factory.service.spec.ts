@@ -9,7 +9,7 @@ import { QuestionBlock } from 'src/app/classes/block/question-block';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('BlockFactoryService', () => {
+describe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
   let input: CreateNewBlockInput;
 
@@ -34,12 +34,21 @@ fdescribe('BlockFactoryService', () => {
       block = factory.createNewTextBlock(input);
     });
 
-    describe('initial values', () => {
-      it('should have the initial value of an empty string', () => {
-        expect(block.value).toEqual('');
-      });
+    it('should have the initial value of an empty string', () => {
+      expect(block.value).toEqual('');
+    });
+    it('should create an object of type TextBlock', () => {
+      expect(block instanceof TextBlock).toBe(true);
+    });
+    it('should store the document ID', () => {
+      expect(block.documentId).toEqual(input.documentId);
     });
 
+    it('should store the lastUpdatedBy', () => {
+      expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+    });
+
+    // no need to check for other properties as they are validated within the class
   });
 
   describe('createNewQuestionBlock()', () => {
@@ -58,51 +67,22 @@ fdescribe('BlockFactoryService', () => {
       });
     });
 
-    describe('parameter validation', () => {
-      const BASE_MESSAGE = 'BlockFactoryService failed to create new QuestionBlock: ';
-      it('should create an object of type QuestionBlock', () => {
-        expect(block instanceof QuestionBlock).toBe(true);
-      });
-      it('should have a UUID for id', () => {
-        expect(isUuid(block.id)).toBe(true);
-      });
-      it('should have a UUID for version', () => {
-        expect(isUuid(block.version)).toBe(true);
-      });
-      it('should have the right type', () => {
-        expect(block.type).toBe(BlockType.QUESTION);
-      });
-      it('show throw error if documentId is not a uuid', () => {
-        try {
-          input.documentId = 'asdf';
-          factory.createNewQuestionBlock(input);
-          fail('error must occur');
-        } catch (error) {
-          expect(error.message).toEqual(BASE_MESSAGE + '"documentId" must be a uuid');
-        }
-      });
-      it('show throw error if lastUpdatedBy is not a uuid', () => {
-        try {
-          input.lastUpdatedBy = 'asdf';
-          factory.createNewQuestionBlock(input);
-          fail('error must occur');
-        } catch (error) {
-          expect(error.message).toEqual(BASE_MESSAGE + '"lastUpdatedBy" must be a uuid');
-        }
-      });
-      // no need to check for createdAt, updatedAt, answers and options as the
-      // QuestionBlock class already handles validating these parameters
+    it('should create an object of type QuestionBlock', () => {
+      expect(block instanceof QuestionBlock).toBe(true);
+    });
+    it('should have the right type', () => {
+      expect(block.type).toBe(BlockType.QUESTION);
     });
 
-    describe('storing values', () => {
-      it('should store the document ID', () => {
-        expect(block.documentId).toEqual(input.documentId);
-      });
-
-      it('should store the lastUpdatedBy', () => {
-        expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
-      });
+    it('should store the document ID', () => {
+      expect(block.documentId).toEqual(input.documentId);
     });
+
+    it('should store the lastUpdatedBy', () => {
+      expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+    });
+
+    // no need to check for other properties as they are validated within the class
   });
 
   describe('Create app TextBlock with all parameters specified', () => {

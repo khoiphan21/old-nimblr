@@ -1,3 +1,5 @@
+import { UUID } from '../services/document/command/document-command.service';
+
 export interface User {
     id: string;
     firstName: string;
@@ -17,3 +19,4 @@ export interface CognitoUserAttributes {
     family_name: string;
 }
 
+export type UserId = UUID;

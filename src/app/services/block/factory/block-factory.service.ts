@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Block, BlockCreateError } from '../../../classes/block/block';
-import { TextBlock } from '../../../classes/block/textBlock';
+import { TextBlock, CreateAppTextBlockInput } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
@@ -21,7 +21,16 @@ export class BlockFactoryService {
   constructor() { }
 
   createNewTextBlock(input: CreateNewBlockInput): TextBlock {
-    return;
+    const newInput: CreateAppTextBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      value: ''
+    };
+    return new TextBlock(newInput);
   }
 
   /**
@@ -32,15 +41,6 @@ export class BlockFactoryService {
    * @returns a valid QuestionBlock object
    */
   createNewQuestionBlock(input: CreateNewBlockInput): QuestionBlock {
-    const BASE_ERROR = 'BlockFactoryService failed to create new QuestionBlock: ';
-
-    if (!isUuid(input.documentId)) {
-      throw new Error(BASE_ERROR + '"documentId" must be a uuid');
-    }
-    if (!isUuid(input.lastUpdatedBy)) {
-      throw new Error(BASE_ERROR + '"lastUpdatedBy" must be a uuid');
-    }
-
     const newInput = {
       id: uuidv4(),
       version: uuidv4(),
