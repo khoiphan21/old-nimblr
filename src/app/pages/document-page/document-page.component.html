@@ -1,9 +1,9 @@
 <div class="fluid-container">
-    <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%"></app-header>
     <div class="row no-pad no-gutters">
         <app-navigation-bar *ngIf="currentDocument" [documentId]="currentDocument.id" class="col-2"></app-navigation-bar>
-        <section class="content col-lg-8 pt-5 pt-lg-4" *ngIf="currentDocument">
-            <div class="title">
+        <section class="content col-lg-8" *ngIf="currentDocument">
+            <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%"></app-header>
+            <div class="title mt-5 mt-lg-4">
                 <h1>
                     <!-- When the user is logged in -->
                     <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder()" (focus)="togglePlaceholder()" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>

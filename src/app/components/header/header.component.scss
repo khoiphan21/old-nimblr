@@ -19,25 +19,6 @@ div.row {
             margin: 0 $mobile-frame-horizontal-padding;
         }
     }
-    section.user-profile {
-        height: 100%;
-        @include row-center;
-        justify-content: flex-start;
-        .user-icon {
-            @include row-center;
-            width: 20px;
-            height: 20px;
-            background: $color-blue-2;
-            text-align: center;
-            color: white;
-            border-radius: 50px;
-            font-size: 0.575rem;
-        }
-        .user-name {
-            color: $color-grey-2;
-            font-size: $header-text-size;
-        }
-    }
     section.document-tab {
         color: $color-grey-2;
         @include row-center;
@@ -53,28 +34,10 @@ div.row {
 @include media(lg) {
     div.row {
         width: 100%;
-        height: 31px;
+        height: $header-height;
         font-family: $font-roboto;
         @include row-center;
-        justify-content: space-between;
-        section.user-profile {
-            height: 100%;
-            @include row-center;
-            justify-content: flex-start;
-            .user-icon {
-                @include row-center;
-                width: 20px;
-                height: 20px;
-                background: $color-blue-2;
-                color: white;
-                border-radius: 50px;
-                font-size: 0.575rem;
-            }
-            .user-name {
-                color: $color-grey-2;
-                font-size: $header-text-size;
-            }
-        }
+        justify-content: flex-end;
         section.document-tab {
             color: $color-grey-2;
             @include row-center;

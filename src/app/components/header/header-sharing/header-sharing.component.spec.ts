@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderSharingComponent } from './header-sharing.component';
 import { SharingStatus } from 'src/API';
+import { ResponsiveModule } from 'ngx-responsive';
 
 describe('HeaderSharingComponent', () => {
   let component: HeaderSharingComponent;
@@ -9,7 +10,8 @@ describe('HeaderSharingComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HeaderSharingComponent]
+      declarations: [HeaderSharingComponent],
+      imports: [ResponsiveModule.forRoot()]
     })
       .compileComponents();
   }));

@@ -8,6 +8,10 @@ import { NavigationBarService } from '../../services/navigation-bar/navigation-b
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
+import { AccountService } from 'src/app/services/account/account.service';
+import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 class MockNavigationBarService {
   getNavigationBar$() {
     return new BehaviorSubject(false);
@@ -21,6 +25,7 @@ describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let navigationBarService: NavigationBarService;
+  let userFactory: UserFactoryService;
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -36,15 +41,22 @@ describe('NavigationBarComponent', () => {
         {
           provide: NavigationBarService,
           useClass: MockNavigationBarService
+        },
+        {
+          provide: AccountService,
+          useClass: MockAccountService
         }
-      ]
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NavigationBarComponent);
+    userFactory = TestBed.get(UserFactoryService);
     navigationBarService = TestBed.get(NavigationBarService);
     component = fixture.componentInstance;
+    component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
     fixture.detectChanges();
   });
 
@@ -52,6 +64,34 @@ describe('NavigationBarComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  /* tslint:disable:no-string-literal */
+  describe('ngOnInit', () => {
+    let user;
+    beforeEach(() => {
+      user = userFactory.createUser('user1', 'john', 'doe', 'johndoe@gmail.com');
+      spyOn(component['accountService'], 'getUser$').and.callFake(() => {
+        return new BehaviorSubject(user);
+      });
+      spyOn<any>(component, 'processInitialName');
+    });
+
+    it('should set the user to the returned value', () => {
+      component.ngOnInit();
+      expect(component.currentUser).toEqual(user);
+    });
+
+    it('should process user`s first name when there is value', () => {
+      component.ngOnInit();
+      expect(component['processInitialName']).toHaveBeenCalled();
+    });
+  });
+
+  /* tslint:disable:no-string-literal */
+  it('processInitialName() - should get the first letter of the name', () => {
+    const firstName = 'Judy';
+    component['processInitialName'](firstName);
+    expect(component.initialName).toBe(firstName.charAt(0));
+  });
 
   it('should receive get the right value for the navigation bar status', () => {
     const expectedResult = false;

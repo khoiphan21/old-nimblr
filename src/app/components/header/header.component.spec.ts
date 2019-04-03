@@ -3,10 +3,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { AccountService } from '../../services/account/account.service';
 import { MockAccountService } from '../../services/account/account-impl.service.spec';
-import { UserFactoryService } from '../../services/user/user-factory.service';
 import { DocumentService } from 'src/app/services/document/document.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BehaviorSubject } from 'rxjs';
 import { configureTestSuite } from 'ng-bullet';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharingStatus } from 'src/API';
@@ -14,7 +12,6 @@ import { SharingStatus } from 'src/API';
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-  let userFactory: UserFactoryService;
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -36,9 +33,7 @@ describe('HeaderComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
-    userFactory = TestBed.get(UserFactoryService);
     component = fixture.componentInstance;
-    component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
     fixture.detectChanges();
   });
 
@@ -46,35 +41,7 @@ describe('HeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  /* tslint:disable:no-string-literal */
-  describe('ngOnInit', () => {
-    let user;
-    beforeEach(() => {
-      user = userFactory.createUser('user1', 'john', 'doe', 'johndoe@gmail.com');
-      spyOn(component['accountService'], 'getUser$').and.callFake(() => {
-        return new BehaviorSubject(user);
-      });
-      spyOn<any>(component, 'processInitialName');
-    });
-
-    it('should set the user to the returned value', () => {
-      component.ngOnInit();
-      expect(component.currentUser).toEqual(user);
-    });
-
-    it('should process user`s first name when there is value', () => {
-      component.ngOnInit();
-      expect(component['processInitialName']).toHaveBeenCalled();
-    });
-  });
-
-  /* tslint:disable:no-string-literal */
-  it('processInitialName() - should get the first letter of the name', () => {
-    const firstName = 'Judy';
-    component['processInitialName'](firstName);
-    expect(component.initialName).toBe(firstName.charAt(0));
-  });
-
+/* tslint:disable:no-string-literal */
   it('showNavigationBar() - should call setNavigationBarStatus() from the service', () => {
     spyOn(component['navigationBarService'], 'setNavigationBarStatus');
     component.showNavigationBar();
