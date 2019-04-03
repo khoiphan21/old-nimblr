@@ -16,7 +16,7 @@ export class BlockComponent implements OnInit {
   @Input() blockId: string;
   @Input() isUserLoggedIn: boolean;
 
-  // @Output() deleteEvent = new EventEmitter<string>();
+  @Output() deleteEvent = new EventEmitter<string>();
 
   constructor(
     private blockQueryService: BlockQueryService
@@ -30,7 +30,7 @@ export class BlockComponent implements OnInit {
     }, error => {
       const newError = new Error(`BlockComponent failed to get block: ${error.message}`);
       // TODO: Handle error in UI
-      console.error(newError);
+      console.error(newError, this.blockId);
     });
   }
 
@@ -44,8 +44,7 @@ export class BlockComponent implements OnInit {
     this.isSelectedOptionShown = event;
   }
 
-  // triggerDelete() {
-  //   this.deleteEvent.emit(this.blockId);
-  // }
-
+  deleteTransmitter(blockId: string) {
+    this.deleteEvent.emit(blockId);
+  }
 }

@@ -69,10 +69,10 @@ export class DocumentCommandService {
   async updateDocument(input: UpdateDocumentInput): Promise<any> {
     try {
       this.validateUpdateInput(input);
-
+      
       // Update the list of versions to be ignored
       this.queryService.registerUpdateVersion(input.version);
-
+      
       const response: any = await this.graphQlService.query(updateDocument, { input });
       return Promise.resolve(response.data.updateDocument);
     } catch (error) {

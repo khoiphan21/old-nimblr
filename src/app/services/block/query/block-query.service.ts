@@ -5,7 +5,6 @@ import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockFactoryService } from '../factory/block-factory.service';
 import { getBlock, listBlocks } from '../../../../graphql/queries';
 import { onUpdateBlockInDocument } from '../../../../graphql/subscriptions';
-import { ListBlocksQuery } from 'src/API';
 
 @Injectable({
   providedIn: 'root'
@@ -94,7 +93,6 @@ export class BlockQueryService {
     this.myVersions.add(version);
   }
 
-
   subscribeToUpdate(documentId: string): Observable<Subscription> {
     if (this.subscriptionMap.has(documentId)) {
       // If not empty:
@@ -140,7 +138,6 @@ export class BlockQueryService {
     }
   }
 
-
   registerBlockCreatedByUI(block: Block) {
     const block$ = new BehaviorSubject<Block>(null);
     this.blocksMap.set(block.id, block$);
@@ -148,5 +145,9 @@ export class BlockQueryService {
 
     // Register the version
     this.registerUpdateVersion(block.version);
+  }
+
+  deleteBlockCreatedByUI(blockId: string) {
+    this.blocksMap.delete(blockId);
   }
 }

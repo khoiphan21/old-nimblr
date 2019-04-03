@@ -1,10 +1,6 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
 import { Block } from 'src/app/classes/block';
-import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
-
-import { DeleteBlockInput } from '../../../../API';
-import { DocumentPageComponent } from 'src/app/pages/document-page/document-page.component';
 
 @Component({
   selector: 'app-block-option',
@@ -60,7 +56,7 @@ export class BlockOptionComponent implements OnChanges {
     this.isSelectedOptionShown.emit(status);
   }
 
-  triggerDelete() {
+  deleteHandler() {
     console.log('i am clicked, id: ', this.block.id);
     this.deleteEvent.emit(this.block.id);
   }

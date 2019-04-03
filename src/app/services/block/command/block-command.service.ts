@@ -181,7 +181,7 @@ export class BlockCommandService {
     });
   }
 
-  async deleteBlock(input: DeleteBlockInput): Promise<any> {
+  deleteBlock(input: DeleteBlockInput): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
         // graphql delete block

@@ -160,18 +160,36 @@ export class DocumentPageComponent implements OnInit {
     this.documentCommandService.updateDocument(this.currentDocument);
   }
 
-  deleteBlock(blockId: string) {
+  async deleteBlock(blockId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // update document, hashmap:
+        this.blockQueryService.deleteBlockCreatedByUI(blockId);
 
-    console.log('deleteBlock is called...');
-    // interface: remove registered block id from internal document array
-    let blockIds = this.currentDocument.blockIds;
-    const index = blockIds.indexOf(blockId);
-    blockIds.splice(index, 1);
+        // Update Document current Document
+        let blockIds = this.currentDocument.blockIds;
+        const index = blockIds.indexOf(blockId);
+        blockIds.splice(index, 1);
+        this.currentDocument.version = uuidv4();
+        this.currentDocument.lastUpdatedBy = this.currentUser.id;
+        const updatePromise = this.documentCommandService.updateDocument(this.currentDocument);
 
-    // call command service
-    let input: DeleteBlockInput;
-    input = { id: blockId };
-    this.blockCommandService.deleteBlock(input);
+        // call command service
+        let input: DeleteBlockInput;
+        input = { id: blockId };
+        const blockPromise = this.blockCommandService.deleteBlock(input);
+
+        // Await for all the promises before moving on
+        await updatePromise;
+        await blockPromise;
+        resolve();
+
+      } catch (error) {
+        const message = `DocumentPage failed to delete block: ${error.message}`;
+        reject(new Error(message));
+
+      }
+    });
   }
 
 }
