@@ -17,6 +17,7 @@ export class BlockComponent implements OnInit {
   @Input() isUserLoggedIn: boolean;
 
   @Output() deleteEvent = new EventEmitter<string>();
+  @Output() backspaceEvent = new EventEmitter<string>();
 
   constructor(
     private blockQueryService: BlockQueryService

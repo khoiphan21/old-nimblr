@@ -137,4 +137,20 @@ describe('BlockTextComponent', () => {
     });
 
   });
+
+  describe('onBackSpace()', () => {
+    beforeEach(() => {
+
+    });
+
+    it('should ...', () => {
+
+    });
+
+    it('should ...', () => {
+
+    });
+
+  });
+
 });
