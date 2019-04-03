@@ -5,10 +5,14 @@ const uuidv4 = require('uuid/v4');
 describe('QuestionBlock -', () => {
   let input: any;
 
-  beforeEach(() => {
+  // This is called first so that Object.keys(input) can be used later
+  // for test automation
+  resetInput();
+
+  function resetInput() {
     input = {
       id: uuidv4(),
-      type: BlockType.QUESTION,
+      type: BlockType.QUESTION, // only needed for test automation
       version: uuidv4(),
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
@@ -19,13 +23,33 @@ describe('QuestionBlock -', () => {
       questionType: QuestionType.SHORT_ANSWER,
       options: []
     };
+  }
+
+  beforeEach(() => {
+    resetInput();
   });
 
-  // tslint:disable:no-unused-expression
   describe('Parameter Validation', () => {
+
+    // test for properties that should be uuids
+    ['id', 'version', 'documentId', 'lastUpdatedBy'].forEach(property => {
+      it(`should throw an error if ${property} is not a valid uuid`, () => {
+        const message = `${property} must be a valid uuid`;
+
+        input[property] = 'abcd';
+        runValidationTest(input, message);
+
+        input[property] = null;
+        runValidationTest(input, message);
+
+        delete input[property];
+        runValidationTest(input, message);
+      });
+    });
 
     function runValidationTest(newInput, message) {
       try {
+        /* tslint:disable:no-unused-expression */
         new QuestionBlock(newInput);
         fail('error must be thrown');
       } catch (error) {
@@ -34,16 +58,22 @@ describe('QuestionBlock -', () => {
       }
     }
 
-    it('should throw an error if createdAt is not a valid time string', () => {
-      input.createdAt = 'abcd';
-      const message = 'createdAt must be a valid time string';
-      runValidationTest(input, message);
+    // Tests for properties that should be time strings
+    ['createdAt', 'updatedAt'].forEach(property => {
+      it(`should throw an error if ${property} is not a valid time string`, () => {
+        const message = `${property} must be a valid time string`;
+
+        input[property] = 'abcd';
+        runValidationTest(input, message);
+
+        input[property] = null;
+        runValidationTest(input, message);
+
+        input[property] = undefined;
+        runValidationTest(input, message);
+      });
     });
-    it('should throw an error if updatedAt is not a valid time string', () => {
-      input.updatedAt = 'abcd';
-      const message = 'updatedAt must be a valid time string';
-      runValidationTest(input, message);
-    });
+
     it('should throw error if question type is not supported', () => {
       const input2 = input as any;
       input2.questionType = 'abcd';
@@ -70,7 +100,18 @@ describe('QuestionBlock -', () => {
     });
   });
 
-  describe('setting values', () => {
+  describe('Storing Values', () => {
+    let block: QuestionBlock;
+
+    beforeEach(() => {
+      block = new QuestionBlock(input);
+    });
+
+    Object.keys(input).forEach(property => {
+      it(`should store the right ${property}`, () => {
+        expect(block[property]).toEqual(input[property]);
+      });
+    });
 
     it('should set the right value for `question`', () => {
       input.question = 'This is a question';

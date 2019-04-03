@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Block } from '../../classes/block';
+import { Block } from '../../classes/block/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 
 @Component({

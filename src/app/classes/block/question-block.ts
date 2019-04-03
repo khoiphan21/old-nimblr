@@ -1,7 +1,6 @@
-import { Block } from '../block';
+import { Block, BlockImpl } from './block';
 import { UUID, ISOTimeString } from '../../services/document/command/document-command.service';
 import { BlockType, QuestionType } from '../../../API';
-import { isValidDateString } from '../test-helpers.spec';
 
 const BASE_ERROR_MESSAGE = 'QuestionBlock failed to create: ';
 
@@ -15,7 +14,7 @@ interface OptionsAnswers {
  *
  * All properties of this class are immutable, including arrays.
  */
-export class QuestionBlock implements Block {
+export class QuestionBlock extends BlockImpl implements Block {
   readonly id: UUID;
   readonly version: UUID;
   readonly type: BlockType;
@@ -32,7 +31,6 @@ export class QuestionBlock implements Block {
   constructor({
     id,
     version,
-    type,
     documentId,
     lastUpdatedBy,
     createdAt,
@@ -42,21 +40,22 @@ export class QuestionBlock implements Block {
     questionType,
     options
   }) {
+    super({
+      id,
+      type: BlockType.QUESTION,
+      version,
+      documentId,
+      lastUpdatedBy,
+      updatedAt,
+      createdAt,
+    })
     // Parameter validation
     this.checkQuestionType(questionType);
-    this.validateTimeString({ createdAt, updatedAt }, ['createdAt', 'updatedAt']);
     const { newAnswers, newOptions } = this.processOptionsAndAnswers(
       { options, answers }
     );
 
     // Storing values
-    this.id = id;
-    this.version = version;
-    this.type = type;
-    this.documentId = documentId;
-    this.lastUpdatedBy = lastUpdatedBy;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.question = question;
     this.immutableAnswers = newAnswers;
     this.questionType = questionType;
@@ -67,15 +66,6 @@ export class QuestionBlock implements Block {
     if (!Object.values(QuestionType).includes(questionType)) {
       throw new Error(BASE_ERROR_MESSAGE + 'QuestionType not supported');
     }
-  }
-
-  private validateTimeString(input: any, properties: Array<string>) {
-    properties.forEach(property => {
-      if (!isValidDateString(input[property])) {
-        const detail = `${property} must be a valid time string`;
-        throw new Error(BASE_ERROR_MESSAGE + detail);
-      }
-    });
   }
 
   private processOptionsAndAnswers({ options = [], answers = [] }): OptionsAnswers {
@@ -107,8 +97,6 @@ export class QuestionBlock implements Block {
       }
     });
   }
-
-
 
   /**
    * Retrieve a **copy** of the list of answers in this question block

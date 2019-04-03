@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Block, BlockCreateError } from '../../../classes/block';
+import { Block, BlockCreateError } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';

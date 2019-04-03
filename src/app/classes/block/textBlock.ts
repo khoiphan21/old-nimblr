@@ -1,6 +1,9 @@
-import { Block, BlockImpl } from '../block';
+import { Block, BlockImpl } from './block';
 import { BlockType } from 'src/API';
 
+/**
+ * A simple block type that contains a string value
+ */
 export class TextBlock extends BlockImpl implements Block {
   readonly value: string;
 

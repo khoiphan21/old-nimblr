@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { BlockQueryService } from './block-query.service';
 import { take, skip } from 'rxjs/operators';
-import { Block } from '../../../classes/block';
+import { Block } from '../../../classes/block/block';
 import { TextBlock } from "../../../classes/block/textBlock";
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { BlockFactoryService } from '../factory/block-factory.service';

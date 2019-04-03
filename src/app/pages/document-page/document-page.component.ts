@@ -11,7 +11,7 @@ import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
-import { BlockId, Block } from 'src/app/classes/block';
+import { BlockId, Block } from 'src/app/classes/block/block';
 import { TextBlock } from "src/app/classes/block/textBlock";
 
 const uuidv4 = require('uuid/v4');

@@ -8,7 +8,7 @@ import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
 import { BehaviorSubject } from 'rxjs';
-import { Block } from 'src/app/classes/block';
+import { Block } from 'src/app/classes/block/block';
 import { environment } from '../../../environments/environment';
 import { listBlocks } from '../../../graphql/queries';
 

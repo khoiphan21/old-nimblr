@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockFactoryService, CreateNewBlockInput } from './block-factory.service';
-import { Block } from '../../../classes/block';
+import { Block } from '../../../classes/block/block';
 import { TextBlock } from "../../../classes/block/textBlock";
 import { isUuid } from '../../../classes/helpers';
 import { BlockType, QuestionType } from 'src/API';
@@ -9,7 +9,7 @@ import { QuestionBlock } from 'src/app/classes/block/question-block';
 
 const uuidv4 = require('uuid/v4');
 
-describe('BlockFactoryService', () => {
+fdescribe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
   let input: CreateNewBlockInput;
 

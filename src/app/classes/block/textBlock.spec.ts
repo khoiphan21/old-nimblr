@@ -13,7 +13,7 @@ describe('TextBlock', () => {
   function resetInput() {
     input = {
       id: uuidv4(),
-      type: BlockType.TEXT,
+      type: BlockType.TEXT, // only needed for test automation
       version: uuidv4(),
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
