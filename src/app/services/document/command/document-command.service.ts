@@ -70,20 +70,23 @@ export class DocumentCommandService {
 
   async updateDocument(input: UpdateDocumentInput): Promise<any> {
     try {
-      // TODO: TEST THIS
-      const newInput = input as any;
-      newInput.version = uuidv4();
-      newInput.updatedAt = new Date().toISOString();
+      // Automatically set some properties to prevent accidental values
+      input.version = uuidv4(); // Must be new every time
+      input.updatedAt = new Date().toISOString(); // The most recent time
+      delete input.createdAt; // This should not be updated
 
-      this.validateUpdateInput(newInput);
+      // Convert title to null if empty string
+      input.title = input.title === '' ? null : input.title;
+
+      this.validateUpdateInput(input);
 
       // Update the list of versions to be ignored
       this.queryService.registerUpdateVersion(input.version);
 
       const response: any = await this.graphQlService.query(updateDocument, { input });
-      return Promise.resolve(response.data.updateDocument);
+      return response.data.updateDocument;
     } catch (error) {
-      return Promise.reject(error);
+      throw error;
     }
   }
 
@@ -102,10 +105,5 @@ export class DocumentCommandService {
       // 'version', 'ownerId', 'lastUpdatedBy'
     ];
     this.checkIfUuid(input, shouldBeUuids);
-
-    // Checks for some specific properties
-    if (input.title === '') {
-      throw new Error('Invalid parameter: Document title cannot be an empty string');
-    }
   }
 }

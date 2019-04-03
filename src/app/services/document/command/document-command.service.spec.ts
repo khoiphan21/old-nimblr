@@ -188,37 +188,73 @@ describe('DocumentCommandService', () => {
 
     /* tslint:disable:no-string-literal */
     describe('[SUCCESS]', () => {
+      const version = uuidv4();
+      const lastUpdatedBy = uuidv4();
+      const updatedAt = new Date().toISOString();
       const updatedInput: UpdateDocumentInput = {
         id: uuidv4(),
         title: 'test title',
-        version: uuidv4(),
-        lastUpdatedBy: uuidv4(),
-        updatedAt: new Date().toISOString()
+        version,
+        lastUpdatedBy,
+        updatedAt,
+        createdAt: new Date().toISOString()
       };
 
-      it('should register the version to the query service', done => {
+      let registerSpy: jasmine.Spy;
+
+      beforeEach(() => {
+        registerSpy = spyOn(service['queryService'], 'registerUpdateVersion');
         querySpy.and.returnValue(Promise.resolve({
           data: { updateDocument: null }
         }));
-
-        service.updateDocument(updatedInput).then(() => {
-          expect(service['queryService']['myVersions'].has(updatedInput.version)).toBe(true);
-          done();
-        }).catch(error => processTestError(
-          'error in testing register version', error, done
-        ));
       });
 
-      it('should return the updated document', done => {
+      it('should use a new version', async () => {
+        await service.updateDocument(updatedInput);
+        expect(registerSpy.calls.mostRecent().args[0]).not.toEqual(version);
+      });
+
+      it('should use a new updatedAt', async () => {
+        await sleep(); // to make sure at least a few millisecs have passed
+        await service.updateDocument(updatedInput);
+
+        async function sleep() {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+            }, 3);
+          });
+        }
+
+        expect(querySpy.calls.mostRecent().args[1].input.updatedAt).not.toEqual(updatedAt);
+      });
+
+      it('should not update createdAt', async () => {
+        await service.updateDocument(updatedInput);
+
+        expect(querySpy.calls.mostRecent().args[1].input.createdAt).toBe(undefined);
+      });
+
+      it('should call the query service to register the version', async () => {
+        await service.updateDocument(updatedInput);
+
+        expect(querySpy).toHaveBeenCalled();
+      });
+
+      it('should return the updated document', async () => {
         const testValue = { foo: 'bar' };
         querySpy.and.returnValue(Promise.resolve({
           data: { updateDocument: testValue }
         }));
         // now call the service
-        service.updateDocument(updatedInput).then(document => {
-          expect(document).toEqual(testValue);
-          done();
-        });
+        const document = await service.updateDocument(updatedInput);
+        expect(document).toEqual(testValue);
+      });
+
+      it('should convert empty string title into null', async () => {
+        updatedInput.title = '';
+        await service.updateDocument(updatedInput);
+        expect(querySpy.calls.mostRecent().args[1].input.title).toBe(null);
       });
 
     });
@@ -270,54 +306,6 @@ describe('DocumentCommandService', () => {
         runTestWithInput({
           input: updatedInput, done,
           fullMessage: 'Invalid parameter: id must be an uuid'
-        });
-      });
-
-      it('should throw an error if the version is undefined', done => {
-        delete updatedInput.version;
-        runTestWithInput({
-          input: updatedInput, done,
-          property: 'version'
-        });
-      });
-
-      it('should throw an error if the version is null', done => {
-        updatedInput.version = null;
-        runTestWithInput({
-          input: updatedInput, done,
-          property: 'version'
-        });
-      });
-
-      it('should throw an error if the version is not a uuid', done => {
-        updatedInput.version = 'abcd';
-        runTestWithInput({
-          input: updatedInput, done,
-          fullMessage: 'Invalid parameter: version must be an uuid'
-        });
-      });
-
-      it('should throw an error if the title is an empty string', done => {
-        updatedInput.title = '';
-        runTestWithInput({
-          input: updatedInput, done,
-          fullMessage: 'Invalid parameter: Document title cannot be an empty string'
-        });
-      });
-
-      it('should throw an error if the updatedAt is undefined', done => {
-        delete updatedInput.updatedAt;
-        runTestWithInput({
-          input: updatedInput, done,
-          property: 'updatedAt'
-        });
-      });
-
-      it('should throw an error if the updatedAt is null', done => {
-        updatedInput.updatedAt = null;
-        runTestWithInput({
-          input: updatedInput, done,
-          property: 'updatedAt'
         });
       });
 
