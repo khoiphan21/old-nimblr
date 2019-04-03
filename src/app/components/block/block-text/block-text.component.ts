@@ -33,7 +33,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.value = this.block.value === null ? '' : this.block.value;
+    this.value = this.block.value;
   }
 
   async updateValue(): Promise<Block> {

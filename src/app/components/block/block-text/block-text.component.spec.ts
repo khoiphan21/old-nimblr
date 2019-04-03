@@ -102,14 +102,6 @@ describe('BlockTextComponent', () => {
 
   describe('ngOnChanges() - should set `value` into the right value when', () => {
     it('`block.value` is not empty', () => {
-      rawData.value = null;
-      const block: any = blockFactroyService.createAppBlock(rawData);
-      component.block = block;
-      component.ngOnChanges();
-      expect(component.value).toBe('');
-    });
-
-    it('`block.value` is empty', () => {
       rawData.value = 'test';
       const block: any = blockFactroyService.createAppBlock(rawData);
       component.block = block;
