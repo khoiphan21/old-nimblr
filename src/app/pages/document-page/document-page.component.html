@@ -6,7 +6,7 @@
             <div class="title mt-5 mt-lg-4">
                 <h1>
                     <!-- When the user is logged in -->
-                    <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
+                    <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
                     <!-- When the user is anonymous -->
                     <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
                     <div class="template-tag">(Template)</div>
