@@ -14,7 +14,7 @@ const uuidv4 = require('uuid/v4');
 describe('BlockTextComponent', () => {
   let component: BlockTextComponent;
   let fixture: ComponentFixture<BlockTextComponent>;
-  let blockFactroyService: BlockFactoryService;
+  let blockFactoryService: BlockFactoryService;
   const rawData = {
     id: uuidv4(),
     type: BlockType.TEXT,
@@ -40,7 +40,7 @@ describe('BlockTextComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockTextComponent);
-    blockFactroyService = TestBed.get(BlockFactoryService);
+    blockFactoryService = TestBed.get(BlockFactoryService);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -55,7 +55,7 @@ describe('BlockTextComponent', () => {
     let changeDetectorSpy: jasmine.Spy;
 
     beforeEach(() => {
-      block = blockFactroyService.createNewTextBlock({
+      block = blockFactoryService.createNewTextBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       });
@@ -72,7 +72,7 @@ describe('BlockTextComponent', () => {
 
     it('should set the block value', () => {
       rawData.value = 'test';
-      block = blockFactroyService.createAppBlock(rawData) as TextBlock;
+      block = blockFactoryService.createAppBlock(rawData) as TextBlock;
       component.block = block;
       fixture.detectChanges();
       component.ngOnChanges({
@@ -137,7 +137,7 @@ describe('BlockTextComponent', () => {
       blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
       blockCommandSpy.and.returnValues(Promise.resolve());
       // create a block for the component
-      const block: any = blockFactroyService.createAppBlock(rawData);
+      const block: any = blockFactoryService.createAppBlock(rawData);
       component.block = block;
       component.value = 'test';
     });

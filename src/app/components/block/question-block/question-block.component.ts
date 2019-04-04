@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { QuestionType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
@@ -10,7 +10,10 @@ import { Block } from 'src/app/classes/block/block';
   templateUrl: './question-block.component.html',
   styleUrls: ['./question-block.component.scss']
 })
-export class QuestionBlockComponent implements OnInit, OnChanges {
+export class QuestionBlockComponent implements OnChanges {
+  // TODO IMPLEMENT CONTROL OF WHETHER IT'S DEITABLE OR NOT
+  // To control whether it's editable or not
+  @Input() isUserLoggedIn: boolean;
   @Input() questionBlock: QuestionBlock;
   @Input() isFocused: boolean;
 
@@ -29,24 +32,24 @@ export class QuestionBlockComponent implements OnInit, OnChanges {
     private changeDetector: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {
-    if (this.isFocused) {
-      // Show the question options
-      this.isPreviewMode = false;
-
-      // needed to render the component
-      this.changeDetector.detectChanges();
-
-      // now then focus on the question
-      document.getElementById(this.questionBlock.id + '-question').focus();
-    }
-  }
-
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.answers = this.questionBlock.answers;
     this.options = this.questionBlock.options;
     this.question = this.questionBlock.question;
     this.currentType = this.questionBlock.questionType;
+
+    // NOTE: call this AFTER setting all values first due to the call to
+    // detectChanges()
+    const focus = changes.isFocused;
+    if (focus) {
+      if (focus.currentValue === true) {
+        // Show the question options
+        this.isPreviewMode = false;
+        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
+        this.changeDetector.detectChanges();
+        document.getElementById(this.questionBlock.id + '-question').focus();
+      }
+    }
   }
 
   toggleOptions() {

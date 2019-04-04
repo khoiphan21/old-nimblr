@@ -2,15 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionBlockComponent } from './question-block.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { QuestionOptionComponent } from './question-option/question-option.component';
 import { configureTestSuite } from 'ng-bullet';
 import { QuestionType, BlockType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 const uuidv4 = require('uuid/v4');
 
-describe('QuestionBlockComponent', () => {
+fdescribe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
   let fixture: ComponentFixture<QuestionBlockComponent>;
   let blockFactoryService: BlockFactoryService;
@@ -47,7 +46,7 @@ describe('QuestionBlockComponent', () => {
     component = fixture.componentInstance;
     spyOn(component, 'toggleOptions').and.callThrough();
     component.questionBlock = block as QuestionBlock;
-    component.ngOnChanges();
+    component.ngOnChanges({});
     fixture.detectChanges();
   });
 
@@ -56,11 +55,12 @@ describe('QuestionBlockComponent', () => {
   });
 
   /* tslint:disable:no-string-literal */
-  describe('ngOnInit()', () => {
+  describe('ngOnChanges()', () => {
     let block: QuestionBlock;
+    let changeDetectorSpy: jasmine.Spy;
 
     beforeEach(() => {
-      block = TestBed.get(BlockFactoryService).createNewTextBlock({
+      block = blockFactoryService.createNewQuestionBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       });
@@ -68,44 +68,52 @@ describe('QuestionBlockComponent', () => {
       component = fixture.componentInstance;
       component.questionBlock = block;
       fixture.detectChanges();
+
+      // Setup spies
+      changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
+      changeDetectorSpy.and.callThrough();
     });
 
-    describe('if isFocused', () => {
-      it('should call changeDetector to detect changes', () => {
-        const changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
-        changeDetectorSpy.and.callThrough();
-
-        component.isFocused = true;
-        component.ngOnInit();
-
+    describe('when isFocused is defined', () => {
+      it('should call changeDetector if isFocused is true', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, true, false)
+        });
         expect(changeDetectorSpy).toHaveBeenCalled();
       });
-      it('should focus on the right element', () => {
-        component.isFocused = true;
-        component.ngOnInit();
-        const element = document.getElementById(block.id + '-question');
 
+      it('should focus on the element if isFocused is true', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, true, false)
+        });
+        const element = document.getElementById(block.id + '-question');
         expect(document.activeElement === element).toBe(true);
       });
-      it('should set preview mode to false', () => {
-        component.isFocused = true;
-        component.ngOnInit();
-        expect(component.isPreviewMode).toBe(false);
+
+      it('should not do anything if isFocused is false', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, false, false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        const element = document.getElementById(block.id + '-question');
+        expect(document.activeElement === element).toBe(false);
       });
     });
 
-    describe('if not isFocused', () => {
-      it('should not call changeDetector', () => {
-        spyOn(component['changeDetector'], 'detectChanges');
-        component.isFocused = false;
-        component.ngOnInit();
-        expect(component['changeDetector'].detectChanges).not.toHaveBeenCalled();
-      });
-      it('should not call getElementById', () => {
-        spyOn(document, 'getElementById');
-        component.isFocused = false;
-        component.ngOnInit();
-        expect(document.getElementById).not.toHaveBeenCalled();
+    describe('when isFocused is not defined or null', () => {
+      it('should not do anything', () => {
+        component.ngOnChanges({
+          isFocused: undefined
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        let element = document.getElementById(block.id + '-question');
+        expect(document.activeElement === element).toBe(false);
+        component.ngOnChanges({
+          isFocused: null
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        element = document.getElementById(block.id + '-question');
+        expect(document.activeElement === element).toBe(false);
       });
     });
   });
