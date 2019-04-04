@@ -6,8 +6,8 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
-import { TextBlock } from "src/app/classes/block/textBlock";
-import { Block } from 'src/app/classes/block/block';
+import { TextBlock } from 'src/app/classes/block/textBlock';
+import { SimpleChange } from '@angular/core';
 
 const uuidv4 = require('uuid/v4');
 
@@ -50,8 +50,9 @@ describe('BlockTextComponent', () => {
   });
 
   /* tslint:disable:no-string-literal */
-  describe('ngOnInit()', () => {
+  describe('ngOnChanges()', () => {
     let block: TextBlock;
+    let changeDetectorSpy: jasmine.Spy;
 
     beforeEach(() => {
       block = blockFactroyService.createNewTextBlock({
@@ -63,51 +64,66 @@ describe('BlockTextComponent', () => {
       component.block = block;
       component.isUserLoggedIn = true;
       fixture.detectChanges();
+
+      // Setup spies
+      changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
+      changeDetectorSpy.and.callThrough();
     });
 
-    describe('if isFocused', () => {
-      it('should call changeDetector to detect changes', () => {
-        const changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
-        changeDetectorSpy.and.callThrough();
-
-        component.isFocused = true;
-        component.ngOnInit();
-
-        expect(changeDetectorSpy).toHaveBeenCalled();
-      });
-      it('should focus on the right element', () => {
-        component.isFocused = true;
-        component.ngOnInit();
-        const element = document.getElementById(block.id);
-
-        expect(document.activeElement === element).toBe(true);
-      });
-    });
-
-    describe('if not isFocused', () => {
-      it('should not call changeDetector', () => {
-        spyOn(component['changeDetector'], 'detectChanges');
-        component.isFocused = false;
-        component.ngOnInit();
-        expect(component['changeDetector'].detectChanges).not.toHaveBeenCalled();
-      });
-      it('should not call getElementById', () => {
-        spyOn(document, 'getElementById');
-        component.isFocused = false;
-        component.ngOnInit();
-        expect(document.getElementById).not.toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('ngOnChanges() - should set `value` into the right value when', () => {
-    it('`block.value` is not empty', () => {
+    it('should set the block value', () => {
       rawData.value = 'test';
-      const block: any = blockFactroyService.createAppBlock(rawData);
+      block = blockFactroyService.createAppBlock(rawData) as TextBlock;
       component.block = block;
-      component.ngOnChanges();
+      fixture.detectChanges();
+      component.ngOnChanges({
+        isFocused: new SimpleChange(null, true, false)
+      });
       expect(component.value).toBe('test');
     });
+
+    describe('when isFocused is defined', () => {
+      it('should call changeDetector if isFocused is true', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, true, false)
+        });
+        expect(changeDetectorSpy).toHaveBeenCalled();
+      });
+
+      it('should focus on the element if isFocused is true', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, true, false)
+        });
+        const element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(true);
+      });
+
+      it('should not do anything if isFocused is false', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, false, false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        const element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+      });
+    });
+
+    describe('when isFocused is not defined or null', () => {
+      it('should not do anything', () => {
+        component.ngOnChanges({
+          isFocused: undefined
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        let element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+        component.ngOnChanges({
+          isFocused: null
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+      });
+    });
+
   });
 
   // TODO: Test this

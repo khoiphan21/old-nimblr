@@ -26,7 +26,7 @@ export class QuestionBlock extends BlockImpl implements Block {
   readonly question: string;
   private immutableAnswers: Array<string>;
   readonly questionType: QuestionType;
-  readonly immutableOptions?: Array<string>;
+  private immutableOptions?: Array<string>;
 
   constructor({
     id,
@@ -102,22 +102,14 @@ export class QuestionBlock extends BlockImpl implements Block {
    * Retrieve a **copy** of the list of answers in this question block
    */
   get answers(): Array<string> {
-    const list = [];
-    for (const answer of this.immutableAnswers) {
-      list.push(answer);
-    }
-    return list;
+    return this.immutableAnswers.map(value => value);
   }
 
   /**
    * Retrieve a **copy** of the list of options in this question block
    */
   get options(): Array<string> {
-    const list = [];
-    for (const option of this.immutableOptions) {
-      list.push(option);
-    }
-    return list;
+    return this.immutableOptions.map(value => value);
   }
 
 }

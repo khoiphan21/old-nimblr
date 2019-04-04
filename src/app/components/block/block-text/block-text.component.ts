@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -9,7 +9,7 @@ import { BlockFactoryService } from '../../../services/block/factory/block-facto
   templateUrl: './block-text.component.html',
   styleUrls: ['./block-text.component.scss']
 })
-export class BlockTextComponent implements OnInit, OnChanges {
+export class BlockTextComponent implements OnChanges {
   isPlaceholderShown: boolean;
   value: string;
   private timeout: any;
@@ -25,15 +25,19 @@ export class BlockTextComponent implements OnInit, OnChanges {
     private changeDetector: ChangeDetectorRef
   ) { }
 
-  ngOnInit(): void {
-    if (this.isFocused) {
-      this.changeDetector.detectChanges(); // Needed to render the component
-      document.getElementById(this.block.id).focus();
-    }
-  }
-
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.value = this.block.value;
+
+    // NOTE: call this AFTER setting all values first due to the call to
+    // detectChanges()
+    const focus = changes.isFocused;
+    if (focus) {
+      if (focus.currentValue === true) {
+        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
+        this.changeDetector.detectChanges();
+        document.getElementById(this.block.id).focus();
+      }
+    }
   }
 
   async updateValue(): Promise<Block> {

@@ -165,8 +165,6 @@ export class DocumentPageComponent implements OnInit {
       // register it to the BlockQueryService so that the backend notification
       // will be ignored
       this.blockQueryService.registerBlockCreatedByUI(block);
-      // create a new block in backend with BlockCommandService
-      await this.blockCommandService.createBlock(block);
       // Update the block to be focused on
       this.focusBlockId = block.id;
       // update the list of block IDs to be displayed
@@ -176,6 +174,8 @@ export class DocumentPageComponent implements OnInit {
       } else {
         this.blockIds.push(block.id);
       }
+      // create a new block in backend with BlockCommandService
+      await this.blockCommandService.createBlock(block);
       // Update the document in the backend
       await this.documentCommandService.updateDocument({
         id: this.currentDocument.id,
