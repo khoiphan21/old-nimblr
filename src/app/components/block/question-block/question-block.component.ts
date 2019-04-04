@@ -43,11 +43,15 @@ export class QuestionBlockComponent implements OnChanges {
     const focus = changes.isFocused;
     if (focus) {
       if (focus.currentValue === true) {
-        // Show the question options
-        this.isPreviewMode = false;
         // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
         this.changeDetector.detectChanges();
         document.getElementById(this.questionBlock.id + '-question').focus();
+        setTimeout(() => {
+          // Show the question options
+          // NOTE: still don't know why wrapping in timeout works.
+          // TODO: IMPROVE THIS
+          this.isPreviewMode = false;
+        }, 5);
       }
     }
   }

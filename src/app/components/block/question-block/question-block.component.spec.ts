@@ -9,7 +9,7 @@ import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 const uuidv4 = require('uuid/v4');
 
-fdescribe('QuestionBlockComponent', () => {
+describe('QuestionBlockComponent', () => {
   let component: QuestionBlockComponent;
   let fixture: ComponentFixture<QuestionBlockComponent>;
   let blockFactoryService: BlockFactoryService;
@@ -75,19 +75,28 @@ fdescribe('QuestionBlockComponent', () => {
     });
 
     describe('when isFocused is defined', () => {
-      it('should call changeDetector if isFocused is true', () => {
-        component.ngOnChanges({
-          isFocused: new SimpleChange(null, true, false)
+      describe('if isFocused is true', () => {
+        beforeEach(() => {
+          component.ngOnChanges({
+            isFocused: new SimpleChange(null, true, false)
+          });
         });
-        expect(changeDetectorSpy).toHaveBeenCalled();
-      });
 
-      it('should focus on the element if isFocused is true', () => {
-        component.ngOnChanges({
-          isFocused: new SimpleChange(null, true, false)
+        it('should call changeDetector if isFocused is true', () => {
+          expect(changeDetectorSpy).toHaveBeenCalled();
         });
-        const element = document.getElementById(block.id + '-question');
-        expect(document.activeElement === element).toBe(true);
+
+        it('should focus on the element if isFocused is true', () => {
+          const element = document.getElementById(block.id + '-question');
+          expect(document.activeElement === element).toBe(true);
+        });
+
+        it('should set isPreviewMode to false', done => {
+          setTimeout(() => {
+            expect(component.isPreviewMode).toBe(false);
+            done();
+          }, 5);
+        });
       });
 
       it('should not do anything if isFocused is false', () => {
@@ -102,12 +111,14 @@ fdescribe('QuestionBlockComponent', () => {
 
     describe('when isFocused is not defined or null', () => {
       it('should not do anything', () => {
+        // undefined case
         component.ngOnChanges({
           isFocused: undefined
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
         let element = document.getElementById(block.id + '-question');
         expect(document.activeElement === element).toBe(false);
+        // null case
         component.ngOnChanges({
           isFocused: null
         });

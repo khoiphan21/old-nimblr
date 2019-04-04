@@ -29,13 +29,6 @@ describe('(Integration) DocumentCommandService', () => {
     graphQlService = TestBed.get(GraphQLService);
   });
 
-  interface RunTestInput {
-    input: CreateDocumentInput | UpdateDocumentInput;
-    done: any;
-    property?: string;
-    fullMessage?: string;
-  }
-
   beforeAll(() => {
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
       service$.next(TestBed.get(DocumentCommandService));
