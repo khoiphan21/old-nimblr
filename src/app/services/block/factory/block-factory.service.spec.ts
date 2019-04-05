@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { BlockFactoryService, CreateNewBlockInput } from './block-factory.service';
 import { Block } from '../../../classes/block/block';
-import { TextBlock } from "../../../classes/block/textBlock";
+import { TextBlock } from '../../../classes/block/textBlock';
 import { isUuid } from '../../../classes/helpers';
 import { BlockType, QuestionType } from 'src/API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
@@ -145,7 +145,6 @@ describe('BlockFactoryService', () => {
         try {
           factory.createAppBlock(rawData);
         } catch (error) {
-          expect(error.blockType).toBe(null);
           expect(error.message).toEqual('BlockType not supported');
         }
       });
@@ -170,53 +169,49 @@ describe('BlockFactoryService', () => {
 
 
       function checkForMissing(parameter: string) {
-        it(`should throw BlockCreateError if ${parameter} is *missing*`, () => {
+        it(`should throw Error if ${parameter} is *missing*`, () => {
           delete rawData[parameter];
           try {
             block = factory.createAppBlock(rawData);
             fail(`Error must be thrown for missing ${parameter} `);
           } catch (error) {
-            expect(error.blockType).toEqual(BlockType.TEXT);
-            expect(error.message).toEqual(`BlockCreateError: ${parameter} is missing`);
+            expect(error.message).toEqual(`${parameter} is missing`);
           }
         });
       }
 
       function checkForNull(parameter: string) {
-        it(`should throw BlockCreateError if ${parameter} is *null*`, () => {
+        it(`should throw Error if ${parameter} is *null*`, () => {
           rawData[parameter] = null;
           try {
             block = factory.createAppBlock(rawData);
             fail(`Error must be thrown for ${parameter} being null`);
           } catch (error) {
-            expect(error.blockType).toEqual(BlockType.TEXT);
-            expect(error.message).toEqual(`BlockCreateError: ${parameter} cannot be null`);
+            expect(error.message).toEqual(`${parameter} cannot be null`);
           }
         });
       }
 
       function checkIfUuid(parameter: string) {
-        it(`should throw BlockCreateError if ${parameter} is not a uuid`, () => {
+        it(`should throw Error if ${parameter} is not a uuid`, () => {
           rawData[parameter] = `abcd`;
           try {
             block = factory.createAppBlock(rawData);
             fail(`Error must be thrown for ${parameter} not being uuid`);
           } catch (error) {
-            expect(error.blockType).toEqual(BlockType.TEXT);
-            expect(error.message).toEqual(`BlockCreateError: ${parameter} must be an uuid`);
+            expect(error.message).toEqual(`${parameter} must be an uuid`);
           }
         });
       }
 
       function checkIfISOTimeString(parameter: string) {
-        it(`should throw BlockCreateError if ${parameter} is not a valid time string`, () => {
+        it(`should throw Error if ${parameter} is not a valid time string`, () => {
           rawData[parameter] = `abcd`;
           try {
             block = factory.createAppBlock(rawData);
             fail(`Error must be thrown for ${parameter} not being a valid time string`);
           } catch (error) {
-            expect(error.blockType).toEqual(BlockType.TEXT);
-            expect(error.message).toEqual(`BlockCreateError: ${parameter} must be a valid time string`);
+            expect(error.message).toEqual(`${parameter} must be a valid time string`);
           }
         });
 
@@ -292,6 +287,36 @@ describe('BlockFactoryService', () => {
     it('should generate a updatedAt if not given', () => {
       expect(typeof block.updatedAt).toEqual('string');
       expect(new Date(block.updatedAt) instanceof Date).toBe(true);
+    });
+  });
+
+  describe('createAppBlock() - QuestionBlock with minimal parameters', () => {
+    let rawData;
+    let block: QuestionBlock;
+
+    beforeEach(() => {
+      rawData = {
+        type: BlockType.QUESTION,
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      };
+      block = factory.createAppBlock(rawData) as QuestionBlock;
+    });
+
+    it('should create a QuestionBlock', () => {
+      expect(block instanceof QuestionBlock).toBe(true);
+    });
+    it('should set question to an empty string', () => {
+      expect(block.question).toEqual('');
+    });
+    it('should set answers to an empty array', () => {
+      expect(block.answers).toEqual([]);
+    });
+    it('should set questionType to SHORT_ANSWER', () => {
+      expect(block.questionType).toEqual(QuestionType.SHORT_ANSWER);
+    });
+    it('should set the options to an empty array', () => {
+      expect(block.options).toEqual([]);
     });
   });
 });
