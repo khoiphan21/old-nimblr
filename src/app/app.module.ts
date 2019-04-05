@@ -33,6 +33,7 @@ import { InviteCollaboratorComponent } from './components/invite-collaborator/in
 import { DocumentLoginComponent } from './components/document-login/document-login.component';
 import { RequestAccessComponent } from './components/request-access/request-access.component';
 import { ResponsiveModule } from 'ngx-responsive';
+import { DocumentContentComponent } from './pages/document-page/document-content/document-content.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { ResponsiveModule } from 'ngx-responsive';
     InviteCollaboratorComponent,
     DocumentLoginComponent,
     RequestAccessComponent,
+    DocumentContentComponent,
   ],
   imports: [
     BrowserModule,

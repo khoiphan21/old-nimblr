@@ -21,7 +21,7 @@ class MockNavigationBarService {
   }
 }
 
-describe('NavigationBarComponent', () => {
+xdescribe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let navigationBarService: NavigationBarService;
