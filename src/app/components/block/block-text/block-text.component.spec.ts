@@ -200,7 +200,11 @@ describe('BlockTextComponent', () => {
 
   describe('onBackSpaceAndEmptyTextbox()', () => {
     beforeEach(() => {
-      component.block = rawData;
+      const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
+      component.block = factory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
     });
 
     it('should emit the id if the value is empty', done => {
