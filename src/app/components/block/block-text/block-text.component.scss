@@ -1,3 +1,12 @@
 @import '../../../_sass/interface';
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
+
+.content {
+    .text-input {
+        padding: 7.5px 0;
+    }
+    .placeholder {
+        z-index: -1;
+    }
+}

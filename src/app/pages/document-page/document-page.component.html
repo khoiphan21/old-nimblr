@@ -9,7 +9,7 @@
         <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
         <!-- When the user is anonymous -->
         <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
-        <div class="placeholder" *ngIf="docTitle === ''">Untitled</div>
+        <div class="placeholder" *ngIf="!docTitle">Untitled</div>
 
       </h1>
       <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId">

@@ -41,6 +41,9 @@ export class BlockTextComponent implements OnChanges {
   }
 
   async updateValue(): Promise<Block> {
+    // Show place holder if value becomes ''
+    this.isPlaceholderShown = true;
+
     return new Promise(resolve => {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {

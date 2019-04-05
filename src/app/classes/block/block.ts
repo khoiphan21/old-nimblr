@@ -80,12 +80,3 @@ export class BlockImpl implements Block {
     });
   }
 }
-
-export class BlockCreateError extends Error {
-  blockType: BlockType;
-  constructor(blockType: BlockType, ...params) {
-    /* istanbul ignore next */
-    super(...params);
-    this.blockType = blockType;
-  }
-}

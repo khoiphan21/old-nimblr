@@ -24,7 +24,7 @@ const uuidv4 = require('uuid/v4');
 export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
   isPlaceholderShown: boolean;
-  docTitle: string = '';
+  docTitle: string;
   currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
@@ -61,7 +61,6 @@ export class DocumentPageComponent implements OnInit {
       const message = `DocumentPage failed to load: ${error.message}`;
       throw new Error(message);
     }
-
 
     // Initialize page display status
     this.docTitle = '';

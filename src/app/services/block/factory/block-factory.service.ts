@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Block, BlockCreateError } from '../../../classes/block/block';
+import { Block } from '../../../classes/block/block';
 import { TextBlock, CreateAppTextBlockInput } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';
@@ -76,7 +76,7 @@ export class BlockFactoryService {
     question = '',
     answers = [],
     questionType = QuestionType.SHORT_ANSWER,
-    options = null
+    options = []
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
@@ -105,30 +105,30 @@ export class BlockFactoryService {
       case BlockType.QUESTION:
         return new QuestionBlock(input);
       default:
-        throw new BlockCreateError(null, 'BlockType not supported');
+        throw new Error('BlockType not supported');
     }
   }
 
   private checkForNullOrUndefined(parameter, parameterName) {
     if (parameter === undefined) {
-      throw new BlockCreateError(BlockType.TEXT, `BlockCreateError: ${parameterName} is missing`);
+      throw new Error(`${parameterName} is missing`);
     } else if (parameter === null) {
-      throw new BlockCreateError(BlockType.TEXT, `BlockCreateError: ${parameterName} cannot be null`);
+      throw new Error(`${parameterName} cannot be null`);
     }
   }
 
   private checkIfUuid(parameter, parameterName) {
     if (!isUuid(parameter)) {
-      const message = `BlockCreateError: ${parameterName} must be an uuid`;
-      throw new BlockCreateError(BlockType.TEXT, message);
+      const message = `${parameterName} must be an uuid`;
+      throw new Error(message);
     }
   }
 
   private checkIfValidTimeString(parameter, parameterName) {
     const createdDate = new Date(parameter);
     if (`${createdDate}`.indexOf('Invalid Date') !== -1) {
-      const message = `BlockCreateError: ${parameterName} must be a valid time string`;
-      throw new BlockCreateError(BlockType.TEXT, message);
+      const message = `${parameterName} must be a valid time string`;
+      throw new Error(message);
     }
   }
 }
