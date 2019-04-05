@@ -1,6 +1,6 @@
 import { DocumentImpl } from './document-impl';
 import { DocumentType, SharingStatus } from 'src/API';
-import { isValidDateString } from './test-helpers.spec';
+import { isValidDateString } from './isValidDateString';
 
 const uuidv4 = require('uuid/v4');
 

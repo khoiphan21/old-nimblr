@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Block, TextBlock } from '../../../classes/block';
-import { BlockCommandService } from '../../../services/block/command/block-command.service';
-import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 
 @Component({
   selector: 'app-block-header',

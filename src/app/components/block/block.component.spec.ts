@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BlockComponent } from './block.component';
+import { BlockComponent, CreateBlockEvent } from './block.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { MockBlockQueryService } from 'src/app/services/block/query/block-query.service.spec';
@@ -8,6 +8,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
+
 const uuidv4 = require('uuid/v4');
 
 describe('BlockComponent', () => {
@@ -88,6 +89,13 @@ describe('BlockComponent', () => {
       // and check if console is called with the right message
       expect(consoleSpy.calls.mostRecent().args[0].message).toEqual(message);
     });
+
+    it('should set isFocused to true if focusBlockId matches', () => {
+      component.focusBlockId = block.id;
+      component.ngOnInit();
+      subject.next(block);
+      expect(component.isFocused).toBe(true);
+    });
   });
 
   it('toggleBlockOptions() - should set `isBlockOptionsShown` to the given value', () => {
@@ -99,5 +107,24 @@ describe('BlockComponent', () => {
   it('toggleSelectedOptionStatus() - should set `isSelectedOptionShown` to the given value', () => {
     component.toggleSelectedOptionStatus(true);
     expect(component.isSelectedOptionShown).toBe(true);
+  });
+
+  describe('addBlock()', () => {
+    it('should emit the right type', done => {
+      const type = BlockType.QUESTION;
+      component.createBlock.subscribe((value: CreateBlockEvent) => {
+        expect(value.type).toEqual(type);
+        done();
+      });
+      component.addBlock(type);
+    });
+    it('should emit the right id', done => {
+      component.blockId = uuidv4();
+      component.createBlock.subscribe((value: CreateBlockEvent) => {
+        expect(value.id).toEqual(component.blockId);
+        done();
+      });
+      component.addBlock(BlockType.TEXT);
+    });
   });
 });

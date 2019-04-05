@@ -5,7 +5,6 @@ import { createDocument, deleteDocument, updateDocument } from '../../../graphql
 export class DocumentQueryTestHelper {
 
   private documentId: string;
-  private latestResponse: any;
   private createdDocument: any;
 
   constructor(
@@ -22,7 +21,6 @@ export class DocumentQueryTestHelper {
 
     this.documentId = response.data.createDocument.id;
     this.createdDocument = response.data.createDocument;
-    this.latestResponse = response;
 
     return response.data.createDocument;
   }
@@ -30,7 +28,6 @@ export class DocumentQueryTestHelper {
   async sendUpdateDocument(input: UpdateDocumentInput, delay = 0): Promise<any> {
     await sleep(delay);
     const res = await this.graphQlService.query(updateDocument, { input });
-    this.latestResponse = res;
     return res.data.updateDocument;
   }
 
@@ -40,13 +37,8 @@ export class DocumentQueryTestHelper {
     });
 
     this.documentId = null;
-    this.latestResponse = response;
 
     return response.data.deleteDocument;
-  }
-
-  getLatestResponse(): any {
-    return this.latestResponse;
   }
 
   getCreatedDocument(): any {

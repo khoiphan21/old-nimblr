@@ -6,14 +6,15 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
-import { TextBlock } from 'src/app/classes/block';
+import { TextBlock } from 'src/app/classes/block/textBlock';
+import { SimpleChange } from '@angular/core';
 
 const uuidv4 = require('uuid/v4');
 
 describe('BlockTextComponent', () => {
   let component: BlockTextComponent;
   let fixture: ComponentFixture<BlockTextComponent>;
-  let blockFactroyService: BlockFactoryService;
+  let blockFactoryService: BlockFactoryService;
   const rawData = {
     id: uuidv4(),
     type: BlockType.TEXT,
@@ -39,7 +40,7 @@ describe('BlockTextComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockTextComponent);
-    blockFactroyService = TestBed.get(BlockFactoryService);
+    blockFactoryService = TestBed.get(BlockFactoryService);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -48,22 +49,81 @@ describe('BlockTextComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnChanges() - should set `value` into the right value when', () => {
-    it('`block.value` is not empty', () => {
-      rawData.value = null;
-      const block: any = blockFactroyService.createAppBlock(rawData);
+  /* tslint:disable:no-string-literal */
+  describe('ngOnChanges()', () => {
+    let block: TextBlock;
+    let changeDetectorSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      block = blockFactoryService.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      fixture = TestBed.createComponent(BlockTextComponent);
+      component = fixture.componentInstance;
       component.block = block;
-      component.ngOnChanges();
-      expect(component.value).toBe('');
+      component.isUserLoggedIn = true;
+      fixture.detectChanges();
+
+      // Setup spies
+      changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
+      changeDetectorSpy.and.callThrough();
     });
 
-    it('`block.value` is empty', () => {
+    it('should set the block value', () => {
       rawData.value = 'test';
-      const block: any = blockFactroyService.createAppBlock(rawData);
+      block = blockFactoryService.createAppBlock(rawData) as TextBlock;
       component.block = block;
-      component.ngOnChanges();
+      fixture.detectChanges();
+      component.ngOnChanges({
+        isFocused: new SimpleChange(null, true, false)
+      });
       expect(component.value).toBe('test');
     });
+
+    describe('when isFocused is defined', () => {
+      it('should call changeDetector if isFocused is true', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, true, false)
+        });
+        expect(changeDetectorSpy).toHaveBeenCalled();
+      });
+
+      it('should focus on the element if isFocused is true', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, true, false)
+        });
+        const element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(true);
+      });
+
+      it('should not do anything if isFocused is false', () => {
+        component.ngOnChanges({
+          isFocused: new SimpleChange(null, false, false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        const element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+      });
+    });
+
+    describe('when isFocused is not defined or null', () => {
+      it('should not do anything', () => {
+        component.ngOnChanges({
+          isFocused: undefined
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        let element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+        component.ngOnChanges({
+          isFocused: null
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+      });
+    });
+
   });
 
   // TODO: Test this
@@ -77,7 +137,7 @@ describe('BlockTextComponent', () => {
       blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
       blockCommandSpy.and.returnValues(Promise.resolve());
       // create a block for the component
-      const block: any = blockFactroyService.createAppBlock(rawData);
+      const block: any = blockFactoryService.createAppBlock(rawData);
       component.block = block;
       component.value = 'test';
     });

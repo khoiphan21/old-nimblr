@@ -1,16 +1,61 @@
 import { Injectable } from '@angular/core';
-import { Block, TextBlock, BlockCreateError } from '../../../classes/block';
+import { Block, BlockCreateError } from '../../../classes/block/block';
+import { TextBlock, CreateAppTextBlockInput } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { UUID } from '../../document/command/document-command.service';
 
 const uuidv4 = require('uuid/v4');
+
+export interface CreateNewBlockInput {
+  documentId: UUID;
+  lastUpdatedBy: UUID;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class BlockFactoryService {
 
   constructor() { }
+
+  createNewTextBlock(input: CreateNewBlockInput): TextBlock {
+    const newInput: CreateAppTextBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      value: ''
+    };
+    return new TextBlock(newInput);
+  }
+
+  /**
+   * Create a new QuestionBlock object. The parameters specified
+   * are the minimum number of parameters required to create this
+   * type of block.
+   *
+   * @returns a valid QuestionBlock object
+   */
+  createNewQuestionBlock(input: CreateNewBlockInput): QuestionBlock {
+    const newInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      type: BlockType.QUESTION,
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      question: '',
+      answers: [],
+      questionType: QuestionType.SHORT_ANSWER,
+      options: []
+    };
+    return new QuestionBlock(newInput);
+  }
 
   /**
    * Create a Block object from the given raw data. All parameters must not be

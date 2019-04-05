@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockOptionComponent } from './block-option.component';
+import { BlockType } from 'src/API';
+import { take } from 'rxjs/operators';
 
 describe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
@@ -11,9 +13,9 @@ describe('BlockOptionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockOptionComponent ]
+      declarations: [BlockOptionComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -120,5 +122,40 @@ describe('BlockOptionComponent', () => {
     const spy = spyOn(component.isSelectedOptionShown, 'emit');
     component['toggleSelectedOptionsStatus'](false);
     expect(spy).toHaveBeenCalledWith(false);
+  });
+
+  describe('add new block', () => {
+    let hideSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      hideSpy = spyOn(component, 'hideAddBlockContainer');
+    });
+
+    describe('addTextBlock()', () => {
+      it('should emit a BlockType.TEXT event', done => {
+        component.createBlock.pipe(take(1)).subscribe(value => {
+          expect(value).toEqual(BlockType.TEXT);
+          done();
+        });
+        component.addTextBlock();
+      });
+      it('should call to hide the container', () => {
+        component.addTextBlock();
+        expect(hideSpy).toHaveBeenCalled();
+      });
+    });
+    describe('addQuestionBlock()', () => {
+      it('should emit a BlockType.QUESTION event', done => {
+        component.createBlock.pipe(take(1)).subscribe(value => {
+          expect(value).toEqual(BlockType.QUESTION);
+          done();
+        });
+        component.addQuestionBlock();
+      });
+      it('should call to hide the container', () => {
+        component.addQuestionBlock();
+        expect(hideSpy).toHaveBeenCalled();
+      });
+    });
   });
 });

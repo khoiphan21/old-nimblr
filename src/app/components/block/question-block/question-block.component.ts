@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { Component, Input, OnChanges, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { QuestionType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
-import { Block } from 'src/app/classes/block';
+import { Block } from 'src/app/classes/block/block';
 
 @Component({
   selector: 'app-question-block',
@@ -11,7 +11,12 @@ import { Block } from 'src/app/classes/block';
   styleUrls: ['./question-block.component.scss']
 })
 export class QuestionBlockComponent implements OnChanges {
+  // TODO IMPLEMENT CONTROL OF WHETHER IT'S DEITABLE OR NOT
+  // To control whether it's editable or not
+  @Input() isUserLoggedIn: boolean;
   @Input() questionBlock: QuestionBlock;
+  @Input() isFocused: boolean;
+
   valueUpdated = true;
   isPreviewMode = true;
   isQuestionOptionShown = false;
@@ -23,14 +28,32 @@ export class QuestionBlockComponent implements OnChanges {
 
   constructor(
     private blockFactoryService: BlockFactoryService,
-    private blockCommandService: BlockCommandService
+    private blockCommandService: BlockCommandService,
+    private changeDetector: ChangeDetectorRef
   ) { }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.answers = this.questionBlock.answers;
     this.options = this.questionBlock.options;
     this.question = this.questionBlock.question;
     this.currentType = this.questionBlock.questionType;
+
+    // NOTE: call this AFTER setting all values first due to the call to
+    // detectChanges()
+    const focus = changes.isFocused;
+    if (focus) {
+      if (focus.currentValue === true) {
+        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
+        this.changeDetector.detectChanges();
+        document.getElementById(this.questionBlock.id + '-question').focus();
+        setTimeout(() => {
+          // Show the question options
+          // NOTE: still don't know why wrapping in timeout works.
+          // TODO: IMPROVE THIS
+          this.isPreviewMode = false;
+        }, 5);
+      }
+    }
   }
 
   toggleOptions() {

@@ -6,16 +6,15 @@
       <h1>
 
         <!-- When the user is logged in -->
-        <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder()"
-          (focus)="togglePlaceholder()" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
+        <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
         <!-- When the user is anonymous -->
         <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
         <div class="placeholder" *ngIf="docTitle === ''">Untitled</div>
 
       </h1>
-      <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of currentDocument.blockIds" [blockId]="id">
+      <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId">
       </app-block>
-      <app-add-information *ngIf="isUserLoggedIn" (click)="addBlock()" style="width: 100%"></app-add-information>
+      <app-add-information *ngIf="isUserLoggedIn" (click)="addNewBlock('TEXT')" style="width: 100%"></app-add-information>
     </section>
   </div>
 </div>

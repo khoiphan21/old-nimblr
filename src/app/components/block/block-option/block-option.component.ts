@@ -1,5 +1,6 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
+import { BlockType } from 'src/API';
 
 @Component({
   selector: 'app-block-option',
@@ -12,6 +13,8 @@ export class BlockOptionComponent implements OnChanges {
   @Input() isBlockOptionsShown: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
+  @Output() createBlock = new EventEmitter<BlockType>();
+
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
@@ -50,6 +53,16 @@ export class BlockOptionComponent implements OnChanges {
 
   private toggleSelectedOptionsStatus(status: boolean) {
     this.isSelectedOptionShown.emit(status);
+  }
+
+  addTextBlock() {
+    this.createBlock.emit(BlockType.TEXT);
+    this.hideAddBlockContainer();
+  }
+
+  addQuestionBlock() {
+    this.createBlock.emit(BlockType.QUESTION);
+    this.hideAddBlockContainer();
   }
 
 }

@@ -1,24 +1,88 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BlockFactoryService } from './block-factory.service';
-import { Block, TextBlock } from '../../../classes/block';
+import { BlockFactoryService, CreateNewBlockInput } from './block-factory.service';
+import { Block } from '../../../classes/block/block';
+import { TextBlock } from "../../../classes/block/textBlock";
 import { isUuid } from '../../../classes/helpers';
 import { BlockType, QuestionType } from 'src/API';
-import { QuestionBlock } from 'src/app/classes/question-block';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 
 const uuidv4 = require('uuid/v4');
 
 describe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
+  let input: CreateNewBlockInput;
 
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
     factory = TestBed.get(BlockFactoryService);
+    input = {
+      documentId: uuidv4(),
+      lastUpdatedBy: uuidv4()
+    };
   });
 
   it('should be created', () => {
     expect(factory).toBeTruthy();
+  });
+
+  describe('createNewTextBlock()', () => {
+    let block: TextBlock;
+
+    beforeEach(() => {
+      block = factory.createNewTextBlock(input);
+    });
+
+    it('should have the initial value of an empty string', () => {
+      expect(block.value).toEqual('');
+    });
+    it('should create an object of type TextBlock', () => {
+      expect(block instanceof TextBlock).toBe(true);
+    });
+    it('should store the document ID', () => {
+      expect(block.documentId).toEqual(input.documentId);
+    });
+
+    it('should store the lastUpdatedBy', () => {
+      expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+    });
+
+    // no need to check for other properties as they are validated within the class
+  });
+
+  describe('createNewQuestionBlock()', () => {
+    let block: QuestionBlock;
+
+    beforeEach(() => {
+      block = factory.createNewQuestionBlock(input);
+    });
+
+    describe('initial values', () => {
+      it('should have the initial question of empty string', () => {
+        expect(block.question).toEqual('');
+      });
+      it('should have the initial questionType of SHORT_ANSWER', () => {
+        expect(block.questionType).toEqual(QuestionType.SHORT_ANSWER);
+      });
+    });
+
+    it('should create an object of type QuestionBlock', () => {
+      expect(block instanceof QuestionBlock).toBe(true);
+    });
+    it('should have the right type', () => {
+      expect(block.type).toBe(BlockType.QUESTION);
+    });
+
+    it('should store the document ID', () => {
+      expect(block.documentId).toEqual(input.documentId);
+    });
+
+    it('should store the lastUpdatedBy', () => {
+      expect(block.lastUpdatedBy).toEqual(input.lastUpdatedBy);
+    });
+
+    // no need to check for other properties as they are validated within the class
   });
 
   describe('Create app TextBlock with all parameters specified', () => {

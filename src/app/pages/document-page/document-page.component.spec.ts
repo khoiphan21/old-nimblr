@@ -15,7 +15,10 @@ import { ActivatedRoute } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
-import { DocumentType, SharingStatus } from 'src/API';
+import { DocumentType, SharingStatus, BlockType } from 'src/API';
+import { TextBlock } from "src/app/classes/block/textBlock";
+import { UserFactoryService } from 'src/app/services/user/user-factory.service';
+import { QuestionBlock } from 'src/app/classes/block/question-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -39,7 +42,6 @@ describe('DocumentPageComponent', () => {
         DocumentPageComponent,
       ],
       imports: [
-        ServicesModule,
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes([])
@@ -231,71 +233,218 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  describe('addBlock()', () => {
+  describe('addNewBlock()', () => {
+    let block: any;
+    let document: Document;
+    let user: User;
+    let userFactory: UserFactoryService;
     let blockQuerySpy: jasmine.Spy;
     let blockCommandSpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
-    const userId = uuidv4();
 
     beforeEach(() => {
-      // setup mock data for the component
-      component['currentDocument'] = documentFactory.createDocument(
-        { id, ownerId: uuidv4() }
+      userFactory = TestBed.get(UserFactoryService);
+
+      // create mock data for testing
+      document = documentFactory.createDocument({
+        id: uuidv4(),
+        ownerId: uuidv4()
+      });
+      user = userFactory.createUser(
+        uuidv4(), 'first', 'last', 'email'
       );
-      component['currentUser'] = {
-        id: userId,
-        firstName: 'foo',
-        lastName: 'bar',
-        email: 'foo@bar.com'
-      };
-      // setup the spies
+
+      // Set the component's data to the mock data
+      component.currentDocument = document;
+      component['currentUser'] = user;
+      component.blockIds = [];
+
+      // Setup all the spies
       blockQuerySpy = spyOn(component['blockQueryService'], 'registerBlockCreatedByUI');
+
       blockCommandSpy = spyOn(component['blockCommandService'], 'createBlock');
+      blockCommandSpy.and.returnValue(Promise.resolve());
+
       documentCommandSpy = spyOn(component['documentCommandService'], 'updateDocument');
+      documentCommandSpy.and.returnValue(Promise.resolve());
     });
 
-    it('should call registerBlockCreatedByUI()', async () => {
-      await component.addBlock();
-      expect(blockQuerySpy).toHaveBeenCalled();
-    });
-
-    it('should call BlockCommand to create a block', async () => {
-      await component.addBlock();
-      expect(blockCommandSpy).toHaveBeenCalled();
-    });
-
-    it('should update the list of block ids in the document', async () => {
-      await component.addBlock();
-      expect(component['currentDocument'].blockIds.length).toBe(1);
-    });
-
-    it('should update the version of the document to a new uuid', async () => {
-      const oldVersion = component['currentDocument'].version;
-      await component.addBlock();
-      expect(isUuid(component['currentDocument'].version)).toBe(true);
-      expect(component['currentDocument'].version).not.toEqual(oldVersion);
-    });
-
-    it('should update the lastUpdatedBy property', async () => {
-      await component.addBlock();
-      expect(component['currentDocument'].lastUpdatedBy).toEqual(userId);
-    });
-
-    it('should call to update document with the right argument', async () => {
-      await component.addBlock();
-      expect(documentCommandSpy).toHaveBeenCalledWith(component['currentDocument']);
-    });
-
-    it('should throw an error if unable to add block', async () => {
-      // setup a random spy to throw an error
-      const mockError = new Error('test');
-      blockCommandSpy.and.returnValue(Promise.reject(mockError));
+    it('should throw an error if the block type is not supported', async () => {
+      const type: any = 'abc';
+      const message = `Error: BlockType "${type}" is not supported`;
       try {
-        await component.addBlock();
+        await component.addNewBlock(type);
+        fail('error must occur');
       } catch (error) {
-        const message = `DocumentPage failed to add block: ${mockError.message}`;
-        expect(error.message).toEqual(message);
+        expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
       }
+    })
+
+    function testInteractionWithOtherClasses() {
+      it('should register the created block to the BlockQueryService', () => {
+        expect(blockQuerySpy).toHaveBeenCalledWith(block);
+      });
+      it('should call to create a new block to GraphQL', () => {
+        expect(blockCommandSpy).toHaveBeenCalledWith(block);
+      });
+      it('should add the new block ID to the list to be shown in the UI', () => {
+        expect(component.blockIds[0]).toEqual(block.id);
+      });
+      it('should call DocumentCommandService to update document', () => {
+        const expectedArgs = {
+          id: document.id,
+          lastUpdatedBy: user.id,
+          blockIds: [block.id]
+        };
+        expect(documentCommandSpy).toHaveBeenCalledWith(expectedArgs);
+      });
+    }
+
+    function testGenericErrorPaths() {
+      it('should throw the error raised by BlockCommandService', async () => {
+        const message = 'test';
+        blockCommandSpy.and.returnValue(Promise.reject(message));
+        try {
+          await component.addNewBlock(BlockType.TEXT);
+          fail('error must occur');
+        } catch (error) {
+          expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
+        }
+      });
+
+      it('should throw the error raised by DocumentCommandService', async () => {
+        const message = 'test';
+        documentCommandSpy.and.returnValue(Promise.reject(message));
+        try {
+          await component.addNewBlock(BlockType.TEXT);
+          fail('error must occur');
+        } catch (error) {
+          expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
+        }
+      });
+    }
+
+    describe('adding new TextBlock', () => {
+
+      beforeEach(async () => {
+        block = await component.addNewBlock(BlockType.TEXT);
+      });
+
+      describe('[HAPPY PATH]', () => {
+        it('should resolve a TextBlock if successful', () => {
+          expect(block instanceof TextBlock).toBe(true);
+          // No need to check for any other values, as they are checked in the
+          // TextBlock class and the factory already
+        });
+        testInteractionWithOtherClasses();
+      });
+
+      describe('[ERROR PATHS]', () => {
+        it('should throw the error from factory', async () => {
+          const error = Error('test');
+          spyOn(component['blockFactoryService'], 'createNewTextBlock')
+            .and.throwError(error.message);
+          try {
+            await component.addNewBlock(BlockType.TEXT);
+            fail('error must occur');
+          } catch (thrownError) {
+            expect(thrownError.message).toEqual(`DocumentPage failed to add block: ${error}`);
+          }
+        });
+
+        testGenericErrorPaths();
+      });
+
+    });
+
+    describe('adding new QuestionBlock', () => {
+
+      beforeEach(async () => {
+        block = await component.addNewBlock(BlockType.QUESTION);
+      });
+
+      describe('[HAPPY PATH]', () => {
+        it('should resolve a QuestionBlock if successful', () => {
+          expect(block instanceof QuestionBlock).toBe(true);
+          // No need to check for any other values, as they are checked in the
+          // TextBlock class and the factory already
+        });
+        testInteractionWithOtherClasses();
+      });
+
+      describe('[ERROR PATHS]', () => {
+        it('should throw the error from factory', async () => {
+          const error = Error('test');
+          spyOn(component['blockFactoryService'], 'createNewQuestionBlock')
+            .and.throwError(error.message);
+          try {
+            await component.addNewBlock(BlockType.QUESTION);
+            fail('error must occur');
+          } catch (thrownError) {
+            expect(thrownError.message).toEqual(`DocumentPage failed to add block: ${error}`);
+          }
+        });
+
+        testGenericErrorPaths();
+      });
+
+    });
+
+    describe('adding block after another block', () => {
+      const existingBlockId1 = uuidv4();
+      const afterId = uuidv4();
+      const existingBlockId2 = uuidv4();
+      const existingBlockId3 = uuidv4();
+
+      let expectedIndex: number;
+      beforeEach(() => {
+        component.blockIds = [
+          existingBlockId1,
+          existingBlockId2,
+          afterId,
+          existingBlockId3,
+        ];
+
+        // Store the expected index first
+        expectedIndex = component.blockIds.indexOf(afterId) + 1;
+      });
+
+      describe('checking order', () => {
+        beforeEach(async () => {
+          // now then call to add new block
+          block = await component.addNewBlock(BlockType.TEXT, afterId);
+        });
+
+        it('should have the right order of blockIds in the document', () => {
+          expect(component.blockIds[expectedIndex]).toEqual(block.id);
+        });
+
+        it('should keep the other ids in place', () => {
+          expect(component.blockIds[0]).toEqual(existingBlockId1);
+          expect(component.blockIds[1]).toEqual(existingBlockId2);
+          expect(component.blockIds[2]).toEqual(afterId);
+          expect(component.blockIds[4]).toEqual(existingBlockId3);
+        });
+      });
+
+      describe('invalid "after" param', () => {
+        it('should add to the end if the given index is null', async () => {
+          const index = null;
+          block = await component.addNewBlock(BlockType.TEXT, index);
+          expect(component.blockIds[4]).toEqual(block.id);
+        });
+        it('should add to the end if the given index is undefined', async () => {
+          const index = undefined;
+          block = await component.addNewBlock(BlockType.TEXT, index);
+          expect(component.blockIds[4]).toEqual(block.id);
+        });
+        it('should add to the end if the given index does not exist', async () => {
+          const index = 'abcd';
+          block = await component.addNewBlock(BlockType.TEXT, index);
+          expect(component.blockIds[4]).toEqual(block.id);
+        });
+      });
+
     });
   });
 
@@ -349,13 +498,11 @@ describe('DocumentPageComponent', () => {
     });
 
     it('should not call updateDocument again for consecutive updates', done => {
-      component.updateDocTitle(0);
-      setTimeout(() => {
-        component.updateDocTitle().then(() => {
-          expect(spyUpdate).toHaveBeenCalledTimes(1);
-          done();
-        });
-      }, 100);
+      component.updateDocTitle(50);
+      component.updateDocTitle().then(() => {
+        expect(spyUpdate).toHaveBeenCalledTimes(1);
+        done();
+      });
     });
 
     it('should reject when failed', done => {

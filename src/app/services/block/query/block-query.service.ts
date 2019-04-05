@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { Block } from '../../../classes/block';
+import { Block } from '../../../classes/block/block';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockFactoryService } from '../factory/block-factory.service';
 import { getBlock, listBlocks } from '../../../../graphql/queries';

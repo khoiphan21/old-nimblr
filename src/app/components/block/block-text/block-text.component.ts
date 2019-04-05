@@ -1,5 +1,6 @@
-import { Component, OnChanges, Input } from '@angular/core';
-import { Block, TextBlock } from '../../../classes/block';
+import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { Block } from '../../../classes/block/block';
+import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 
@@ -16,14 +17,27 @@ export class BlockTextComponent implements OnChanges {
   // To control whether it's editable or not
   @Input() isUserLoggedIn: boolean;
   @Input() block: TextBlock;
+  @Input() isFocused: boolean;
 
   constructor(
     private blockCommandService: BlockCommandService,
-    private factoryService: BlockFactoryService
+    private factoryService: BlockFactoryService,
+    private changeDetector: ChangeDetectorRef
   ) { }
 
-  ngOnChanges() {
-    this.value = this.block.value === null ? '' : this.block.value;
+  ngOnChanges(changes: SimpleChanges) {
+    this.value = this.block.value;
+
+    // NOTE: call this AFTER setting all values first due to the call to
+    // detectChanges()
+    const focus = changes.isFocused;
+    if (focus) {
+      if (focus.currentValue === true) {
+        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
+        this.changeDetector.detectChanges();
+        document.getElementById(this.block.id).focus();
+      }
+    }
   }
 
   async updateValue(): Promise<Block> {

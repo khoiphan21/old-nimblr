@@ -5,13 +5,14 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
-import { BlockFactoryService } from '../../services/block/factory/block-factory.service';
+import { BlockFactoryService, CreateNewBlockInput } from '../../services/block/factory/block-factory.service';
 import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
-import { TextBlock } from 'src/app/classes/block';
+import { BlockId, Block } from 'src/app/classes/block/block';
+import { TextBlock } from 'src/app/classes/block/textBlock';
 
 const uuidv4 = require('uuid/v4');
 
@@ -23,15 +24,17 @@ const uuidv4 = require('uuid/v4');
 export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
   isPlaceholderShown: boolean;
-  docTitle: string;
+  docTitle: string = '';
   currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
+  blockIds: Array<string>;
+
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
 
-  // blockIds: Array<string>;
+  focusBlockId: BlockId; // the block that needs to be focused on after creation
 
   @Input() block: TextBlock;
 
@@ -90,6 +93,9 @@ export class DocumentPageComponent implements OnInit {
       if (document === null) { return; }
       this.currentDocument = document;
 
+      // Update the list of block ids
+      this.blockIds = this.currentDocument.blockIds;
+
       // added in for edit title
       this.docTitle = document.title;
 
@@ -107,26 +113,56 @@ export class DocumentPageComponent implements OnInit {
     this.blockQueryService.subscribeToUpdate(this.currentDocument.id);
   }
 
-  async addBlock() {
-    const block = this.blockFactoryService.createAppBlock({
-      documentId: this.currentDocument.id,
-      lastUpdatedBy: this.currentUser.id,
-      type: BlockType.TEXT
-    });
-    // register the block with BlockQueryService
+  /**
+   * Create a new block and add it to the list of blocks in the document
+   *
+   * @param type the type of the new block to be added
+   * @param after after a certain block. If not specified or invalid, the new
+   *              block will be added to the end of the array
+   */
+  async addNewBlock(type: BlockType, after?: BlockId): Promise<Block> {
     try {
+      // create a new block object
+      let block: Block;
+      const input: CreateNewBlockInput = {
+        documentId: this.currentDocument.id,
+        lastUpdatedBy: this.currentUser.id
+      };
+
+      switch (type) {
+        case BlockType.TEXT:
+          block = this.blockFactoryService.createNewTextBlock(input);
+          break;
+        case BlockType.QUESTION:
+          block = this.blockFactoryService.createNewQuestionBlock(input);
+          break;
+        default:
+          throw Error(`BlockType "${type}" is not supported`);
+      }
+      // register it to the BlockQueryService so that the backend notification
+      // will be ignored
       this.blockQueryService.registerBlockCreatedByUI(block);
-      // send create command to BlockCommandService
+      // Update the block to be focused on
+      this.focusBlockId = block.id;
+      // update the list of block IDs to be displayed
+      if (after && this.blockIds.indexOf(after) !== -1) {
+        const index = this.blockIds.indexOf(after) + 1;
+        this.blockIds.splice(index, 0, block.id);
+      } else {
+        this.blockIds.push(block.id);
+      }
+      // create a new block in backend with BlockCommandService
       await this.blockCommandService.createBlock(block);
-      // update document
-      this.currentDocument.blockIds.push(block.id);
-      this.currentDocument.version = uuidv4();
-      this.currentDocument.lastUpdatedBy = this.currentUser.id;
-      // send update command to DocumentCommandService
-      this.documentCommandService.updateDocument(this.currentDocument);
+      // Update the document in the backend
+      await this.documentCommandService.updateDocument({
+        id: this.currentDocument.id,
+        lastUpdatedBy: this.currentUser.id,
+        blockIds: this.blockIds
+      });
+
+      return block;
     } catch (error) {
-      const message = `DocumentPage failed to add block: ${error.message}`;
-      throw new Error(message);
+      throw new Error(`DocumentPage failed to add block: ${error}`);
     }
   }
 
@@ -137,10 +173,8 @@ export class DocumentPageComponent implements OnInit {
       this.timeout = setTimeout(() => {
         const input: UpdateDocumentInput = {
           id: this.currentDocument.id,
-          version: uuidv4(),
           lastUpdatedBy: this.currentUser.id,
-          title: this.docTitle,
-          updatedAt: new Date().toISOString(),
+          title: this.docTitle
         };
 
         // TODO: @khoiphan21 change the update function to automatically create the version

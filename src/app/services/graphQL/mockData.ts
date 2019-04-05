@@ -1,4 +1,4 @@
-import { Block } from '../../classes/block';
+import { Block } from '../../classes/block/block';
 import { BlockType } from '../../../API';
 const uuidv4 = require('uuid/v4');
 
