@@ -1,6 +1,7 @@
 <div class="fluid-container">
     <div class="row no-pad no-gutters">
         <app-navigation-bar class="col-2"></app-navigation-bar>
-        <app-document-content class="col-lg-8"></app-document-content>
+        <app-document-content class="col-lg-8" (navigateToChildDocEvent)="navigateToChildDocument($event.parent, $event.child)"></app-document-content>
     </div>
 </div>
+<router-outlet></router-outlet>

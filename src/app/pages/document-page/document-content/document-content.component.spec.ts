@@ -8,7 +8,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { configureTestSuite } from 'ng-bullet';
 import { User } from 'src/app/classes/user';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
@@ -126,9 +126,30 @@ describe('DocumentContentComponent', () => {
           done();
         });
       });
+    });
+  });
 
+  xdescribe('checkIsChildDocument', () => {
+    let router;
+    const uuid = 'd232cdb5-142d-4d77-afb3-8ac638f9755b';
+    const uuid2 = 't412awf9-142d-4d77-afb3-8ac638f9755c';
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          {
+             provide: Router,
+             useValue: {
+                url: '/document'
+             }
+          }
+        ]
+      });
+      router = TestBed.get(Router);
     });
 
+    it('should set value to true if it is a child document', () => {
+      router.url = `/document/${uuid}`;
+    });
   });
 
   describe('checkUser()', () => {
@@ -401,4 +422,40 @@ describe('DocumentContentComponent', () => {
     component.showSendForm();
     expect(component.isSendFormShown).toBe(true);
   });
+
+  it('navigateToChildDocument() - should send the right argument', () => {
+    component['currentDocument'] = documentFactory.createDocument(
+      { id, ownerId: uuidv4() }
+    );
+    const uuid = 'd232cdb5-142d-4d77-afb3-8ac638f9755b';
+    component.navigateToChildDocEvent.subscribe(data => {
+      expect(data).toEqual({
+        parent: component.currentDocument.id,
+        child: uuid
+      });
+    });
+    component.navigateToChildDocument(uuid);
+  });
+
+  describe('backToParent()', () => {
+    let locationSpy;
+    beforeEach(() => {
+      locationSpy = spyOn(component['location'], 'back').and.callFake(() => {
+        return;
+      });
+    });
+
+    it('should navigate to the previous url when it is a child document', () => {
+      component.isChildDoc = true;
+      component.backToParent();
+      expect(locationSpy).toHaveBeenCalled();
+    });
+
+    it('should not navigate to the previous url when it is not a child document', () => {
+      component.isChildDoc = false;
+      component.backToParent();
+      expect(locationSpy).not.toHaveBeenCalled();
+    });
+  });
+
 });

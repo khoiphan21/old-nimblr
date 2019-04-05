@@ -1,25 +1,30 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
-import { DocumentCommandService } from '../../../services/document/command/document-command.service';
+import { DocumentCommandService, UUID } from '../../../services/document/command/document-command.service';
 import { TextBlock } from 'src/app/classes/block';
+import { fadeInOutAnimation } from 'src/app/animation';
+import { Location } from '@angular/common';
 
 const uuidv4 = require('uuid/v4');
 @Component({
   selector: 'app-document-content',
   templateUrl: './document-content.component.html',
-  styleUrls: ['./document-content.component.scss']
+  styleUrls: ['./document-content.component.scss'],
+  animations: [fadeInOutAnimation]
 })
 export class DocumentContentComponent implements OnInit {
+  @Output() navigateToChildDocEvent = new EventEmitter<object>();
+  isChildDoc = false;
   isUserLoggedIn: boolean;
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
@@ -27,7 +32,6 @@ export class DocumentContentComponent implements OnInit {
   docTitle: string;
   currentSharingStatus: SharingStatus;
   currentTab = 'template';
-
   currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
@@ -44,8 +48,10 @@ export class DocumentContentComponent implements OnInit {
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
     private accountService: AccountService,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private location: Location,
+    private router: Router
+  ) {}
 
   async ngOnInit() {
     try {
@@ -60,8 +66,6 @@ export class DocumentContentComponent implements OnInit {
       const message = `DocumentPage failed to load: ${error.message}`;
       throw new Error(message);
     }
-
-
     // Initialize page display status
     this.docTitle = '';
 
@@ -91,7 +95,7 @@ export class DocumentContentComponent implements OnInit {
     this.document$.subscribe(document => {
       if (document === null) { return; }
       this.currentDocument = document;
-
+      // this.checkIsChildDocument();
       // added in for edit title
       this.docTitle = document.title;
 
@@ -102,6 +106,11 @@ export class DocumentContentComponent implements OnInit {
     }, error => {
       console.error(`DocumentPage failed to get document: ${error.message}`);
     });
+  }
+
+  private checkIsChildDocument() {
+    const url = this.router.url;
+
   }
 
   private setupBlockUpdateSubscription() {
@@ -170,6 +179,20 @@ export class DocumentContentComponent implements OnInit {
   showSendForm() {
     this.isSendFormShown = true;
     this.isInviteCollaboratorShown = false;
+  }
+
+  navigateToChildDocument(docID: UUID) {
+    this.navigateToChildDocEvent.emit(
+      {
+        parent: this.currentDocument.id,
+        child: docID
+      });
+  }
+
+  backToParent() {
+    if (this.isChildDoc === true) {
+      this.location.back();
+    }
   }
 
 }

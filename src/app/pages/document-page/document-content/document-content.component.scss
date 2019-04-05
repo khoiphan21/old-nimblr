@@ -3,6 +3,7 @@
 @import '../../../_sass/base';
 section.content {
     height: 100%;
+    background: white;
     div.title {
         height: fit-content;
         font-size: 2.2rem;
@@ -231,4 +232,15 @@ section.content {
             }
         }
     }
+}
+
+.child-document {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    min-height: 100vh;
+    background: rgba(0, 0, 0, 0.46);
+    z-index: 3;
+    padding: 20vh 10vw 10vh 10vw;
 }
