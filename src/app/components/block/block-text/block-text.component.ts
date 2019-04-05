@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges, Output, EventEmitter, OnInit } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -9,7 +9,7 @@ import { BlockFactoryService } from '../../../services/block/factory/block-facto
   templateUrl: './block-text.component.html',
   styleUrls: ['./block-text.component.scss']
 })
-export class BlockTextComponent implements OnChanges {
+export class BlockTextComponent implements OnInit, OnChanges {
   isPlaceholderShown: boolean;
   value: string;
   private timeout: any;
@@ -27,9 +27,15 @@ export class BlockTextComponent implements OnChanges {
     private changeDetector: ChangeDetectorRef
   ) { }
 
-  ngOnChanges(changes: SimpleChanges) {
-    this.value = this.block.value;
+  ngOnInit() {
+    this.setValue(this.block.value);
+  }
 
+  private setValue(value: string) {
+    this.value = value ? value : '';
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
     // NOTE: call this AFTER setting all values first due to the call to
     // detectChanges()
     const focus = changes.focusBlockId;
@@ -44,6 +50,9 @@ export class BlockTextComponent implements OnChanges {
         // TODO @jeremyng Move caret to the end
 
       }
+    } else if (changes.block) {
+      const newBlock = changes.block.currentValue;
+      this.setValue(newBlock.value);
     }
   }
 
@@ -70,11 +79,7 @@ export class BlockTextComponent implements OnChanges {
   }
 
   togglePlaceholder(status: boolean) {
-    if (this.value.length > 0 || status === false) {
-      this.isPlaceholderShown = false;
-    } else {
-      this.isPlaceholderShown = true;
-    }
+    this.isPlaceholderShown = status;
   }
 
   onBackSpaceAndEmptyTextbox() {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectorRef, SimpleChanges, OnInit } from '@angular/core';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { QuestionType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
@@ -10,7 +10,7 @@ import { Block } from 'src/app/classes/block/block';
   templateUrl: './question-block.component.html',
   styleUrls: ['./question-block.component.scss']
 })
-export class QuestionBlockComponent implements OnChanges {
+export class QuestionBlockComponent implements OnInit, OnChanges {
   // TODO IMPLEMENT CONTROL OF WHETHER IT'S DEITABLE OR NOT
   // To control whether it's editable or not
   @Input() isUserLoggedIn: boolean;
@@ -32,16 +32,24 @@ export class QuestionBlockComponent implements OnChanges {
     private changeDetector: ChangeDetectorRef
   ) { }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnInit(): void {
+    this.setQuestionValues();
+  }
+
+  private setQuestionValues() {
     this.answers = this.questionBlock.answers;
     this.options = this.questionBlock.options;
     this.question = this.questionBlock.question;
     this.currentType = this.questionBlock.questionType;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+
 
     // NOTE: call this AFTER setting all values first due to the call to
     // detectChanges()
-    const focus = changes.focusBlockId;
-    if (focus) {
+    if (changes.focusBlockId) {
+      const focus = changes.focusBlockId;
       if (!focus.currentValue) { return; }
       if (focus.currentValue.includes(this.questionBlock.id)) {
         // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
@@ -54,6 +62,8 @@ export class QuestionBlockComponent implements OnChanges {
           this.isPreviewMode = false;
         }, 5);
       }
+    } else if (changes.questionBlock) {
+      this.setQuestionValues();
     }
   }
 

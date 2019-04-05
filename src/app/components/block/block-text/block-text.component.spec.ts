@@ -42,6 +42,10 @@ describe('BlockTextComponent', () => {
     fixture = TestBed.createComponent(BlockTextComponent);
     blockFactoryService = TestBed.get(BlockFactoryService);
     component = fixture.componentInstance;
+    component.block = blockFactoryService.createNewTextBlock({
+      documentId: uuidv4(),
+      lastUpdatedBy: uuidv4()
+    });
     fixture.detectChanges();
   });
 
@@ -71,14 +75,10 @@ describe('BlockTextComponent', () => {
     });
 
     it('should set the block value', () => {
-      rawData.value = 'test';
-      block = blockFactoryService.createAppBlock(rawData) as TextBlock;
-      component.block = block;
-      fixture.detectChanges();
       component.ngOnChanges({
-        focusBlockId: new SimpleChange(null, '12324', false)
+        block: new SimpleChange(null, { value: '1234' }, false)
       });
-      expect(component.value).toBe('test');
+      expect(component.value).toBe('1234');
     });
 
     describe('when focusBlockId is defined', () => {
@@ -195,26 +195,13 @@ describe('BlockTextComponent', () => {
 
   });
 
-  describe('togglePlaceholder() - should toggle `isPlaceholderShown` into the right value when', () => {
-    it('`value` is valid and `status` is true', () => {
-      component.value = 'test';
-      component.togglePlaceholder(true);
-      expect(component.isPlaceholderShown).toBe(false);
-    });
-
-
-    it('`value` is valid and `status` is false', () => {
-      component.value = 'test';
+  describe('togglePlaceholder()', () => {
+    it('should set the isPlaceholderShown value', () => {
       component.togglePlaceholder(false);
       expect(component.isPlaceholderShown).toBe(false);
-    });
-
-    it('`value` is not valid and `status` is true', () => {
-      component.value = '';
       component.togglePlaceholder(true);
       expect(component.isPlaceholderShown).toBe(true);
     });
-
   });
 
   describe('onBackSpaceAndEmptyTextbox()', () => {
