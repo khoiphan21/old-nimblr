@@ -24,7 +24,7 @@ const uuidv4 = require('uuid/v4');
 export class DocumentPageComponent implements OnInit {
   isUserLoggedIn: boolean;
   isPlaceholderShown: boolean;
-  docTitle: string;
+  docTitle: string = '';
   currentSharingStatus: SharingStatus;
 
   currentDocument: Document;
@@ -113,29 +113,6 @@ export class DocumentPageComponent implements OnInit {
     this.blockQueryService.subscribeToUpdate(this.currentDocument.id);
   }
 
-  async addBlock() {
-    const block = this.blockFactoryService.createAppBlock({
-      documentId: this.currentDocument.id,
-      lastUpdatedBy: this.currentUser.id,
-      type: BlockType.TEXT
-    });
-    // register the block with BlockQueryService
-    try {
-      this.blockQueryService.registerBlockCreatedByUI(block);
-      // send create command to BlockCommandService
-      await this.blockCommandService.createBlock(block);
-      // update document
-      this.currentDocument.blockIds.push(block.id);
-      this.currentDocument.version = uuidv4();
-      this.currentDocument.lastUpdatedBy = this.currentUser.id;
-      // send update command to DocumentCommandService
-      this.documentCommandService.updateDocument(this.currentDocument);
-    } catch (error) {
-      const message = `DocumentPage failed to add block: ${error.message}`;
-      throw new Error(message);
-    }
-  }
-
   /**
    * Create a new block and add it to the list of blocks in the document
    *
@@ -196,10 +173,8 @@ export class DocumentPageComponent implements OnInit {
       this.timeout = setTimeout(() => {
         const input: UpdateDocumentInput = {
           id: this.currentDocument.id,
-          version: uuidv4(),
           lastUpdatedBy: this.currentUser.id,
-          title: this.docTitle,
-          updatedAt: new Date().toISOString(),
+          title: this.docTitle
         };
 
         // TODO: @khoiphan21 change the update function to automatically create the version
