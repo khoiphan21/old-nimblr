@@ -1,8 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { BlockOptionComponent } from './block-option.component';
 import { BlockType } from 'src/API';
 import { take } from 'rxjs/operators';
+import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
+
+const uuidv4 = require('uuid/v4');
 
 describe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
@@ -158,4 +160,25 @@ describe('BlockOptionComponent', () => {
       });
     });
   });
+
+  describe('deleteHandler()', () => {
+    let factory: BlockFactoryService;
+
+    beforeEach(() => {
+      factory = TestBed.get(BlockFactoryService);
+    });
+    it('should emit the block id', done => {
+      component.block = factory.createAppBlock({
+        type: BlockType.TEXT,
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      component.deleteEvent.subscribe(value => {
+        expect(value).toEqual(component.block.id);
+        done();
+      });
+      component.deleteHandler();
+    });
+  });
+
 });

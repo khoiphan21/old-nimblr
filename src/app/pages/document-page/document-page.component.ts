@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from 'src/app/classes/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput } from 'src/API';
 import { AccountService } from '../../services/account/account.service';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../services/block/command/block-command.service';
@@ -193,4 +193,35 @@ export class DocumentPageComponent implements OnInit {
     this.documentCommandService.updateDocument(this.currentDocument);
   }
 
+  deleteBlock(blockId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // update document, hashmap:
+        this.blockQueryService.registerBlockDeletedByUI(blockId);
+
+        // Update Document current Document
+        const blockIds = this.currentDocument.blockIds;
+        const index = blockIds.indexOf(blockId);
+        blockIds.splice(index, 1);
+        this.currentDocument.version = uuidv4();
+        this.currentDocument.lastUpdatedBy = this.currentUser.id;
+        const updatePromise = this.documentCommandService.updateDocument(this.currentDocument);
+
+        // call command service
+        let input: DeleteBlockInput;
+        input = { id: blockId };
+        const blockPromise = this.blockCommandService.deleteBlock(input);
+
+        // Await for all the promises before moving on
+        await updatePromise;
+        await blockPromise;
+        resolve();
+
+      } catch (error) {
+        const message = `DocumentPage failed to delete block: ${error.message}`;
+        reject(new Error(message));
+
+      }
+    });
+  }
 }

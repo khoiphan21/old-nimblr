@@ -127,4 +127,16 @@ describe('BlockComponent', () => {
       component.addBlock(BlockType.TEXT);
     });
   });
+
+  describe('deleteTransmitter()', () => {
+    const id = 'test';
+
+    it('should emit the given blockId', done => {
+      component.deleteEvent.subscribe(value => {
+        expect(value).toEqual(id);
+        done();
+      });
+      component.deleteTransmitter(id);
+    });
+  });
 });

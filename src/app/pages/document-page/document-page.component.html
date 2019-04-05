@@ -12,7 +12,7 @@
         <div class="placeholder" *ngIf="!docTitle">Untitled</div>
 
       </h1>
-      <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId">
+      <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
       </app-block>
       <app-add-information *ngIf="isUserLoggedIn" (click)="addNewBlock('TEXT')" style="width: 100%"></app-add-information>
     </section>

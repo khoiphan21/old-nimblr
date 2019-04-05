@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType } from 'src/API';
+import { BlockType, QuestionType, DeleteBlockInput } from 'src/API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
@@ -387,6 +387,40 @@ describe('BlockCommandService', () => {
         runTestForQuestionMissingParams(
           requiredParams, 'createBlock', 'CreateQuestionBlockInput'
         );
+      });
+    });
+  });
+
+  describe('deleteBlock', () => {
+    let mockInput: DeleteBlockInput;
+
+    beforeEach(() => {
+      graphQlSpy.and.returnValue(Promise.resolve('ok'));
+      mockInput = { id: 'test id' };
+    });
+
+    it('should return a promise', () => {
+      const data = service.deleteBlock(mockInput);
+      expect(data instanceof Promise).toBeTruthy();
+    });
+
+    it('should call graphQlservice query', async () => {
+      await service.deleteBlock(mockInput);
+      expect(graphQlSpy.calls.count()).toBe(1);
+    });
+
+    it('should call graphQlservice query with expected arguments', async () => {
+      await service.deleteBlock(mockInput);
+      const input = { id: 'test id' };
+      expect(graphQlSpy.calls.mostRecent().args[1]).toEqual({ input });
+    });
+
+    it('should reject with appropriate error from API when failed', done => {
+      const expectedError = 'test err';
+      graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));
+      service.deleteBlock(mockInput).catch(err => {
+        expect(err.message).toEqual(expectedError);
+        done();
       });
     });
   });

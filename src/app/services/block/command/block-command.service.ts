@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput } from '../../../../API';
-import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
+import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
 
 @Injectable({
   providedIn: 'root'
@@ -143,7 +143,6 @@ export class BlockCommandService {
     }
   }
 
-
   private async createQuestionBlock(originalInput: CreateQuestionBlockInput): Promise<any> {
     const input = {
       id: originalInput.id,
@@ -180,5 +179,13 @@ export class BlockCommandService {
         throw new Error(`Missing argument "${param}" in ${context}`);
       }
     });
+  }
+
+  async deleteBlock(input: DeleteBlockInput): Promise<any> {
+    // graphql delete block
+    input = { id: input.id };
+    const response = await this.graphQLService.query(deleteBlock, { input });
+
+    return response;
   }
 }

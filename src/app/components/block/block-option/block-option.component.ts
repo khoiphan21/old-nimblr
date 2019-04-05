@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
 import { BlockType } from 'src/API';
+import { Block } from 'src/app/classes/block/block';
 
 @Component({
   selector: 'app-block-option',
@@ -17,6 +18,9 @@ export class BlockOptionComponent implements OnChanges {
 
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
+
+  @Output() deleteEvent = new EventEmitter<string>();
+  @Input() block: Block;
 
   constructor() { }
 
@@ -63,6 +67,10 @@ export class BlockOptionComponent implements OnChanges {
   addQuestionBlock() {
     this.createBlock.emit(BlockType.QUESTION);
     this.hideAddBlockContainer();
+  }
+
+  deleteHandler() {
+    this.deleteEvent.emit(this.block.id);
   }
 
 }

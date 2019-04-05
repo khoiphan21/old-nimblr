@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -18,6 +18,9 @@ export class BlockTextComponent implements OnChanges {
   @Input() isUserLoggedIn: boolean;
   @Input() block: TextBlock;
   @Input() isFocused: boolean;
+
+  @Output() deleteEvent = new EventEmitter<string>();
+
 
   constructor(
     private blockCommandService: BlockCommandService,
@@ -70,5 +73,9 @@ export class BlockTextComponent implements OnChanges {
     }
   }
 
-
+  onBackSpaceAndEmptyTextbox() {
+    if (this.value === '') {
+      this.deleteEvent.emit(this.block.id);
+    }
+  }
 }

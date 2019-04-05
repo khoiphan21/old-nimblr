@@ -1,17 +1,22 @@
 <ng-container *ngIf="block" [ngSwitch]=block.type>
-    <!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
+  <!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
     <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
     <app-block-header [block]="block"></app-block-header>
 </div> -->
     <div class="block" *ngSwitchCase="'TEXT'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-        <app-block-option *ngIf="isUserLoggedIn" class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)
+        <app-block-option [block]="block" (deleteEvent)="deleteTransmitter($event)" 
+                          *ngIf="isUserLoggedIn" class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" 
+                          (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
+                          (switchBlockOptionsOff)=toggleBlockOptions($event)
         (createBlock)="addBlock($event)">
         </app-block-option>
-        <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [isFocused]="isFocused"></app-block-text>
+        <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [isFocused]="isFocused" (deleteEvent)="deleteTransmitter($event)"></app-block-text>
     </div>
     <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-        <app-block-option [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)
-        (createBlock)="addBlock($event)">
+        <app-block-option [block]="block" [isBlockOptionsShown]="isBlockOptionsShown" 
+                          (isSelectedOptionShown)=toggleSelectedOptionStatus($event) 
+                          (switchBlockOptionsOff)=toggleBlockOptions($event)
+                          (createBlock)="addBlock($event)" (deleteEvent)="deleteTransmitter($event)">
         </app-block-option>
         <app-question-block [questionBlock]="block" class="desktop" [isFocused]="isFocused"></app-question-block>
         <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>

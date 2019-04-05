@@ -450,7 +450,7 @@ describe('DocumentPageComponent', () => {
 
   describe('updateDocTitle()', () => {
     let spyUpdate: jasmine.Spy;
-    let spyUpdateDocTitle: jasmine.Spy;
+    let spyDocCommandServiceTitle: jasmine.Spy;
 
     let testId;
     let userId;
@@ -463,7 +463,7 @@ describe('DocumentPageComponent', () => {
       testId = uuidv4();
       userId = uuidv4();
       testTitle = 'test title';
-      spyUpdateDocTitle = spyOn(component, 'updateDocTitle').and.callThrough();
+      spyDocCommandServiceTitle = spyOn(component, 'updateDocTitle').and.callThrough();
       spyUpdate = spyOn(component['documentCommandService'], 'updateDocument'); spyUpdate.and.returnValue(Promise.resolve('ok'));
 
       component['docTitle'] = testTitle;
@@ -536,6 +536,88 @@ describe('DocumentPageComponent', () => {
       const status = SharingStatus.PUBLIC;
       component.changeSharingStatus(status);
       expect(spy.calls.mostRecent().args[0].sharingStatus).toEqual(status);
+    });
+  });
+
+  describe('deleteBlock', () => {
+    let spyBlockCommandService: jasmine.Spy;
+    let spyDocCommandService: jasmine.Spy;
+    let spyBlockQueryService: jasmine.Spy;
+
+    let mockCurrentDocument: object;
+    let testId: string;
+
+    beforeEach(() => {
+      spyBlockQueryService = spyOn(component['blockQueryService'], 'registerBlockDeletedByUI').and.returnValue(Promise.resolve('test'));
+      spyDocCommandService = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('test'));
+      spyBlockCommandService = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
+
+      mockCurrentDocument = {
+        blockIds: ['t1', 't2', 't3'],
+        version: 'v1',
+        lastUpdatedBy: '',
+      };
+      component['currentDocument'] = mockCurrentDocument as Document;
+      component['currentUser'] = { id: '' } as User;
+
+      testId = 't1';
+    });
+
+    it('should call registerBlockDeletedByUI service', done => {
+      component.deleteBlock(testId);
+      expect(spyBlockQueryService.calls.count()).toBe(1);
+      done();
+    });
+
+    it('should call registerBlockDeletedByUI service with correct value', done => {
+      component.deleteBlock(testId);
+      expect(spyBlockQueryService).toHaveBeenCalledWith(testId);
+      done();
+    });
+
+    it('should call updateDocument command service', done => {
+      component.deleteBlock(testId);
+      expect(spyDocCommandService).toHaveBeenCalled();
+      done();
+    });
+
+    it('should call deleteBlock command service', done => {
+      component.deleteBlock(testId);
+      expect(spyBlockCommandService).toHaveBeenCalled();
+      done();
+    });
+
+    it('should call deleteBlock service with correct value', done => {
+      const expectedInput = { id: testId };
+      component['block.id'] = testId;
+      component.deleteBlock(testId);
+      expect(spyBlockCommandService).toHaveBeenCalledWith(expectedInput);
+      done();
+    });
+
+    it('should throw error when docCommandService.updateDoc fails', async done => {
+      const expectedError = 'test err';
+      spyDocCommandService.and.returnValue(Promise.reject(new Error(expectedError)));
+      component.deleteBlock(testId).catch(err => {
+        expect(err.message).toEqual(`DocumentPage failed to delete block: ${expectedError}`);
+        done();
+      });
+    });
+
+    it('should throw error when blockCommandService.deleteBlock fails', async done => {
+      const expectedError = 'test err';
+      spyBlockCommandService.and.returnValue(Promise.reject(new Error(expectedError)));
+      component.deleteBlock(testId).catch(err => {
+        expect(err.message).toEqual(`DocumentPage failed to delete block: ${expectedError}`);
+        done();
+      });
+    });
+
+    it('should remove correct id from currentDocument', done => {
+      component.deleteBlock(testId).then(() => {
+        expect(component['currentDocument'].blockIds.includes('t1')).toBeFalsy();
+        done();
+      });
     });
   });
 });
