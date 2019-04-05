@@ -10,7 +10,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 const uuidv4 = require('uuid/v4');
 
-fdescribe('BlockComponent', () => {
+describe('BlockComponent', () => {
   let component: BlockComponent;
   let fixture: ComponentFixture<BlockComponent>;
   let blockFactoryService: BlockFactoryService;

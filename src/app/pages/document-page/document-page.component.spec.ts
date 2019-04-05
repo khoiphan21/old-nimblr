@@ -301,7 +301,7 @@ describe('DocumentPageComponent', () => {
 
   describe('updateDocTitle()', () => {
     let spyUpdate: jasmine.Spy;
-    let spyUpdateDocTitle: jasmine.Spy;
+    let spyDocCommandServiceTitle: jasmine.Spy;
 
     let testId;
     let userId;
@@ -314,7 +314,7 @@ describe('DocumentPageComponent', () => {
       testId = uuidv4();
       userId = uuidv4();
       testTitle = 'test title';
-      spyUpdateDocTitle = spyOn(component, 'updateDocTitle').and.callThrough();
+      spyDocCommandServiceTitle = spyOn(component, 'updateDocTitle').and.callThrough();
       spyUpdate = spyOn(component['documentCommandService'], 'updateDocument'); spyUpdate.and.returnValue(Promise.resolve('ok'));
 
       component['docTitle'] = testTitle;
@@ -392,18 +392,18 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  describe('deleteBlock', () => {
-    let spyDelete: jasmine.Spy;
-    let spyUpdateDoc: jasmine.Spy;
-    let spyBlockQueryDeletion: jasmine.Spy;
+  fdescribe('deleteBlock', () => {
+    let spyBlockCommandService: jasmine.Spy;
+    let spyDocCommandService: jasmine.Spy;
+    let spyBlockQueryService: jasmine.Spy;
 
     let mockCurrentDocument: object;
     let testId: string;
 
     beforeEach(() => {
-      spyBlockQueryDeletion = spyOn(component['blockQueryService'], 'deleteBlockCreatedByUI').and.returnValue(Promise.resolve('test'));
-      spyUpdateDoc = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('test'));
-      spyDelete = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
+      spyBlockQueryService = spyOn(component['blockQueryService'], 'registerBlockDeletedByUI').and.returnValue(Promise.resolve('test'));
+      spyDocCommandService = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('test'));
+      spyBlockCommandService = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
 
       mockCurrentDocument = {
         blockIds: ['t1', 't2', 't3'],
@@ -416,27 +416,27 @@ describe('DocumentPageComponent', () => {
       testId = 't1';
     });
 
-    it('should call deleteBlockCreatedByUI service', done => {
+    it('should call registerBlockDeletedByUI service', done => {
       component.deleteBlock(testId);
-      expect(spyBlockQueryDeletion.calls.count()).toBe(1);
+      expect(spyBlockQueryService.calls.count()).toBe(1);
+      done();
+    });
+
+    it('should call registerBlockDeletedByUI service with correct value', done => {
+      component.deleteBlock(testId);
+      expect(spyBlockQueryService).toHaveBeenCalledWith(testId);
       done();
     });
 
     it('should call updateDocument command service', done => {
       component.deleteBlock(testId);
-      expect(spyUpdateDoc.calls.count()).toBe(1);
+      expect(spyDocCommandService).toHaveBeenCalled();
       done();
     });
 
     it('should call deleteBlock command service', done => {
       component.deleteBlock(testId);
-      expect(spyDelete.calls.count()).toBe(1);
-      done();
-    });
-
-    it('should call deleteBlockCreatedByUI service with correct value', done => {
-      component.deleteBlock(testId);
-      expect(spyBlockQueryDeletion.calls.mostRecent().args[0]).toEqual(testId);
+      expect(spyBlockCommandService).toHaveBeenCalled();
       done();
     });
 
@@ -444,18 +444,26 @@ describe('DocumentPageComponent', () => {
       const expectedInput = { id: testId };
       component['block.id'] = testId;
       component.deleteBlock(testId);
-      expect(spyDelete.calls.mostRecent().args[0]).toEqual(expectedInput);
+      expect(spyBlockCommandService).toHaveBeenCalledWith(expectedInput);
       done();
     });
 
-    it('should throw error when deleteBlock cannot be performed', async done => {
+    it('should throw error when docCommandService.updateDoc fails', async done => {
       const expectedError = 'test err';
-      spyDelete.and.returnValue(Promise.reject(new Error(expectedError)));
+      spyDocCommandService.and.returnValue(Promise.reject(new Error(expectedError)));
       component.deleteBlock(testId).catch(err => {
         expect(err.message).toEqual(`DocumentPage failed to delete block: ${expectedError}`);
         done();
       });
+    });
 
+    it('should throw error when blockCommandService.deleteBlock fails', async done => {
+      const expectedError = 'test err';
+      spyBlockCommandService.and.returnValue(Promise.reject(new Error(expectedError)));
+      component.deleteBlock(testId).catch(err => {
+        expect(err.message).toEqual(`DocumentPage failed to delete block: ${expectedError}`);
+        done();
+      });
     });
 
     it('should remove correct id from currentDocument', done => {

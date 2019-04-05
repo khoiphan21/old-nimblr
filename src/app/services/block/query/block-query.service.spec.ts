@@ -339,4 +339,20 @@ describe('BlockQueryService', () => {
     });
   });
 
+  describe('registerBlockDeletedByUI', () => {
+    let block: Block;
+    let factory: BlockFactoryService;
+
+    beforeEach(() => {
+      factory = TestBed.get(BlockFactoryService);
+      block = factory.createAppBlock(mockBlock);
+    });
+    it('should remove the stored block from the map', () => {
+      service['blocksMap'] = new Map();
+      service['blocksMap'].set(id, new BehaviorSubject(block));
+      service.registerBlockDeletedByUI(id);
+      expect(service['blocksMap'].has(id)).toBe(false);
+    });
+  });
+
 });

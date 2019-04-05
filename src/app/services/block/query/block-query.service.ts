@@ -147,7 +147,7 @@ export class BlockQueryService {
     this.registerUpdateVersion(block.version);
   }
 
-  deleteBlockCreatedByUI(blockId: string) {
+  registerBlockDeletedByUI(blockId: string) {
     this.blocksMap.delete(blockId);
   }
 }

@@ -162,10 +162,10 @@ export class DocumentPageComponent implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         // update document, hashmap:
-        this.blockQueryService.deleteBlockCreatedByUI(blockId);
+        this.blockQueryService.registerBlockDeletedByUI(blockId);
 
         // Update Document current Document
-        let blockIds = this.currentDocument.blockIds;
+        const blockIds = this.currentDocument.blockIds;
         const index = blockIds.indexOf(blockId);
         blockIds.splice(index, 1);
         this.currentDocument.version = uuidv4();
