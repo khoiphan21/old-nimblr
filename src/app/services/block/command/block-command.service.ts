@@ -181,17 +181,11 @@ export class BlockCommandService {
     });
   }
 
-  deleteBlock(input: DeleteBlockInput): Promise<any> {
-    return new Promise((resolve, reject) => {
-      try {
-        // graphql delete block
-        input = { id: input.id };
-        const response = this.graphQLService.query(deleteBlock, { input });
-        resolve(response);
-      } catch (err) {
-        // error path: reject with err
-        reject(err);
-      }
-    });
+  async deleteBlock(input: DeleteBlockInput): Promise<any> {
+    // graphql delete block
+    input = { id: input.id };
+    const response = await this.graphQLService.query(deleteBlock, { input });
+
+    return response;
   }
 }

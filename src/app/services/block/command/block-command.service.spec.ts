@@ -399,29 +399,26 @@ describe('BlockCommandService', () => {
       mockInput = { id: 'test id' };
     });
 
-    it('should return a promise', done => {
+    it('should return a promise', () => {
       const data = service.deleteBlock(mockInput);
       expect(data instanceof Promise).toBeTruthy();
-      done();
     });
 
-    it('should call graphQlservice query', async done => {
+    it('should call graphQlservice query', async () => {
       await service.deleteBlock(mockInput);
       expect(graphQlSpy.calls.count()).toBe(1);
-      done();
     });
 
-    it('should call graphQlservice query with expected arguments', async done => {
+    it('should call graphQlservice query with expected arguments', async () => {
       await service.deleteBlock(mockInput);
       const input = { id: 'test id' };
       expect(graphQlSpy.calls.mostRecent().args[1]).toEqual({ input });
-      done();
     });
 
-    it('should reject with appropriate error from API when failed', async done => {
+    it('should reject with appropriate error from API when failed', done => {
       const expectedError = 'test err';
       graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));
-      await service.deleteBlock(mockInput).catch(err => {
+      service.deleteBlock(mockInput).catch(err => {
         expect(err.message).toEqual(expectedError);
         done();
       });

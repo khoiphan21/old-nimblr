@@ -392,7 +392,7 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  fdescribe('deleteBlock', () => {
+  describe('deleteBlock', () => {
     let spyBlockCommandService: jasmine.Spy;
     let spyDocCommandService: jasmine.Spy;
     let spyBlockQueryService: jasmine.Spy;
