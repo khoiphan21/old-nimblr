@@ -1,7 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockOptionComponent } from './block-option.component';
+import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
+import { BlockType } from 'src/API';
 
-describe('BlockOptionComponent', () => {
+const uuidv4 = require('uuid/v4');
+
+fdescribe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
   let fixture: ComponentFixture<BlockOptionComponent>;
 
@@ -119,6 +123,26 @@ describe('BlockOptionComponent', () => {
     const spy = spyOn(component.isSelectedOptionShown, 'emit');
     component['toggleSelectedOptionsStatus'](false);
     expect(spy).toHaveBeenCalledWith(false);
+  });
+
+  describe('deleteHandler()', () => {
+    let factory: BlockFactoryService;
+
+    beforeEach(() => {
+      factory = TestBed.get(BlockFactoryService);
+    });
+    it('should emit the block id', done => {
+      component.block = factory.createAppBlock({
+        type: BlockType.TEXT,
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      component.deleteEvent.subscribe(value => {
+        expect(value).toEqual(component.block.id);
+        done();
+      });
+      component.deleteHandler();
+    });
   });
 
 });
