@@ -56,8 +56,8 @@ export class BlockTextComponent implements OnChanges {
     }
   }
 
-  onBackSpaceAndEmptyTextbox(event: KeyboardEvent) {
-    if (event.keyCode === 8 && this.value === '') {
+  onBackSpaceAndEmptyTextbox() {
+    if (this.value === '') {
       this.deleteEvent.emit(this.block.id);
     }
   }

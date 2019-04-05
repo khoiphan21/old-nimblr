@@ -138,17 +138,25 @@ describe('BlockTextComponent', () => {
 
   });
 
-  describe('onBackSpace()', () => {
+  describe('onBackSpaceAndEmptyTextbox()', () => {
     beforeEach(() => {
-
+      component.block = rawData;
     });
 
-    it('should ...', () => {
-
+    it('should emit the id if the value is empty', done => {
+      component.value = '';
+      component.deleteEvent.subscribe(value => {
+        expect(value).toEqual(component.block.id);
+        done();
+      });
+      component.onBackSpaceAndEmptyTextbox();
     });
 
-    it('should ...', () => {
-
+    it('should not emit if the value is not empty', () => {
+      component.value = 'test';
+      spyOn(component.deleteEvent, 'emit');
+      component.onBackSpaceAndEmptyTextbox();
+      expect(component.deleteEvent.emit).not.toHaveBeenCalled();
     });
 
   });

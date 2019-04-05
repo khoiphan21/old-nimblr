@@ -10,7 +10,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 const uuidv4 = require('uuid/v4');
 
-describe('BlockComponent', () => {
+fdescribe('BlockComponent', () => {
   let component: BlockComponent;
   let fixture: ComponentFixture<BlockComponent>;
   let blockFactoryService: BlockFactoryService;
@@ -99,5 +99,17 @@ describe('BlockComponent', () => {
   it('toggleSelectedOptionStatus() - should set `isSelectedOptionShown` to the given value', () => {
     component.toggleSelectedOptionStatus(true);
     expect(component.isSelectedOptionShown).toBe(true);
+  });
+
+  describe('deleteTransmitter()', () => {
+    const id = 'test';
+
+    it('should emit the given blockId', done => {
+      component.deleteEvent.subscribe(value => {
+        expect(value).toEqual(id);
+        done();
+      });
+      component.deleteTransmitter(id);
+    });
   });
 });
