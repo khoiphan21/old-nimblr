@@ -76,33 +76,52 @@ describe('BlockTextComponent', () => {
       component.block = block;
       fixture.detectChanges();
       component.ngOnChanges({
-        isFocused: new SimpleChange(null, true, false)
+        focusBlockId: new SimpleChange(null, '12324', false)
       });
       expect(component.value).toBe('test');
     });
 
-    describe('when isFocused is defined', () => {
-      it('should call changeDetector if isFocused is true', () => {
+    describe('when focusBlockId is defined', () => {
+      it('should call changeDetector if focusBlockId has the block id', () => {
         component.ngOnChanges({
-          isFocused: new SimpleChange(null, true, false)
+          focusBlockId: new SimpleChange(
+            null, block.id + '1234', false
+          )
         });
         expect(changeDetectorSpy).toHaveBeenCalled();
       });
 
-      it('should focus on the element if isFocused is true', () => {
+      it('should focus on the element if focusBlockId has the block id', () => {
         component.ngOnChanges({
-          isFocused: new SimpleChange(null, true, false)
+          focusBlockId: new SimpleChange(null, block.id + '1234', false)
         });
         const element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(true);
       });
 
-      it('should not do anything if isFocused is false', () => {
+      it('should not do anything if focusBlockId does not have the block id', () => {
         component.ngOnChanges({
-          isFocused: new SimpleChange(null, false, false)
+          focusBlockId: new SimpleChange(null, '1234', false)
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
         const element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+      });
+
+      it('should not do anything if focusBlockId is undefined or null', () => {
+        // null
+        component.ngOnChanges({
+          focusBlockId: new SimpleChange(null, null, false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        let element = document.getElementById(block.id);
+        expect(document.activeElement === element).toBe(false);
+        // undefined
+        component.ngOnChanges({
+          focusBlockId: new SimpleChange(null, undefined, false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(false);
       });
     });

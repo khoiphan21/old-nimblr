@@ -10,7 +10,7 @@
                           (switchBlockOptionsOff)=toggleBlockOptions($event)
         (createBlock)="addBlock($event)">
         </app-block-option>
-        <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [isFocused]="isFocused" (deleteEvent)="deleteTransmitter($event)"></app-block-text>
+        <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)"></app-block-text>
     </div>
     <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
         <app-block-option [block]="block" [isBlockOptionsShown]="isBlockOptionsShown" 
@@ -18,7 +18,7 @@
                           (switchBlockOptionsOff)=toggleBlockOptions($event)
                           (createBlock)="addBlock($event)" (deleteEvent)="deleteTransmitter($event)">
         </app-block-option>
-        <app-question-block [questionBlock]="block" class="desktop" [isFocused]="isFocused"></app-question-block>
+        <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
         <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>
     </div>
 </ng-container>

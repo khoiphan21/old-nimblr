@@ -193,35 +193,35 @@ export class DocumentPageComponent implements OnInit {
     this.documentCommandService.updateDocument(this.currentDocument);
   }
 
-  deleteBlock(blockId: string) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // update document, hashmap:
-        this.blockQueryService.registerBlockDeletedByUI(blockId);
+  async deleteBlock(blockId: string) {
+    try {
+      // update document, hashmap:
+      this.blockQueryService.registerBlockDeletedByUI(blockId);
 
-        // Update Document current Document
-        const blockIds = this.currentDocument.blockIds;
-        const index = blockIds.indexOf(blockId);
-        blockIds.splice(index, 1);
-        this.currentDocument.version = uuidv4();
-        this.currentDocument.lastUpdatedBy = this.currentUser.id;
-        const updatePromise = this.documentCommandService.updateDocument(this.currentDocument);
+      // Update Document current Document
+      const blockIds = this.blockIds;
+      const index = blockIds.indexOf(blockId);
+      blockIds.splice(index, 1);
+      // Now move the focus on the previous block
+      // The uuidv4() call is needed to make sure it changes
+      this.focusBlockId = `${blockIds[index - 1]}-${uuidv4()}`;
+      // Update the version
+      this.currentDocument.blockIds = this.blockIds;
+      this.currentDocument.lastUpdatedBy = this.currentUser.id;
+      const updatePromise = this.documentCommandService.updateDocument(this.currentDocument);
 
-        // call command service
-        let input: DeleteBlockInput;
-        input = { id: blockId };
-        const blockPromise = this.blockCommandService.deleteBlock(input);
+      // call command service
+      let input: DeleteBlockInput;
+      input = { id: blockId };
+      const blockPromise = this.blockCommandService.deleteBlock(input);
 
-        // Await for all the promises before moving on
-        await updatePromise;
-        await blockPromise;
-        resolve();
+      // Await for all the promises before moving on
+      await updatePromise;
+      await blockPromise;
 
-      } catch (error) {
-        const message = `DocumentPage failed to delete block: ${error.message}`;
-        reject(new Error(message));
-
-      }
-    });
+    } catch (error) {
+      const message = `DocumentPage failed to delete block: ${error.message}`;
+      throw new Error(message);
+    }
   }
 }

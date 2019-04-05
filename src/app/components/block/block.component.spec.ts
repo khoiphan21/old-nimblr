@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { MockBlockQueryService } from 'src/app/services/block/query/block-query.service.spec';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
 
@@ -90,12 +90,6 @@ describe('BlockComponent', () => {
       expect(consoleSpy.calls.mostRecent().args[0].message).toEqual(message);
     });
 
-    it('should set isFocused to true if focusBlockId matches', () => {
-      component.focusBlockId = block.id;
-      component.ngOnInit();
-      subject.next(block);
-      expect(component.isFocused).toBe(true);
-    });
   });
 
   it('toggleBlockOptions() - should set `isBlockOptionsShown` to the given value', () => {

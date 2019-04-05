@@ -17,10 +17,9 @@ export class BlockTextComponent implements OnChanges {
   // To control whether it's editable or not
   @Input() isUserLoggedIn: boolean;
   @Input() block: TextBlock;
-  @Input() isFocused: boolean;
+  @Input() focusBlockId: string;
 
   @Output() deleteEvent = new EventEmitter<string>();
-
 
   constructor(
     private blockCommandService: BlockCommandService,
@@ -33,12 +32,17 @@ export class BlockTextComponent implements OnChanges {
 
     // NOTE: call this AFTER setting all values first due to the call to
     // detectChanges()
-    const focus = changes.isFocused;
+    const focus = changes.focusBlockId;
     if (focus) {
-      if (focus.currentValue === true) {
+      if (!focus.currentValue) { return; }
+
+      if (focus.currentValue.includes(this.block.id)) {
         // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
         this.changeDetector.detectChanges();
-        document.getElementById(this.block.id).focus();
+        const element = document.getElementById(this.block.id);
+        element.focus();
+        // TODO @jeremyng Move caret to the end
+
       }
     }
   }
@@ -78,4 +82,5 @@ export class BlockTextComponent implements OnChanges {
       this.deleteEvent.emit(this.block.id);
     }
   }
+
 }

@@ -15,7 +15,7 @@ export class QuestionBlockComponent implements OnChanges {
   // To control whether it's editable or not
   @Input() isUserLoggedIn: boolean;
   @Input() questionBlock: QuestionBlock;
-  @Input() isFocused: boolean;
+  @Input() focusBlockId: string;
 
   valueUpdated = true;
   isPreviewMode = true;
@@ -40,9 +40,10 @@ export class QuestionBlockComponent implements OnChanges {
 
     // NOTE: call this AFTER setting all values first due to the call to
     // detectChanges()
-    const focus = changes.isFocused;
+    const focus = changes.focusBlockId;
     if (focus) {
-      if (focus.currentValue === true) {
+      if (!focus.currentValue) { return; }
+      if (focus.currentValue.includes(this.questionBlock.id)) {
         // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
         this.changeDetector.detectChanges();
         document.getElementById(this.questionBlock.id + '-question').focus();

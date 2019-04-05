@@ -74,19 +74,20 @@ describe('QuestionBlockComponent', () => {
       changeDetectorSpy.and.callThrough();
     });
 
-    describe('when isFocused is defined', () => {
-      describe('if isFocused is true', () => {
+    describe('when focusBlockId is defined', () => {
+
+      describe('if focusBlockId has the block id', () => {
         beforeEach(() => {
           component.ngOnChanges({
-            isFocused: new SimpleChange(null, true, false)
+            focusBlockId: new SimpleChange(null, block.id + '1234', false)
           });
         });
 
-        it('should call changeDetector if isFocused is true', () => {
+        it('should call changeDetector', () => {
           expect(changeDetectorSpy).toHaveBeenCalled();
         });
 
-        it('should focus on the element if isFocused is true', () => {
+        it('should focus on the element', () => {
           const element = document.getElementById(block.id + '-question');
           expect(document.activeElement === element).toBe(true);
         });
@@ -99,9 +100,27 @@ describe('QuestionBlockComponent', () => {
         });
       });
 
-      it('should not do anything if isFocused is false', () => {
+      it('should not do anything if focusBlockId does not have the block id', () => {
         component.ngOnChanges({
-          isFocused: new SimpleChange(null, false, false)
+          focusBlockId: new SimpleChange(null, 'asdf', false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        const element = document.getElementById(block.id + '-question');
+        expect(document.activeElement === element).toBe(false);
+      });
+
+      it('should not do anything if focusBlockId has null value', () => {
+        component.ngOnChanges({
+          focusBlockId: new SimpleChange(null, null, false)
+        });
+        expect(changeDetectorSpy).not.toHaveBeenCalled();
+        const element = document.getElementById(block.id + '-question');
+        expect(document.activeElement === element).toBe(false);
+      });
+
+      it('should not do anything if focusBlockId has undefined value', () => {
+        component.ngOnChanges({
+          focusBlockId: new SimpleChange(null, undefined, false)
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
         const element = document.getElementById(block.id + '-question');
@@ -109,18 +128,18 @@ describe('QuestionBlockComponent', () => {
       });
     });
 
-    describe('when isFocused is not defined or null', () => {
+    describe('when focusBlockId is not defined or null', () => {
       it('should not do anything', () => {
         // undefined case
         component.ngOnChanges({
-          isFocused: undefined
+          focusBlockId: undefined
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
         let element = document.getElementById(block.id + '-question');
         expect(document.activeElement === element).toBe(false);
         // null case
         component.ngOnChanges({
-          isFocused: null
+          focusBlockId: null
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
         element = document.getElementById(block.id + '-question');

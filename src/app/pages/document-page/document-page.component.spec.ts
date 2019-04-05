@@ -16,7 +16,7 @@ import { DocumentFactoryService } from 'src/app/services/document/factory/docume
 import { Document } from 'src/app/classes/document';
 import { isUuid } from 'src/app/classes/helpers';
 import { DocumentType, SharingStatus, BlockType } from 'src/API';
-import { TextBlock } from "src/app/classes/block/textBlock";
+import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 
@@ -278,7 +278,7 @@ describe('DocumentPageComponent', () => {
       } catch (error) {
         expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
       }
-    })
+    });
 
     function testInteractionWithOtherClasses() {
       it('should register the created block to the BlockQueryService', () => {
@@ -551,51 +551,47 @@ describe('DocumentPageComponent', () => {
       spyBlockQueryService = spyOn(component['blockQueryService'], 'registerBlockDeletedByUI').and.returnValue(Promise.resolve('test'));
       spyDocCommandService = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('test'));
       spyBlockCommandService = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
-
+      const blockIds = ['t1', 't2', 't3'];
       mockCurrentDocument = {
-        blockIds: ['t1', 't2', 't3'],
+        blockIds,
         version: 'v1',
         lastUpdatedBy: '',
       };
       component['currentDocument'] = mockCurrentDocument as Document;
+      component.blockIds = blockIds;
       component['currentUser'] = { id: '' } as User;
 
       testId = 't1';
     });
 
-    it('should call registerBlockDeletedByUI service', done => {
+    it('should call registerBlockDeletedByUI service', () => {
       component.deleteBlock(testId);
-      expect(spyBlockQueryService.calls.count()).toBe(1);
-      done();
+      expect(spyBlockQueryService).toHaveBeenCalled();
     });
 
-    it('should call registerBlockDeletedByUI service with correct value', done => {
+    it('should call registerBlockDeletedByUI service with correct value', () => {
       component.deleteBlock(testId);
       expect(spyBlockQueryService).toHaveBeenCalledWith(testId);
-      done();
     });
 
-    it('should call updateDocument command service', done => {
+    it('should call updateDocument command service', () => {
       component.deleteBlock(testId);
       expect(spyDocCommandService).toHaveBeenCalled();
-      done();
     });
 
-    it('should call deleteBlock command service', done => {
+    it('should call deleteBlock command service', () => {
       component.deleteBlock(testId);
       expect(spyBlockCommandService).toHaveBeenCalled();
-      done();
     });
 
-    it('should call deleteBlock service with correct value', done => {
+    it('should call deleteBlock service with correct value', () => {
       const expectedInput = { id: testId };
       component['block.id'] = testId;
       component.deleteBlock(testId);
       expect(spyBlockCommandService).toHaveBeenCalledWith(expectedInput);
-      done();
     });
 
-    it('should throw error when docCommandService.updateDoc fails', async done => {
+    it('should throw error when docCommandService.updateDoc fails', done => {
       const expectedError = 'test err';
       spyDocCommandService.and.returnValue(Promise.reject(new Error(expectedError)));
       component.deleteBlock(testId).catch(err => {
@@ -604,7 +600,7 @@ describe('DocumentPageComponent', () => {
       });
     });
 
-    it('should throw error when blockCommandService.deleteBlock fails', async done => {
+    it('should throw error when blockCommandService.deleteBlock fails', done => {
       const expectedError = 'test err';
       spyBlockCommandService.and.returnValue(Promise.reject(new Error(expectedError)));
       component.deleteBlock(testId).catch(err => {
@@ -613,11 +609,9 @@ describe('DocumentPageComponent', () => {
       });
     });
 
-    it('should remove correct id from currentDocument', done => {
-      component.deleteBlock(testId).then(() => {
-        expect(component['currentDocument'].blockIds.includes('t1')).toBeFalsy();
-        done();
-      });
+    it('should remove correct id from currentDocument', async () => {
+      await component.deleteBlock(testId);
+      expect(component['currentDocument'].blockIds.includes('t1')).toBeFalsy();
     });
   });
 });
