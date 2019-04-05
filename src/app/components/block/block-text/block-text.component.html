@@ -1,7 +1,7 @@
 <div class="content text-block" *ngIf="block">
   <!-- When the user is logged in -->
-  <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder(false)"
-    (focus)="togglePlaceholder(true)" [(ngModel)]="value" (ngModelChange)="updateValue()"></div>
+  <div id={{block.id}} class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder(false)"
+    (focus)="togglePlaceholder(true)" [(ngModel)]="value" (ngModelChange)="updateValue()" (keydown)="onBackSpaceAndEmptyTextbox($event)"></div>
 
   <!-- When the user is anonymous -->
   <div class="text-input" *ngIf="!isUserLoggedIn">{{value}}</div>

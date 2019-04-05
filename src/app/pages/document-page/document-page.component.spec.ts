@@ -392,7 +392,6 @@ describe('DocumentPageComponent', () => {
     });
   });
 
-  // add:
   describe('deleteBlock', () => {
     let spyDelete: jasmine.Spy;
     let spyUpdateDoc: jasmine.Spy;
@@ -466,4 +465,21 @@ describe('DocumentPageComponent', () => {
       });
     });
   });
+
+  describe('deleteBlockByKey', () => {
+    beforeEach(() => {
+
+    });
+
+    it('should call deleteBlock', done => {
+
+    });
+
+    it('should catch error when deleteBlock failed', done => {
+
+    });
+
+  });
+
+
 });

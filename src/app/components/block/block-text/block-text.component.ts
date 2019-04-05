@@ -17,7 +17,8 @@ export class BlockTextComponent implements OnChanges {
   @Input() isUserLoggedIn: boolean;
   @Input() block: TextBlock;
 
-  @Output() deleteEvent = new EventEmitter<string>();
+  @Output() deleteByKeyEvent = new EventEmitter<string>();
+
 
   constructor(
     private blockCommandService: BlockCommandService,
@@ -55,16 +56,9 @@ export class BlockTextComponent implements OnChanges {
     }
   }
 
-  onBackSpace() {
-    // call deleteBlck function in document-page component
-    const blockId = this.block.id;
-    this.deleteEvent.emit(blockId);
-
-    // UI interaction
-    /* 
-    if (block is empty) && (there is block above) then:
-      focus on aboveBlock last character, cursor after last character
-    */
-
+  onBackSpaceAndEmptyTextbox(event: KeyboardEvent) {
+    if (event.keyCode === 8 && this.value === '') {
+      this.deleteByKeyEvent.emit(this.block.id);
+    }
   }
 }
