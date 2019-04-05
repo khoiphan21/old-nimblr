@@ -17,7 +17,7 @@ export class BlockTextComponent implements OnChanges {
   @Input() isUserLoggedIn: boolean;
   @Input() block: TextBlock;
 
-  @Output() deleteByKeyEvent = new EventEmitter<string>();
+  @Output() deleteEvent = new EventEmitter<string>();
 
 
   constructor(
@@ -58,7 +58,7 @@ export class BlockTextComponent implements OnChanges {
 
   onBackSpaceAndEmptyTextbox(event: KeyboardEvent) {
     if (event.keyCode === 8 && this.value === '') {
-      this.deleteByKeyEvent.emit(this.block.id);
+      this.deleteEvent.emit(this.block.id);
     }
   }
 }

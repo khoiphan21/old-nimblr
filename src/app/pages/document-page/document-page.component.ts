@@ -12,7 +12,6 @@ import { BlockQueryService } from '../../services/block/query/block-query.servic
 import { BlockCommandService } from '../../services/block/command/block-command.service';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
 import { TextBlock } from 'src/app/classes/block';
-import { isNull } from 'util';
 
 const uuidv4 = require('uuid/v4');
 
@@ -190,53 +189,4 @@ export class DocumentPageComponent implements OnInit {
       }
     });
   }
-
-  deleteBlockByKey(blockId: string) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // focus cursor to block above
-        const blockIds = this.currentDocument.blockIds;
-        const currentIndex = blockIds.indexOf(blockId);
-        const previousInputBlockId = blockIds[currentIndex - 1];
-        const textbox: HTMLElement = document.getElementById(previousInputBlockId);
-        console.log("TCL: DocumentPageComponent -> deleteBlockByKey -> textbox", textbox)
-        // textbox.focus();
-
-        // perform block deletion
-        await this.deleteBlock(blockId);
-        resolve();
-
-      } catch (error) {
-        reject('Nothing can be focus: ' + error.message);
-      }
-    });
-  }
-
-  // private focusOnElement(htmlElement: HTMLElement, position: number = -1) {
-  //   /*
-  //   This method place cursor on a specific position. By default it places cursor
-  //   after the last character (-1).
-  //   */
-  //   const range = document.createRange();
-  //   const seletion = window.getSelection();
-  //   const inputFirstLine = htmlElement.childNodes[0];
-
-  //   const findPosition = input => {
-  //     if (isNull(input)) {
-  //       return 0;
-  //     } else {
-  //       return input.nodeValue.length;
-  //     }
-  //   };
-
-  //   if (position === -1) {
-  //     range.setStart(inputFirstLine, findPosition(inputFirstLine));
-  //   } else {
-  //     range.setStart(inputFirstLine, position);
-  //   }
-
-  //   range.collapse(true);
-  //   seletion.removeAllRanges();
-  //   seletion.addRange(range);
-  // }
 }

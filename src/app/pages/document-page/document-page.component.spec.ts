@@ -465,21 +465,4 @@ describe('DocumentPageComponent', () => {
       });
     });
   });
-
-  describe('deleteBlockByKey', () => {
-    beforeEach(() => {
-
-    });
-
-    it('should call deleteBlock', done => {
-
-    });
-
-    it('should catch error when deleteBlock failed', done => {
-
-    });
-
-  });
-
-
 });

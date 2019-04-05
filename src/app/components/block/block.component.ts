@@ -17,7 +17,6 @@ export class BlockComponent implements OnInit {
   @Input() isUserLoggedIn: boolean;
 
   @Output() deleteEvent = new EventEmitter<string>();
-  @Output() deleteByKeyEvent = new EventEmitter<string>();
 
   constructor(
     private blockQueryService: BlockQueryService
@@ -47,9 +46,5 @@ export class BlockComponent implements OnInit {
 
   deleteTransmitter(blockId: string) {
     this.deleteEvent.emit(blockId);
-  }
-
-  deleteKeyTransmitter(blockId: string) {
-    this.deleteByKeyEvent.emit(blockId);
   }
 }
