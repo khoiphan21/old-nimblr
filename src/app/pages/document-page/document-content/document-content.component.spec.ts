@@ -23,7 +23,7 @@ describe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
-
+  let router;
   // mock data for testing
   const id = uuidv4();
   const testUser: User = {
@@ -56,7 +56,13 @@ describe('DocumentContentComponent', () => {
               get: () => id
             })
           }
-        }
+        },
+        {
+          provide: Router,
+          useValue: {
+             url: '/document'
+          }
+       }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
@@ -64,6 +70,7 @@ describe('DocumentContentComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentContentComponent);
+    router = TestBed.get(Router);
     component = fixture.componentInstance;
     documentFactory = TestBed.get(DocumentFactoryService);
   });
@@ -129,26 +136,21 @@ describe('DocumentContentComponent', () => {
     });
   });
 
-  xdescribe('checkIsChildDocument', () => {
-    let router;
+  describe('checkIsChildDocument', () => {
     const uuid = 'd232cdb5-142d-4d77-afb3-8ac638f9755b';
     const uuid2 = 't412awf9-142d-4d77-afb3-8ac638f9755c';
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        providers: [
-          {
-             provide: Router,
-             useValue: {
-                url: '/document'
-             }
-          }
-        ]
-      });
-      router = TestBed.get(Router);
-    });
 
     it('should set value to true if it is a child document', () => {
+      router.url = `/document/${uuid}/${uuid2}`;
+      component['checkIsChildDocument']();
+      expect(component.isChildDoc).toBe(true);
+    });
+
+    it('should set value to false if it is not a child document', () => {
+      component.isChildDoc = true;
       router.url = `/document/${uuid}`;
+      component['checkIsChildDocument']();
+      expect(component.isChildDoc).toBe(false);
     });
   });
 
@@ -423,7 +425,7 @@ describe('DocumentContentComponent', () => {
     expect(component.isSendFormShown).toBe(true);
   });
 
-  it('navigateToChildDocument() - should send the right argument', () => {
+  it('navigateToChildDocument() - should send the right argument', done => {
     component['currentDocument'] = documentFactory.createDocument(
       { id, ownerId: uuidv4() }
     );
@@ -433,6 +435,7 @@ describe('DocumentContentComponent', () => {
         parent: component.currentDocument.id,
         child: uuid
       });
+      done();
     });
     component.navigateToChildDocument(uuid);
   });

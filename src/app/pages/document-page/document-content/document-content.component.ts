@@ -95,7 +95,7 @@ export class DocumentContentComponent implements OnInit {
     this.document$.subscribe(document => {
       if (document === null) { return; }
       this.currentDocument = document;
-      // this.checkIsChildDocument();
+      this.checkIsChildDocument();
       // added in for edit title
       this.docTitle = document.title;
 
@@ -110,7 +110,13 @@ export class DocumentContentComponent implements OnInit {
 
   private checkIsChildDocument() {
     const url = this.router.url;
-
+    const trimmedUrl = url.substring(0, url.length - 37);
+    const toBeValidateUrl = trimmedUrl.substr(-8, 8);
+    if (toBeValidateUrl === 'document') {
+      this.isChildDoc = false;
+    } else {
+      this.isChildDoc = true;
+    }
   }
 
   private setupBlockUpdateSubscription() {
