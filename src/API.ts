@@ -95,16 +95,16 @@ export type CreateDocumentInput = {
   blockIds?: Array< string | null > | null,
   createdAt?: string | null,
   updatedAt?: string | null,
+  submissionDocIds?: Array< string | null > | null,
   isSubmission?: boolean | null,
   recipientEmail?: string | null,
   submittedAt?: string | null,
   submissionStatus?: SubmissionStatus | null,
-  submissionDocIds?: Array< string | null > | null,
 };
 
 export enum DocumentType {
   GENERIC = "GENERIC",
-  FORM_TEMPLATE = "FORM_TEMPLATE",
+  TEMPLATE = "TEMPLATE",
 }
 
 
@@ -135,11 +135,11 @@ export type UpdateDocumentInput = {
   blockIds?: Array< string | null > | null,
   createdAt?: string | null,
   updatedAt?: string | null,
+  submissionDocIds?: Array< string | null > | null,
   isSubmission?: boolean | null,
   recipientEmail?: string | null,
   submittedAt?: string | null,
   submissionStatus?: SubmissionStatus | null,
-  submissionDocIds?: Array< string | null > | null,
 };
 
 export type DeleteDocumentInput = {
@@ -232,11 +232,11 @@ export type ModelDocumentFilterInput = {
   blockIds?: ModelStringFilterInput | null,
   createdAt?: ModelStringFilterInput | null,
   updatedAt?: ModelStringFilterInput | null,
+  submissionDocIds?: ModelStringFilterInput | null,
   isSubmission?: ModelBooleanFilterInput | null,
   recipientEmail?: ModelStringFilterInput | null,
   submittedAt?: ModelStringFilterInput | null,
   submissionStatus?: ModelSubmissionStatusFilterInput | null,
-  submissionDocIds?: ModelStringFilterInput | null,
   and?: Array< ModelDocumentFilterInput | null > | null,
   or?: Array< ModelDocumentFilterInput | null > | null,
   not?: ModelDocumentFilterInput | null,
@@ -446,11 +446,11 @@ export type CreateDocumentMutation = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -474,11 +474,11 @@ export type UpdateDocumentMutation = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -502,11 +502,11 @@ export type DeleteDocumentMutation = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -634,11 +634,11 @@ export type GetDocumentQuery = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -666,11 +666,11 @@ export type ListDocumentsQuery = {
       blockIds: Array< string | null > | null,
       createdAt: string | null,
       updatedAt: string | null,
+      submissionDocIds: Array< string | null > | null,
       isSubmission: boolean | null,
       recipientEmail: string | null,
       submittedAt: string | null,
       submissionStatus: SubmissionStatus | null,
-      submissionDocIds: Array< string | null > | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -768,11 +768,11 @@ export type OnSpecificDocumentUpdateSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -828,11 +828,11 @@ export type OnCreateDocumentSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -852,11 +852,11 @@ export type OnUpdateDocumentSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -876,11 +876,11 @@ export type OnDeleteDocumentSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
     isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
-    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 

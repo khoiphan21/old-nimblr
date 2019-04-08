@@ -90,7 +90,7 @@ describe('DocumentImpl', () => {
     });
   });
 
-  describe('FORM_TEMPLATE properties', () => {
+  describe('TEMPLATE properties', () => {
     describe('submissionDocIds', () => {
       it('should be stored as an empty array if given null', () => {
         input.submissionDocIds = null;

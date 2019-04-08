@@ -21,7 +21,7 @@ type Document @model {
   blockIds: [String]
   createdAt: String
   updatedAt: String
-  # Properties for FORM_TEMPLATE type
+  # Properties for TEMPLATE type
   submissionDocIds: [String]
   # Properties for the Submission Details section
   isSubmission: Boolean
@@ -32,7 +32,7 @@ type Document @model {
 
 enum DocumentType {
   GENERIC
-  FORM_TEMPLATE
+  TEMPLATE
 }
 
 enum SharingStatus {

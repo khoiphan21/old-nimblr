@@ -20,7 +20,7 @@ export class DocumentImpl implements Document {
   updatedAt: ISOTimeString;
   sharingStatus: SharingStatus;
 
-  // Properties for FORM_TEMPLATE document type
+  // Properties for TEMPLATE document type
   // tslint:disable:variable-name
   private _submissionDocIds: Array<UUID>;
 
@@ -44,7 +44,7 @@ export class DocumentImpl implements Document {
     this.setIfNullOrUndefined(input, 'updatedAt', new Date().toISOString());
     this.setIfNullOrUndefined(input, 'sharingStatus', null);
 
-    // For the FORM_TEMPLATE type documents
+    // For the TEMPLATE type documents
     const submissionDocIds = input.submissionDocIds;
     if (submissionDocIds === null || submissionDocIds === undefined) {
       this._submissionDocIds = [];

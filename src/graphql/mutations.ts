@@ -117,11 +117,11 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
     isSubmission
     recipientEmail
     submittedAt
     submissionStatus
-    submissionDocIds
   }
 }
 `;
@@ -140,11 +140,11 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
     isSubmission
     recipientEmail
     submittedAt
     submissionStatus
-    submissionDocIds
   }
 }
 `;
@@ -163,11 +163,11 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
     isSubmission
     recipientEmail
     submittedAt
     submissionStatus
-    submissionDocIds
   }
 }
 `;

@@ -45,11 +45,11 @@ export const getDocument = `query GetDocument($id: ID!) {
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
     isSubmission
     recipientEmail
     submittedAt
     submissionStatus
-    submissionDocIds
   }
 }
 `;
@@ -73,11 +73,11 @@ export const listDocuments = `query ListDocuments(
       blockIds
       createdAt
       updatedAt
+      submissionDocIds
       isSubmission
       recipientEmail
       submittedAt
       submissionStatus
-      submissionDocIds
     }
     nextToken
   }
