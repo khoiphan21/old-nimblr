@@ -90,8 +90,41 @@ describe('DocumentImpl', () => {
     });
   });
 
+  describe('FORM_TEMPLATE properties', () => {
+    describe('submissionDocIds', () => {
+      it('should be stored as an empty array if given null', () => {
+        input.submissionDocIds = null;
+        initiateDocument();
+        expect(document.submissionDocIds).toEqual([]);
+      });
+      it('should be stored as an empty array if given undefined', () => {
+        input.submissionDocIds = null;
+        initiateDocument();
+        expect(document.submissionDocIds).toEqual([]);
+      });
+
+      describe('(Immutability Testing)', () => {
+        const id = uuidv4();
+        it('should store a copy of the given array', () => {
+          input.submissionDocIds = [id];
+          initiateDocument();
+          // now try to add to the original array
+          input.submissionDocIds.push(uuidv4());
+          // check if the document's array has changed
+          expect(document.submissionDocIds).toEqual([id]);
+        });
+        it('should return only a copy of the stored array', () => {
+          input.submissionDocIds = [id];
+          initiateDocument();
+          document.submissionDocIds.push(uuidv4());
+          expect(document.submissionDocIds).toEqual([id]);
+        });
+      });
+    });
+  });
+
   /* tslint:disable:no-unused-expression */
-  describe('Submission Details Properties', () => {
+  describe('Submission Details properties', () => {
 
     describe('checking isSubmission flag', () => {
       let validateSpy: jasmine.Spy;

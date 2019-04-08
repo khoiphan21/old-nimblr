@@ -21,13 +21,13 @@ type Document @model {
   blockIds: [String]
   createdAt: String
   updatedAt: String
+  # Properties for FORM_TEMPLATE type
+  submissionDocIds: [String]
   # Properties for the Submission Details section
   isSubmission: Boolean
   recipientEmail: String
   submittedAt: String
   submissionStatus: SubmissionStatus
-  # Properties for FORM_TEMPLATE type
-  submissionDocIds: [String]
 }
 
 enum DocumentType {

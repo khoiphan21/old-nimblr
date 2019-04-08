@@ -19,6 +19,11 @@ export class DocumentImpl implements Document {
   createdAt: ISOTimeString;
   updatedAt: ISOTimeString;
   sharingStatus: SharingStatus;
+
+  // Properties for FORM_TEMPLATE document type
+  // tslint:disable:variable-name
+  private _submissionDocIds: Array<UUID>;
+
   // Properties for the Submission Details section
   isSubmission: boolean;
   recipientEmail: string;
@@ -38,6 +43,15 @@ export class DocumentImpl implements Document {
     this.setIfNullOrUndefined(input, 'createdAt', new Date().toISOString());
     this.setIfNullOrUndefined(input, 'updatedAt', new Date().toISOString());
     this.setIfNullOrUndefined(input, 'sharingStatus', null);
+
+    // For the FORM_TEMPLATE type documents
+    const submissionDocIds = input.submissionDocIds;
+    if (submissionDocIds === null || submissionDocIds === undefined) {
+      this._submissionDocIds = [];
+    } else {
+      // now make sure to store the submissionDocIds as a clone
+      this._submissionDocIds = submissionDocIds.map(v => v);
+    }
 
     // For the Submission Details section
     this.setIfNullOrUndefined(input, 'isSubmission', false);
@@ -75,5 +89,10 @@ export class DocumentImpl implements Document {
       const message = 'submittedAt must be a valid date string';
       throw new Error(BASE_ERROR_MESSAGE + message);
     }
+  }
+
+  get submissionDocIds(): Array<UUID> {
+    // Make sure to return a clone only
+    return this._submissionDocIds.map(v => v);
   }
 }
