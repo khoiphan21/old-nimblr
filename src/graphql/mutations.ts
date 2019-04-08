@@ -117,6 +117,11 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;
@@ -135,6 +140,11 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;
@@ -153,6 +163,11 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;

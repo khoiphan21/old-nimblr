@@ -33,6 +33,11 @@ export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;
@@ -84,6 +89,11 @@ export const onCreateDocument = `subscription OnCreateDocument {
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;
@@ -102,6 +112,11 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;
@@ -120,6 +135,11 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     blockIds
     createdAt
     updatedAt
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
+    submissionDocIds
   }
 }
 `;

@@ -1,7 +1,10 @@
 import { Document } from './document';
 import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
-import { DocumentType, SharingStatus } from 'src/API';
+import { DocumentType, SharingStatus, SubmissionStatus } from 'src/API';
 import { CreateDocumentInput } from '../../API';
+import { isValidDateString } from './isValidDateString';
+
+const BASE_ERROR_MESSAGE = 'DocumentImpl failed to create: ';
 
 export class DocumentImpl implements Document {
   id: UUID;
@@ -16,6 +19,11 @@ export class DocumentImpl implements Document {
   createdAt: ISOTimeString;
   updatedAt: ISOTimeString;
   sharingStatus: SharingStatus;
+  // Properties for the Submission Details section
+  isSubmission: boolean;
+  recipientEmail: string;
+  submittedAt: ISOTimeString;
+  submissionStatus: SubmissionStatus;
 
   constructor(input: CreateDocumentInput) {
     this.id = input.id;
@@ -30,13 +38,42 @@ export class DocumentImpl implements Document {
     this.setIfNullOrUndefined(input, 'createdAt', new Date().toISOString());
     this.setIfNullOrUndefined(input, 'updatedAt', new Date().toISOString());
     this.setIfNullOrUndefined(input, 'sharingStatus', null);
+
+    // For the Submission Details section
+    this.setIfNullOrUndefined(input, 'isSubmission', false);
+    if (input.isSubmission === true) {
+      this.setIfNullOrUndefined(input, 'recipientEmail', '');
+      this.setIfNullOrUndefined(input, 'submittedAt', null);
+      this.setIfNullOrUndefined(input, 'submissionStatus', SubmissionStatus.NOT_STARTED);
+      this.validateSubmissionProperties();
+    }
   }
 
+  /**
+   * Set the **internal property** to be the given default value, if the property
+   * in the input is either *null* or *undefined*
+   *
+   * @param input the input given to instantiate this object
+   * @param name the name of the property to be set
+   * @param defaultValue the default value to be used
+   */
   private setIfNullOrUndefined(input: any, name: string, defaultValue: any) {
     if (input[name] === null || input[name] === undefined) {
       this[name] = defaultValue;
     } else {
       this[name] = input[name];
+    }
+  }
+
+  private validateSubmissionProperties() {
+    // Set the submissionStatus to NOT_STARTED if an invalid value
+    if (!Object.keys(SubmissionStatus).includes(this.submissionStatus)) {
+      this.submissionStatus = SubmissionStatus.NOT_STARTED;
+    }
+    // Throw error if submittedAt is not a valid date string
+    if (!isValidDateString(this.submittedAt)) {
+      const message = 'submittedAt must be a valid date string';
+      throw new Error(BASE_ERROR_MESSAGE + message);
     }
   }
 }

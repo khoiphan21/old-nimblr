@@ -83,11 +83,11 @@ export type DeleteUserInput = {
 
 export type CreateDocumentInput = {
   id?: string | null,
-  version: string,
-  type: DocumentType,
-  ownerId: string,
-  lastUpdatedBy: string,
-  sharingStatus: SharingStatus,
+  version?: string | null,
+  type?: DocumentType | null,
+  ownerId?: string | null,
+  lastUpdatedBy?: string | null,
+  sharingStatus?: SharingStatus | null,
   title?: string | null,
   editorIds?: Array< string | null > | null,
   viewerIds?: Array< string | null > | null,
@@ -95,6 +95,11 @@ export type CreateDocumentInput = {
   blockIds?: Array< string | null > | null,
   createdAt?: string | null,
   updatedAt?: string | null,
+  isSubmission?: boolean | null,
+  recipientEmail?: string | null,
+  submittedAt?: string | null,
+  submissionStatus?: SubmissionStatus | null,
+  submissionDocIds?: Array< string | null > | null,
 };
 
 export enum DocumentType {
@@ -106,6 +111,13 @@ export enum DocumentType {
 export enum SharingStatus {
   PRIVATE = "PRIVATE",
   PUBLIC = "PUBLIC",
+}
+
+
+export enum SubmissionStatus {
+  NOT_STARTED = "NOT_STARTED",
+  IN_PROGRESS = "IN_PROGRESS",
+  SUBMITTED = "SUBMITTED",
 }
 
 
@@ -123,6 +135,11 @@ export type UpdateDocumentInput = {
   blockIds?: Array< string | null > | null,
   createdAt?: string | null,
   updatedAt?: string | null,
+  isSubmission?: boolean | null,
+  recipientEmail?: string | null,
+  submittedAt?: string | null,
+  submissionStatus?: SubmissionStatus | null,
+  submissionDocIds?: Array< string | null > | null,
 };
 
 export type DeleteDocumentInput = {
@@ -215,6 +232,11 @@ export type ModelDocumentFilterInput = {
   blockIds?: ModelStringFilterInput | null,
   createdAt?: ModelStringFilterInput | null,
   updatedAt?: ModelStringFilterInput | null,
+  isSubmission?: ModelBooleanFilterInput | null,
+  recipientEmail?: ModelStringFilterInput | null,
+  submittedAt?: ModelStringFilterInput | null,
+  submissionStatus?: ModelSubmissionStatusFilterInput | null,
+  submissionDocIds?: ModelStringFilterInput | null,
   and?: Array< ModelDocumentFilterInput | null > | null,
   or?: Array< ModelDocumentFilterInput | null > | null,
   not?: ModelDocumentFilterInput | null,
@@ -228,6 +250,16 @@ export type ModelDocumentTypeFilterInput = {
 export type ModelSharingStatusFilterInput = {
   eq?: SharingStatus | null,
   ne?: SharingStatus | null,
+};
+
+export type ModelBooleanFilterInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+};
+
+export type ModelSubmissionStatusFilterInput = {
+  eq?: SubmissionStatus | null,
+  ne?: SubmissionStatus | null,
 };
 
 export type ModelBlockFilterInput = {
@@ -402,11 +434,11 @@ export type CreateDocumentMutation = {
   createDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -414,6 +446,11 @@ export type CreateDocumentMutation = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -425,11 +462,11 @@ export type UpdateDocumentMutation = {
   updateDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -437,6 +474,11 @@ export type UpdateDocumentMutation = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -448,11 +490,11 @@ export type DeleteDocumentMutation = {
   deleteDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -460,6 +502,11 @@ export type DeleteDocumentMutation = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -575,11 +622,11 @@ export type GetDocumentQuery = {
   getDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -587,6 +634,11 @@ export type GetDocumentQuery = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -602,11 +654,11 @@ export type ListDocumentsQuery = {
     items:  Array< {
       __typename: "Document",
       id: string,
-      version: string,
-      type: DocumentType,
-      ownerId: string,
-      lastUpdatedBy: string,
-      sharingStatus: SharingStatus,
+      version: string | null,
+      type: DocumentType | null,
+      ownerId: string | null,
+      lastUpdatedBy: string | null,
+      sharingStatus: SharingStatus | null,
       title: string | null,
       editorIds: Array< string | null > | null,
       viewerIds: Array< string | null > | null,
@@ -614,6 +666,11 @@ export type ListDocumentsQuery = {
       blockIds: Array< string | null > | null,
       createdAt: string | null,
       updatedAt: string | null,
+      isSubmission: boolean | null,
+      recipientEmail: string | null,
+      submittedAt: string | null,
+      submissionStatus: SubmissionStatus | null,
+      submissionDocIds: Array< string | null > | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -699,11 +756,11 @@ export type OnSpecificDocumentUpdateSubscription = {
   onSpecificDocumentUpdate:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -711,6 +768,11 @@ export type OnSpecificDocumentUpdateSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -754,11 +816,11 @@ export type OnCreateDocumentSubscription = {
   onCreateDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -766,6 +828,11 @@ export type OnCreateDocumentSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -773,11 +840,11 @@ export type OnUpdateDocumentSubscription = {
   onUpdateDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -785,6 +852,11 @@ export type OnUpdateDocumentSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
@@ -792,11 +864,11 @@ export type OnDeleteDocumentSubscription = {
   onDeleteDocument:  {
     __typename: "Document",
     id: string,
-    version: string,
-    type: DocumentType,
-    ownerId: string,
-    lastUpdatedBy: string,
-    sharingStatus: SharingStatus,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
     title: string | null,
     editorIds: Array< string | null > | null,
     viewerIds: Array< string | null > | null,
@@ -804,6 +876,11 @@ export type OnDeleteDocumentSubscription = {
     blockIds: Array< string | null > | null,
     createdAt: string | null,
     updatedAt: string | null,
+    isSubmission: boolean | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+    submissionDocIds: Array< string | null > | null,
   } | null,
 };
 
