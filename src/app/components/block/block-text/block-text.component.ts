@@ -1,4 +1,13 @@
-import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  Input,
+  ChangeDetectorRef,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+  OnInit
+} from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -25,7 +34,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
     private blockCommandService: BlockCommandService,
     private factoryService: BlockFactoryService,
     private changeDetector: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.setValue(this.block.value);
@@ -40,19 +49,29 @@ export class BlockTextComponent implements OnInit, OnChanges {
     // detectChanges()
     const focus = changes.focusBlockId;
     if (focus) {
-      if (!focus.currentValue) { return; }
+      if (!focus.currentValue) {
+        return;
+      }
 
       if (focus.currentValue.includes(this.block.id)) {
         // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
         this.changeDetector.detectChanges();
-        const element = document.getElementById(this.block.id);
-        element.focus();
-        // TODO @jeremyng Move caret to the end
-
+        this.setCaretToEnd();
       }
     } else if (changes.block) {
       const newBlock = changes.block.currentValue;
       this.setValue(newBlock.value);
+    }
+  }
+
+  setCaretToEnd() {
+    event.stopImmediatePropagation();
+    const element = document.getElementById(this.block.id);
+    element.focus();
+    if (this.value) {
+      window.getSelection().setPosition(element, 1);
+    } else {
+      window.getSelection().setPosition(element, 0);
     }
   }
 
@@ -84,8 +103,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   onBackSpaceAndEmptyTextbox() {
     if (this.value === '') {
-      this.deleteEvent.emit(this.block.id);
+        this.deleteEvent.emit(this.block.id);
     }
   }
-
 }

@@ -253,7 +253,6 @@ export class DocumentContentComponent implements OnInit {
       this.currentDocument.blockIds = this.blockIds;
       this.currentDocument.lastUpdatedBy = this.currentUser.id;
       const updatePromise = this.documentCommandService.updateDocument(this.currentDocument);
-
       // call command service
       let input: DeleteBlockInput;
       input = { id: blockId };
