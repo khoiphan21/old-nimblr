@@ -177,4 +177,28 @@ describe('BlockCommandService', () => {
     });
   });
 
+  describe('deleteBlock', () => {
+    it('TextBlock - should delete a block from the database', done => {
+      // call command service
+
+
+      // const testid = 'test_id';
+      // let input: DeleteBlockInput;
+      // input = { id: 'test_id' };
+      // const blockPromise = this.blockCommandService.deleteBlock(input);
+
+      // // Await for all the promises before moving on
+      // await blockPromise.then(() => {
+
+      // }).catch(() => {
+
+      // });
+
+      // return graphQlService.query(deleteBlock, { input: { id } });
+    });
+
+    it('QuestionBlock - should delete a block from the database', done => {
+
+    });
+  });
 });
