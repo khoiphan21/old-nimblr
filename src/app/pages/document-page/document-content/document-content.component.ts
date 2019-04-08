@@ -105,7 +105,6 @@ export class DocumentContentComponent implements OnInit {
 
       // added in for edit title
       this.docTitle = document.title;
-			console.log("TCL: DocumentContentComponent -> privateretrieveDocumentData -> this.docTitle", this.docTitle)
 
       // For monitoring sharing status
       this.currentSharingStatus = this.currentDocument.sharingStatus;

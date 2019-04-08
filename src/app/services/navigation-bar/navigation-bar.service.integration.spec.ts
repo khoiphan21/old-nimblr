@@ -68,7 +68,7 @@ describe('(Integration) NavigationBarService', () => {
         };
         service.getNavigationBar$().pipe(skip(2)).pipe(take(2)).subscribe(navigationTabs => {
           navigationTabCount = navigationTabs.length;
-          if (!originalCount) {
+          if (originalCount === undefined) {
             originalCount = navigationTabCount;
           }
           switch (navigationTabCount) {
@@ -80,8 +80,8 @@ describe('(Integration) NavigationBarService', () => {
             case originalCount + 1:
               const docId = navigationTabs[0].id;
               documentService.deleteDocument(docId).then(() => {
+                done();
               });
-              done();
               break;
             default:
               fail('Number of tabs counted is wrong: ' + navigationTabCount);
