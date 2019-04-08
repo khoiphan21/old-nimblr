@@ -1,160 +1,220 @@
 @import '../../../_sass/interface';
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
-
-section.container {
-  max-width: 100vw;
-  max-height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  padding: 0;
-  margin: 0;
-  flex-direction: column;
-
-  .popup {
-    position: absolute;
-    background: white;
-    top: 31px;
-    right: 24px;
-    width: 320px;
-    display: flex;
-    flex-direction: column;
-
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 15px;
-      border-bottom: #DDD solid 1px;
-
-      button {
-        height: 32px;
-        border-radius: 40px;
-        width: 50%;
-        font-size: 0.75rem;
-        padding: 1px 5px;
-
-        &:focus {
-          outline: none;
+section.mobile.container.option-container {
+    section.document-options {
+        width: 100%;
+        div.option {
+            padding: 25px 0;
+            @include row-center;
+            &:nth-child(2) {
+                border-top: solid 1px #97A0BF;
+                border-bottom: solid 1px #97A0BF;
+                color: $color-grey-1;
+                font-size: 16px;
+                font-weight: normal;
+                letter-spacing: 1px;
+            }
+            &:nth-child(3) {
+                padding-top: 20px;
+            }
+            button {
+                padding: 0 5rem;
+                font-weight: normal;
+                letter-spacing: 1px;
+            }
         }
-
-        &.invite-person {
-          background-color: $color-blue-2;
-          color: white;
-
-          &:hover {
-            // background-color: lighten($color-blue-2, 3);
-            filter: brightness(110%);
-          }
-
-        }
-
-        &.copy-page-link {
-          color: $color-grey-1;
-          background-color: transparent;
-
-          &:hover {
-            color: $color-blue-2;
-          }
-        }
-      }
     }
+}
 
-    .change-sharing-status {
-      min-height: 45px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 15px;
-
-      .icon {
+.change-sharing-status {
+    width: 100%;
+    height: fit-content;
+    @include row-center;
+    justify-content: flex-start;
+    padding: 0 45px;
+    .icon {
         display: flex;
         align-items: center;
         justify-content: center;
-
         i {
-          font-size: 20px;
-          color: $color-light-steel-blue;
+            font-size: 30px;
+            color: $color-light-steel-blue;
         }
-      }
-
-      .status {
-        margin-right: 20px;
-        margin-left: 4px;
-
+    }
+    .status {
+        margin-left: 20px;
         p {
-          margin: 0;
+            margin: 0;
         }
-
         .status-detail {
-          font-size: 0.8rem;
-          font-weight: 400;
+            height: fit-content;
+            font-size: 18px;
+            font-weight: 400;
         }
-
         .sub-status {
-          margin-top: 5px;
-          font-size: 0.7rem;
+            font-size: 15px;
+            color: #97A0BF;
+            height: fit-content;
         }
-      }
-
-      .sharing-button {
+    }
+    .sharing-button {
+        margin-left: auto;
         display: flex;
         align-items: center;
-
         input[type=checkbox] {
-          height: 0;
-          width: 0;
-          visibility: hidden;
+            height: 0;
+            width: 0;
+            visibility: hidden;
         }
-
-        $height: 20px;
-
+        $height: 30px;
         label {
-          cursor: pointer;
-          text-indent: -9999px;
-          width: $height * 1.8;
-          height: $height;
-          background: $color-blue-3;
-          display: block;
-          border-radius: $height;
-          position: relative;
-          margin: 0;
+            cursor: pointer;
+            text-indent: -9999px;
+            width: $height * 1.8;
+            height: $height;
+            background: $color-blue-3;
+            display: block;
+            border-radius: $height;
+            position: relative;
+            margin: 0;
         }
-
         $button-height: $height * 0.8;
         $margin: $height * 0.1;
-
         label:after {
-          content: '';
-          position: absolute;
-          top: $margin;
-          left: $margin;
-          width: $button-height;
-          height: $button-height;
-          background: $color-light-steel-blue;
-          border-radius: $button-height;
-          transition: 0.3s;
-          margin: 0;
+            content: '';
+            position: absolute;
+            top: $margin;
+            left: $margin;
+            width: $button-height;
+            height: $button-height;
+            background: $color-light-steel-blue;
+            border-radius: $button-height;
+            transition: 0.3s;
+            margin: 0;
         }
-
         input:checked+label {
-          background: $color-blue-2;
+            background: $color-blue-2;
         }
-
         input:checked+label:after {
-          left: calc(100% - 2px);
-          transform: translateX(-100%);
-          background: white;
+            left: calc(100% - 2px);
+            transform: translateX(-100%);
+            background: white;
         }
-
         label:active:after {
-          width: $height * 1.3;
+            width: $height * 1.3;
         }
-      }
     }
-  }
+}
+
+@include media(lg) {
+    section.container {
+        max-width: 100vw;
+        max-height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        padding: 0;
+        margin: 0;
+        flex-direction: column;
+        .popup {
+            position: absolute;
+            background: white;
+            top: 31px;
+            right: 24px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            .buttons {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 15px;
+                border-bottom: #DDD solid 1px;
+                button {
+                    height: 32px;
+                    border-radius: 40px;
+                    width: 50%;
+                    font-size: 0.75rem;
+                    padding: 1px 5px;
+                    &:focus {
+                        outline: none;
+                    }
+                    &.invite-person {
+                        background-color: $color-blue-2;
+                        color: white;
+                        &:hover {
+                            // background-color: lighten($color-blue-2, 3);
+                            filter: brightness(110%);
+                        }
+                    }
+                    &.copy-page-link {
+                        color: $color-grey-1;
+                        background-color: transparent;
+                        &:hover {
+                            color: $color-blue-2;
+                        }
+                    }
+                }
+            }
+            .change-sharing-status {
+                min-height: 45px;
+                justify-content: space-between;
+                padding: 12px 15px;
+                .icon {
+                    i {
+                        font-size: 20px;
+                        color: $color-light-steel-blue;
+                    }
+                }
+                .status {
+                    margin-right: 20px;
+                    margin-left: 10px;
+                    .status-detail {
+                        font-size: 0.8rem;
+                    }
+                    .sub-status {
+                        font-size: 0.7rem;
+                    }
+                }
+                .sharing-button {
+                    $height: 20px;
+                    label {
+                        cursor: pointer;
+                        width: $height * 1.8;
+                        height: $height;
+                        border-radius: $height;
+                    }
+                    $button-height: $height * 0.8;
+                    $margin: $height * 0.1;
+                    label:after {
+                        content: '';
+                        position: absolute;
+                        top: $margin;
+                        left: $margin;
+                        width: $button-height;
+                        height: $button-height;
+                        background: $color-light-steel-blue;
+                        border-radius: $button-height;
+                        transition: 0.3s;
+                        margin: 0;
+                    }
+                    input:checked+label {
+                        background: $color-blue-2;
+                    }
+                    input:checked+label:after {
+                        left: calc(100% - 2px);
+                        transform: translateX(-100%);
+                        background: white;
+                    }
+                    label:active:after {
+                        width: $height * 1.3;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,0 +1,29 @@
+<div class="fluid-container">
+    <div class="row">
+        <section class="login-container">
+            <section class="heading">
+                <h1>Please log in or sign up to access</h1>
+                <h1>Sample Document</h1>
+            </section>
+            <form [formGroup]="loginForm">
+                <div class="form-input">
+                    <div class="input-label  mb-1">Email</div>
+                    <input class="mb-4" formControlName="email" type="text" required>
+                </div>
+                <div class="form-input">
+                    <div class="password-label">
+                        <div class="input-label mb-1">Password</div>
+                        <div class="forgot-password">Forgot Password?</div>
+                    </div>
+                    <input class="mb-4" formControlName="password" type="{{passwordType}}" required>
+                    <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
+                    <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
+                </div>
+                <!-- <button class="filled-button-primary ml-auto mr-auto" [disabled]="loginForm.invalid" (click)="signIn()">Sign in</button> -->
+                <button class="filled-button-primary ml-auto mr-auto" (click)="signIn()">Sign in</button>
+            </form>
+            <button class="outline-button-primary mobile" routerLink="/register">Get Started</button>
+            <div class="sign-up desktop">Don't have an account? <span routerLink="/register">Get Started</span></div>
+        </section>
+    </div>
+</div>

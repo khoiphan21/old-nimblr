@@ -1,0 +1,95 @@
+@import '../../_sass/interface';
+@import '../../_sass/variables';
+@import '../../_sass/base';
+@include media(lg) {
+    div.fluid-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        font-family: $font-roboto;
+        background: white;
+        z-index: 10;
+        div.row {
+            @include row-center;
+            section.login-container {
+                width: 466px;
+                height: 100vh;
+                @include column-center;
+                section.heading {
+                    margin-bottom: 2rem;
+                    h1 {
+                        font-size: 25px;
+                        color: $color-grey-1;
+                        font-weight: normal;
+                        letter-spacing: 0.1rem;
+                        text-align: center;
+                        height: fit-content;
+                        &:nth-child(2) {
+                            font-weight: 500;
+                        }
+                    }
+                }
+                form {
+                    width: 100%;
+                    @include column-center;
+                    align-items: flex-start;
+                    input[type=email],
+                    [type=text],
+                    [type=password] {
+                        width: 100%;
+                        border: 1px solid $color-grey-5;
+                        border-radius: 5px;
+                        height: 47px;
+                        padding: 0 1rem;
+                    }
+                    .row {
+                        width: 100%;
+                    }
+                    .form-input {
+                        width: 100%;
+                        position: relative;
+                        .input-label {
+                            font-size: 0.65rem;
+                            text-transform: uppercase;
+                            font-weight: normal;
+                            margin-left: 5px;
+                        }
+                        .password-label {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            .forgot-password {
+                                font-size: 0.6rem;
+                                color: #989898;
+                                cursor: pointer;
+                            }
+                        }
+                        .password-toggle {
+                            position: absolute;
+                            top: 35%;
+                            font-size: 1.5rem;
+                            color: $color-grey-1;
+                            right: 1.25rem;
+                            cursor: pointer;
+                        }
+                    }
+                }
+                div.sign-up {
+                    font-size: 0.85rem;
+                    position: absolute;
+                    bottom: 2rem;
+                    left: 0;
+                    width: 100%;
+                    justify-content: center;
+                    span {
+                        margin-left: 10px;
+                        color: $color-blue-2;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+}

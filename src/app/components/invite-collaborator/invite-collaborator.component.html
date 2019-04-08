@@ -1,0 +1,36 @@
+<ng-container *responsive="{sizes:{min:576, max:2000}}">
+    <section class="overlay" *ngIf="isInviteCollaboratorShown" (click)="hideContainer()" [@fadeInOutAnimation]>
+        <section class="invitation options-block" (click)="$event.stopPropagation()">
+            <div class="title">
+                Invite to collaborate
+            </div>
+            <div class="description">
+                Anyone you invite to this document can view, edit and comment.
+            </div>
+            <input type="text" placeholder="Search a person or type an email address">
+            <div class="title">
+                select a person
+            </div>
+            <div class="recipient">
+                <i class="fas fa-circle"></i><span>Daffy Duck</span>
+            </div>
+        </section>
+    </section>
+</ng-container>
+<!-- mobile  -->
+<ng-container *responsive="{sizes:{min:0,max:575}}">
+    <section class="mobile container option-container" *ngIf="isInviteCollaboratorShown" [@slideBottomToTopAnimation]>
+        <div class="row no-pad header">
+            <div class="col-2" (click)="hideContainer()">Done</div>
+            <div class="col-5">Invite People</div>
+            <div class="col-2">Invite</div>
+        </div>
+        <input type="text" placeholder="Search a person or type an email address">
+        <div class="title">
+            select a person
+        </div>
+        <div class="recipient">
+            <i class="fas fa-circle"></i><span>Daffy Duck</span>
+        </div>
+    </section>
+</ng-container>

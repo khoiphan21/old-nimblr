@@ -1,0 +1,41 @@
+<section class="child-overlay" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]=true (click)="backToParent()">
+    <section class="content" *ngIf="currentDocument" (click)="$event.stopPropagation()">
+        <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%"></app-header>
+        <div class="title mt-5 mt-lg-4">
+            <h1>
+                <div class="placeholder" *ngIf="!docTitle">Untitled</div>
+                <!-- When the user is logged in -->
+                <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
+                <!-- When the user is anonymous -->
+                <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
+                <!-- Shown only when there's some content -->
+                <button class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND FORM</button>
+            </h1>
+        </div>
+        <section class="document-tab">
+            <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
+                template</div>
+            <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}" (click)="currentTab = 'submissions'">submissions</div>
+        </section>
+        <section class="template" *ngIf="currentTab === 'template'">
+            <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
+            </app-block>
+            <app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock('TEXT')" style="width: 100%"></app-add-information>
+        </section>
+        <table class="submissions" *ngIf="currentTab === 'submissions'">
+            <tr>
+                <td class="title">recipients</td>
+            </tr>
+            <tr class="recipient">
+                <td class="name"><i class="fas fa-circle"></i>Marvin the Martian</td>
+                <td class="information">Last edited on 19 Mar, 2019 </td>
+                <td class="view-submission"><button class="filled-button-primary" (click)="navigateToChildDocument()">View submission</button></td>
+            </tr>
+        </table>
+    </section>
+</section>
+
+<app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown" (hideSendFormEvent)="isSendFormShown = false"></app-send-form>
+<app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown" (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
+<!-- <app-document-login></app-document-login> -->
+<!-- <app-request-access></app-request-access> -->

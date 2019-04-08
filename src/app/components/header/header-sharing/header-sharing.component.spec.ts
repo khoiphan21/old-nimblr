@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderSharingComponent } from './header-sharing.component';
 import { SharingStatus } from 'src/API';
+import { ResponsiveModule } from 'ngx-responsive';
 
 describe('HeaderSharingComponent', () => {
   let component: HeaderSharingComponent;
@@ -9,7 +10,8 @@ describe('HeaderSharingComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HeaderSharingComponent]
+      declarations: [HeaderSharingComponent],
+      imports: [ResponsiveModule.forRoot()]
     })
       .compileComponents();
   }));
@@ -52,6 +54,16 @@ describe('HeaderSharingComponent', () => {
         done();
       });
       component.hideSharing();
+    });
+  });
+
+  describe('showInvite()', () => {
+    it('should emit the event value as true', done => {
+      component.showInviteEvent.subscribe(value => {
+        expect(value).toBe(true);
+        done();
+      });
+      component.showInvite();
     });
   });
 

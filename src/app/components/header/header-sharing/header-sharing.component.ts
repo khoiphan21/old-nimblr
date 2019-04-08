@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { fadeInOutAnimation } from 'src/app/animation';
+import { fadeInOutAnimation, slideBottomToTopAnimation } from 'src/app/animation';
 import { SharingStatus } from 'src/API';
 
 @Component({
   selector: 'app-header-sharing',
   templateUrl: './header-sharing.component.html',
   styleUrls: ['./header-sharing.component.scss'],
-  animations: [fadeInOutAnimation]
+  animations: [fadeInOutAnimation, slideBottomToTopAnimation]
 })
 export class HeaderSharingComponent implements OnInit, OnChanges {
   isPublic: boolean;
@@ -16,6 +16,7 @@ export class HeaderSharingComponent implements OnInit, OnChanges {
 
   @Output() hideSharingEvent = new EventEmitter<boolean>();
   @Output() changeSharingStatus = new EventEmitter<SharingStatus>();
+  @Output() showInviteEvent = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -37,6 +38,10 @@ export class HeaderSharingComponent implements OnInit, OnChanges {
 
   hideSharing() {
     this.hideSharingEvent.emit(false);
+  }
+
+  showInvite() {
+    this.showInviteEvent.emit(true);
   }
 
   copyPageLink() {

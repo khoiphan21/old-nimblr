@@ -28,6 +28,12 @@ import { AddInformationComponent } from './components/block/add-information/add-
 import { MobileQuestionBlockComponent } from './components/block/mobile-question-block/mobile-question-block.component';
 import { QuestionOptionComponent } from './components/block/question-block/question-option/question-option.component';
 import { HeaderSharingComponent } from './components/header/header-sharing/header-sharing.component';
+import { SendFormComponent } from './components/send-form/send-form.component';
+import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
+import { DocumentLoginComponent } from './components/document-login/document-login.component';
+import { RequestAccessComponent } from './components/request-access/request-access.component';
+import { ResponsiveModule } from 'ngx-responsive';
+import { DocumentContentComponent } from './pages/document-page/document-content/document-content.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +58,11 @@ import { HeaderSharingComponent } from './components/header/header-sharing/heade
     MobileQuestionBlockComponent,
     QuestionOptionComponent,
     HeaderSharingComponent,
+    SendFormComponent,
+    InviteCollaboratorComponent,
+    DocumentLoginComponent,
+    RequestAccessComponent,
+    DocumentContentComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,7 +73,8 @@ import { HeaderSharingComponent } from './components/header/header-sharing/heade
     ServicesModule,
     ClickOutsideModule,
     BrowserAnimationsModule,
-    ContenteditableModule
+    ContenteditableModule,
+    ResponsiveModule.forRoot()
   ],
 
   bootstrap: [AppComponent]

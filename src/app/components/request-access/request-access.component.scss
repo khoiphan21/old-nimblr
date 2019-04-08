@@ -1,0 +1,52 @@
+@import '../../_sass/interface';
+@import '../../_sass/variables';
+@import '../../_sass/base';
+@include media(lg) {
+    div.fluid-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        font-family: $font-roboto;
+        background: white;
+        z-index: 10;
+        div.row {
+            width: 466px;
+            height: 100vh;
+            @include column-center;
+            margin: 0 auto;
+            section.heading {
+                margin-bottom: 1rem;
+                h1 {
+                    font-size: 25px;
+                    color: $color-grey-1;
+                    font-weight: normal;
+                    letter-spacing: 0.1rem;
+                    text-align: center;
+                    height: fit-content;
+                }
+            }
+            .information {
+                font-size: 20px;
+                margin-bottom: 10px;
+                color: $color-grey-1;
+                font-weight: normal;
+                span {
+                    color: $color-grey-1;
+                    font-weight: 500;
+                }
+            }
+            .button-container {
+                width: 90%;
+                @include row-center;
+                justify-content: space-between;
+                margin-top: 20px;
+                button {
+                    font-size: 12px;
+                    padding: 0 1.75rem;
+                }
+            }
+        }
+    }
+}
