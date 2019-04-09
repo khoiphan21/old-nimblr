@@ -1,11 +1,16 @@
 <ng-container *responsive="{sizes:{min:576, max:2000}}">
     <section class="overlay" *ngIf="isSendFormShown" (click)="hideContainer()" [@fadeInOutAnimation]>
         <section class="invitation options-block" (click)="$event.stopPropagation()">
-            <div class="title">
-                send form
-            </div>
-            <div class="description">
-                Anyone you send this form to can only edit input fields
+            <div class="header">
+                <i class="fas fa-paper-plane"></i>
+                <div class="content">
+                    <div class="title">
+                        send form
+                    </div>
+                    <div class="description">
+                        Anyone you send this form to can only edit input fields
+                    </div>
+                </div>
             </div>
             <input type="text" placeholder="Search a person or type an email address">
             <div class="title">

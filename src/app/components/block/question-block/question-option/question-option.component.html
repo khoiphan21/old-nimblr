@@ -13,11 +13,10 @@
             </div>
             <div class="option checkbox clickable" (click)="addNewOption()" *ngIf="isPreviewMode === false">
                 <i class="fas fa-plus-circle"></i>
-                <div class="add-option">Add option or Add 'OTHER'</div>
+                <div class="add-option">Add another option</div>
             </div>
         </div>
     </form>
     <div class="form-input" *ngIf="currentType === 'SHORT_ANSWER' || currentType === 'PARAGRAPH'">
         <input type="text" [(ngModel)]="answers[0]" placeholder="Type your answer here" [ngClass]="{'long-input': currentType === 'PARAGRAPH'}">
-    </div>
-</div>
+    </div>`
