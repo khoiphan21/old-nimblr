@@ -103,7 +103,8 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   onBackSpaceAndEmptyTextbox() {
     if (this.value === '') {
-        this.deleteEvent.emit(this.block.id);
+      this.deleteEvent.emit(this.block.id);
+      event.preventDefault();
     }
   }
 }
