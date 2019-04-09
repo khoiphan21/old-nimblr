@@ -4,11 +4,12 @@ import { Document } from 'src/app/classes/document/document';
 import { DocumentType } from 'src/API';
 import { CreateDocumentInput } from '../../../../API';
 import { isUuid } from '../../../classes/helpers';
+import { UserId } from 'src/app/classes/user';
 
 const uuidv5 = require('uuid/v5');
 
 export interface NewTemplateDocumentInput {
-
+  ownerId: UserId;
 }
 
 @Injectable({
@@ -19,9 +20,12 @@ export class DocumentFactoryService {
   constructor() { }
 
   createNewTemplateDocument(input: NewTemplateDocumentInput): Document {
-    return new DocumentImpl({
-      type: DocumentType.TEMPLATE
-    });
+    const newInput = input as any;
+
+    // Set the default properties
+    newInput.type = DocumentType.TEMPLATE;
+
+    return new DocumentImpl(newInput);
   }
 
   createTemplateDocument(input: CreateDocumentInput): Document {

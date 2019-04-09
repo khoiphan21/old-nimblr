@@ -184,21 +184,32 @@ describe('DocumentFactoryService', () => {
     }
   });
 
-  fdescribe('createNewTemplateDocument()', () => {
+  describe('createNewTemplateDocument()', () => {
     let document: Document;
-    let input: any;
 
     beforeEach(() => {
-      input ={};
+      input = {
+        ownerId: uuidv4()
+      };
     });
 
     function initiateDocument() {
       document = service.createNewTemplateDocument(input);
     }
-    it('should have the type TEMPLATE', () => {
-      initiateDocument();
-      expect(document.type).toEqual(DocumentType.TEMPLATE);
+
+    describe('basic creation', () => {
+      beforeEach(() => {
+        initiateDocument();
+      });
+      it('should have the type TEMPLATE', () => {
+        expect(document.type).toEqual(DocumentType.TEMPLATE);
+      });
+      it('should have the right ownerId', () => {
+        expect(document.ownerId).toEqual(input.ownerId);
+      });
+
     });
+
   });
 
   describe('createTemplateDocument()', () => {

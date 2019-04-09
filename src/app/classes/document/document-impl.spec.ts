@@ -1,8 +1,11 @@
 import { DocumentImpl } from './document-impl';
 import { DocumentType, SharingStatus, SubmissionStatus } from 'src/API';
 import { isValidDateString } from '../isValidDateString';
+import { isUuid } from '../helpers';
 
 const uuidv4 = require('uuid/v4');
+
+const BASE_ERROR_MESSAGE = 'DocumentImpl failed to create: ';
 
 describe('DocumentImpl', () => {
   let document: DocumentImpl;
@@ -29,64 +32,224 @@ describe('DocumentImpl', () => {
     document = new DocumentImpl(input);
   }
 
-  describe('undefined parameters', () => {
-    it('should set editorIds to an empty array if undefined', () => {
-      delete input.editorIds;
-      initiateDocument();
-      expect(document.editorIds.length).toEqual(0);
+  describe('id', () => {
+    testForUuidType('id');
+  });
+
+  function testForUuidType(propertyName) {
+    const checkIfUuid = true;
+
+    testStoreGivenValue(propertyName, uuidv4());
+
+    testDefaultValueIfNullOrUndefined({
+      propertyName,
+      expectedValueDescription: 'a valid uuid',
+      checkIfUuid
     });
-    it('should set viewerIds to an empty array if undefined', () => {
-      delete input.viewerIds;
-      initiateDocument();
-      expect(document.viewerIds.length).toEqual(0);
+
+    testInvalidValue({
+      propertyName,
+      value: 'abcd',
+      message: `"${propertyName}" must be a valid uuid`,
+      givenValueDescription: 'an invalid uuid'
     });
-    it('should set blockIds to an empty array if undefined', () => {
-      delete input.blockIds;
+  }
+
+  function testStoreGivenValue(propertyName: string, value: any) {
+    it('should store the given value', () => {
+      input[propertyName] = value;
+
       initiateDocument();
-      expect(document.blockIds.length).toEqual(0);
+
+      expect(document[propertyName]).toEqual(value);
     });
-    it('should set createdAt to a date if undefined', () => {
-      delete input.createdAt;
-      initiateDocument();
-      expect(isValidDateString(document.createdAt)).toBe(true);
+  }
+
+  function testDefaultValueIfNullOrUndefined(testInput: TestDefaultValueInput) {
+    [null, undefined].forEach(value => {
+      const testName = `should be set to ${
+        testInput.expectedValueDescription
+        } if ${value === undefined ? 'undefined' : 'null'}`;
+
+      it(testName, () => {
+        input[testInput.propertyName] = value;
+
+        initiateDocument();
+
+        if (testInput.expectedValue !== undefined) {
+          expect(document[testInput.propertyName]).toEqual(testInput.expectedValue);
+          return;
+        }
+        if (testInput.checkIfUuid) {
+          expect(isUuid(document[testInput.propertyName])).toBe(true);
+          return;
+        }
+        if (testInput.checkIfDateString) {
+          expect(isValidDateString(document[testInput.propertyName])).toBe(true);
+          return;
+        }
+
+        throw new Error('must set at least one value of: expectedValue, checkIfUuid or checkIfDateString');
+      });
+
     });
-    it('should set updatedAt to a date if undefined', () => {
-      delete input.updatedAt;
-      initiateDocument();
-      expect(isValidDateString(document.updatedAt)).toBe(true);
+  }
+
+  interface TestDefaultValueInput {
+    propertyName: string;
+    expectedValueDescription: string;
+    expectedValue?: any;
+    checkIfUuid?: boolean;
+    checkIfDateString?: boolean;
+  }
+
+  function testInvalidValue({
+    propertyName, value, message, givenValueDescription
+  }) {
+    it(`should throw an error if given ${givenValueDescription}`, () => {
+      try {
+        input[propertyName] = value;
+        initiateDocument();
+        fail('error must occur');
+      } catch (error) {
+        expect(error.message).toEqual(BASE_ERROR_MESSAGE + message);
+      }
     });
-    it('should set sharingStatus to null if undefined', () => {
-      delete input.sharingStatus;
-      initiateDocument();
-      expect(document.sharingStatus).toBe(null);
+  }
+
+  describe('version', () => {
+    testForUuidType('version');
+  });
+
+  describe('type', () => {
+    const propertyName = 'type';
+
+    testStoringValueForEnum(propertyName, DocumentType);
+
+    testDefaultValueIfNullOrUndefined({
+      propertyName,
+      expectedValueDescription: 'the value of GENERIC',
+      expectedValue: DocumentType.GENERIC
+    });
+
+    testInvalidValue({
+      propertyName,
+      value: 'abcd',
+      message: '"type" must be a valid value of DocumentType',
+      givenValueDescription: 'an invalid DocumentType'
     });
   });
 
-  describe('null parameters', () => {
-    it('should set editorIds to an empty array if undefined', () => {
-      input.editorIds = null;
-      initiateDocument();
-      expect(document.editorIds.length).toEqual(0);
+  function testStoringValueForEnum(propertyName, enumType) {
+    Object.keys(enumType).forEach(value => {
+      testStoreGivenValue(propertyName, value);
     });
-    it('should set viewerIds to an empty array if undefined', () => {
-      input.viewerIds = null;
-      initiateDocument();
-      expect(document.viewerIds.length).toEqual(0);
+  }
+
+  describe('title', () => {
+    const propertyName = 'title';
+
+    testStoreGivenValue(propertyName, 'abcd');
+
+    testDefaultValueIfNullOrUndefined({
+      propertyName,
+      expectedValueDescription: 'an empty string',
+      expectedValue: ''
     });
-    it('should set blockIds to an empty array if undefined', () => {
-      input.blockIds = null;
-      initiateDocument();
-      expect(document.blockIds.length).toEqual(0);
+
+    testInvalidValue({
+      propertyName,
+      value: 2,
+      message: 'title must be a string',
+      givenValueDescription: 'an non-string value'
     });
-    it('should set createdAt to a date if undefined', () => {
-      input.createdAt = null;
-      initiateDocument();
-      expect(isValidDateString(document.createdAt)).toBe(true);
+  });
+
+  describe('ownerId', () => {
+    testForUuidType('ownerId');
+  });
+
+  describe('editorIds', () => {
+    testForUuidArrayType('editorIds');
+  });
+
+  function testForUuidArrayType(propertyName: string) {
+    testStoreGivenValue(propertyName, [uuidv4()]);
+
+    testDefaultValueIfNullOrUndefined({
+      propertyName,
+      expectedValueDescription: 'a valid uuid',
+      expectedValue: []
     });
-    it('should set updatedAt to a date if undefined', () => {
-      input.updatedAt = null;
-      initiateDocument();
-      expect(isValidDateString(document.updatedAt)).toBe(true);
+
+    testInvalidValue({
+      propertyName,
+      value: 'abcd',
+      message: `"${propertyName}" must be an array`,
+      givenValueDescription: 'an invalid array'
+    });
+
+    testInvalidValue({
+      propertyName,
+      value: [uuidv4(), 'abcd'],
+      message: `"${propertyName}" must contain only UUIDs`,
+      givenValueDescription: 'an array containing a non-uuid value'
+    });
+  }
+
+  describe('viewerIds', () => {
+    testForUuidArrayType('viewerIds');
+  });
+
+  describe('blockIds', () => {
+    testForUuidArrayType('blockIds');
+  });
+
+  describe('lastUpdatedBy', () => {
+    testForUuidType('lastUpdatedBy');
+  });
+
+  describe('createdAt', () => {
+    testForDateStringType('createdAt');
+  });
+
+  function testForDateStringType(propertyName) {
+    testStoreGivenValue(propertyName, new Date().toISOString());
+
+    testDefaultValueIfNullOrUndefined({
+      propertyName,
+      expectedValueDescription: 'a valid date string',
+      checkIfDateString: true
+    });
+
+    testInvalidValue({
+      propertyName,
+      value: 'abcd',
+      message: `"${propertyName}" must be a valid date string`,
+      givenValueDescription: 'an invalid date string'
+    });
+  }
+
+  describe('updatedAt', () => {
+    testForDateStringType('updatedAt');
+  });
+
+  describe('sharingStatus', () => {
+    const propertyName = 'sharingStatus';
+
+    testStoringValueForEnum(propertyName, SharingStatus);
+
+    testDefaultValueIfNullOrUndefined({
+      propertyName,
+      expectedValueDescription: 'the value PRIVATE',
+      expectedValue: SharingStatus.PRIVATE
+    });
+
+    testInvalidValue({
+      propertyName,
+      value: 'abcd',
+      message: `"${propertyName}" must be a valid value of SharingStatus`,
+      givenValueDescription: 'an invalid date string'
     });
   });
 
@@ -203,7 +366,6 @@ describe('DocumentImpl', () => {
             new DocumentImpl(input);
             fail('error must occur');
           } catch (error) {
-            const BASE_ERROR_MESSAGE = 'DocumentImpl failed to create: ';
             const message = 'submittedAt must be a valid date string';
             expect(error.message).toEqual(BASE_ERROR_MESSAGE + message);
           }
