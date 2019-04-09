@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { DocumentFactoryService } from './document-factory.service';
 import { isUuid } from '../../../classes/helpers';
 import { DocumentType, SharingStatus } from 'src/API';
+import { Document } from 'src/app/classes/document/document';
 
 const uuidv4 = require('uuid/v4');
 
@@ -181,5 +182,28 @@ describe('DocumentFactoryService', () => {
         expect(error.message).toEqual(errorMessage);
       }
     }
+  });
+
+  fdescribe('createNewTemplateDocument()', () => {
+    let document: Document;
+    let input: any;
+
+    beforeEach(() => {
+      input ={};
+    });
+
+    function initiateDocument() {
+      document = service.createNewTemplateDocument(input);
+    }
+    it('should have the type TEMPLATE', () => {
+      initiateDocument();
+      expect(document.type).toEqual(DocumentType.TEMPLATE);
+    });
+  });
+
+  describe('createTemplateDocument()', () => {
+    it('to be implemented', () => {
+      fail('to be tested');
+    });
   });
 });

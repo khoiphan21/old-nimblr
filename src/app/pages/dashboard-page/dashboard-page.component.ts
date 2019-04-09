@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DocumentService } from '../../services/document/document.service';
-import { Document } from '../../classes/document';
+import { Document } from '../../classes/document/document';
 import { Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { AccountService } from 'src/app/services/account/account.service';

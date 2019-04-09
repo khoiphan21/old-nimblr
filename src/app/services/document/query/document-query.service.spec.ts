@@ -6,9 +6,9 @@ import { take, skip } from 'rxjs/operators';
 import { getDocument } from 'src/graphql/queries';
 import { UUID } from '../command/document-command.service';
 import { DocumentFactoryService } from '../factory/document-factory.service';
-import { DocumentImpl } from 'src/app/classes/document-impl';
+import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { onSpecificDocumentUpdate } from 'src/graphql/subscriptions';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 
 const uuidv4 = require('uuid/v4');
 

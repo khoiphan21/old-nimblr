@@ -1,8 +1,8 @@
 import { Document } from './document';
-import { UUID, ISOTimeString } from '../services/document/command/document-command.service';
+import { UUID, ISOTimeString } from '../../services/document/command/document-command.service';
 import { DocumentType, SharingStatus, SubmissionStatus } from 'src/API';
-import { CreateDocumentInput } from '../../API';
-import { isValidDateString } from './isValidDateString';
+import { CreateDocumentInput } from '../../../API';
+import { isValidDateString } from '../isValidDateString';
 
 const BASE_ERROR_MESSAGE = 'DocumentImpl failed to create: ';
 

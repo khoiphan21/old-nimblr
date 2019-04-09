@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
-import { DocumentImpl } from '../../../classes/document-impl';
-import { Document } from 'src/app/classes/document';
+import { DocumentImpl } from '../../../classes/document/document-impl';
+import { Document } from 'src/app/classes/document/document';
 import { DocumentType } from 'src/API';
 import { CreateDocumentInput } from '../../../../API';
 import { isUuid } from '../../../classes/helpers';
 
 const uuidv5 = require('uuid/v5');
+
+export interface NewTemplateDocumentInput {
+
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +17,16 @@ const uuidv5 = require('uuid/v5');
 export class DocumentFactoryService {
 
   constructor() { }
+
+  createNewTemplateDocument(input: NewTemplateDocumentInput): Document {
+    return new DocumentImpl({
+      type: DocumentType.TEMPLATE
+    });
+  }
+
+  createTemplateDocument(input: CreateDocumentInput): Document {
+    return;
+  }
 
   createDocument({
     id,

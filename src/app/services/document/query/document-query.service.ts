@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { getDocument } from '../../../../graphql/queries';

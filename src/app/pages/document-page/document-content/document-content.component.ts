@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -267,6 +267,12 @@ export class DocumentContentComponent implements OnInit {
       const message = `DocumentPage failed to delete block: ${error.message}`;
       throw new Error(message);
     }
+  }
+
+  async saveAsTemplate() {
+    // create a new document based on the current document's input
+    // update this.currentDocument
+    // send update for the document's type to GraphQL
   }
 
 }

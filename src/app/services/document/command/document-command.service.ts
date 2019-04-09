@@ -79,10 +79,10 @@ export class DocumentCommandService {
       input.title = input.title === '' ? null : input.title;
 
       this.validateUpdateInput(input);
-      
+
       // Update the list of versions to be ignored
       this.queryService.registerUpdateVersion(input.version);
-      
+
       const response: any = await this.graphQlService.query(updateDocument, { input });
       return response.data.updateDocument;
     } catch (error) {

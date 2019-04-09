@@ -10,7 +10,7 @@ import { User } from 'src/app/classes/user';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { DocumentType, SharingStatus, BlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
@@ -681,6 +681,12 @@ describe('DocumentContentComponent', () => {
     it('should remove correct id from currentDocument', async () => {
       await component.deleteBlock(testId);
       expect(component['currentDocument'].blockIds.includes('t1')).toBeFalsy();
+    });
+  });
+
+  describe('saveAsTemplate()', () => {
+    it('to be tested', () => {
+      fail('to be tested');
     });
   });
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Document } from '../../classes/document';
+import { Document } from '../../classes/document/document';
 import { AccountService } from '../account/account.service';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { User } from '../../classes/user';
