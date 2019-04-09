@@ -81,7 +81,7 @@ section.content {
     }
     section.template {
         width: 100%;
-        padding: 0 $mobile-frame-horizontal-padding;
+        // padding: 0 $mobile-frame-horizontal-padding;
     }
     table.submissions {
         width: 100%;
@@ -139,7 +139,7 @@ section.content {
         height: 100%;
         div.title {
             font-size: 2.2rem;
-            padding: 0 250px 20px 250px;
+            padding: 0 275px 20px 275px;
             h1 {
                 border-bottom: 1px solid #97A0BF;
                 justify-content: center;
@@ -161,17 +161,17 @@ section.content {
         }
         section.document-tab {
             width: 100%;
-            padding: 0 250px;
+            padding: 0 275px;
             margin-top: 30px;
         }
         section.template {
-            padding: 0 250px;
+            // padding: 0 275px;
         }
         table.submissions {
             // width: 70%;
             margin-left: auto;
             margin-right: auto;
-            padding: 0 250px;
+            padding: 0 275px;
             .title {
                 font-weight: 500;
                 color: #97A0BF;
