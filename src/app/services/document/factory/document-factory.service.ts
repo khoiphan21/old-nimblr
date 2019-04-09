@@ -6,7 +6,7 @@ import { CreateDocumentInput } from '../../../../API';
 import { isUuid } from '../../../classes/helpers';
 import { UserId } from 'src/app/classes/user';
 
-const uuidv5 = require('uuid/v5');
+const uuidv4 = require('uuid/v4');
 
 export interface NewTemplateDocumentInput {
   ownerId: UserId;
@@ -36,7 +36,7 @@ export class DocumentFactoryService {
     id,
     ownerId,
     title = null,
-    version = 'NOT SET',
+    version = uuidv4(),
     type = DocumentType.GENERIC,
     editorIds = [],
     viewerIds = [],
@@ -52,8 +52,6 @@ export class DocumentFactoryService {
     };
 
     this.checkForNullOrUndefined(input);
-
-    if (version === 'NOT SET') { version = uuidv5(id, ownerId); }
 
     return new DocumentImpl(input);
   }

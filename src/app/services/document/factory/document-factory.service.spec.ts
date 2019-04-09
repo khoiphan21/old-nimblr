@@ -58,7 +58,7 @@ describe('DocumentFactoryService', () => {
         expect(new Date(document.updatedAt) instanceof Date).toBe(true);
       });
       it('should set sharingStatus', () => {
-        expect(document.sharingStatus).toBe(null);
+        expect(document.sharingStatus).toBe(SharingStatus.PRIVATE);
       });
     });
 
