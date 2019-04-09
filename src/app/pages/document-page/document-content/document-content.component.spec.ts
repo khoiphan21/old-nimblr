@@ -11,7 +11,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document/document';
-import { DocumentType, SharingStatus, BlockType } from 'src/API';
+import { SharingStatus, BlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -62,18 +62,20 @@ describe('DocumentContentComponent', () => {
         {
           provide: Router,
           useValue: {
-             url: '/document'
+            url: '/document'
           }
-       }
+        }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
   });
 
+  /* tslint:disable:no-string-literal */
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentContentComponent);
     router = TestBed.get(Router);
     component = fixture.componentInstance;
+    component['currentUser'] = testUser;
     documentFactory = TestBed.get(DocumentFactoryService);
   });
 
@@ -138,7 +140,7 @@ describe('DocumentContentComponent', () => {
     });
   });
 
-  describe('checkIsChildDocument', () => {
+  describe('checkIsChildDocument()', () => {
     const uuid = 'd232cdb5-142d-4d77-afb3-8ac638f9755b';
     const uuid2 = 't412awf9-142d-4d77-afb3-8ac638f9755c';
 
@@ -219,18 +221,53 @@ describe('DocumentContentComponent', () => {
       }, 3);
     });
 
-    it('should store the document in currentDocument', done => {
-      getDocument$.next(document);
-      setTimeout(() => {
-        expect(component['currentDocument']).toEqual(document);
-        done();
-      }, 3);
+    describe('(storing values)', () => {
+
+      it('should store into documentId', done => {
+        getDocument$.next(document);
+        setTimeout(() => {
+          expect(component.documentId).toEqual(document.id);
+          done();
+        }, 3);
+      });
+
+      it('should store into documentType', done => {
+        getDocument$.next(document);
+        setTimeout(() => {
+          expect(component.documentType).toEqual(document.type);
+          done();
+        }, 3);
+      });
+
+      it('should store into blockIds', done => {
+        getDocument$.next(document);
+        setTimeout(() => {
+          expect(component.blockIds).toEqual(document.blockIds);
+          done();
+        }, 3);
+      });
+
+      it('should store into docTitle', done => {
+        getDocument$.next(document);
+        setTimeout(() => {
+          expect(component.docTitle).toEqual(document.title);
+          done();
+        }, 3);
+      });
+      it('should store into currentSharingStatus', done => {
+        getDocument$.next(document);
+        setTimeout(() => {
+          expect(component.currentSharingStatus).toEqual(document.sharingStatus);
+          done();
+        }, 3);
+      });
+
     });
 
-    it('should change docTitle', done => {
+    it('should set isDocumentReady to be true', done => {
       getDocument$.next(document);
       setTimeout(() => {
-        expect(component['docTitle']).toEqual(document.title);
+        expect(component.isDocumentReady).toBe(true);
         done();
       }, 3);
     });
@@ -238,7 +275,6 @@ describe('DocumentContentComponent', () => {
     it('should not do anything if document returned is null', done => {
       getDocument$.next(null);
       setTimeout(() => {
-        expect(component['currentDocument']).toEqual(undefined);
         expect(setupSubscriptionSpy.calls.count()).toBe(0);
         done();
       }, 3);
@@ -278,9 +314,9 @@ describe('DocumentContentComponent', () => {
       );
 
       // Set the component's data to the mock data
-      component.currentDocument = document;
       component['currentUser'] = user;
       component.blockIds = [];
+      component.documentId = document.id;
 
       // Setup all the spies
       blockQuerySpy = spyOn(component['blockQueryService'], 'registerBlockCreatedByUI');
@@ -490,16 +526,7 @@ describe('DocumentContentComponent', () => {
       spyUpdate = spyOn(component['documentCommandService'], 'updateDocument'); spyUpdate.and.returnValue(Promise.resolve('ok'));
 
       component['docTitle'] = testTitle;
-      // is there a way no to mock this entire thing in order to pass codes like
-      // currentDocument.blah?
-      component['currentDocument'] = {
-        id: testId,
-        version: uuidv4(),
-        type: DocumentType.GENERIC,
-        lastUpdatedBy: uuidv4(),
-        createdAt: '',
-        updatedAt: '',
-      } as Document;
+      component.documentId = testId;
 
       component['currentUser'] = { id: userId } as User;
     });
@@ -546,7 +573,6 @@ describe('DocumentContentComponent', () => {
 
     beforeEach(() => {
       spy = spyOn(component['documentCommandService'], 'updateDocument');
-      component.currentDocument = documentFactory.createDocument({ id, ownerId: uuidv4() });
     });
 
     it('should set the current status to the new status', () => {
@@ -558,7 +584,11 @@ describe('DocumentContentComponent', () => {
     it('should call the documentCommandService with the right args', () => {
       const status = SharingStatus.PUBLIC;
       component.changeSharingStatus(status);
-      expect(spy.calls.mostRecent().args[0].sharingStatus).toEqual(status);
+      expect(spy).toHaveBeenCalledWith({
+        id: component.documentId,
+        sharingStatus: status,
+        lastUpdatedBy: component['currentUser'].id
+      });
     });
   });
 
@@ -573,13 +603,12 @@ describe('DocumentContentComponent', () => {
   });
 
   it('navigateToChildDocument() - should send the right argument', done => {
-    component['currentDocument'] = documentFactory.createDocument(
-      { id, ownerId: uuidv4() }
-    );
-    const uuid = 'd232cdb5-142d-4d77-afb3-8ac638f9755b';
+    component.documentId = uuidv4();
+
+    const uuid = uuidv4();
     component.navigateToChildDocEvent.subscribe(data => {
       expect(data).toEqual({
-        parent: component.currentDocument.id,
+        parent: component.documentId,
         child: uuid
       });
       done();
@@ -613,7 +642,6 @@ describe('DocumentContentComponent', () => {
     let spyDocCommandService: jasmine.Spy;
     let spyBlockQueryService: jasmine.Spy;
 
-    let mockCurrentDocument: object;
     let testId: string;
 
     beforeEach(() => {
@@ -621,12 +649,6 @@ describe('DocumentContentComponent', () => {
       spyDocCommandService = spyOn(component['documentCommandService'], 'updateDocument').and.returnValue(Promise.resolve('test'));
       spyBlockCommandService = spyOn(component['blockCommandService'], 'deleteBlock').and.returnValue(Promise.resolve('test'));
       const blockIds = ['t1', 't2', 't3'];
-      mockCurrentDocument = {
-        blockIds,
-        version: 'v1',
-        lastUpdatedBy: '',
-      };
-      component['currentDocument'] = mockCurrentDocument as Document;
       component.blockIds = blockIds;
       component['currentUser'] = { id: '' } as User;
 
@@ -678,16 +700,14 @@ describe('DocumentContentComponent', () => {
       });
     });
 
-    it('should remove correct id from currentDocument', async () => {
+    it('should remove correct id from the stored block IDs', async () => {
       await component.deleteBlock(testId);
-      expect(component['currentDocument'].blockIds.includes('t1')).toBeFalsy();
+      expect(component.blockIds.includes('t1')).toBeFalsy();
     });
   });
 
   describe('saveAsTemplate()', () => {
-    it('to be tested', () => {
-      fail('to be tested');
-    });
+    it('fail', () => fail('to be implemented'));
   });
 
 });

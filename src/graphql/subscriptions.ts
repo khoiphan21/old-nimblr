@@ -29,7 +29,6 @@ export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
@@ -85,7 +84,6 @@ export const onCreateDocument = `subscription OnCreateDocument {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
@@ -108,7 +106,6 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
@@ -131,7 +128,6 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt

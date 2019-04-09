@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput } from 'src/API';
+import { BlockType, DocumentType, SharingStatus, UpdateDocumentInput, DeleteBlockInput } from 'src/API';
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -30,15 +30,18 @@ export class DocumentContentComponent implements OnInit {
   isUserLoggedIn: boolean;
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
-  docTitle: string;
   currentSharingStatus: SharingStatus;
   currentTab = 'template';
-  currentDocument: Document;
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
 
+  // Properties needed from the readonly Document received
+  documentId: string;
+  documentType: DocumentType;
+  docTitle: string;
   blockIds: Array<string>;
+  isDocumentReady = false; // should be switched to true when document is loaded
 
   focusBlockId: BlockId; // the block that needs to be focused on after creation
 
@@ -95,19 +98,19 @@ export class DocumentContentComponent implements OnInit {
       )
     );
     // subscribe to and process the document from the observable
-    this.document$.subscribe(document => {
+    this.document$.subscribe((document: Document) => {
       if (document === null) { return; }
-      this.currentDocument = document;
       this.checkIsChildDocument();
 
-      // Update the list of block ids
-      this.blockIds = this.currentDocument.blockIds;
-
-      // added in for edit title
+      // Update the values to be used in rendering
+      this.documentId = document.id;
+      this.documentType = document.type;
+      this.blockIds = document.blockIds;
       this.docTitle = document.title;
+      this.currentSharingStatus = document.sharingStatus;
 
-      // For monitoring sharing status
-      this.currentSharingStatus = this.currentDocument.sharingStatus;
+      // now set the flag for document ready to be true for rendering
+      this.isDocumentReady = true;
 
       this.setupBlockUpdateSubscription();
     }, error => {
@@ -128,7 +131,7 @@ export class DocumentContentComponent implements OnInit {
 
   private setupBlockUpdateSubscription() {
     // The return result can be ignored (maybe)
-    this.blockQueryService.subscribeToUpdate(this.currentDocument.id);
+    this.blockQueryService.subscribeToUpdate(this.documentId);
   }
 
 
@@ -144,7 +147,7 @@ export class DocumentContentComponent implements OnInit {
       // create a new block object
       let block: Block;
       const input: CreateNewBlockInput = {
-        documentId: this.currentDocument.id,
+        documentId: this.documentId,
         lastUpdatedBy: this.currentUser.id
       };
 
@@ -174,7 +177,7 @@ export class DocumentContentComponent implements OnInit {
       await this.blockCommandService.createBlock(block);
       // Update the document in the backend
       await this.documentCommandService.updateDocument({
-        id: this.currentDocument.id,
+        id: this.documentId,
         lastUpdatedBy: this.currentUser.id,
         blockIds: this.blockIds
       });
@@ -191,7 +194,7 @@ export class DocumentContentComponent implements OnInit {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         const input: UpdateDocumentInput = {
-          id: this.currentDocument.id,
+          id: this.documentId,
           lastUpdatedBy: this.currentUser.id,
           title: this.docTitle
         };
@@ -209,8 +212,11 @@ export class DocumentContentComponent implements OnInit {
 
   changeSharingStatus(status: SharingStatus) {
     this.currentSharingStatus = status;
-    this.currentDocument.sharingStatus = status;
-    this.documentCommandService.updateDocument(this.currentDocument);
+    this.documentCommandService.updateDocument({
+      id: this.documentId,
+      sharingStatus: this.currentSharingStatus,
+      lastUpdatedBy: this.currentUser.id
+    });
   }
 
   showInviteCollaborator() {
@@ -226,7 +232,7 @@ export class DocumentContentComponent implements OnInit {
   navigateToChildDocument(docID: UUID) {
     this.navigateToChildDocEvent.emit(
       {
-        parent: this.currentDocument.id,
+        parent: this.documentId,
         child: docID
       });
   }
@@ -250,9 +256,11 @@ export class DocumentContentComponent implements OnInit {
       // The uuidv4() call is needed to make sure it changes
       this.focusBlockId = `${blockIds[index - 1]}-${uuidv4()}`;
       // Update the version
-      this.currentDocument.blockIds = this.blockIds;
-      this.currentDocument.lastUpdatedBy = this.currentUser.id;
-      const updatePromise = this.documentCommandService.updateDocument(this.currentDocument);
+      const updatePromise = this.documentCommandService.updateDocument({
+        id: this.documentId,
+        blockIds: this.blockIds,
+        lastUpdatedBy: this.currentUser.id
+      });
 
       // call command service
       let input: DeleteBlockInput;
@@ -271,7 +279,7 @@ export class DocumentContentComponent implements OnInit {
 
   async saveAsTemplate() {
     // create a new document based on the current document's input
-    // update this.currentDocument
+    // update the stored document type
     // send update for the document's type to GraphQL
   }
 

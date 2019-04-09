@@ -113,7 +113,6 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
@@ -136,7 +135,6 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
@@ -159,7 +157,6 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt

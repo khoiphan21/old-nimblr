@@ -15,31 +15,39 @@ const BASE_ERROR_MESSAGE = 'DocumentImpl failed to create: ';
  * set to a certain default value. Read the constructor() for more details
  */
 export class DocumentImpl implements Document {
+  // tslint:disable:variable-name
   // To store the given constructor input for convenience
   private input: CreateDocumentInput;
 
-  id: UUID;
-  version: UUID;
-  type: DocumentType;
-  title: string;
-  ownerId: UUID;
-  editorIds: Array<UUID>;
-  viewerIds: Array<UUID>;
-  blockIds: Array<UUID>;
-  lastUpdatedBy: UUID;
-  createdAt: ISOTimeString;
-  updatedAt: ISOTimeString;
-  sharingStatus: SharingStatus;
+  private _id: UUID;
+  private _version: UUID;
+  private _type: DocumentType;
+  private _title: string;
+  private _ownerId: UUID;
+  private _editorIds: Array<UUID>;
+
+  private _viewerIds: Array<UUID>;
+
+  private _blockIds: Array<UUID>;
+
+  private _lastUpdatedBy: UUID;
+
+  private _createdAt: ISOTimeString;
+
+  private _updatedAt: ISOTimeString;
+
+  private _sharingStatus: SharingStatus;
+
 
   // Properties for TEMPLATE document type
-  // tslint:disable:variable-name
   private _submissionDocIds: Array<UUID>;
 
   // Properties for the Submission Details section
-  isSubmission: boolean;
-  recipientEmail: string;
-  submittedAt: ISOTimeString;
-  submissionStatus: SubmissionStatus;
+  private _isSubmission: boolean;
+  private _recipientEmail: string;
+  private _submittedAt: ISOTimeString;
+  private _submissionStatus: SubmissionStatus;
+
 
   constructor(input: CreateDocumentInput) {
     // Store the given input for other internal functions
@@ -92,10 +100,11 @@ export class DocumentImpl implements Document {
   private setIfNullOrUndefined(name: string, defaultValue: any) {
     const input = this.input;
 
+    // Note: the '_' is needed since they are private variables with getters
     if (input[name] === null || input[name] === undefined) {
-      this[name] = defaultValue;
+      this[`_${name}`] = defaultValue;
     } else {
-      this[name] = input[name];
+      this[`_${name}`] = input[name];
     }
   }
 
@@ -130,7 +139,6 @@ export class DocumentImpl implements Document {
 
   private checkIfValidEnum(property: string, enumType: any, enumName: string) {
     if (!Object.keys(enumType).includes(this[property])) {
-      console.log(enumType.constructor.name);
       const message = `"${property}" must be a valid value of ${enumName}`;
       throw new Error(BASE_ERROR_MESSAGE + message);
     }
@@ -165,7 +173,7 @@ export class DocumentImpl implements Document {
   private validateSubmissionProperties() {
     // Set the submissionStatus to NOT_STARTED if an invalid value
     if (!Object.keys(SubmissionStatus).includes(this.submissionStatus)) {
-      this.submissionStatus = SubmissionStatus.NOT_STARTED;
+      this._submissionStatus = SubmissionStatus.NOT_STARTED;
     }
     // Throw error if submittedAt is not a valid date string
     if (!isValidDateString(this.submittedAt)) {
@@ -174,8 +182,63 @@ export class DocumentImpl implements Document {
     }
   }
 
-  get submissionDocIds(): Array<UUID> {
+  /**
+   * GETTERS
+   */
+  public get id(): UUID {
+    return this._id;
+  }
+  public get version(): UUID {
+    return this._version;
+  }
+  public get type(): DocumentType {
+    return this._type;
+  }
+  public get title(): string {
+    return this._title;
+  }
+  public get ownerId(): UUID {
+    return this._ownerId;
+  }
+  public get editorIds(): Array<UUID> {
+    return this._editorIds;
+  }
+  public get viewerIds(): Array<UUID> {
+    return this._viewerIds;
+  }
+  public get blockIds(): Array<UUID> {
+    return this._blockIds;
+  }
+  public get lastUpdatedBy(): UUID {
+    return this._lastUpdatedBy;
+  }
+  public get createdAt(): ISOTimeString {
+    return this._createdAt;
+  }
+  public get updatedAt(): ISOTimeString {
+    return this._updatedAt;
+  }
+  public get sharingStatus(): SharingStatus {
+    return this._sharingStatus;
+  }
+
+  // For the TEMPLATE document type
+  public get submissionDocIds(): Array<UUID> {
     // Make sure to return a clone only
     return this._submissionDocIds.map(v => v);
+  }
+
+  // For the Submission Details section
+  public get isSubmission(): boolean {
+    return this._isSubmission;
+  }
+  public get recipientEmail(): string {
+    return this._recipientEmail;
+  }
+  public get submittedAt(): ISOTimeString {
+    return this._submittedAt;
+  }
+  public get submissionStatus(): SubmissionStatus {
+    return this._submissionStatus;
   }
 }

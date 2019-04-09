@@ -41,7 +41,6 @@ export const getDocument = `query GetDocument($id: ID!) {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
@@ -69,7 +68,6 @@ export const listDocuments = `query ListDocuments(
       title
       editorIds
       viewerIds
-      order
       blockIds
       createdAt
       updatedAt

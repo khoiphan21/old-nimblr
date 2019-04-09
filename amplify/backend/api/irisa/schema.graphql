@@ -17,7 +17,6 @@ type Document @model {
   title: String
   editorIds: [String]
   viewerIds: [String]
-  order: [String]
   blockIds: [String]
   createdAt: String
   updatedAt: String

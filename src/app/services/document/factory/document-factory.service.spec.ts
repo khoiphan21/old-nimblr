@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentFactoryService } from './document-factory.service';
+import { DocumentFactoryService, NewDocumentInput } from './document-factory.service';
 import { isUuid } from '../../../classes/helpers';
-import { DocumentType, SharingStatus } from 'src/API';
+import { DocumentType, SharingStatus, SubmissionStatus } from 'src/API';
 import { Document } from 'src/app/classes/document/document';
+import { DocumentImpl } from 'src/app/classes/document/document-impl';
+import { UserId } from 'src/app/classes/user';
 
 const uuidv4 = require('uuid/v4');
 
@@ -184,6 +186,36 @@ describe('DocumentFactoryService', () => {
     }
   });
 
+  describe('createNewDocument()', () => {
+    let document: Document;
+    input = input as NewDocumentInput;
+
+    beforeEach(() => {
+      input = {
+        ownerId: uuidv4()
+      };
+      document = service.createNewDocument(input);
+    });
+
+    it('should return a Document object', () => {
+      expect(document instanceof DocumentImpl).toBe(true);
+    });
+
+    it('should have the default type to be GENERIC', () => {
+      expect(document.type).toEqual(DocumentType.GENERIC);
+    });
+
+    it('should store the given ownerId', () => {
+      expect(document.ownerId).toEqual(input.ownerId);
+    });
+
+    it('should automatically set the lastUpdatedBy as the ownerId', () => {
+      expect(document.lastUpdatedBy).toEqual(input.ownerId);
+    });
+
+    // no need to check for errors as the DocumentImpl will do the validation
+  });
+
   describe('createNewTemplateDocument()', () => {
     let document: Document;
 
@@ -191,30 +223,22 @@ describe('DocumentFactoryService', () => {
       input = {
         ownerId: uuidv4()
       };
-    });
-
-    function initiateDocument() {
       document = service.createNewTemplateDocument(input);
-    }
-
-    describe('basic creation', () => {
-      beforeEach(() => {
-        initiateDocument();
-      });
-      it('should have the type TEMPLATE', () => {
-        expect(document.type).toEqual(DocumentType.TEMPLATE);
-      });
-      it('should have the right ownerId', () => {
-        expect(document.ownerId).toEqual(input.ownerId);
-      });
-
     });
 
-  });
-
-  describe('createTemplateDocument()', () => {
-    it('to be implemented', () => {
-      fail('to be tested');
+    it('should return a Document object', () => {
+      expect(document instanceof DocumentImpl).toBe(true);
     });
+    it('should have the type TEMPLATE', () => {
+      expect(document.type).toEqual(DocumentType.TEMPLATE);
+    });
+    it('should have the right ownerId', () => {
+      expect(document.ownerId).toEqual(input.ownerId);
+    });
+    it('should store the lastUpdatedBy from the given ownerId', () => {
+      expect(document.lastUpdatedBy).toEqual(input.ownerId);
+    });
+
+    // no need to check for errors as the DocumentImpl will do the validation
   });
 });

@@ -1,5 +1,5 @@
 <section class="child-overlay" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]=true (click)="backToParent()">
-    <section class="content" *ngIf="currentDocument" (click)="$event.stopPropagation()">
+    <section class="content" *ngIf="isDocumentReady" (click)="$event.stopPropagation()">
         <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%"></app-header>
         <div class="title mt-5 mt-lg-4">
             <h1>

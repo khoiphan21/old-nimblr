@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { DocumentImpl } from '../../../classes/document/document-impl';
 import { Document } from 'src/app/classes/document/document';
-import { DocumentType } from 'src/API';
+import { DocumentType, UpdateDocumentInput } from 'src/API';
 import { CreateDocumentInput } from '../../../../API';
 import { isUuid } from '../../../classes/helpers';
 import { UserId } from 'src/app/classes/user';
 
 const uuidv4 = require('uuid/v4');
 
-export interface NewTemplateDocumentInput {
+export interface NewDocumentInput {
   ownerId: UserId;
 }
 
@@ -19,17 +19,22 @@ export class DocumentFactoryService {
 
   constructor() { }
 
-  createNewTemplateDocument(input: NewTemplateDocumentInput): Document {
+  createNewDocument(input: NewDocumentInput): Document {
+    const newInput = input as any;
+
+    newInput.lastUpdatedBy = input.ownerId;
+
+    return new DocumentImpl(input);
+  }
+
+  createNewTemplateDocument(input: NewDocumentInput): Document {
     const newInput = input as any;
 
     // Set the default properties
     newInput.type = DocumentType.TEMPLATE;
+    newInput.lastUpdatedBy = input.ownerId;
 
     return new DocumentImpl(newInput);
-  }
-
-  createTemplateDocument(input: CreateDocumentInput): Document {
-    return;
   }
 
   createDocument({
