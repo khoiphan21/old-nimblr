@@ -14,7 +14,7 @@ export interface HeaderBlockInput {
     createdAt: ISOTimeString;
     updatedAt: ISOTimeString;
     value: string;
-    textblocktype: TextBlockType; // TODO: @bruno register enum
+    textblocktype: TextBlockType;
 }
 
 export class HeaderBlock extends TextBlock implements Block {

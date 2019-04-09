@@ -7,7 +7,7 @@ const uuid4 = require('uuid/v4');
 describe('HeaderBlock', () => {
   let mockInput: any;
 
-  function resetInput() {
+  function getMockInput() {
     mockInput = {
       id: uuid4(),
       version: uuid4(),
@@ -16,20 +16,19 @@ describe('HeaderBlock', () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       value: 'abcd',
-      textblocktype: 'not implemented yet'
+      textblocktype: TextBlockType.HEADER
     };
-  }
+  };
 
   beforeEach(() => {
-    resetInput();
+    getMockInput();
   });
 
   describe('Parameters validation', () => {
-    // TODO: @bruno to be tested
+    beforeEach(() => { });
 
     it('should instantiate when textblocktype is a valid type', done => {
       mockInput.textblocktype = TextBlockType.HEADER;
-      mockInput.id = 12;
 
       try {
         const block = new HeaderBlock(mockInput);
@@ -50,34 +49,34 @@ describe('HeaderBlock', () => {
       }
     });
 
+    it('should fail to instantiate when textblocktype is null', done => {
+      mockInput.textblocktype = null;
+
+      try {
+        const block = new HeaderBlock(mockInput);
+        fail();
+      } catch (err) {
+        done();
+      }
+    });
+
   });
 
-  fdescribe('Storing values', () => {
-    // TODO: @bruno Not implemented yet: header-block
-
+  describe('Storing values', () => {
     let block: HeaderBlock;
+    let keys: Array<string>;
 
     beforeEach(() => {
-      resetInput();
       block = new HeaderBlock(mockInput);
     });
 
-    console.log("TCL: mockInput", mockInput);
+    getMockInput();
+    keys = Object.keys(mockInput);
 
-    for (let property of mockInput) {
+    for (let property of keys) {
       it(`should store the right ${property}`, () => {
         expect(block[property]).toEqual(mockInput[property]);
       });
-    }
-    
-    describe('storing property "textblocktype"', () => {
-
-      // it('should store value as empty string if undefined', () => {
-      //   mockInput.value = undefined;
-      //   block = new HeaderBlock(mockInput);
-      //   expect(block.value).toEqual('');
-      // });
-    });
-
+    };
   });
 });
