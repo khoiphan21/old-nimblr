@@ -211,6 +211,7 @@ describe('BlockCommandService', () => {
 
     describe('HeaderBlock -', () => {
       // TODO: @bruno Not implemented yet: header-block
+      
     });
 
   });

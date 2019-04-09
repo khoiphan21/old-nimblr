@@ -15,6 +15,10 @@ export enum BlockType {
   QUESTION = "QUESTION",
 }
 
+export enum TextBlockType {
+  HEADER = "HEADER",
+}
+
 
 export enum QuestionType {
   PARAGRAPH = "PARAGRAPH",

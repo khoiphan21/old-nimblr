@@ -71,6 +71,7 @@ export class BlockCommandService {
 
   private async updateHeaderBlock(): Promise<any> {
     // TODO: @bruno Not implemented yet: header-block
+    
   }
 
   private async updateQuestionBlock(input: UpdateQuestionBlockInput): Promise<any> {

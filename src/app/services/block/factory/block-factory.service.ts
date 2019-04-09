@@ -34,10 +34,11 @@ export class BlockFactoryService {
     return new TextBlock(newInput);
   }
 
-  createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
-    // TODO: @bruno Not implemented yet: header-block
+  // createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
+  //   // TODO: @bruno Not implemented yet: header-block
 
-  }
+    
+  // }
 
   /**
    * Create a new QuestionBlock object. The parameters specified
