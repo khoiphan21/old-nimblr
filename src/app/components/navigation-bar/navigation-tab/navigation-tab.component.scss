@@ -20,7 +20,7 @@ div.navigation-tab {
 @include media(lg) {
     div.navigation-tab {
         height: 27px;
-        padding: 0 15px;
+        padding: 0 25px;
         font-size: 13px;
         &:hover {
             background: transparentize($color: #000000, $amount: 0.95)
