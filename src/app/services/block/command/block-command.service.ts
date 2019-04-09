@@ -69,6 +69,10 @@ export class BlockCommandService {
     }
   }
 
+  private async updateHeaderBlock(): Promise<any> {
+    // TODO: @bruno Not implemented yet: header-block
+  }
+
   private async updateQuestionBlock(input: UpdateQuestionBlockInput): Promise<any> {
     const requiredParams = [
       'id', 'documentId', 'version', 'lastUpdatedBy', 'answers', 'questionType'
@@ -141,6 +145,10 @@ export class BlockCommandService {
     } catch (error) {
       return Promise.reject(error);
     }
+  }
+
+  private async createHeaderBlock(): Promise<any> {
+    // TODO: @bruno Not implemented yet: header-block
   }
 
   private async createQuestionBlock(originalInput: CreateQuestionBlockInput): Promise<any> {

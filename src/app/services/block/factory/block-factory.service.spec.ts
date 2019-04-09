@@ -51,6 +51,27 @@ describe('BlockFactoryService', () => {
     // no need to check for other properties as they are validated within the class
   });
 
+
+  describe('createNewHeaderBlock()', () => {
+    // TODO: @bruno Not implemented yet: header-block
+    beforeEach(() => {
+
+    });
+
+    it('should have the initial value of an empty string', () => {
+
+    });
+
+    it('should create an object of type HeaderBlock', () => {
+
+    });
+
+    it('should register the textfield type', () => {
+
+    });
+
+  });
+
   describe('createNewQuestionBlock()', () => {
     let block: QuestionBlock;
 

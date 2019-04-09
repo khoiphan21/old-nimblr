@@ -5,6 +5,7 @@ import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { UUID } from '../../document/command/document-command.service';
+import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -31,6 +32,11 @@ export class BlockFactoryService {
       value: ''
     };
     return new TextBlock(newInput);
+  }
+
+  createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
+    // TODO: @bruno Not implemented yet: header-block
+
   }
 
   /**
