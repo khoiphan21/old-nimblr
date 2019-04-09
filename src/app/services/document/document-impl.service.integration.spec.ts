@@ -56,7 +56,7 @@ describe('(Integration) DocumentService', () => {
       return graphQlService.query(createDocument, { input });
     }).then(response => {
       document = response.data.createDocument;
-      return getFirstDocumentSet(service);
+      return getFirstDocumentSet();
     }).then(documents => {
       expect(documents.length).toBeGreaterThan(0);
       expect(documents[0] instanceof DocumentImpl).toBe(true);
@@ -64,7 +64,7 @@ describe('(Integration) DocumentService', () => {
     }).then(() => done()
     ).catch(error => processTestError('failed to retrieve docs', error, done));
 
-    function getFirstDocumentSet(service: DocumentService): Promise<Array<Document>> {
+    function getFirstDocumentSet(): Promise<Array<Document>> {
       return new Promise((resolve, reject) => {
         const subscription = service.getUserDocuments$();
         subscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {

@@ -199,10 +199,8 @@ export class DocumentContentComponent implements OnInit {
           title: this.docTitle
         };
 
-        // TODO: @khoiphan21 change the update function to automatically create the version
-        // so that the user of this service doesn't need to worry about version or other related values
         this.documentCommandService.updateDocument(input).then(data => {
-          resolve(input);
+          resolve(data);
         }).catch(err => {
           reject(err);
         });
@@ -278,9 +276,16 @@ export class DocumentContentComponent implements OnInit {
   }
 
   async saveAsTemplate() {
-    // create a new document based on the current document's input
     // update the stored document type
+    this.documentType = DocumentType.TEMPLATE;
     // send update for the document's type to GraphQL
+    const input: UpdateDocumentInput = {
+      id: this.documentId,
+      lastUpdatedBy: this.currentUser.id,
+      type: DocumentType.TEMPLATE
+    };
+
+    await this.documentCommandService.updateDocument(input);
   }
 
 }

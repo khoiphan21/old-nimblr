@@ -11,7 +11,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document/document';
-import { SharingStatus, BlockType } from 'src/API';
+import { SharingStatus, BlockType, DocumentType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -707,7 +707,29 @@ describe('DocumentContentComponent', () => {
   });
 
   describe('saveAsTemplate()', () => {
-    it('fail', () => fail('to be implemented'));
+    let commandSpy: jasmine.Spy;
+
+    beforeEach(async () => {
+      commandSpy = spyOn(component['documentCommandService'], 'updateDocument');
+      commandSpy.and.returnValue(Promise.resolve());
+      // setup initial properties of the component
+      component.documentId = uuidv4();
+      component.documentType = DocumentType.GENERIC;
+      component['currentUser'] = testUser;
+
+      await component.saveAsTemplate();
+    });
+
+    it('should change the type stored', () => {
+      expect(component.documentType).toEqual(DocumentType.TEMPLATE);
+    });
+    it('should call command service to update', () => {
+      expect(commandSpy).toHaveBeenCalledWith({
+        id: component.documentId,
+        lastUpdatedBy: testUser.id,
+        type: DocumentType.TEMPLATE
+      });
+    });
   });
 
 });
