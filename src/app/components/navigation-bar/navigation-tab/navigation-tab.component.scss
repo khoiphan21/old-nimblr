@@ -2,16 +2,28 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 div.navigation-tab {
-    color: $color-grey-2;
+    height: 38px;
+    padding: 0 15px;
+    @include row-center;
+    justify-content: flex-start;
+    font-size: 16px;
     font-weight: normal;
-    padding: 4px 0;
-    &:hover {
-        opacity: 0.75;
-    }
-    i.fa-chevron-down {
-        transform: rotate(-90deg);
-    }
-    span {
-        margin-left: 15px;
+    letter-spacing: 0.5px;
+    color: $color-grey-2;
+}
+
+.current-tab {
+    background: transparentize($color: #000000, $amount: 0.9);
+    font-weight: 500 !important;
+}
+
+@include media(lg) {
+    div.navigation-tab {
+        height: 27px;
+        padding: 0 15px;
+        font-size: 13px;
+        &:hover {
+            background: transparentize($color: #000000, $amount: 0.95)
+        }
     }
 }

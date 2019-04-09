@@ -1,5 +1,4 @@
-<div class="navigation-tab clickable" (click)="navigateToDocument(navigationTab.id)">
+<div class="navigation-tab clickable" (click)="navigateToDocument(navigationTab.id)" [ngClass]="{'current-tab': isCurrentDocument}">
     <!-- {{navigationTab.title}} -->
-    <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isQuestionOptionShown === true}"></i>
-    <span>Untitled Form</span>
+    Untitled Form
 </div>

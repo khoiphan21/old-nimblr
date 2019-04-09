@@ -8,7 +8,7 @@ import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
   styleUrls: ['./navigation-tab.component.scss']
 })
 export class NavigationTabComponent implements OnInit {
-
+  isCurrentDocument = false;
   isQuestionOptionShown = false;
   @Input() navigationTab: NavigationTabDocument;
 
@@ -17,6 +17,12 @@ export class NavigationTabComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    const url = this.router.url;
+    const uuidLength = 36;
+    const currentId = url.substring(url.length - uuidLength, url.length);
+    if (currentId === this.navigationTab.id) {
+      this.isCurrentDocument = true;
+    }
   }
 
   navigateToDocument(docId: string) {

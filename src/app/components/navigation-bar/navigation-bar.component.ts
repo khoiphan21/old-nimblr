@@ -25,22 +25,23 @@ export class NavigationBarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.navigationBarService.getNavigationBarStatus$().subscribe(status => {
-    //   this.isNavigationTabShown = status;
-    // });
-    // this.navigationBarService.getNavigationBar$(this.documentId).subscribe((navigationTabs: NavigationTabDocument[]) => {
-    //   this.navigationTabs = [];
-    //   for (const navigationTab of navigationTabs) {
-    //     this.navigationTabs.push(navigationTab);
-    //   }
-    // });
-    // this.accountService.getUser$().subscribe((user) => {
-    //   if (user !== null) {
-    //     this.currentUser = user;
-    //     const firstName = user.firstName;
-    //     this.processInitialName(firstName);
-    //   }
-    // });
+    this.documentId = 'c9e9f6ed-1365-4ff9-aacc-b23a08454fc4';
+    this.navigationBarService.getNavigationBarStatus$().subscribe(status => {
+      this.isNavigationTabShown = status;
+    });
+    this.navigationBarService.getNavigationBar$(this.documentId).subscribe((navigationTabs: NavigationTabDocument[]) => {
+      this.navigationTabs = [];
+      for (const navigationTab of navigationTabs) {
+        this.navigationTabs.push(navigationTab);
+      }
+    });
+    this.accountService.getUser$().subscribe((user) => {
+      if (user !== null) {
+        this.currentUser = user;
+        const firstName = user.firstName;
+        this.processInitialName(firstName);
+      }
+    });
   }
 
   private processInitialName(fName: string) {
