@@ -1,11 +1,9 @@
 @import '../../../_sass/interface';
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
-
 section.content {
     height: 100%;
     background: white;
-
     div.title {
         height: fit-content;
         font-size: 2.2rem;
@@ -14,7 +12,6 @@ section.content {
         padding: 0 $mobile-frame-horizontal-padding;
         position: relative;
         font-family: $font-roboto;
-
         h1 {
             justify-content: flex-start;
             height: fit-content;
@@ -31,7 +28,6 @@ section.content {
                 border: 0;
                 z-index: 1;
             }
-
             .placeholder {
                 position: absolute;
                 top: 0;
@@ -42,7 +38,6 @@ section.content {
                 white-space: pre-wrap;
                 word-break: break-word;
             }
-
             button {
                 height: 50px;
                 position: fixed;
@@ -52,7 +47,6 @@ section.content {
                 padding: 0 1rem;
                 font-weight: normal;
                 @include row-center;
-
                 i.fa-paper-plane {
                     font-size: 20px;
                     margin-right: 10px;
@@ -60,7 +54,6 @@ section.content {
             }
         }
     }
-
     section.document-tab {
         width: 100%;
         padding: 0 $mobile-frame-horizontal-padding;
@@ -73,7 +66,6 @@ section.content {
         font-weight: normal;
         letter-spacing: 1.5px;
         font-size: 17px;
-
         .template,
         .submissions {
             padding: 10px 0;
@@ -82,25 +74,21 @@ section.content {
             color: #97A0BF;
             @include row-center;
         }
-
         .current-tab {
             border-bottom: 3px solid #97A0BF;
             font-weight: bold;
         }
     }
-
     section.template {
         width: 100%;
         padding: 0 $mobile-frame-horizontal-padding;
     }
-
     table.submissions {
         width: 100%;
         margin-left: auto;
         margin-right: auto;
         border-collapse: separate;
         padding: 0 $mobile-frame-horizontal-padding + 0.5rem;
-
         .title {
             font-weight: 500;
             color: #97A0BF;
@@ -109,35 +97,29 @@ section.content {
             letter-spacing: 1.5px;
             padding-bottom: 10px;
         }
-
         .recipient {
             width: 100%;
             height: 40px;
             @include row-center;
             justify-content: space-between;
-
             .name {
                 font-size: 16px;
                 width: 50%;
                 @include row-center;
                 justify-content: flex-start;
                 color: $color-grey-1;
-
                 i.fa-circle {
                     font-size: 30px;
                     margin-right: 10px;
                 }
             }
-
             .information {
                 display: none;
             }
-
             .view-submission {
                 width: 50%;
                 @include row-center;
                 justify-content: flex-end;
-
                 button {
                     background: transparent;
                     opacity: 1;
@@ -155,16 +137,13 @@ section.content {
 @include media(lg) {
     section.content {
         height: 100%;
-
         div.title {
             font-size: 2.2rem;
-            padding: 0 100px 20px 100px;
-
+            padding: 0 250px 20px 250px;
             h1 {
                 border-bottom: 1px solid #97A0BF;
                 justify-content: center;
                 padding: 0;
-
                 button {
                     position: absolute;
                     top: 5px;
@@ -174,30 +153,25 @@ section.content {
                     font-size: 12px;
                     padding: 0 1.75rem;
                     font-weight: normal;
-
                     i.fa-paper-plane {
                         display: none;
                     }
                 }
             }
         }
-
         section.document-tab {
             width: 95%;
-            padding: 0 100px;
+            padding: 0 250px;
             margin-top: 30px;
         }
-
         section.template {
-            padding: 0 100px;
+            padding: 0 250px;
         }
-
         table.submissions {
             width: 70%;
             margin-left: auto;
             margin-right: auto;
             padding: 0;
-
             .title {
                 font-weight: 500;
                 color: #97A0BF;
@@ -206,7 +180,6 @@ section.content {
                 letter-spacing: 1.5px;
                 padding-bottom: 10px;
             }
-
             .recipient {
                 width: 100%;
                 height: 40px;
@@ -215,20 +188,17 @@ section.content {
                 @include row-center;
                 justify-content: space-between;
                 padding: 0 10px;
-
                 .name {
                     font-size: 14px;
                     width: 30%;
                     @include row-center;
                     justify-content: flex-start;
                     color: $color-grey-1;
-
                     i.fa-circle {
                         font-size: 24px;
                         margin-right: 20px;
                     }
                 }
-
                 .information {
                     width: 30%;
                     @include row-center;
@@ -237,12 +207,10 @@ section.content {
                     font-weight: normal;
                     color: #B2B9D0;
                 }
-
                 .view-submission {
                     width: 40%;
                     @include row-center;
                     justify-content: flex-end;
-
                     button {
                         color: white;
                         opacity: 0;
@@ -252,7 +220,6 @@ section.content {
                         padding: 0 1.75rem;
                     }
                 }
-
                 &:hover {
                     .view-submission {
                         button {
