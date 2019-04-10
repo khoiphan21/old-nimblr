@@ -11,7 +11,7 @@ import { SimpleChange } from '@angular/core';
 
 const uuidv4 = require('uuid/v4');
 
-describe('BlockTextComponent', () => {
+fdescribe('BlockTextComponent', () => {
   let component: BlockTextComponent;
   let fixture: ComponentFixture<BlockTextComponent>;
   let blockFactoryService: BlockFactoryService;
@@ -81,7 +81,7 @@ describe('BlockTextComponent', () => {
       expect(component.value).toBe('1234');
     });
 
-    describe('when focusBlockId is defined', () => {
+    describe('when focusBlockId is defined -', () => {
       it('should call changeDetector if focusBlockId has the block id', () => {
         component.ngOnChanges({
           focusBlockId: new SimpleChange(
@@ -91,12 +91,43 @@ describe('BlockTextComponent', () => {
         expect(changeDetectorSpy).toHaveBeenCalled();
       });
 
-      it('should focus on the element if focusBlockId has the block id', () => {
-        component.ngOnChanges({
-          focusBlockId: new SimpleChange(null, block.id + '1234', false)
+      describe('with the same block id -', () => {
+        let textBlock;
+        const input = {
+            type: BlockType.TEXT,
+            documentId: uuidv4(),
+            lastUpdatedBy: uuidv4(),
+            value: 'test'
+        };
+        beforeEach(() => {
+          textBlock = blockFactoryService.createAppBlock(input);
         });
-        const element = document.getElementById(block.id);
-        expect(document.activeElement === element).toBe(true);
+
+        it('should focus on the element', () => {
+          component.ngOnChanges({
+            focusBlockId: new SimpleChange(null, block.id + '1234', false)
+          });
+          const element = document.getElementById(block.id);
+          expect(document.activeElement === element).toBe(true);
+        });
+
+        fit('should focus on the end of the text if there is value', () => {
+          component.block = textBlock;
+          component.ngOnInit();
+          component.ngOnChanges({
+            focusBlockId: new SimpleChange(block.id, block.id + '1234', true)
+          });
+          const offset = window.getSelection().focusOffset;
+          expect(offset).toBe(1);
+        });
+
+        it('should focus on the beginning if there is no value', () => {
+          component.ngOnChanges({
+            focusBlockId: new SimpleChange(null, block.id + '1234', false)
+          });
+          const offset = window.getSelection().focusOffset;
+          expect(offset).toBe(0);
+        });
       });
 
       it('should not do anything if focusBlockId does not have the block id', () => {
@@ -145,7 +176,6 @@ describe('BlockTextComponent', () => {
 
   });
 
-  // TODO: Test this
   /* tslint:disable:no-string-literal */
   describe('updateValue', () => {
     let blockCommandSpy: jasmine.Spy;
@@ -206,6 +236,8 @@ describe('BlockTextComponent', () => {
 
   describe('onBackSpaceAndEmptyTextbox()', () => {
     beforeEach(() => {
+      event = new KeyboardEvent('keydown', {key: 'Enter'});
+      document.dispatchEvent(event);
       const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
       component.block = factory.createNewTextBlock({
         documentId: uuidv4(),
@@ -228,7 +260,16 @@ describe('BlockTextComponent', () => {
       component.onBackSpaceAndEmptyTextbox();
       expect(component.deleteEvent.emit).not.toHaveBeenCalled();
     });
+  });
 
+  it('createTextBlockOnEnter() - should emit the correct blockType', done => {
+    event = new KeyboardEvent('keydown', {key: 'Backspace'});
+    document.dispatchEvent(event);
+    component.createBlock.subscribe(type => {
+      expect(type).toEqual(BlockType.TEXT);
+      done();
+    });
+    component.createTextBlockOnEnter();
   });
 
 });

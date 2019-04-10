@@ -12,6 +12,7 @@ import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
+import { BlockType } from 'src/API';
 
 @Component({
   selector: 'app-block-text',
@@ -29,6 +30,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   @Input() focusBlockId: string;
 
   @Output() deleteEvent = new EventEmitter<string>();
+  @Output() createBlock = new EventEmitter<BlockType>();
 
   constructor(
     private blockCommandService: BlockCommandService,
@@ -52,7 +54,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
       if (!focus.currentValue) {
         return;
       }
-
       if (focus.currentValue.includes(this.block.id)) {
         // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
         this.changeDetector.detectChanges();
@@ -65,9 +66,10 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   setCaretToEnd() {
-    event.stopImmediatePropagation();
     const element = document.getElementById(this.block.id);
     element.focus();
+    console.log(this.value);
+    console.log(window.getSelection());
     if (this.value) {
       window.getSelection().setPosition(element, 1);
     } else {
@@ -106,5 +108,10 @@ export class BlockTextComponent implements OnInit, OnChanges {
       this.deleteEvent.emit(this.block.id);
       event.preventDefault();
     }
+  }
+
+  createTextBlockOnEnter() {
+    this.createBlock.emit(BlockType.TEXT);
+    event.preventDefault();
   }
 }
