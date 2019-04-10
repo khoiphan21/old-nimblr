@@ -112,6 +112,11 @@ export class BlockCommandService {
   // Why do you need `CreateBlockInput`
   // createBlock(input: CreateBlockInput | CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
   createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
+    // reset the input's version to a new value
+    input.version = uuidv4();
+
+    this.versionService.registerVersion(input.version);
+
     switch (input.type) {
       case BlockType.TEXT:
         return this.createTextBlock(input);

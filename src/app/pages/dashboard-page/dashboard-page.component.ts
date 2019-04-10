@@ -46,7 +46,6 @@ export class DashboardPageComponent implements OnInit {
       lastUpdatedBy: user.id,
       sharingStatus: SharingStatus.PRIVATE
     };
-    console.log(user.id);
     const document = await this.documentCommandService.createDocument(input);
     this.router.navigate([`/document/${document.id}`]);
   }

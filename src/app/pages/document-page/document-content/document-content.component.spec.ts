@@ -281,6 +281,7 @@ describe('DocumentContentComponent', () => {
     let user: User;
     let userFactory: UserFactoryService;
     let blockCommandSpy: jasmine.Spy;
+    let blockQuerySpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
     beforeEach(() => {
@@ -299,6 +300,9 @@ describe('DocumentContentComponent', () => {
       component['currentUser'] = user;
       component.blockIds = [];
       component.documentId = document.id;
+
+      // Setup all the spies
+      blockQuerySpy = spyOn(component['blockQueryService'], 'registerBlockCreatedByUI');
 
       blockCommandSpy = spyOn(component['blockCommandService'], 'createBlock');
       blockCommandSpy.and.returnValue(Promise.resolve());
@@ -319,6 +323,9 @@ describe('DocumentContentComponent', () => {
     });
 
     function testInteractionWithOtherClasses() {
+      it('should register the created block to the BlockQueryService', () => {
+        expect(blockQuerySpy).toHaveBeenCalledWith(block);
+      });
       it('should call to create a new block to GraphQL', () => {
         expect(blockCommandSpy).toHaveBeenCalledWith(block);
       });

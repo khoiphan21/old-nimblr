@@ -151,6 +151,10 @@ describe('BlockQueryService', () => {
       });
     });
 
+    it('should not notify when the version is stored', () => {
+      fail('to be implemented');
+    });
+
     it('should notify an error if there is an issue processing raw', done => {
       // Setup the factory spy to throw an error
       const errorMessage = 'test error';
@@ -264,6 +268,27 @@ describe('BlockQueryService', () => {
       backendSubject.error(message);
     });
 
+  });
+
+  describe('registerBlockCreatedByUI', () => {
+    let block: Block;
+    let factory: BlockFactoryService;
+
+    beforeEach(() => {
+      factory = TestBed.get(BlockFactoryService);
+      block = factory.createAppBlock(mockBlock);
+    });
+
+    it('should store the block in the internal map', done => {
+      service.registerBlockCreatedByUI(block);
+      service.getBlock$(id).subscribe(storedBlock => {
+        if (storedBlock === null) {
+          fail('stored block must have a value'); done();
+        }
+        expect(storedBlock.id).toEqual(id);
+        done();
+      }, () => fail('error getting stored block'));
+    });
   });
 
   describe('registerBlockDeletedByUI', () => {

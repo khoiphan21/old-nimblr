@@ -170,6 +170,10 @@ export class DocumentContentComponent implements OnInit {
         default:
           throw Error(`BlockType "${type}" is not supported`);
       }
+      // register it to the BlockQueryService so that the backend notification
+      // will be ignored
+      this.blockQueryService.registerBlockCreatedByUI(block);
+
       // Update the block to be focused on
       this.focusBlockId = block.id;
       // update the list of block IDs to be displayed
@@ -179,6 +183,7 @@ export class DocumentContentComponent implements OnInit {
       } else {
         this.blockIds.push(block.id);
       }
+      console.log('before calling backend');
       // create a new block in backend with BlockCommandService
       await this.blockCommandService.createBlock(block);
       // Update the document in the backend

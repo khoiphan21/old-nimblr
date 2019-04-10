@@ -61,7 +61,6 @@ export class DocumentService {
       });
     }
     const documents: Array<any> = response.items;
-    console.log(documents);
 
     // Convert the raw documents into Document objects
     const parsedDocuments: Array<Document> = documents.map(

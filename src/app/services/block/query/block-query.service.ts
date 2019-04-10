@@ -5,19 +5,20 @@ import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockFactoryService } from '../factory/block-factory.service';
 import { getBlock, listBlocks } from '../../../../graphql/queries';
 import { onUpdateBlockInDocument } from '../../../../graphql/subscriptions';
+import { VersionService } from '../../version.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlockQueryService {
 
-  private myVersions: Set<string> = new Set();
   private blocksMap: Map<string, BehaviorSubject<Block>> = new Map();
   private subscriptionMap: Map<string, Observable<Subscription>> = new Map();
 
   constructor(
     private graphQlService: GraphQLService,
-    private blockFactoryService: BlockFactoryService
+    private blockFactoryService: BlockFactoryService,
+    private versionService: VersionService
   ) { }
 
   getBlock$(id: string): Observable<Block> {
@@ -49,7 +50,7 @@ export class BlockQueryService {
       const block: Block = this.blockFactoryService.createAppBlock(data);
       // This is needed for when called by getBlocksForDocument
       this.blocksMap.set(block.id, block$);
-      if (!this.myVersions.has(block.version)) {
+      if (!this.versionService.checkAndDelete(block.version)) {
         // To ensure only other versions will be updated
         block$.next(block);
       }
@@ -127,6 +128,12 @@ export class BlockQueryService {
     }
 
     // This is needed for when called by getBlocksForDocument
+    this.blocksMap.set(block.id, block$);
+    block$.next(block);
+  }
+
+  registerBlockCreatedByUI(block: Block) {
+    const block$ = new BehaviorSubject<Block>(null);
     this.blocksMap.set(block.id, block$);
     block$.next(block);
   }

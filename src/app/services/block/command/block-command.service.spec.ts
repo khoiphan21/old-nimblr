@@ -229,6 +229,13 @@ describe('BlockCommandService', () => {
       });
     });
 
+    it('should set a new version', () => {
+      fail('to be tested');
+    });
+
+    it('should call the VersionService to register the created block version', () => {
+      fail('to be tested');
+    });
     describe('TextBlock -', () => {
       beforeEach(() => {
         graphQlSpy.and.returnValue(Promise.resolve(textBlockBackendResponse));
