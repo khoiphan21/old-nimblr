@@ -35,7 +35,6 @@ export class BlockFactoryService {
   }
 
   createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
-    // TODO: @bruno tbt
     const newInput: HeaderBlockInput = {
       id: uuidv4(),
       version: uuidv4(),

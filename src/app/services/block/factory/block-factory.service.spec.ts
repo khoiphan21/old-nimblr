@@ -52,8 +52,7 @@ describe('BlockFactoryService', () => {
     // no need to check for other properties as they are validated within the class
   });
 
-  fdescribe('createNewHeaderBlock()', () => {
-    // TODO: @bruno tbt
+  describe('createNewHeaderBlock()', () => {
     let block: HeaderBlock;
 
     beforeEach(() => {
@@ -68,7 +67,7 @@ describe('BlockFactoryService', () => {
       expect(block instanceof HeaderBlock).toBeTruthy();
     });
 
-    it('should register the textblocktype', () => {
+    it('should have textblocktype of HEADER type', () => {
       expect(block.textblocktype).toEqual(TextBlockType.HEADER);
     });
   });
