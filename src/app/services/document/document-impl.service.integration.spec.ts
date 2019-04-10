@@ -5,14 +5,14 @@ import { AccountService } from '../account/account.service';
 import { ServicesModule } from 'src/app/modules/services.module';
 
 import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
-import { DocumentImpl } from 'src/app/classes/document-impl';
+import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { createDocument, deleteDocument } from '../../../graphql/mutations';
 import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../API';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { User } from 'src/app/classes/user';
 import { DocumentCommandService } from './command/document-command.service';
 
@@ -56,7 +56,7 @@ describe('(Integration) DocumentService', () => {
       return graphQlService.query(createDocument, { input });
     }).then(response => {
       document = response.data.createDocument;
-      return getFirstDocumentSet(service);
+      return getFirstDocumentSet();
     }).then(documents => {
       expect(documents.length).toBeGreaterThan(0);
       expect(documents[0] instanceof DocumentImpl).toBe(true);
@@ -64,7 +64,7 @@ describe('(Integration) DocumentService', () => {
     }).then(() => done()
     ).catch(error => processTestError('failed to retrieve docs', error, done));
 
-    function getFirstDocumentSet(service: DocumentService): Promise<Array<Document>> {
+    function getFirstDocumentSet(): Promise<Array<Document>> {
       return new Promise((resolve, reject) => {
         const subscription = service.getUserDocuments$();
         subscription.pipe(skip(1)).pipe(take(1)).subscribe(documents => {

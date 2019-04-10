@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 
 @Component({
   selector: 'app-document-card',

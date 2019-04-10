@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DocumentService } from '../document/document.service';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Document } from '../../classes/document';
+import { Document } from '../../classes/document/document';
 import { NavigationTabDocument } from '../../classes/navigation-tab';
 import { DocumentQueryService } from '../document/query/document-query.service';
 import { AccountService } from '../account/account.service';
