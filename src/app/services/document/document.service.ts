@@ -45,9 +45,13 @@ export class DocumentService {
 
     // Retrieve the list of raw documents from the backend
     try {
-      response = await this.graphQlService.query(
-        listDocuments, queryArgs
-      );
+      response = await this.graphQlService.list({
+        query: listDocuments,
+        queryName: 'listDocuments',
+        params: queryArgs,
+        listAll: true,
+        limit: 100
+      });
     } catch (error) {
       throw new GraphQLError({
         message: `failed to retrieve documents for user ${userId}`,
@@ -56,7 +60,8 @@ export class DocumentService {
         backendResponse: error
       });
     }
-    const documents: Array<any> = response.data.listDocuments.items;
+    const documents: Array<any> = response.items;
+    console.log(documents);
 
     // Convert the raw documents into Document objects
     const parsedDocuments: Array<Document> = documents.map(

@@ -49,7 +49,7 @@ describe('BlockComponent', () => {
   });
 
   /* tslint:disable:no-string-literal */
-  fdescribe('ngOnInit()', () => {
+  describe('ngOnInit()', () => {
     let block: Block;
     let getBlockSpy: jasmine.Spy;
     let subject: Subject<any>;
@@ -62,7 +62,7 @@ describe('BlockComponent', () => {
       getBlockSpy.and.returnValue(subject);
     });
 
-    fit('should set the block into the given value if it is not empty', () => {
+    it('should set the block into the given value if it is not empty', () => {
       component.ngOnInit();
       subject.next(block);
       expect(component.block).toEqual(block);

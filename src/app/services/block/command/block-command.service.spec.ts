@@ -68,6 +68,23 @@ describe('BlockCommandService', () => {
       });
     });
 
+    it('should set a new version', async () => {
+      // Updating text block
+      await service.updateBlock(textInput);
+      let version = graphQlSpy.calls.mostRecent().args[1].input.version;
+      expect(version).not.toEqual(textInput.version);
+      // Updating question block
+      await service.updateBlock(questionInput);
+      version = graphQlSpy.calls.mostRecent().args[1].input.version;
+      expect(version).not.toEqual(questionInput.version);
+    });
+
+    it('should register the version to the VersionService', () => {
+      service.updateBlock(textInput);
+      const version = graphQlSpy.calls.mostRecent().args[1].input.version;
+      expect(service['versionService'].checkAndDelete(version)).toBe(true);
+    });
+
     describe('TextBlock -', () => {
       beforeEach(() => {
         graphQlSpy.and.returnValue(Promise.resolve(textBlockBackendResponse));

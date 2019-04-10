@@ -208,7 +208,7 @@ describe('DocumentCommandService', () => {
 
       it('should use a new version', async () => {
         service.updateDocument(updatedInput);
-        expect(querySpy.calls.mostRecent().args[1].input.version).not.toEqual(updatedInput.version);
+        expect(querySpy.calls.mostRecent().args[1].input.version).not.toEqual(version);
       });
 
       it('should use a new updatedAt', async () => {

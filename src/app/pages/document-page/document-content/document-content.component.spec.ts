@@ -209,93 +209,62 @@ describe('DocumentContentComponent', () => {
       component['retrieveDocumentData']();
     });
 
-    it('should call getDocument$() with the id from route', done => {
-      setTimeout(() => {
-        expect(getDocumentSpy.calls.mostRecent().args[0]).toBe(id);
-        done();
-      }, 5);
+    it('should call getDocument$() with the id from route', () => {
+      expect(getDocumentSpy.calls.mostRecent().args[0]).toBe(id);
     });
 
-    it('should not update the properties if the version is stored', done => {
-      versionService.registerVersion(document.version);
-      component['retrieveDocumentData']();
+    it('should not update the properties if the version is stored', () => {
+      component['versionService'].registerVersion(document.version);
       spyOn<any>(component, 'updateStoredProperties');
       // now emit and check
       getDocument$.next(document);
-      setTimeout(() => {
-        expect(component['updateStoredProperties']).not.toHaveBeenCalled();
-        done();
-      }, 3);
+      expect(component['updateStoredProperties']).not.toHaveBeenCalled();
     });
 
-    it('should call setupBlockUpdateSubscription() when notified', done => {
+    it('should call setupBlockUpdateSubscription() when notified', () => {
       getDocument$.next(document);
-      setTimeout(() => {
-        expect(setupSubscriptionSpy.calls.count()).toBe(1);
-        done();
-      }, 3);
+      expect(setupSubscriptionSpy.calls.count()).toBe(1);
     });
 
     describe('(storing values)', () => {
 
-      it('should store into documentId', done => {
+      it('should store into documentId', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.documentId).toEqual(document.id);
-          done();
-        }, 3);
+        expect(component.documentId).toEqual(document.id);
       });
 
-      it('should store into documentType', done => {
+      it('should store into documentType', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.documentType).toEqual(document.type);
-          done();
-        }, 3);
+        expect(component.documentType).toEqual(document.type);
       });
 
-      it('should store into blockIds', done => {
+      it('should store into blockIds', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.blockIds).toEqual(document.blockIds);
-          done();
-        }, 3);
+        expect(component.blockIds).toEqual(document.blockIds);
       });
 
-      it('should store into docTitle', done => {
+      it('should store into docTitle', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.docTitle).toEqual(document.title);
-          done();
-        }, 3);
+        expect(component.docTitle).toEqual(document.title);
       });
-      it('should store into currentSharingStatus', done => {
+      it('should store into currentSharingStatus', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.currentSharingStatus).toEqual(document.sharingStatus);
-          done();
-        }, 3);
+        expect(component.currentSharingStatus).toEqual(document.sharingStatus);
       });
 
     });
 
-    it('should set isDocumentReady to be true', done => {
+    it('should set isDocumentReady to be true', () => {
       getDocument$.next(document);
-      setTimeout(() => {
-        expect(component.isDocumentReady).toBe(true);
-        done();
-      }, 3);
+      expect(component.isDocumentReady).toBe(true);
     });
 
-    it('should not do anything if document returned is null', done => {
+    it('should not do anything if document returned is null', () => {
       getDocument$.next(null);
-      setTimeout(() => {
-        expect(setupSubscriptionSpy.calls.count()).toBe(0);
-        done();
-      }, 3);
+      expect(setupSubscriptionSpy.calls.count()).toBe(0);
     });
 
-    it('should log the error received', done => {
+    it('should log the error received', () => {
       // Setup the spy on console
       const consoleSpy = spyOn(console, 'error');
       // setup the document to throw an error
@@ -303,7 +272,6 @@ describe('DocumentContentComponent', () => {
       getDocument$.error(mockError);
       const message = `DocumentPage failed to get document: ${mockError.message}`;
       expect(consoleSpy).toHaveBeenCalledWith(message);
-      done();
     });
   });
 

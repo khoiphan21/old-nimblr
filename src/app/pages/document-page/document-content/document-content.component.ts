@@ -115,6 +115,7 @@ export class DocumentContentComponent implements OnInit {
     }, error => {
       console.error(`DocumentPage failed to get document: ${error.message}`);
     });
+
   }
 
   private updateStoredProperties(document: Document) {
@@ -217,12 +218,10 @@ export class DocumentContentComponent implements OnInit {
   }
 
   changeSharingStatus(status: SharingStatus) {
-    const version = uuidv4();
     this.currentSharingStatus = status;
 
     this.documentCommandService.updateDocument({
       id: this.documentId,
-      version,
       sharingStatus: this.currentSharingStatus,
       lastUpdatedBy: this.currentUser.id
     });
