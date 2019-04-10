@@ -4,10 +4,9 @@ import { Document } from '../../classes/document/document';
 import { AccountService } from '../account/account.service';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { User } from '../../classes/user';
-import { DocumentType } from '../../../API';
 import { DocumentFactoryService } from './factory/document-factory.service';
 import { listDocuments } from 'src/graphql/queries';
-import { createDocument, deleteDocument } from 'src/graphql/mutations';
+import { deleteDocument } from 'src/graphql/mutations';
 import { onCreateDocument } from 'src/graphql/subscriptions';
 import { GraphQLError } from '../graphQL/error';
 
@@ -45,9 +44,13 @@ export class DocumentService {
 
     // Retrieve the list of raw documents from the backend
     try {
-      response = await this.graphQlService.query(
-        listDocuments, queryArgs
-      );
+      response = await this.graphQlService.list({
+        query: listDocuments,
+        queryName: 'listDocuments',
+        params: queryArgs,
+        listAll: true,
+        limit: 100
+      });
     } catch (error) {
       throw new GraphQLError({
         message: `failed to retrieve documents for user ${userId}`,
@@ -56,7 +59,7 @@ export class DocumentService {
         backendResponse: error
       });
     }
-    const documents: Array<any> = response.data.listDocuments.items;
+    const documents: Array<any> = response.items;
 
     // Convert the raw documents into Document objects
     const parsedDocuments: Array<Document> = documents.map(

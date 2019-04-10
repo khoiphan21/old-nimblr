@@ -8,6 +8,7 @@ import { QuestionType, BlockType } from 'src/API';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { RouterTestingModule } from '@angular/router/testing';
 const uuidv4 = require('uuid/v4');
 describe('MobileQuestionBlockComponent', () => {
   let component: MobileQuestionBlockComponent;
@@ -34,7 +35,8 @@ describe('MobileQuestionBlockComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        RouterTestingModule.withRoutes([])
       ]
     });
   });
