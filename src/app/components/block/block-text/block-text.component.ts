@@ -34,9 +34,8 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   constructor(
     private blockCommandService: BlockCommandService,
-    private factoryService: BlockFactoryService,
-    private changeDetector: ChangeDetectorRef
-  ) {}
+    private factoryService: BlockFactoryService
+  ) { }
 
   ngOnInit() {
     this.setValue(this.block.value);
@@ -46,18 +45,15 @@ export class BlockTextComponent implements OnInit, OnChanges {
     this.value = value ? value : '';
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    // NOTE: call this AFTER setting all values first due to the call to
-    // detectChanges()
+  async ngOnChanges(changes: SimpleChanges) {
     const focus = changes.focusBlockId;
+
     if (focus) {
       if (!focus.currentValue) {
         return;
       }
       if (focus.currentValue.includes(this.block.id)) {
-        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
-        this.changeDetector.detectChanges();
-        this.setCaretToEnd();
+        await this.setCaretToEnd();
       }
     } else if (changes.block) {
       const newBlock = changes.block.currentValue;
@@ -65,16 +61,24 @@ export class BlockTextComponent implements OnInit, OnChanges {
     }
   }
 
-  setCaretToEnd() {
-    const element = document.getElementById(this.block.id);
-    element.focus();
-    console.log(this.value);
-    console.log(window.getSelection());
-    if (this.value) {
-      window.getSelection().setPosition(element, 1);
-    } else {
-      window.getSelection().setPosition(element, 0);
-    }
+  async setCaretToEnd() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          const element = document.getElementById(this.block.id);
+          element.focus();
+          if (this.value) {
+            window.getSelection().setPosition(element, 1);
+          } else {
+            window.getSelection().setPosition(element, 0);
+          }
+          resolve();
+
+        } catch (error) {
+          reject(Error('Failed to set caret: element does not exist'));
+        }
+      });
+    });
   }
 
   async updateValue(): Promise<Block> {
@@ -103,14 +107,14 @@ export class BlockTextComponent implements OnInit, OnChanges {
     this.isPlaceholderShown = status;
   }
 
-  onBackSpaceAndEmptyTextbox() {
+  onBackSpaceAndEmptyTextbox(event: Event) {
     if (this.value === '') {
       this.deleteEvent.emit(this.block.id);
       event.preventDefault();
     }
   }
 
-  createTextBlockOnEnter() {
+  createTextBlockOnEnter(event: Event) {
     this.createBlock.emit(BlockType.TEXT);
     event.preventDefault();
   }

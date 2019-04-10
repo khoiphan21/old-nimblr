@@ -2,6 +2,7 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 .content {
+    z-index: 1;
     .text-input {
         padding: 7.5px 0;
     }
