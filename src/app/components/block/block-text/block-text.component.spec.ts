@@ -11,7 +11,7 @@ import { SimpleChange } from '@angular/core';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('BlockTextComponent', () => {
+describe('BlockTextComponent', () => {
   let component: BlockTextComponent;
   let fixture: ComponentFixture<BlockTextComponent>;
   let blockFactoryService: BlockFactoryService;
