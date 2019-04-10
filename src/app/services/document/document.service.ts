@@ -4,10 +4,9 @@ import { Document } from '../../classes/document/document';
 import { AccountService } from '../account/account.service';
 import { GraphQLService } from '../graphQL/graph-ql.service';
 import { User } from '../../classes/user';
-import { DocumentType } from '../../../API';
 import { DocumentFactoryService } from './factory/document-factory.service';
 import { listDocuments } from 'src/graphql/queries';
-import { createDocument, deleteDocument } from 'src/graphql/mutations';
+import { deleteDocument } from 'src/graphql/mutations';
 import { onCreateDocument } from 'src/graphql/subscriptions';
 import { GraphQLError } from '../graphQL/error';
 

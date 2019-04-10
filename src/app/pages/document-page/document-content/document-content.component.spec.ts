@@ -214,6 +214,7 @@ describe('DocumentContentComponent', () => {
     });
 
     it('should not update the properties if the version is stored', () => {
+      spyOn<any>(component['versionService'], 'subscribeToRouter');
       component['versionService'].registerVersion(document.version);
       spyOn<any>(component, 'updateStoredProperties');
       // now emit and check

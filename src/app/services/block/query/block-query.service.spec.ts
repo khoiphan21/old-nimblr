@@ -9,6 +9,7 @@ import { BlockFactoryService } from '../factory/block-factory.service';
 import { processTestError } from '../../../classes/test-helpers.spec';
 import { MockAPIDataFactory } from '../../graphQL/mockData';
 import { getBlock } from '../../../../graphql/queries';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const uuidv4 = require('uuid/v4');
 
@@ -23,7 +24,11 @@ describe('BlockQueryService', () => {
   let backendSubject: Subject<any>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
     service = TestBed.get(BlockQueryService);
 
     // Setup testing data
