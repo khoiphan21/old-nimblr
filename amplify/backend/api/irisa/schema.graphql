@@ -23,7 +23,6 @@ type Document @model {
   # Properties for TEMPLATE type
   submissionDocIds: [String]
   # Properties for the Submission Details section
-  isSubmission: Boolean
   recipientEmail: String
   submittedAt: String
   submissionStatus: SubmissionStatus
@@ -32,6 +31,7 @@ type Document @model {
 enum DocumentType {
   GENERIC
   TEMPLATE
+  SUBMISSION
 }
 
 enum SharingStatus {

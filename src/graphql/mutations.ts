@@ -117,7 +117,6 @@ export const createDocument = `mutation CreateDocument($input: CreateDocumentInp
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus
@@ -139,7 +138,6 @@ export const updateDocument = `mutation UpdateDocument($input: UpdateDocumentInp
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus
@@ -161,7 +159,6 @@ export const deleteDocument = `mutation DeleteDocument($input: DeleteDocumentInp
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus

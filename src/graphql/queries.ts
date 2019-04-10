@@ -45,7 +45,6 @@ export const getDocument = `query GetDocument($id: ID!) {
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus
@@ -72,7 +71,6 @@ export const listDocuments = `query ListDocuments(
       createdAt
       updatedAt
       submissionDocIds
-      isSubmission
       recipientEmail
       submittedAt
       submissionStatus
