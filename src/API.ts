@@ -15,16 +15,17 @@ export enum BlockType {
   QUESTION = "QUESTION",
 }
 
-export enum TextBlockType {
-  HEADER = "HEADER",
-}
-
 
 export enum QuestionType {
   PARAGRAPH = "PARAGRAPH",
   SHORT_ANSWER = "SHORT_ANSWER",
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
   CHECKBOX = "CHECKBOX",
+}
+
+
+export enum TextBlockType {
+  HEADER = "HEADER",
 }
 
 
@@ -36,6 +37,27 @@ export type UpdateTextBlockInput = {
   lastUpdatedBy: string,
   updatedAt: string,
   value?: string | null,
+};
+
+export type CreateHeaderBlockInput = {
+  id?: string | null,
+  version: string,
+  type: BlockType,
+  documentId: string,
+  lastUpdatedBy: string,
+  value?: string | null,
+  textblocktype: TextBlockType,
+};
+
+export type UpdateHeaderBlockInput = {
+  id: string,
+  version: string,
+  type?: BlockType | null,
+  documentId?: string | null,
+  lastUpdatedBy: string,
+  updatedAt: string,
+  value?: string | null,
+  textblocktype: TextBlockType,
 };
 
 export type CreateQuestionBlockInput = {
@@ -146,6 +168,7 @@ export type CreateBlockInput = {
   answers?: Array< string | null > | null,
   questionType?: QuestionType | null,
   options?: Array< string | null > | null,
+  textblocktype?: TextBlockType | null,
 };
 
 export type UpdateBlockInput = {
@@ -161,6 +184,7 @@ export type UpdateBlockInput = {
   answers?: Array< string | null > | null,
   questionType?: QuestionType | null,
   options?: Array< string | null > | null,
+  textblocktype?: TextBlockType | null,
 };
 
 export type DeleteBlockInput = {
@@ -247,6 +271,7 @@ export type ModelBlockFilterInput = {
   answers?: ModelStringFilterInput | null,
   questionType?: ModelQuestionTypeFilterInput | null,
   options?: ModelStringFilterInput | null,
+  textblocktype?: ModelTextBlockTypeFilterInput | null,
   and?: Array< ModelBlockFilterInput | null > | null,
   or?: Array< ModelBlockFilterInput | null > | null,
   not?: ModelBlockFilterInput | null,
@@ -260,6 +285,11 @@ export type ModelBlockTypeFilterInput = {
 export type ModelQuestionTypeFilterInput = {
   eq?: QuestionType | null,
   ne?: QuestionType | null,
+};
+
+export type ModelTextBlockTypeFilterInput = {
+  eq?: TextBlockType | null,
+  ne?: TextBlockType | null,
 };
 
 export type CreateTextBlockMutationVariables = {
@@ -281,6 +311,7 @@ export type CreateTextBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -303,6 +334,53 @@ export type UpdateTextBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
+  } | null,
+};
+
+export type CreateHeaderBlockMutationVariables = {
+  input: CreateHeaderBlockInput,
+};
+
+export type CreateHeaderBlockMutation = {
+  createHeaderBlock:  {
+    __typename: "Block",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
+  } | null,
+};
+
+export type UpdateHeaderBlockMutationVariables = {
+  input: UpdateHeaderBlockInput,
+};
+
+export type UpdateHeaderBlockMutation = {
+  updateHeaderBlock:  {
+    __typename: "Block",
+    id: string,
+    version: string | null,
+    type: BlockType | null,
+    documentId: string | null,
+    lastUpdatedBy: string | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    value: string | null,
+    question: string | null,
+    answers: Array< string | null > | null,
+    questionType: QuestionType | null,
+    options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -325,6 +403,7 @@ export type CreateQuestionBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -347,6 +426,7 @@ export type UpdateQuestionBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -486,6 +566,7 @@ export type CreateBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -508,6 +589,7 @@ export type UpdateBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -530,6 +612,7 @@ export type DeleteBlockMutation = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -642,6 +725,7 @@ export type GetBlockQuery = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -668,6 +752,7 @@ export type ListBlocksQuery = {
       answers: Array< string | null > | null,
       questionType: QuestionType | null,
       options: Array< string | null > | null,
+      textblocktype: TextBlockType | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -692,6 +777,7 @@ export type OnUpdateBlockInDocumentSubscription = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -826,6 +912,7 @@ export type OnCreateBlockSubscription = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -844,6 +931,7 @@ export type OnUpdateBlockSubscription = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };
 
@@ -862,5 +950,6 @@ export type OnDeleteBlockSubscription = {
     answers: Array< string | null > | null,
     questionType: QuestionType | null,
     options: Array< string | null > | null,
+    textblocktype: TextBlockType | null,
   } | null,
 };

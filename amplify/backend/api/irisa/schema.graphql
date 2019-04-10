@@ -48,6 +48,7 @@ type Block @model {
   answers: [String]
   questionType: QuestionType
   options: [String]
+  textblocktype: TextBlockType
 }
 
 enum BlockType {
@@ -62,11 +63,18 @@ enum QuestionType {
   CHECKBOX
 }
 
+enum TextBlockType{
+  HEADER
+}
+
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block
   updateTextBlock(input: UpdateTextBlockInput!): Block
+  createHeaderBlock(input: CreateHeaderBlockInput!): Block
+  updateHeaderBlock(input: UpdateHeaderBlockInput!): Block
   createQuestionBlock(input: CreateQuestionBlockInput!): Block
   updateQuestionBlock(input: UpdateQuestionBlockInput!): Block
+
 }
 
 type Subscription {
@@ -83,6 +91,26 @@ type Subscription {
     )
   onSpecificDocumentUpdate(id: ID!): Document
     @aws_subscribe(mutations: ["updateDocument"])
+}
+
+input CreateHeaderBlockInput {
+  id: ID
+  version: String!
+  type: BlockType!
+  documentId: String!
+  lastUpdatedBy: String!
+  value: String
+  textblocktype: TextBlockType!
+}
+input UpdateHeaderBlockInput {
+  id: ID!
+  version: String!
+  type: BlockType
+  documentId: String
+  lastUpdatedBy: String!
+  updatedAt: String!
+  value: String
+  textblocktype: TextBlockType!
 }
 
 input CreateTextBlockInput {
