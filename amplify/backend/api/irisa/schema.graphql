@@ -9,28 +9,40 @@ type User @model {
 
 type Document @model {
   id: ID!
-  version: String!
-  type: DocumentType!
-  ownerId: String!
-  lastUpdatedBy: String!
-  sharingStatus: SharingStatus!
+  version: String
+  type: DocumentType
+  ownerId: String
+  lastUpdatedBy: String
+  sharingStatus: SharingStatus
   title: String
   editorIds: [String]
   viewerIds: [String]
-  order: [String]
   blockIds: [String]
   createdAt: String
   updatedAt: String
+  # Properties for TEMPLATE type
+  submissionDocIds: [String]
+  # Properties for the Submission Details section
+  isSubmission: Boolean
+  recipientEmail: String
+  submittedAt: String
+  submissionStatus: SubmissionStatus
 }
 
 enum DocumentType {
   GENERIC
-  FORM_TEMPLATE
+  TEMPLATE
 }
 
 enum SharingStatus {
   PRIVATE
   PUBLIC
+}
+
+enum SubmissionStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
 }
 
 type Block @model {

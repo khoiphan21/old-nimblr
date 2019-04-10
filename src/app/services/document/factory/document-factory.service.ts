@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
-import { DocumentImpl } from '../../../classes/document-impl';
-import { Document } from 'src/app/classes/document';
-import { DocumentType } from 'src/API';
+import { DocumentImpl } from '../../../classes/document/document-impl';
+import { Document } from 'src/app/classes/document/document';
+import { DocumentType, UpdateDocumentInput } from 'src/API';
 import { CreateDocumentInput } from '../../../../API';
 import { isUuid } from '../../../classes/helpers';
+import { UserId } from 'src/app/classes/user';
 
-const uuidv5 = require('uuid/v5');
+const uuidv4 = require('uuid/v4');
+
+export interface NewDocumentInput {
+  ownerId: UserId;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +19,29 @@ export class DocumentFactoryService {
 
   constructor() { }
 
+  createNewDocument(input: NewDocumentInput): Document {
+    const newInput = input as any;
+
+    newInput.lastUpdatedBy = input.ownerId;
+
+    return new DocumentImpl(input);
+  }
+
+  createNewTemplateDocument(input: NewDocumentInput): Document {
+    const newInput = input as any;
+
+    // Set the default properties
+    newInput.type = DocumentType.TEMPLATE;
+    newInput.lastUpdatedBy = input.ownerId;
+
+    return new DocumentImpl(newInput);
+  }
+
   createDocument({
     id,
     ownerId,
     title = null,
-    version = 'NOT SET',
+    version = uuidv4(),
     type = DocumentType.GENERIC,
     editorIds = [],
     viewerIds = [],
@@ -34,8 +57,6 @@ export class DocumentFactoryService {
     };
 
     this.checkForNullOrUndefined(input);
-
-    if (version === 'NOT SET') { version = uuidv5(id, ownerId); }
 
     return new DocumentImpl(input);
   }

@@ -13,7 +13,7 @@ import { createDocument, deleteDocument } from 'src/graphql/mutations';
 import { take, skip } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { DocumentFactoryService } from './factory/document-factory.service';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 

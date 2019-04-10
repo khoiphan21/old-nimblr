@@ -22,6 +22,7 @@ describe('(Integration) DocumentQueryService', () => {
     version: uuidv4(),
     ownerId: uuidv4(),
     lastUpdatedBy: uuidv4(),
+    title: 'test title',
     sharingStatus: SharingStatus.PRIVATE,
     type: DocumentType.GENERIC
   };

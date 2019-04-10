@@ -29,10 +29,14 @@ export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
   }
 }
 `;
@@ -80,10 +84,14 @@ export const onCreateDocument = `subscription OnCreateDocument {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
   }
 }
 `;
@@ -98,10 +106,14 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
   }
 }
 `;
@@ -116,10 +128,14 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     title
     editorIds
     viewerIds
-    order
     blockIds
     createdAt
     updatedAt
+    submissionDocIds
+    isSubmission
+    recipientEmail
+    submittedAt
+    submissionStatus
   }
 }
 `;
