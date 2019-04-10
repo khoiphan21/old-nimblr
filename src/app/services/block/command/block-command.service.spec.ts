@@ -56,7 +56,7 @@ describe('BlockCommandService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('updateBlock', () => {
+  describe('updateBlock()', () => {
 
     it('should return an error if the type is not supported', done => {
       textInput.type = 'ABCD';
@@ -66,18 +66,6 @@ describe('BlockCommandService', () => {
         expect(error).toEqual('BlockType not supported');
         done();
       });
-    });
-
-    /* tslint:disable:no-string-literal */
-    it(`should store the updated block's version in the query service`, done => {
-      service.updateBlock(textInput).then(() => {
-        // The version must be stored
-        expect(service['blockQueryService']['myVersions']
-          .has(textInput.version)).toBe(true);
-        done();
-      }).catch(error =>
-        processTestError('unable to update block', error, done)
-      );
     });
 
     describe('TextBlock -', () => {
@@ -220,16 +208,6 @@ describe('BlockCommandService', () => {
         fail('error should be thrown'); done();
       }).catch(error => {
         expect(error).toEqual('BlockType not supported');
-        done();
-      });
-    });
-
-    /* tslint:disable:no-string-literal */
-    it(`should store the created block's version in the query service`, done => {
-      service.createBlock(textInput).then(() => {
-        // The version must be stored
-        expect(service['blockQueryService']['myVersions']
-          .has(textInput.version)).toBe(true);
         done();
       });
     });

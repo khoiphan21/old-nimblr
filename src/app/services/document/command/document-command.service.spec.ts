@@ -184,7 +184,7 @@ describe('DocumentCommandService', () => {
 
   });
 
-  describe('updateDocument', () => {
+  describe('updateDocument()', () => {
 
     /* tslint:disable:no-string-literal */
     describe('[SUCCESS]', () => {
@@ -200,18 +200,15 @@ describe('DocumentCommandService', () => {
         createdAt: new Date().toISOString()
       };
 
-      let registerSpy: jasmine.Spy;
-
       beforeEach(() => {
-        registerSpy = spyOn(service['queryService'], 'registerUpdateVersion');
         querySpy.and.returnValue(Promise.resolve({
           data: { updateDocument: null }
         }));
       });
 
       it('should use a new version', async () => {
-        await service.updateDocument(updatedInput);
-        expect(registerSpy.calls.mostRecent().args[0]).not.toEqual(version);
+        service.updateDocument(updatedInput);
+        expect(querySpy.calls.mostRecent().args[1].input.version).not.toEqual(updatedInput.version);
       });
 
       it('should use a new updatedAt', async () => {
@@ -235,10 +232,10 @@ describe('DocumentCommandService', () => {
         expect(querySpy.calls.mostRecent().args[1].input.createdAt).toBe(undefined);
       });
 
-      it('should call the query service to register the version', async () => {
-        await service.updateDocument(updatedInput);
-
-        expect(querySpy).toHaveBeenCalled();
+      it('should call the VersionService to store the version', () => {
+        service.updateDocument(updatedInput);
+        const v = querySpy.calls.mostRecent().args[1].input.version;
+        expect(service['versionService']['myVersions'].has(v)).toBe(true);
       });
 
       it('should return the updated document', async () => {

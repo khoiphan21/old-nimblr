@@ -89,10 +89,6 @@ export class BlockQueryService {
     return observables;
   }
 
-  registerUpdateVersion(version: string) {
-    this.myVersions.add(version);
-  }
-
   subscribeToUpdate(documentId: string): Observable<Subscription> {
     if (this.subscriptionMap.has(documentId)) {
       // If not empty:
@@ -132,19 +128,7 @@ export class BlockQueryService {
 
     // This is needed for when called by getBlocksForDocument
     this.blocksMap.set(block.id, block$);
-    if (!this.myVersions.has(block.version)) {
-      // To ensure only other versions will be updated
-      block$.next(block);
-    }
-  }
-
-  registerBlockCreatedByUI(block: Block) {
-    const block$ = new BehaviorSubject<Block>(null);
-    this.blocksMap.set(block.id, block$);
     block$.next(block);
-
-    // Register the version
-    this.registerUpdateVersion(block.version);
   }
 
   registerBlockDeletedByUI(blockId: string) {

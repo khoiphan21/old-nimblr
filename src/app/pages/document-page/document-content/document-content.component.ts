@@ -15,6 +15,7 @@ import { BlockId, Block } from 'src/app/classes/block/block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
+import { VersionService } from 'src/app/services/version.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -53,6 +54,7 @@ export class DocumentContentComponent implements OnInit {
     private blockCommandService: BlockCommandService,
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
+    private versionService: VersionService,
     private accountService: AccountService,
     private route: ActivatedRoute,
     private location: Location,
@@ -102,12 +104,9 @@ export class DocumentContentComponent implements OnInit {
       if (document === null) { return; }
       this.checkIsChildDocument();
 
-      // Update the values to be used in rendering
-      this.documentId = document.id;
-      this.documentType = document.type;
-      this.blockIds = document.blockIds;
-      this.docTitle = document.title;
-      this.currentSharingStatus = document.sharingStatus;
+      if (!this.versionService.checkAndDelete(document.version)) {
+        this.updateStoredProperties(document);
+      }
 
       // now set the flag for document ready to be true for rendering
       this.isDocumentReady = true;
@@ -116,6 +115,15 @@ export class DocumentContentComponent implements OnInit {
     }, error => {
       console.error(`DocumentPage failed to get document: ${error.message}`);
     });
+  }
+
+  private updateStoredProperties(document: Document) {
+    // Update the values to be used in rendering
+    this.documentId = document.id;
+    this.documentType = document.type;
+    this.blockIds = document.blockIds;
+    this.docTitle = document.title;
+    this.currentSharingStatus = document.sharingStatus;
   }
 
   private checkIsChildDocument() {
@@ -161,9 +169,6 @@ export class DocumentContentComponent implements OnInit {
         default:
           throw Error(`BlockType "${type}" is not supported`);
       }
-      // register it to the BlockQueryService so that the backend notification
-      // will be ignored
-      this.blockQueryService.registerBlockCreatedByUI(block);
       // Update the block to be focused on
       this.focusBlockId = block.id;
       // update the list of block IDs to be displayed
@@ -193,8 +198,11 @@ export class DocumentContentComponent implements OnInit {
     return new Promise((resolve, reject) => {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
+        const version = uuidv4();
+
         const input: UpdateDocumentInput = {
           id: this.documentId,
+          version,
           lastUpdatedBy: this.currentUser.id,
           title: this.docTitle
         };
@@ -209,9 +217,12 @@ export class DocumentContentComponent implements OnInit {
   }
 
   changeSharingStatus(status: SharingStatus) {
+    const version = uuidv4();
     this.currentSharingStatus = status;
+
     this.documentCommandService.updateDocument({
       id: this.documentId,
+      version,
       sharingStatus: this.currentSharingStatus,
       lastUpdatedBy: this.currentUser.id
     });
@@ -253,7 +264,6 @@ export class DocumentContentComponent implements OnInit {
       // Now move the focus on the previous block
       // The uuidv4() call is needed to make sure it changes
       this.focusBlockId = `${blockIds[index - 1]}-${uuidv4()}`;
-      // Update the version
 
       const updatePromise = this.documentCommandService.updateDocument({
         id: this.documentId,
@@ -278,6 +288,7 @@ export class DocumentContentComponent implements OnInit {
   async saveAsTemplate() {
     // update the stored document type
     this.documentType = DocumentType.TEMPLATE;
+
     // send update for the document's type to GraphQL
     const input: UpdateDocumentInput = {
       id: this.documentId,

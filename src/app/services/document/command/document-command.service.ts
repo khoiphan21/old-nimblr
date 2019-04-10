@@ -4,6 +4,7 @@ import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { createDocument, updateDocument } from '../../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
 import { DocumentQueryService } from '../query/document-query.service';
+import { VersionService } from '../../version.service';
 
 export type UUID = string;
 export type ISOTimeString = string;
@@ -17,7 +18,7 @@ export class DocumentCommandService {
 
   constructor(
     private graphQlService: GraphQLService,
-    private queryService: DocumentQueryService
+    private versionService: VersionService
   ) { }
 
   async createDocument(input: CreateDocumentInput): Promise<any> {
@@ -71,17 +72,17 @@ export class DocumentCommandService {
   async updateDocument(input: UpdateDocumentInput): Promise<any> {
     try {
       // Automatically set some properties to prevent accidental values
-      input.version = uuidv4(); // Must be new every time
+      input.version = uuidv4(); // a new version
       input.updatedAt = new Date().toISOString(); // The most recent time
       delete input.createdAt; // This should not be updated
+
+      // Now tell the VersionService to register this version
+      this.versionService.registerVersion(input.version);
 
       // Convert title to null if empty string
       input.title = input.title === '' ? null : input.title;
 
       this.validateUpdateInput(input);
-
-      // Update the list of versions to be ignored
-      this.queryService.registerUpdateVersion(input.version);
 
       const response: any = await this.graphQlService.query(updateDocument, { input });
       return response.data.updateDocument;

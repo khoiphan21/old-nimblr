@@ -61,8 +61,6 @@ export class BlockCommandService {
       // Now do a convert for empty string in 'value'
       input.value = input.value === '' ? null : input.value;
 
-      this.blockQueryService.registerUpdateVersion(input.version);
-
       return this.graphQLService.query(updateTextBlock, { input });
     } catch (error) {
       return Promise.reject(error);
@@ -79,8 +77,6 @@ export class BlockCommandService {
       // Now do a convert for empty string in 'question'
       input.question = input.question === '' ? null : input.question;
       input.options = this.cleanQuestionOptions(input.options);
-
-      this.blockQueryService.registerUpdateVersion(input.version);
 
       return this.graphQLService.query(updateQuestionBlock, { input });
     } catch (error) {
@@ -132,8 +128,6 @@ export class BlockCommandService {
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 
-      this.blockQueryService.registerUpdateVersion(input.version);
-
       // Now do a convert for empty string in 'value'
       input.value = input.value === '' ? null : input.value;
 
@@ -160,8 +154,6 @@ export class BlockCommandService {
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateQuestionBlockInput');
-
-      this.blockQueryService.registerUpdateVersion(input.version);
 
       input.question = input.question === '' ? null : input.question;
       input.options = this.cleanQuestionOptions(input.options);

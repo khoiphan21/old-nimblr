@@ -12,14 +12,6 @@ import { getBlock } from '../../../../graphql/queries';
 
 const uuidv4 = require('uuid/v4');
 
-export class MockBlockQueryService {
-  getBlock$(_: string) { return new Subject(); }
-  getBlocksForDocument(_: string) { return new Promise((___, __) => { }); }
-  registerUpdateVersion(_: string) { }
-  subscribeToUpdate(_: string) { return new Promise((___, __) => { }); }
-  registerBlockCreatedByUI(_: Block) { }
-}
-
 /* tslint:disable:no-string-literal */
 describe('BlockQueryService', () => {
   let service: BlockQueryService;
@@ -159,45 +151,6 @@ describe('BlockQueryService', () => {
       });
     });
 
-    it('should not notify if the received version is in myVersions', done => {
-      const version = uuidv4();
-      // Setup the supposedly 'updated' block
-      const input = {
-        id, documentId, version,
-        lastUpdatedBy: uuidv4(),
-        updatedAt: new Date().toISOString(),
-        value: '(block for testing) new value: ' + Math.random()
-      };
-      // generate and remap the factory default basic response
-      const response = {
-        value: {
-          data: {
-            onUpdateBlockInDocument: MockAPIDataFactory.createBlock(input)
-          }
-        }
-      };
-      // Setup code to test subscription
-      service.subscribeToUpdate(documentId);
-
-      service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
-        // time out is needed to make sure the first notification is received
-        setTimeout(() => {
-          // Register a version into the service
-          service.registerUpdateVersion(version);
-          backendSubject.next(response);
-        }, 50);
-        // Set time out: if no notification received then automatically passes
-        setTimeout(() => {
-          done();
-        }, 100);
-      });
-      service.getBlock$(id).pipe(skip(2)).pipe(take(1)).subscribe(() => {
-        // should fail if a 3rd notification is received
-        fail('should not have notified the 3rd time');
-        done();
-      });
-    });
-
     it('should notify an error if there is an issue processing raw', done => {
       // Setup the factory spy to throw an error
       const errorMessage = 'test error';
@@ -311,33 +264,6 @@ describe('BlockQueryService', () => {
       backendSubject.error(message);
     });
 
-  });
-
-  describe('registerBlockCreatedByUI', () => {
-    let block: Block;
-    let factory: BlockFactoryService;
-
-    beforeEach(() => {
-      factory = TestBed.get(BlockFactoryService);
-      block = factory.createAppBlock(mockBlock);
-    });
-
-    it('should store the block in the internal map', done => {
-      service.registerBlockCreatedByUI(block);
-      service.getBlock$(id).subscribe(storedBlock => {
-        if (storedBlock === null) {
-          fail('stored block must have a value'); done();
-        }
-        expect(storedBlock.id).toEqual(id);
-        done();
-      }, () => fail('error getting stored block'));
-    });
-
-    it('should also store the version of the given block', done => {
-      service.registerBlockCreatedByUI(block);
-      expect(service['myVersions'].has(block.version)).toBe(true);
-      done();
-    });
   });
 
   describe('registerBlockDeletedByUI', () => {

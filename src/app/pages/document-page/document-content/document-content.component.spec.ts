@@ -18,6 +18,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
+import { VersionService } from 'src/app/services/version.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -25,6 +26,7 @@ describe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
+  let versionService: VersionService;
   let router;
   // mock data for testing
   const id = uuidv4();
@@ -74,6 +76,7 @@ describe('DocumentContentComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentContentComponent);
     router = TestBed.get(Router);
+    versionService = TestBed.get(VersionService);
     component = fixture.componentInstance;
     component['currentUser'] = testUser;
     documentFactory = TestBed.get(DocumentFactoryService);
@@ -213,6 +216,18 @@ describe('DocumentContentComponent', () => {
       }, 5);
     });
 
+    it('should not update the properties if the version is stored', done => {
+      versionService.registerVersion(document.version);
+      component['retrieveDocumentData']();
+      spyOn<any>(component, 'updateStoredProperties');
+      // now emit and check
+      getDocument$.next(document);
+      setTimeout(() => {
+        expect(component['updateStoredProperties']).not.toHaveBeenCalled();
+        done();
+      }, 3);
+    });
+
     it('should call setupBlockUpdateSubscription() when notified', done => {
       getDocument$.next(document);
       setTimeout(() => {
@@ -297,7 +312,6 @@ describe('DocumentContentComponent', () => {
     let document: Document;
     let user: User;
     let userFactory: UserFactoryService;
-    let blockQuerySpy: jasmine.Spy;
     let blockCommandSpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
@@ -318,9 +332,6 @@ describe('DocumentContentComponent', () => {
       component.blockIds = [];
       component.documentId = document.id;
 
-      // Setup all the spies
-      blockQuerySpy = spyOn(component['blockQueryService'], 'registerBlockCreatedByUI');
-
       blockCommandSpy = spyOn(component['blockCommandService'], 'createBlock');
       blockCommandSpy.and.returnValue(Promise.resolve());
 
@@ -340,9 +351,6 @@ describe('DocumentContentComponent', () => {
     });
 
     function testInteractionWithOtherClasses() {
-      it('should register the created block to the BlockQueryService', () => {
-        expect(blockQuerySpy).toHaveBeenCalledWith(block);
-      });
       it('should call to create a new block to GraphQL', () => {
         expect(blockCommandSpy).toHaveBeenCalledWith(block);
       });
@@ -581,6 +589,7 @@ describe('DocumentContentComponent', () => {
       component.changeSharingStatus(SharingStatus.PRIVATE);
       expect(component.currentSharingStatus).toEqual(SharingStatus.PRIVATE);
     });
+
     it('should call the documentCommandService with the right args', () => {
       const status = SharingStatus.PUBLIC;
       component.changeSharingStatus(status);
@@ -723,6 +732,7 @@ describe('DocumentContentComponent', () => {
     it('should change the type stored', () => {
       expect(component.documentType).toEqual(DocumentType.TEMPLATE);
     });
+
     it('should call command service to update', () => {
       expect(commandSpy).toHaveBeenCalledWith({
         id: component.documentId,

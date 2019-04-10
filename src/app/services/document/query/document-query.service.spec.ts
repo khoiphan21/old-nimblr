@@ -173,15 +173,6 @@ describe('DocumentQueryService', () => {
 
   });
 
-  /* tslint:disable:no-string-literal */
-  describe('registerUpdateVersion()', () => {
-    it('should store the given version', () => {
-      const version = uuidv4();
-      service.registerUpdateVersion(version);
-      expect(service['myVersions'].has(version)).toBe(true);
-    });
-  });
-
   describe('subscribeToUpdate()', () => {
     let getSubscriptionSpy: jasmine.Spy;
 
@@ -235,22 +226,6 @@ describe('DocumentQueryService', () => {
           service['subscribeToUpdate'](id);
           service['documentMap'].get(id).pipe(skip(1)).subscribe(value => {
             expect(value instanceof DocumentImpl).toBe(true);
-            done();
-          });
-          notify();
-        });
-        it('should not emit if the version is already stored', done => {
-          // first store the version
-          service.registerUpdateVersion(backendResponse.version);
-          // Then call the service
-          service['subscribeToUpdate'](id);
-          service['documentMap'].get(id).subscribe(value => {
-            if (value === null) {
-              // set timeout to call done
-              setTimeout(() => done(), 5);
-              return;
-            }
-            fail('should not have been notified');
             done();
           });
           notify();
