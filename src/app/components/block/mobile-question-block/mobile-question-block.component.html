@@ -1,7 +1,10 @@
 <!-- mobile version -->
 <section class="mobile question-block" (click)="isPreviewMode = false" *ngIf="isPreviewMode">
-    <div class="question">
+    <div class="question" *ngIf="question">
         {{question}}
+    </div>
+    <div class="question" style="color: #A9A9A9" *ngIf="!question">
+        Untitled
     </div>
     <app-question-option [isPreviewMode]="isPreviewMode" [currentType]="currentType" [options]="previewOptions" [answers]="previewAnswers" style=" width: 100%;"></app-question-option>
 </section>

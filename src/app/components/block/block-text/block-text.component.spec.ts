@@ -56,7 +56,6 @@ describe('BlockTextComponent', () => {
   /* tslint:disable:no-string-literal */
   describe('ngOnChanges()', () => {
     let block: TextBlock;
-    let changeDetectorSpy: jasmine.Spy;
 
     beforeEach(() => {
       block = blockFactoryService.createNewTextBlock({
@@ -68,10 +67,6 @@ describe('BlockTextComponent', () => {
       component.block = block;
       component.isUserLoggedIn = true;
       fixture.detectChanges();
-
-      // Setup spies
-      changeDetectorSpy = spyOn(component['changeDetector'], 'detectChanges');
-      changeDetectorSpy.and.callThrough();
     });
 
     it('should set the block value', () => {
@@ -81,31 +76,47 @@ describe('BlockTextComponent', () => {
       expect(component.value).toBe('1234');
     });
 
-    describe('when focusBlockId is defined', () => {
-      it('should call changeDetector if focusBlockId has the block id', () => {
-        component.ngOnChanges({
-          focusBlockId: new SimpleChange(
-            null, block.id + '1234', false
-          )
-        });
-        expect(changeDetectorSpy).toHaveBeenCalled();
+    describe('when focusBlockId is defined -', () => {
+      let textBlock;
+      const input = {
+        type: BlockType.TEXT,
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4(),
+        value: 'test'
+      };
+      beforeEach(() => {
+        textBlock = blockFactoryService.createAppBlock(input);
       });
 
-      it('should focus on the element if focusBlockId has the block id', () => {
-        component.ngOnChanges({
+      it('should focus on the element', async () => {
+        await component.ngOnChanges({
           focusBlockId: new SimpleChange(null, block.id + '1234', false)
         });
         const element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(true);
       });
 
+      it('should call setCaretToEnd()', () => {
+        spyOn(component, 'setCaretToEnd');
+        component.ngOnChanges({
+          focusBlockId: new SimpleChange(null, block.id + '1234', false)
+        });
+        expect(component.setCaretToEnd).toHaveBeenCalled();
+      });
+    });
+
+    describe('when focusBlockId is not the right value', () => {
+      beforeEach(() => {
+        spyOn(component, 'setCaretToEnd');
+      });
+
       it('should not do anything if focusBlockId does not have the block id', () => {
         component.ngOnChanges({
           focusBlockId: new SimpleChange(null, '1234', false)
         });
-        expect(changeDetectorSpy).not.toHaveBeenCalled();
         const element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(false);
+        expect(component.setCaretToEnd).not.toHaveBeenCalled();
       });
 
       it('should not do anything if focusBlockId is undefined or null', () => {
@@ -113,16 +124,16 @@ describe('BlockTextComponent', () => {
         component.ngOnChanges({
           focusBlockId: new SimpleChange(null, null, false)
         });
-        expect(changeDetectorSpy).not.toHaveBeenCalled();
         let element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(false);
+        expect(component.setCaretToEnd).not.toHaveBeenCalled();
         // undefined
         component.ngOnChanges({
           focusBlockId: new SimpleChange(null, undefined, false)
         });
-        expect(changeDetectorSpy).not.toHaveBeenCalled();
         element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(false);
+        expect(component.setCaretToEnd).not.toHaveBeenCalled();
       });
     });
 
@@ -131,13 +142,11 @@ describe('BlockTextComponent', () => {
         component.ngOnChanges({
           isFocused: undefined
         });
-        expect(changeDetectorSpy).not.toHaveBeenCalled();
         let element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(false);
         component.ngOnChanges({
           isFocused: null
         });
-        expect(changeDetectorSpy).not.toHaveBeenCalled();
         element = document.getElementById(block.id);
         expect(document.activeElement === element).toBe(false);
       });
@@ -145,7 +154,37 @@ describe('BlockTextComponent', () => {
 
   });
 
-  // TODO: Test this
+  describe('setCaretToEnd()', () => {
+    let div: HTMLElement;
+    beforeEach(() => {
+      div = document.createElement('div');
+      div.setAttribute('id', component.block.id);
+      div.setAttribute('contenteditable', '');
+      document.body.appendChild(div);
+    });
+    it('should set caret to the beginning if value is empty', async () => {
+      component.value = '';
+      await component.setCaretToEnd();
+      expect(window.getSelection().focusOffset).toBe(0);
+    });
+    it('should set caret to the end of the value', async () => {
+      component.value = 'test';
+      div.textContent = component.value;
+      await component.setCaretToEnd();
+      expect(window.getSelection().focusOffset).toBe(1);
+    });
+    it('should fail if the element does not exist', async () => {
+      div.remove();
+      try {
+        await component.setCaretToEnd();
+        fail('error should occur');
+      } catch (error) {
+        const message = 'Failed to set caret: element does not exist';
+        expect(error.message).toEqual(message);
+      }
+    });
+  });
+
   /* tslint:disable:no-string-literal */
   describe('updateValue', () => {
     let blockCommandSpy: jasmine.Spy;
@@ -205,6 +244,8 @@ describe('BlockTextComponent', () => {
   });
 
   describe('onBackSpaceAndEmptyTextbox()', () => {
+    const event = new KeyboardEvent('keydown', { key: 'Backspace' });
+
     beforeEach(() => {
       const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
       component.block = factory.createNewTextBlock({
@@ -219,16 +260,24 @@ describe('BlockTextComponent', () => {
         expect(value).toEqual(component.block.id);
         done();
       });
-      component.onBackSpaceAndEmptyTextbox();
+      component.onBackSpaceAndEmptyTextbox(event);
     });
 
     it('should not emit if the value is not empty', () => {
       component.value = 'test';
       spyOn(component.deleteEvent, 'emit');
-      component.onBackSpaceAndEmptyTextbox();
+      component.onBackSpaceAndEmptyTextbox(event);
       expect(component.deleteEvent.emit).not.toHaveBeenCalled();
     });
+  });
 
+  it('createTextBlockOnEnter() - should emit the correct blockType', done => {
+    const event = new KeyboardEvent('keydown', { key: 'Enter' });
+    component.createBlock.subscribe(type => {
+      expect(type).toEqual(BlockType.TEXT);
+      done();
+    });
+    component.createTextBlockOnEnter(event);
   });
 
 });

@@ -3,19 +3,19 @@
 @import '../../../_sass/base';
 $input-gap: 7.5px;
 section.block-option {
-    padding-top: 7.5px;
+    padding-top: 6.5px;
     width: auto;
     height: auto;
     position: absolute;
-    left: 100px - 52.5px - $input-gap;
+    left: 275px - 75px - $input-gap;
     @include row-center;
     align-items: flex-start;
     font-family: $font-roboto;
     z-index: 5;
     .add-button-container,
     .menu-drag-container {
-        width: 22.5px;
-        height: 22.55px;
+        width: 31px;
+        height: 31px;
         cursor: pointer;
         transition: 0.3s;
         @include row-center;
@@ -25,8 +25,8 @@ section.block-option {
             position: relative;
             @include row-center;
             &:hover {
-                border-radius: 3px;
-                background-color: #E5E5E5;
+                border-radius: 50px;
+                background-color: $color-light-blue;
                 div.tooltiptext {
                     visibility: visible;
                 }

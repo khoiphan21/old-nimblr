@@ -16,6 +16,7 @@ section.mobile.navigation-bar {
     width: 85vw;
     min-height: 100vh;
     background: $color-light-blue;
+    box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.44);
     position: fixed;
     top: 0;
     left: 0;
@@ -23,13 +24,11 @@ section.mobile.navigation-bar {
     display: flex;
     flex-direction: column;
     section.user-profile {
-        padding: 0 4%;
+        padding: 0 15px;
         width: 100%;
-        border-bottom: $color-grey-5 solid 0.5px;
-        height: 50px;
         @include row-center;
         justify-content: flex-start;
-        margin-bottom: 20px;
+        padding: 21px 15px 0 15px;
         .user-icon {
             width: 26.5px;
             height: 26.5px;
@@ -46,17 +45,27 @@ section.mobile.navigation-bar {
             font-weight: normal;
         }
     }
-    app-navigation-tab {
-        padding: 0 4%;
+    section.tabs {
+        margin-top: 26px;
+        .title {
+            padding: 0 15px;
+            margin-bottom: 10px;
+            color: #97A0BF;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
     }
 }
 
 @include media(lg) {
     $header-text-size: 0.8rem;
     section.user-profile {
-        height: $header-height;
+        height: auto;
         @include row-center;
         justify-content: flex-start;
+        padding: 15px 15px 0 15px;
         .user-icon {
             @include row-center;
             width: 20px;
@@ -69,6 +78,17 @@ section.mobile.navigation-bar {
         .user-name {
             color: $color-grey-2;
             font-size: $header-text-size;
+        }
+    }
+    section.tabs {
+        margin-top: 33px;
+        .title {
+            padding: 0 25px;
+            color: #97A0BF;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
         }
     }
 }

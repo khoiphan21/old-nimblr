@@ -42,23 +42,34 @@ section.mobile.container.option-container {
 @include media(lg) {
     $horizontal-padding: 20px;
     section.invitation.options-block {
-        width: 431px;
+        width: 450px;
         height: 385px;
         font-family: $font-roboto;
         font-size: 12px;
-        padding: 10px 0;
+        padding: 0 0 10px 0;
+        .header {
+            @include row-center;
+            justify-content: flex-start;
+            border-bottom: 1px solid #DDD;
+            padding: 0 $horizontal-padding;
+            i {
+                font-size: 25px;
+                color: $color-dark-steel-blue;
+            }
+            .content {
+                .description {
+                    padding: 0 0 10px $horizontal-padding;
+                    font-weight: normal;
+                    color: #B2B9D0;
+                }
+            }
+        }
         .title {
-            padding: 10px $horizontal-padding 5px $horizontal-padding;
+            padding: 10px 0 5px $horizontal-padding;
             color: #97A0BF;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 500;
-        }
-        .description {
-            padding: 0 $horizontal-padding 10px $horizontal-padding;
-            font-weight: normal;
-            color: #B2B9D0;
-            border-bottom: 1px solid #DDD;
         }
         input[type=text] {
             width: 100%;

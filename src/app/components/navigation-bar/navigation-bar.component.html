@@ -1,22 +1,35 @@
-<section class="fluid-container desktop" *ngIf="navigationTabs">
-    <section class="user-profile desktop pl-4 pr-4" *ngIf="currentUser">
-        <div class="user-icon mr-2">{{initialName}}</div>
-        <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
+<ng-container *responsive="{sizes:{min:576, max:2000}}">
+    <section class="fluid-container desktop" *ngIf="navigationTabs">
+        <section class="user-profile desktop" *ngIf="currentUser">
+            <div class="user-icon mr-2">{{initialName}}</div>
+            <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
+        </section>
+        <section class="tabs private">
+            <div class="title">my documents</div>
+            <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+        </section>
+        <section class="tabs shared">
+            <div class="title">shared</div>
+            <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+        </section>
     </section>
-    <section class="pl-4 pr-4 mt-4">
-        <app-navigation-tab *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+</ng-container>
+
+<!-- mobile  -->
+<ng-container *responsive="{sizes:{min:0,max:575}}">
+    <div class="mobile overlay" (click)="isNavigationTabShown = false" *ngIf="isNavigationTabShown" [@fadeInOutAnimation]></div>
+    <section class="mobile navigation-bar" *ngIf="isNavigationTabShown && navigationTabs" [@slideLeftToRightAnimation]>
+        <section class="user-profile" *ngIf="currentUser">
+            <div class="user-icon mr-2">{{initialName}}</div>
+            <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
+        </section>
+        <section class="tabs private">
+            <div class="title">my documents</div>
+            <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+        </section>
+        <section class="tabs shared">
+            <div class="title">shared</div>
+            <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+        </section>
     </section>
-</section>
-
-<div class="mobile overlay" (click)="isNavigationTabShown = false" *ngIf="isNavigationTabShown" [@fadeInOutAnimation]></div>
-
-<section class="mobile navigation-bar" *ngIf="isNavigationTabShown && navigationTabs" [@slideLeftToRightAnimation]>
-    <section class="user-profile" *ngIf="currentUser">
-        <div class="user-icon mr-2">{{initialName}}</div>
-        <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
-    </section>
-    <ng-container *ngFor="let navigationTab of navigationTabs">
-        <app-navigation-tab [navigationTab]="navigationTab"></app-navigation-tab>
-    </ng-container>
-
-</section>
+</ng-container>

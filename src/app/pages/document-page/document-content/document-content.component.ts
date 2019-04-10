@@ -254,12 +254,12 @@ export class DocumentContentComponent implements OnInit {
       // The uuidv4() call is needed to make sure it changes
       this.focusBlockId = `${blockIds[index - 1]}-${uuidv4()}`;
       // Update the version
+
       const updatePromise = this.documentCommandService.updateDocument({
         id: this.documentId,
         blockIds: this.blockIds,
         lastUpdatedBy: this.currentUser.id
       });
-
       // call command service
       let input: DeleteBlockInput;
       input = { id: blockId };
