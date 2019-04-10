@@ -15,6 +15,7 @@ import { BlockId, Block } from 'src/app/classes/block/block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
+import { balancePreviousStylesIntoKeyframes } from '@angular/animations/browser/src/util';
 
 const uuidv4 = require('uuid/v4');
 
@@ -150,11 +151,15 @@ export class DocumentContentComponent implements OnInit {
 
       switch (type) {
         case BlockType.TEXT:
-          block = this.blockFactoryService.createNewTextBlock(input);
-          break;
+        block = this.blockFactoryService.createNewTextBlock(input);
+        break;
         case BlockType.QUESTION:
-          block = this.blockFactoryService.createNewQuestionBlock(input);
-          break;
+        block = this.blockFactoryService.createNewQuestionBlock(input);
+        break;
+        // TODO: @bruno add new method here to activate header block creation
+        // case BlockType.HEADER:
+        //   block = this.blockFactoryService.createNewHeaderBlock(input);
+        //   break;
         default:
           throw Error(`BlockType "${type}" is not supported`);
       }
@@ -171,13 +176,16 @@ export class DocumentContentComponent implements OnInit {
         this.blockIds.push(block.id);
       }
       // create a new block in backend with BlockCommandService
-      await this.blockCommandService.createBlock(block);
+      const createBlockPromise = this.blockCommandService.createBlock(block);
       // Update the document in the backend
-      await this.documentCommandService.updateDocument({
+      const updateDocPromise = this.documentCommandService.updateDocument({
         id: this.currentDocument.id,
         lastUpdatedBy: this.currentUser.id,
         blockIds: this.blockIds
       });
+
+      await createBlockPromise;
+      await updateDocPromise;
 
       return block;
     } catch (error) {

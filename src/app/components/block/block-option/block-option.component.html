@@ -5,6 +5,17 @@
         </div>
         <div class="add-basic-blocks  options-block" *ngIf="isAddBlockContainerShown">
             <div class="title basic">BASIC BLOCKS</div>
+
+            <div class="block-type" (click) ="addHeaderBlock()">
+                <div class="block-image text">
+                    
+                </div>
+                <div class="block-text">
+                    <div class="type">Header</div>
+                    <div class="description">Is a Header</div>
+                </div>
+            </div>
+
             <div class="block-type" (click)="addTextBlock()">
                 <div class="block-image text">
                     <!-- <img class="text" src="./assets/icons/text-block.png" alt=""> -->
@@ -14,6 +25,7 @@
                     <div class="description">Just plain text</div>
                 </div>
             </div>
+
             <div class="title form">FORM BLOCKS</div>
             <div class="block-type" (click)="addQuestionBlock()">
                 <div class="block-image text">

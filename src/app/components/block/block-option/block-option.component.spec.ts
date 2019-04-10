@@ -159,6 +159,11 @@ describe('BlockOptionComponent', () => {
         expect(hideSpy).toHaveBeenCalled();
       });
     });
+
+    describe('addHeaderBlock()', () => {
+      // TODO: @bruno not implemented
+
+    });
   });
 
   describe('deleteHandler()', () => {

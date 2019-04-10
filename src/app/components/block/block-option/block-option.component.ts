@@ -69,6 +69,13 @@ export class BlockOptionComponent implements OnChanges {
     this.hideAddBlockContainer();
   }
 
+  addHeaderBlock() {
+    // TODO: @bruno seems like i need to add BlockType.HEADER
+    console.log('fire up header');
+    // this.createBlock.emit(BlockType.HEADER);
+    // this.hideAddBlockContainer();
+  }
+
   deleteHandler() {
     this.deleteEvent.emit(this.block.id);
   }
