@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock, CreateAppTextBlockInput } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
-import { BlockType, QuestionType } from '../../../../API';
+import { BlockType, QuestionType, TextBlockType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { UUID } from '../../document/command/document-command.service';
-import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
+import { HeaderBlock, HeaderBlockInput } from 'src/app/classes/block/textBox/header-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -34,11 +34,21 @@ export class BlockFactoryService {
     return new TextBlock(newInput);
   }
 
-  // createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
-  //   // TODO: @bruno Not implemented yet: header-block
+  createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
+    // TODO: @bruno tbt
+    const newInput: HeaderBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      value: '',
+      textblocktype: TextBlockType.HEADER,
+    };
 
-    
-  // }
+    return new HeaderBlock(newInput);
+  }
 
   /**
    * Create a new QuestionBlock object. The parameters specified
