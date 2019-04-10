@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType, DeleteBlockInput } from 'src/API';
+import { BlockType, QuestionType, DeleteBlockInput, TextBlockType } from 'src/API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
@@ -13,6 +13,8 @@ describe('BlockCommandService', () => {
   let service: BlockCommandService;
   let textInput: any;
   let questionInput: any;
+  let headerInput: any;
+
   // variables to use with the spy
   let graphQlSpy: jasmine.Spy;
   let textBlockBackendResponse: any;
@@ -29,6 +31,16 @@ describe('BlockCommandService', () => {
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
       value: 'from updateBlock test'
+    };
+
+    headerInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      type: BlockType.TEXT,
+      documentId: uuidv4(),
+      lastUpdatedBy: uuidv4(),
+      value: 'from updateBlock test',
+      textblocktype: TextBlockType.HEADER,
     };
 
     questionInput = {
@@ -211,7 +223,7 @@ describe('BlockCommandService', () => {
 
     describe('HeaderBlock -', () => {
       // TODO: @bruno Not implemented yet: header-block
-      
+
     });
 
   });
@@ -394,9 +406,61 @@ describe('BlockCommandService', () => {
       });
     });
 
-    describe('HeaderBlock', () => {
+    fdescribe('HeaderBlock', () => {
       // TODO: @bruno Not implemented yet: header-block
-      
+      beforeEach(() => {
+        graphQlSpy.and.returnValue(Promise.resolve(questionBlockBackendResponse));
+      });
+
+      describe('execution in createTextBlock()', () => {
+        it('should resolve response from backend', () => {
+          service.createBlock(headerInput).then(data => {
+            expect(data).toEqual(questionBlockBackendResponse);
+          });
+        });
+  
+        it('should call query method', () => {
+          service.createBlock(headerInput).then(() => {
+            expect(graphQlSpy.calls.count()).toBe(1);
+          });
+        });
+  
+        it('should reject promise when query method failed', () => {
+          const expectedError = 'test err';
+          graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));
+          service.createBlock(headerInput).catch(err => {
+            expect(err.message).toEqual(expectedError);
+          });
+        });
+      });
+
+      describe('correctness of mapTextBoxType() mapping', () => {
+
+        let createTextBlockSpy: jasmine.Spy;
+        let createHeaderBlockSpy: jasmine.Spy;
+
+        beforeEach(()=> {
+          createTextBlockSpy = spyOn<any>(service, 'createTextBlock').and.callThrough();
+          createHeaderBlockSpy = spyOn<any>(service, 'createHeaderBlock').and.callThrough();
+        });
+
+        it('should call createTextBlock', done => {
+          service['mapTextBoxType'](textInput).then(data => {
+            expect(createTextBlockSpy.calls.count()).toBe(1);
+            expect(createHeaderBlockSpy.calls.count()).toBe(0);
+            done();
+          });
+        });
+
+        it('should call createHeaderBlockSpy', done => {
+          service['mapTextBoxType'](headerInput).then(data => {
+            expect(createTextBlockSpy.calls.count()).toBe(0);
+            expect(createHeaderBlockSpy.calls.count()).toBe(1);
+            done();
+          });
+        });
+      });
+
 
     });
   });

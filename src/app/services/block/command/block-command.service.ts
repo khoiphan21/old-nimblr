@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput, CreateHeaderBlockInput, TextBlockType } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
 
 @Injectable({
@@ -71,7 +71,7 @@ export class BlockCommandService {
 
   private async updateHeaderBlock(): Promise<any> {
     // TODO: @bruno Not implemented yet: header-block
-    
+
   }
 
   private async updateQuestionBlock(input: UpdateQuestionBlockInput): Promise<any> {
@@ -112,16 +112,28 @@ export class BlockCommandService {
    */
   // Why do you need `CreateBlockInput`
   // createBlock(input: CreateBlockInput | CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
-  createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
+  createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput | CreateHeaderBlockInput): Promise<any> {
     switch (input.type) {
       case BlockType.TEXT:
-        return this.createTextBlock(input);
+        return this.mapTextBoxType(input);
       case BlockType.QUESTION:
         return this.createQuestionBlock(input);
       default:
         return Promise.reject('BlockType not supported');
     }
   }
+
+  private mapTextBoxType(input) {
+    if (!('textblocktype' in input)) {
+      return this.createTextBlock(input);
+    } else if (input.textblocktype === TextBlockType.HEADER) {
+      return this.createHeaderBlock(input);
+    } else {
+      return Promise.reject('BlockType not supported');
+    }
+  }
+
+
   private async createTextBlock(originalInput: CreateBlockInput): Promise<any> {
     const input = {
       id: originalInput.id,
@@ -148,8 +160,39 @@ export class BlockCommandService {
     }
   }
 
-  private async createHeaderBlock(): Promise<any> {
+  private async createHeaderBlock(originalInput: CreateHeaderBlockInput): Promise<any> {
+
     // TODO: @bruno Not implemented yet: header-block
+    // create input
+    const input = {
+      id: originalInput.id,
+      version: originalInput.version,
+      type: originalInput.type,
+      documentId: originalInput.documentId,
+      lastUpdatedBy: originalInput.lastUpdatedBy,
+      value: originalInput.value,
+      textblocktype: originalInput.textblocktype,
+    };
+
+    // param validation && versioning
+    const requiredParams = [
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'textblocktype'
+    ];
+
+    // query
+    try {
+      this.checkForNullOrUndefined(input, requiredParams, 'CreateHeaderBlockInput');
+      this.blockQueryService.registerUpdateVersion(input.version);
+
+      // Now do a convert for empty string in 'value'
+      input.value = input.value === '' ? null : input.value;
+
+      return this.graphQLService.query(createTextBlock, { input });
+
+    } catch (error) {
+      return Promise.reject(error);
+
+    }
   }
 
   private async createQuestionBlock(originalInput: CreateQuestionBlockInput): Promise<any> {
