@@ -406,8 +406,7 @@ describe('BlockCommandService', () => {
       });
     });
 
-    fdescribe('HeaderBlock', () => {
-      // TODO: @bruno Not implemented yet: header-block
+    describe('HeaderBlock', () => {
       beforeEach(() => {
         graphQlSpy.and.returnValue(Promise.resolve(questionBlockBackendResponse));
       });

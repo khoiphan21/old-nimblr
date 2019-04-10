@@ -161,8 +161,6 @@ export class BlockCommandService {
   }
 
   private async createHeaderBlock(originalInput: CreateHeaderBlockInput): Promise<any> {
-
-    // TODO: @bruno Not implemented yet: header-block
     // create input
     const input = {
       id: originalInput.id,
