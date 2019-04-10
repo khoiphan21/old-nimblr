@@ -5,6 +5,7 @@ import { BlockType, QuestionType, DeleteBlockInput } from 'src/API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const uuidv4 = require('uuid/v4');
 
@@ -19,7 +20,11 @@ describe('BlockCommandService', () => {
   let questionBlockBackendResponse: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
 
     // Setup the input to be used in the tests
     textInput = {
@@ -82,7 +87,7 @@ describe('BlockCommandService', () => {
     it('should register the version to the VersionService', () => {
       service.updateBlock(textInput);
       const version = graphQlSpy.calls.mostRecent().args[1].input.version;
-      expect(service['versionService'].checkAndDelete(version)).toBe(true);
+      expect(service['versionService'].isRegistered(version)).toBe(true);
     });
 
     describe('TextBlock -', () => {
@@ -118,6 +123,9 @@ describe('BlockCommandService', () => {
           delete textInput.type;
           // delete 'updatedAt' from queryArg as it's auto-generated
           delete queryArg.input.updatedAt;
+          // delete version as it is reset
+          delete textInput.version;
+          delete queryArg.input.version;
           // now check all other args
           expect(queryArg.input).toEqual(textInput);
           done();
@@ -137,7 +145,7 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = [
-          'id', 'version', 'documentId', 'lastUpdatedBy', 'value'
+          'id', 'documentId', 'lastUpdatedBy', 'value'
         ];
         runTestForTextMissingParams(
           requiredParams, 'updateBlock', 'UpdateTextBlockInput'
@@ -178,6 +186,9 @@ describe('BlockCommandService', () => {
           delete questionInput.type;
           // delete 'updatedAt' from queryArg as it's auto-generated
           delete queryArg.input.updatedAt;
+          // delete version as it will be reset
+          delete queryArg.input.version;
+          delete questionInput.version;
           // now check all other args
           expect(queryArg.input).toEqual(questionInput);
           done();
@@ -206,7 +217,7 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = [
-          'id', 'version', 'documentId', 'lastUpdatedBy', 'answers', 'questionType'
+          'id', 'documentId', 'lastUpdatedBy', 'answers', 'questionType'
         ];
         runTestForQuestionMissingParams(
           requiredParams, 'updateBlock', 'UpdateQuestionBlockInput'
@@ -230,12 +241,12 @@ describe('BlockCommandService', () => {
     });
 
     it('should set a new version', () => {
-      fail('to be tested');
+      const version = uuidv4();
+      textInput.version = version;
+      service.createBlock(textInput);
+      expect(textInput.version).not.toEqual(version);
     });
 
-    it('should call the VersionService to register the created block version', () => {
-      fail('to be tested');
-    });
     describe('TextBlock -', () => {
       beforeEach(() => {
         graphQlSpy.and.returnValue(Promise.resolve(textBlockBackendResponse));
@@ -295,7 +306,7 @@ describe('BlockCommandService', () => {
       });
 
       describe('(error pathways)', () => {
-        const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+        const requiredParams = ['id', 'documentId', 'lastUpdatedBy'];
         runTestForTextMissingParams(
           requiredParams, 'createBlock', 'CreateTextBlockInput'
         );
@@ -385,7 +396,7 @@ describe('BlockCommandService', () => {
       });
 
       describe('(error pathways)', () => {
-        const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+        const requiredParams = ['id', 'documentId', 'lastUpdatedBy'];
         runTestForQuestionMissingParams(
           requiredParams, 'createBlock', 'CreateQuestionBlockInput'
         );

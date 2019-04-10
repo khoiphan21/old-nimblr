@@ -151,10 +151,6 @@ describe('BlockQueryService', () => {
       });
     });
 
-    it('should not notify when the version is stored', () => {
-      fail('to be implemented');
-    });
-
     it('should notify an error if there is an issue processing raw', done => {
       // Setup the factory spy to throw an error
       const errorMessage = 'test error';

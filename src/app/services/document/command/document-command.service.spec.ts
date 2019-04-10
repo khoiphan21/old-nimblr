@@ -4,6 +4,7 @@ import { DocumentCommandService } from './document-command.service';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
 import { processTestError } from '../../../classes/test-helpers.spec';
 import { createDocument } from 'src/graphql/mutations';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const uuidv4 = require('uuid/v4');
 interface RunTestInput {
@@ -21,7 +22,11 @@ describe('DocumentCommandService', () => {
 
   /* tslint:disable:no-string-literal */
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
     input = {
       type: DocumentType.GENERIC,
       version: uuidv4(),

@@ -8,6 +8,7 @@ import { BlockCommandService } from 'src/app/services/block/command/block-comman
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { SimpleChange } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const uuidv4 = require('uuid/v4');
 
@@ -29,7 +30,8 @@ describe('BlockTextComponent', () => {
     TestBed.configureTestingModule({
       declarations: [BlockTextComponent],
       imports: [
-        FormsModule
+        FormsModule,
+        RouterTestingModule.withRoutes([])
       ],
       providers: [
         BlockFactoryService,

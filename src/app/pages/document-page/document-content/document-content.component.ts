@@ -104,7 +104,7 @@ export class DocumentContentComponent implements OnInit {
       if (document === null) { return; }
       this.checkIsChildDocument();
 
-      if (!this.versionService.checkAndDelete(document.version)) {
+      if (!this.versionService.isRegistered(document.version)) {
         this.updateStoredProperties(document);
       }
 
@@ -183,7 +183,6 @@ export class DocumentContentComponent implements OnInit {
       } else {
         this.blockIds.push(block.id);
       }
-      console.log('before calling backend');
       // create a new block in backend with BlockCommandService
       await this.blockCommandService.createBlock(block);
       // Update the document in the backend

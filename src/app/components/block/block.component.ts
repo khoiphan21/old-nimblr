@@ -40,8 +40,10 @@ export class BlockComponent implements OnInit {
     this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
       if (block !== null) {
         // Check if the version is stored
-        if (!this.versionService.checkAndDelete(block.version)) {
-          // If the version is new, then store the block to display
+        if (!this.versionService.isRegistered(block.version)) {
+          // Try to register the received version (in the case of UI-created
+          // blocks)
+          this.versionService.registerVersion(block.version);
           this.block = block;
         }
       }

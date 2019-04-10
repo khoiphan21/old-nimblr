@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const uuidv4 = require('uuid/v4');
 
@@ -31,7 +32,8 @@ describe('BlockComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+        RouterTestingModule.withRoutes([])
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

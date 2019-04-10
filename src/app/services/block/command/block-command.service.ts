@@ -109,13 +109,9 @@ export class BlockCommandService {
    * This will also notify BlockQueryService of the created block's version
    * @param input the input to the create query
    */
-  // Why do you need `CreateBlockInput`
-  // createBlock(input: CreateBlockInput | CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
   createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
     // reset the input's version to a new value
     input.version = uuidv4();
-
-    this.versionService.registerVersion(input.version);
 
     switch (input.type) {
       case BlockType.TEXT:

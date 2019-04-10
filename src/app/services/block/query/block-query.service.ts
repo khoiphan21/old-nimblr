@@ -50,10 +50,7 @@ export class BlockQueryService {
       const block: Block = this.blockFactoryService.createAppBlock(data);
       // This is needed for when called by getBlocksForDocument
       this.blocksMap.set(block.id, block$);
-      if (!this.versionService.checkAndDelete(block.version)) {
-        // To ensure only other versions will be updated
-        block$.next(block);
-      }
+      block$.next(block);
     } catch (error) {
       block$.error(error);
     }

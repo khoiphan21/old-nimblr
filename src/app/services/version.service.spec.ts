@@ -1,12 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
 import { VersionService } from './version.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NavigationStart } from '@angular/router';
 
 describe('VersionService', () => {
   let service: VersionService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
     service = TestBed.get(VersionService);
   });
 
@@ -15,11 +21,51 @@ describe('VersionService', () => {
   });
 
   describe('registerVersion()', () => {
+    let subscribeSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      subscribeSpy = spyOn<any>(service, 'subscribeToRouter');
+    });
+
     it('should store the given version', () => {
       const version = 'abcd';
       service.registerVersion(version);
       // tslint:disable:no-string-literal
       expect(service['myVersions'].has(version)).toBe(true);
+    });
+    it('should call subscribeToRouter() if not yet done', () => {
+      service.registerVersion('abcd');
+      expect(subscribeSpy).toHaveBeenCalled();
+    });
+    it('should not call subscribeToRouter() again if already done so', () => {
+      service['isRouterSubscriptionReady'] = true;
+      service.registerVersion('abcd');
+      expect(subscribeSpy).not.toHaveBeenCalled();
+    });
+    it('should set the router subscription to be ready', () => {
+      service.registerVersion('abcd');
+      expect(service['isRouterSubscriptionReady']).toBe(true);
+    });
+  });
+
+  describe('subscribeToRouter()', () => {
+    let handler: any;
+
+    beforeEach(() => {
+      const eventSpy = spyOn(service['router'].events, 'forEach');
+      service['subscribeToRouter']();
+      handler = eventSpy.calls.mostRecent().args[0];
+      service.registerVersion('test');
+    });
+    it('should clear the versions if the event is of type NavigationStart', () => {
+      const event = new NavigationStart(1234, 'abcd');
+      handler(event);
+      expect(service['myVersions'].size).toBe(0);
+    });
+    it('should NOT clear the versions if the event is not of the right type', () => {
+      const event = 1234;
+      handler(event);
+      expect(service['myVersions'].size).toBe(1);
     });
   });
 
@@ -27,17 +73,10 @@ describe('VersionService', () => {
     it('should return true for a stored version', () => {
       const version = 'abcd';
       service.registerVersion(version);
-      expect(service.checkAndDelete(version)).toBe(true);
+      expect(service.isRegistered(version)).toBe(true);
     });
     it('should return false for a unstored version', () => {
-      expect(service.checkAndDelete('random')).toBe(false);
-    });
-    it('should delete the version once checked', () => {
-      const version = 'abcd';
-      service.registerVersion(version);
-      service.checkAndDelete(version);
-      // at this point the version musthave been removed
-      expect(service.checkAndDelete(version)).toBe(false);
+      expect(service.isRegistered('random')).toBe(false);
     });
   });
 });
