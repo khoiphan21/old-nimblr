@@ -8,11 +8,17 @@ export type CreateTextBlockInput = {
   documentId: string,
   lastUpdatedBy: string,
   value?: string | null,
+  textblocktype: TextBlockType,
 };
 
 export enum BlockType {
   TEXT = "TEXT",
   QUESTION = "QUESTION",
+}
+
+
+export enum TextBlockType {
+  HEADER = "HEADER",
 }
 
 
@@ -24,32 +30,7 @@ export enum QuestionType {
 }
 
 
-export enum TextBlockType {
-  HEADER = "HEADER",
-}
-
-
 export type UpdateTextBlockInput = {
-  id: string,
-  version: string,
-  type?: BlockType | null,
-  documentId?: string | null,
-  lastUpdatedBy: string,
-  updatedAt: string,
-  value?: string | null,
-};
-
-export type CreateHeaderBlockInput = {
-  id?: string | null,
-  version: string,
-  type: BlockType,
-  documentId: string,
-  lastUpdatedBy: string,
-  value?: string | null,
-  textblocktype: TextBlockType,
-};
-
-export type UpdateHeaderBlockInput = {
   id: string,
   version: string,
   type?: BlockType | null,
@@ -321,52 +302,6 @@ export type UpdateTextBlockMutationVariables = {
 
 export type UpdateTextBlockMutation = {
   updateTextBlock:  {
-    __typename: "Block",
-    id: string,
-    version: string | null,
-    type: BlockType | null,
-    documentId: string | null,
-    lastUpdatedBy: string | null,
-    createdAt: string | null,
-    updatedAt: string | null,
-    value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
-    textblocktype: TextBlockType | null,
-  } | null,
-};
-
-export type CreateHeaderBlockMutationVariables = {
-  input: CreateHeaderBlockInput,
-};
-
-export type CreateHeaderBlockMutation = {
-  createHeaderBlock:  {
-    __typename: "Block",
-    id: string,
-    version: string | null,
-    type: BlockType | null,
-    documentId: string | null,
-    lastUpdatedBy: string | null,
-    createdAt: string | null,
-    updatedAt: string | null,
-    value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
-    textblocktype: TextBlockType | null,
-  } | null,
-};
-
-export type UpdateHeaderBlockMutationVariables = {
-  input: UpdateHeaderBlockInput,
-};
-
-export type UpdateHeaderBlockMutation = {
-  updateHeaderBlock:  {
     __typename: "Block",
     id: string,
     version: string | null,

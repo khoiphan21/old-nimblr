@@ -37,42 +37,6 @@ export const updateTextBlock = `mutation UpdateTextBlock($input: UpdateTextBlock
   }
 }
 `;
-export const createHeaderBlock = `mutation CreateHeaderBlock($input: CreateHeaderBlockInput!) {
-  createHeaderBlock(input: $input) {
-    id
-    version
-    type
-    documentId
-    lastUpdatedBy
-    createdAt
-    updatedAt
-    value
-    question
-    answers
-    questionType
-    options
-    textblocktype
-  }
-}
-`;
-export const updateHeaderBlock = `mutation UpdateHeaderBlock($input: UpdateHeaderBlockInput!) {
-  updateHeaderBlock(input: $input) {
-    id
-    version
-    type
-    documentId
-    lastUpdatedBy
-    createdAt
-    updatedAt
-    value
-    question
-    answers
-    questionType
-    options
-    textblocktype
-  }
-}
-`;
 export const createQuestionBlock = `mutation CreateQuestionBlock($input: CreateQuestionBlockInput!) {
   createQuestionBlock(input: $input) {
     id

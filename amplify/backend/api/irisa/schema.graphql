@@ -70,8 +70,6 @@ enum TextBlockType{
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block
   updateTextBlock(input: UpdateTextBlockInput!): Block
-  createHeaderBlock(input: CreateHeaderBlockInput!): Block
-  updateHeaderBlock(input: UpdateHeaderBlockInput!): Block
   createQuestionBlock(input: CreateQuestionBlockInput!): Block
   updateQuestionBlock(input: UpdateQuestionBlockInput!): Block
 
@@ -93,26 +91,6 @@ type Subscription {
     @aws_subscribe(mutations: ["updateDocument"])
 }
 
-input CreateHeaderBlockInput {
-  id: ID
-  version: String!
-  type: BlockType!
-  documentId: String!
-  lastUpdatedBy: String!
-  value: String
-  textblocktype: TextBlockType!
-}
-input UpdateHeaderBlockInput {
-  id: ID!
-  version: String!
-  type: BlockType
-  documentId: String
-  lastUpdatedBy: String!
-  updatedAt: String!
-  value: String
-  textblocktype: TextBlockType!
-}
-
 input CreateTextBlockInput {
   id: ID
   version: String!
@@ -120,6 +98,7 @@ input CreateTextBlockInput {
   documentId: String!
   lastUpdatedBy: String!
   value: String
+  textblocktype: TextBlockType!
 }
 
 input UpdateTextBlockInput {
@@ -130,6 +109,7 @@ input UpdateTextBlockInput {
   lastUpdatedBy: String!
   updatedAt: String!
   value: String
+  textblocktype: TextBlockType!
 }
 
 input CreateQuestionBlockInput {
