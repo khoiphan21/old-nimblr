@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { UUID } from '../document/command/document-command.service';
+import { User } from 'src/app/classes/user';
 
 const aws = require('aws-sdk');
+
+export interface InvitationEmailDetails {
+  email: string;
+  documentId: UUID;
+  sender: User;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +18,7 @@ export class EmailService {
 
   constructor() { }
 
-  send(link: string) {
+  sendInvitationEmail(input: InvitationEmailDetails) {
     'use strict';
 
     // Provide the full path to your config.json file.
@@ -41,7 +49,7 @@ export class EmailService {
       <body>
         <h1>Invitation to shared document</h1>
         <p>Click on this link to access document:
-          <a href='http://localhost:4200/${link}'>Shared Document</a>
+          <a href='http://localhost:4200/document/${input.documentId}'>Shared Document</a>
         </p>
       </body>
     </html>`;

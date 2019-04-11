@@ -13,10 +13,4 @@ describe('EmailService', () => {
     expect(service).toBeTruthy();
   });
 
-  // fdescribe('send()', () => {
-  //   it('testing', () => {
-  //     service.send('document/a735f371-905c-4c8a-8a96-c7dedbc36b2d');
-  //     fail();
-  //   });
-  // });
 });

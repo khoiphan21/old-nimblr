@@ -19,6 +19,7 @@ import { VersionService } from 'src/app/services/version.service';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
+import { EmailService } from 'src/app/services/email/email.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -46,6 +47,7 @@ export class DocumentContentComponent implements OnInit {
   docTitle: string;
   blockIds: Array<string> = [];
   isDocumentReady = false; // should be switched to true when document is loaded
+  submissionDocIds: Array<UUID> = [];
 
   focusBlockId: BlockId; // the block that needs to be focused on after creation
 
@@ -59,6 +61,7 @@ export class DocumentContentComponent implements OnInit {
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
     private versionService: VersionService,
+    private emailService: EmailService,
     private accountService: AccountService,
     private route: ActivatedRoute,
     private location: Location,
@@ -309,7 +312,6 @@ export class DocumentContentComponent implements OnInit {
   }
 
   async sendDocument(email: string) {
-    console.log(email);
     // create a new SubmissionDocument
     const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
       ownerId: this.currentUser.id,
@@ -317,13 +319,23 @@ export class DocumentContentComponent implements OnInit {
     });
 
     // call createDocument for the new document
+    await this.documentCommandService.createDocument(submission);
 
     // update the list of submissionDocIds
+    this.submissionDocIds.push(submission.id);
 
     // call to updateDocument for current document
+    await this.documentCommandService.updateDocument({
+      id: this.documentId,
+      submissionDocIds: this.submissionDocIds
+    });
 
     // if all good, then send the email
-
+    await this.emailService.sendInvitationEmail({
+      email,
+      documentId: submission.id,
+      sender: this.currentUser
+    });
   }
 
 }

@@ -19,6 +19,8 @@ import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version.service';
+import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
+import { InvitationEmailDetails } from 'src/app/services/email/email.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -78,6 +80,7 @@ describe('DocumentContentComponent', () => {
     router = TestBed.get(Router);
     versionService = TestBed.get(VersionService);
     component = fixture.componentInstance;
+    component.documentId = id;
     component['currentUser'] = testUser;
     documentFactory = TestBed.get(DocumentFactoryService);
   });
@@ -715,6 +718,63 @@ describe('DocumentContentComponent', () => {
         lastUpdatedBy: testUser.id,
         type: DocumentType.TEMPLATE
       });
+    });
+  });
+
+  fdescribe('sendDocument()', () => {
+    let submission: SubmissionDocument;
+    let factorySpy: jasmine.Spy;
+    let createDocumentSpy: jasmine.Spy;
+    let updateDocumentSpy: jasmine.Spy;
+    let emailSpy: jasmine.Spy;
+
+    const email = 'test@email.com';
+
+    beforeEach(async () => {
+      factorySpy = spyOn(component['docFactoryService'], 'createNewSubmission');
+      factorySpy.and.callThrough();
+
+      createDocumentSpy = spyOn(component['documentCommandService'], 'createDocument');
+      createDocumentSpy.and.returnValue(Promise.resolve());
+
+      updateDocumentSpy = spyOn(component['documentCommandService'], 'updateDocument');
+      updateDocumentSpy.and.returnValue(Promise.resolve());
+
+      emailSpy = spyOn(component['emailService'], 'sendInvitationEmail');
+      emailSpy.and.returnValue(Promise.resolve());
+
+      await component.sendDocument(email);
+      submission = factorySpy.calls.mostRecent().returnValue;
+    });
+
+    it('should call factory with the right arguments', () => {
+      expect(factorySpy).toHaveBeenCalledWith({
+        ownerId: testUser.id,
+        recipientEmail: email
+      });
+    });
+
+    it('should call command service with the document', () => {
+      expect(createDocumentSpy).toHaveBeenCalledWith(submission);
+    });
+
+    it('should update the submission doc IDs array', () => {
+      expect(component.submissionDocIds.includes(submission.id)).toBe(true);
+    });
+
+    it('should call to update document to backend', () => {
+      expect(updateDocumentSpy).toHaveBeenCalledWith({
+        id, submissionDocIds: component.submissionDocIds
+      });
+    });
+
+    it('should call EmailService with the right args', () => {
+      const expectedArgs: InvitationEmailDetails = {
+        email,
+        documentId: submission.id,
+        sender: testUser,
+      };
+      expect(emailSpy).toHaveBeenCalledWith(expectedArgs);
     });
   });
 

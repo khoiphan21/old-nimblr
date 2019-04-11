@@ -41,9 +41,13 @@ export class DocumentFactoryService {
   }
 
   createNewSubmission(input: NewSubmissionDocumentInput): SubmissionDocument {
+    // Extract the data from the original input
+    const { ownerId, recipientEmail } = input;
     // update some properties
-    const newInput: CreateDocumentInput = input;
-    newInput.lastUpdatedBy = input.ownerId;
+    const newInput: CreateDocumentInput = {
+      ownerId, recipientEmail,
+      lastUpdatedBy: input.ownerId
+    };
 
     return new SubmissionDocument(newInput);
   }
@@ -61,40 +65,4 @@ export class DocumentFactoryService {
     }
   }
 
-  // createDocument({
-  //   id,
-  //   ownerId,
-  //   title = null,
-  //   version = uuidv4(),
-  //   type = DocumentType.GENERIC,
-  //   editorIds = [],
-  //   viewerIds = [],
-  //   blockIds = [],
-  //   lastUpdatedBy = ownerId,
-  //   createdAt = new Date().toUTCString(),
-  //   updatedAt = new Date().toUTCString(),
-  //   sharingStatus = null
-  // }): Document {
-  //   const input: CreateDocumentInput = {
-  //     id, version, type, title, ownerId, editorIds, viewerIds,
-  //     blockIds, lastUpdatedBy, createdAt, updatedAt, sharingStatus
-  //   };
-
-  //   this.checkForNullOrUndefined(input);
-
-  //   return new DocumentImpl(input);
-  // }
-
-  // private checkForNullOrUndefined(input: any) {
-  //   const requiredUuidParams = [
-  //     'id', 'ownerId'
-  //   ];
-  //   requiredUuidParams.forEach(param => {
-  //     if (!input[param]) {
-  //       throw new Error(`Invalid parameter: missing ${param}`);
-  //     } else if (!isUuid(input[param])) {
-  //       throw new Error(`Invalid parameter: ${param} must be a uuid`);
-  //     }
-  //   });
-  // }
 }
