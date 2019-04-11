@@ -64,7 +64,7 @@ export class DocumentService {
     // Convert the raw documents into Document objects
     const parsedDocuments: Array<Document> = documents.map(
       (rawDocument: any) => {
-        return this.documentFactory.createDocument(rawDocument);
+        return this.documentFactory.convertRawDocument(rawDocument);
       }
     );
 

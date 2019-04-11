@@ -237,7 +237,7 @@ describe('DocumentService', () => {
       backendSubject = new Subject();
       subscriptionSpy.and.returnValue(backendSubject);
       // setup the document to be returned when getUserDocument is called;
-      testDocument = documentFactory.createDocument(
+      testDocument = documentFactory.convertRawDocument(
         { id: uuidv4(), ownerId: uuidv4() }
       );
       // Setup the spy for getDocumentsForUserId()
@@ -299,7 +299,7 @@ describe('DocumentService', () => {
     beforeEach(() => {
       // setup the mock deleted document
       id = uuidv4();
-      deletedDocument = documentFactory.createDocument({
+      deletedDocument = documentFactory.convertRawDocument({
         id, ownerId: uuidv4()
       });
       // setup the return value of query spy

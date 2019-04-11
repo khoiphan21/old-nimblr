@@ -6,7 +6,7 @@ import { UUID } from 'src/app/services/document/command/document-command.service
 import { VersionService } from 'src/app/services/version.service';
 
 export interface CreateBlockEvent {
-  id: BlockId;
+  id?: BlockId;
   type: BlockType;
 }
 
@@ -41,7 +41,7 @@ export class BlockComponent implements OnInit {
     this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
       if (block !== null) {
         // Check if the version is stored
-        if (!this.versionService.isRegistered(block.version)) {
+        if (!this.versionService.isRegistered(block.version) || !this.block) {
           // Try to register the received version (in the case of UI-created
           // blocks)
           this.versionService.registerVersion(block.version);

@@ -33,7 +33,6 @@ export const onSpecificDocumentUpdate = `subscription OnSpecificDocumentUpdate($
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus
@@ -88,7 +87,6 @@ export const onCreateDocument = `subscription OnCreateDocument {
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus
@@ -110,7 +108,6 @@ export const onUpdateDocument = `subscription OnUpdateDocument {
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus
@@ -132,7 +129,6 @@ export const onDeleteDocument = `subscription OnDeleteDocument {
     createdAt
     updatedAt
     submissionDocIds
-    isSubmission
     recipientEmail
     submittedAt
     submissionStatus

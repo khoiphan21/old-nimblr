@@ -189,12 +189,12 @@ describe('NavigationBarService', () => {
 
   describe('processNavigationTab()', () => {
     it('should extract the right details from `Document` object to `NavigationTab`', () => {
-      const sampleDocument = documentFactory.createDocument({
+      const sampleDocument = documentFactory.convertRawDocument({
         id: uuidv4(),
         ownerId: uuidv4(),
         title: 'Test title'
       });
-      const sampleDocument2 = documentFactory.createDocument({
+      const sampleDocument2 = documentFactory.convertRawDocument({
         id: uuidv4(),
         ownerId: uuidv4(),
         title: 'Test title'

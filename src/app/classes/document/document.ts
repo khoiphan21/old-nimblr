@@ -15,13 +15,4 @@ export interface Document {
   readonly createdAt: ISOTimeString;
   readonly updatedAt: ISOTimeString;
   readonly sharingStatus: SharingStatus;
-  // Properties for TEMPLATE document type
-  // tslint:disable:variable-name
-  readonly submissionDocIds: Array<UUID>;
-
-  // Properties for the Submission Details section
-  readonly isSubmission: boolean;
-  readonly recipientEmail: string;
-  readonly submittedAt: ISOTimeString;
-  readonly submissionStatus: SubmissionStatus;
 }

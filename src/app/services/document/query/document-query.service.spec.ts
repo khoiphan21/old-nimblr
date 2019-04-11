@@ -25,7 +25,7 @@ describe('DocumentQueryService', () => {
     factory = TestBed.get(DocumentFactoryService);
     // setup mock data
     id = uuidv4();
-    backendResponse = factory.createDocument({ id, ownerId: uuidv4() });
+    backendResponse = factory.convertRawDocument({ id, ownerId: uuidv4() });
   });
 
   it('should be created', () => {
@@ -147,7 +147,7 @@ describe('DocumentQueryService', () => {
         it('should emit the error thrown by the factory', done => {
           // setup factory to throw an error
           const message = 'test';
-          spyOn(service['documentFactory'], 'createDocument')
+          spyOn(service['documentFactory'], 'convertRawDocument')
             .and.throwError(message);
           // call service
           service.getDocument$(id).subscribe(() => { }, error => {
@@ -245,7 +245,7 @@ describe('DocumentQueryService', () => {
         it('should emit the error thrown by factory', done => {
           // setup factory to throw an error
           const message = 'test';
-          spyOn(service['documentFactory'], 'createDocument')
+          spyOn(service['documentFactory'], 'convertRawDocument')
             .and.throwError(message);
           // call the service
           service['subscribeToUpdate'](id);

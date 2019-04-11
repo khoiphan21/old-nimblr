@@ -58,8 +58,7 @@ describe('DashboardPageComponent', () => {
     component = fixture.componentInstance;
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);
-    document = documentFactory.createDocument({
-      id: uuidv4(),
+    document = documentFactory.createNewDocument({
       ownerId: uuidv4()
     });
     // Spy on the account service

@@ -149,6 +149,17 @@ describe('QuestionBlockComponent', () => {
         expect(document.activeElement === element).toBe(false);
       });
     });
+
+    describe('when questionBlock is defined', () => {
+      it('should call setQuestionValues()', () => {
+        spyOn<any>(component, 'setQuestionValues');
+        // undefined case
+        component.ngOnChanges({
+          questionBlock: new SimpleChange(null, block, true)
+        });
+        expect(component['setQuestionValues']).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('toggleOptions()', () => {

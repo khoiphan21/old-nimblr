@@ -16,6 +16,7 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version.service';
+import { CreateBlockEvent } from 'src/app/components/block/block.component';
 
 const uuidv4 = require('uuid/v4');
 
@@ -32,7 +33,7 @@ export class DocumentContentComponent implements OnInit {
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
   currentSharingStatus: SharingStatus;
-  currentTab = 'template';
+  // currentTab = 'template';
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
@@ -41,7 +42,7 @@ export class DocumentContentComponent implements OnInit {
   documentId: string;
   documentType: DocumentType;
   docTitle: string;
-  blockIds: Array<string>;
+  blockIds: Array<string> = [];
   isDocumentReady = false; // should be switched to true when document is loaded
 
   focusBlockId: BlockId; // the block that needs to be focused on after creation
@@ -151,7 +152,9 @@ export class DocumentContentComponent implements OnInit {
    * @param after after a certain block. If not specified or invalid, the new
    *              block will be added to the end of the array
    */
-  async addNewBlock(type: BlockType, after?: BlockId): Promise<Block> {
+  async addNewBlock(event: CreateBlockEvent): Promise<Block> {
+    const type = event.type;
+    const after = event.id;
     try {
       // create a new block object
       let block: Block;

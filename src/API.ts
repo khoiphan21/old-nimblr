@@ -95,7 +95,6 @@ export type CreateDocumentInput = {
   createdAt?: string | null,
   updatedAt?: string | null,
   submissionDocIds?: Array< string | null > | null,
-  isSubmission?: boolean | null,
   recipientEmail?: string | null,
   submittedAt?: string | null,
   submissionStatus?: SubmissionStatus | null,
@@ -104,6 +103,7 @@ export type CreateDocumentInput = {
 export enum DocumentType {
   GENERIC = "GENERIC",
   TEMPLATE = "TEMPLATE",
+  SUBMISSION = "SUBMISSION",
 }
 
 
@@ -134,7 +134,6 @@ export type UpdateDocumentInput = {
   createdAt?: string | null,
   updatedAt?: string | null,
   submissionDocIds?: Array< string | null > | null,
-  isSubmission?: boolean | null,
   recipientEmail?: string | null,
   submittedAt?: string | null,
   submissionStatus?: SubmissionStatus | null,
@@ -230,7 +229,6 @@ export type ModelDocumentFilterInput = {
   createdAt?: ModelStringFilterInput | null,
   updatedAt?: ModelStringFilterInput | null,
   submissionDocIds?: ModelStringFilterInput | null,
-  isSubmission?: ModelBooleanFilterInput | null,
   recipientEmail?: ModelStringFilterInput | null,
   submittedAt?: ModelStringFilterInput | null,
   submissionStatus?: ModelSubmissionStatusFilterInput | null,
@@ -247,11 +245,6 @@ export type ModelDocumentTypeFilterInput = {
 export type ModelSharingStatusFilterInput = {
   eq?: SharingStatus | null,
   ne?: SharingStatus | null,
-};
-
-export type ModelBooleanFilterInput = {
-  ne?: boolean | null,
-  eq?: boolean | null,
 };
 
 export type ModelSubmissionStatusFilterInput = {
@@ -443,7 +436,6 @@ export type CreateDocumentMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -470,7 +462,6 @@ export type UpdateDocumentMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -497,7 +488,6 @@ export type DeleteDocumentMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -628,7 +618,6 @@ export type GetDocumentQuery = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -659,7 +648,6 @@ export type ListDocumentsQuery = {
       createdAt: string | null,
       updatedAt: string | null,
       submissionDocIds: Array< string | null > | null,
-      isSubmission: boolean | null,
       recipientEmail: string | null,
       submittedAt: string | null,
       submissionStatus: SubmissionStatus | null,
@@ -760,7 +748,6 @@ export type OnSpecificDocumentUpdateSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -819,7 +806,6 @@ export type OnCreateDocumentSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -842,7 +828,6 @@ export type OnUpdateDocumentSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
@@ -865,7 +850,6 @@ export type OnDeleteDocumentSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     submissionDocIds: Array< string | null > | null,
-    isSubmission: boolean | null,
     recipientEmail: string | null,
     submittedAt: string | null,
     submissionStatus: SubmissionStatus | null,
