@@ -1,7 +1,7 @@
 <section class="child-overlay" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]=true (click)="backToParent()">
     <section class="content" *ngIf="isDocumentReady" (click)="$event.stopPropagation()">
         <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%"></app-header>
-        <div class="title mt-5 mt-lg-4">
+        <div class="title mt-5 mt-lg-4" [ngClass]="{'child-document-padding': isChildDoc}">
             <h1>
                 <div class="placeholder" *ngIf="!docTitle">Untitled</div>
                 <!-- When the user is logged in -->
@@ -12,13 +12,13 @@
                 <button class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND FORM</button>
             </h1>
         </div>
-        <section class="document-tab">
+        <section class="document-tab" [ngClass]="{'child-document-padding': isChildDoc}">
             <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
                 template</div>
             <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}" (click)="currentTab = 'submissions'">submissions</div>
         </section>
         <section class="template" *ngIf="currentTab === 'template'">
-            <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
+            <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [isChildDoc]="isChildDoc" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
             </app-block>
             <app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock('TEXT')" style="width: 100%"></app-add-information>
         </section>

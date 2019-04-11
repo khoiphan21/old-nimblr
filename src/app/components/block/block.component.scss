@@ -6,6 +6,9 @@ div.block {
 }
 
 @include media(lg) {
+    .block.child-document {
+        padding: 0 150px;
+    }
     div.block {
         padding: 0 275px;
     }

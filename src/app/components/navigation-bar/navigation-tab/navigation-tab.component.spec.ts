@@ -3,15 +3,19 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavigationTabComponent } from './navigation-tab.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
+import { BehaviorSubject } from 'rxjs';
 
+const uuid = '8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
+const falseUuid = '7d232med-4be2-4d84-bcaa-37ebc8c3e24a';
+const navigationEnd = new NavigationEnd(0, '', '/document');
+const routerEvent = new BehaviorSubject(navigationEnd);
 describe('NavigationTabComponent', () => {
   let component: NavigationTabComponent;
   let fixture: ComponentFixture<NavigationTabComponent>;
   let routerSpy;
   let router;
-  const uuid = '8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -24,9 +28,10 @@ describe('NavigationTabComponent', () => {
         {
           provide: Router,
           useValue: {
-             url: '/document',
-             navigate: ''
-          }
+            url: '/document',
+            navigate: '',
+            events: routerEvent
+         }
        }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -49,13 +54,15 @@ describe('NavigationTabComponent', () => {
       });
 
       it('should set value to true if it is the same document', () => {
+        spyOn(router.events, 'subscribe').and.callFake(() => {
+          return;
+        });
         component.navigationTab = new NavigationTabDocument(uuid, 'test', []);
         component.ngOnInit();
         expect(component.isCurrentDocument).toBe(true);
       });
 
       it('should set value to false if it is the same document', () => {
-        const falseUuid = '7d232med-4be2-4d84-bcaa-37ebc8c3e24a';
         component.navigationTab = new NavigationTabDocument(falseUuid, 'test', []);
         component.ngOnInit();
         expect(component.isCurrentDocument).toBe(false);

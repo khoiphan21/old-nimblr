@@ -10,6 +10,7 @@ div.navigation-tab {
     font-weight: normal;
     letter-spacing: 0.5px;
     color: $color-grey-2;
+    cursor: pointer;
 }
 
 .current-tab {
@@ -22,6 +23,7 @@ div.navigation-tab {
         height: 27px;
         padding: 0 25px;
         font-size: 13px;
+        transition: background 0.3s;
         &:hover {
             background: transparentize($color: #000000, $amount: 0.95)
         }
