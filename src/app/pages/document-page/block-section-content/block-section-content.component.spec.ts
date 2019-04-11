@@ -40,6 +40,17 @@ describe('BlockSectionContentComponent', () => {
     component.addNewBlock(event);
   });
 
+  it('addFirstBlock() - should emit the right event', done => {
+    const event: CreateBlockEvent = {
+      type: BlockType.TEXT
+    };
+    component.addNewBlockEvent.pipe(take(1)).subscribe(value => {
+      expect(value).toEqual(event);
+      done();
+    });
+    component.addFirstBlock();
+  });
+
   it('deleteBlock() - should emit the event', done => {
     const event = 'test';
     component.deleteBlockEvent.pipe(take(1)).subscribe(value => {

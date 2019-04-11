@@ -2,9 +2,9 @@ import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
-import { processTestError } from '../../../classes/test-helpers.spec';
 import { createDocument } from 'src/graphql/mutations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { DocumentFactoryService } from '../factory/document-factory.service';
 
 const uuidv4 = require('uuid/v4');
 interface RunTestInput {
@@ -17,8 +17,9 @@ interface RunTestInput {
 describe('DocumentCommandService', () => {
 
   let service: DocumentCommandService;
+  let factory: DocumentFactoryService;
   let querySpy: jasmine.Spy;
-  let input: CreateDocumentInput;
+  let input: any;
 
   /* tslint:disable:no-string-literal */
   beforeEach(() => {
@@ -35,6 +36,7 @@ describe('DocumentCommandService', () => {
       sharingStatus: SharingStatus.PRIVATE
     };
     service = TestBed.get(DocumentCommandService);
+    factory = TestBed.get(DocumentFactoryService);
     // setup graphQlService to return some results
     querySpy = spyOn(service['graphQlService'], 'query');
     querySpy.and.returnValue(Promise.resolve({
@@ -59,9 +61,32 @@ describe('DocumentCommandService', () => {
         service.createDocument(input);
         expect(querySpy.calls.mostRecent().args[0]).toEqual(createDocument);
       });
+
       it('should call with the right argument', () => {
         service.createDocument(input);
-        expect(querySpy.calls.mostRecent().args[1]).toEqual({ input });
+        // Extract the arguments to check
+        const {
+          type, version, ownerId, lastUpdatedBy, sharingStatus
+        } = querySpy.calls.mostRecent().args[1].input;
+        // Form a new argument
+        const argsToCheck = {
+          type, version, ownerId, lastUpdatedBy, sharingStatus
+        };
+
+        expect(argsToCheck).toEqual(input);
+      });
+
+      describe('when called with a Document instance', () => {
+        it('should not have unnecessary properties', () => {
+          const document = factory.createNewDocument({
+            ownerId: uuidv4(),
+          });
+          service.createDocument(document);
+
+          // Check an example of a non-relevant property
+          const arg = querySpy.calls.mostRecent().args[1].input;
+          expect(arg.baseErrorMessage).toBeUndefined();
+        });
       });
     });
 
