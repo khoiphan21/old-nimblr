@@ -24,8 +24,8 @@ export class BlockSectionContentComponent implements OnInit {
     this.addNewBlockEvent.emit(event);
   }
 
-  deleteBlock(blockId: string) {
-    this.deleteBlockEvent.emit(blockId);
+  deleteBlock(event: string) {
+    this.deleteBlockEvent.emit(event);
   }
 
 }
