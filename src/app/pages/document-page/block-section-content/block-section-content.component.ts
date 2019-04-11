@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BlockId } from 'src/app/classes/block/block';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
+import { BlockType } from 'src/API';
 
 @Component({
   selector: 'app-block-section-content',
@@ -22,6 +23,10 @@ export class BlockSectionContentComponent implements OnInit {
 
   addNewBlock(event: CreateBlockEvent) {
     this.addNewBlockEvent.emit(event);
+  }
+
+  addFirstBlock() {
+    this.addNewBlockEvent.emit({ type: BlockType.TEXT });
   }
 
   deleteBlock(event: string) {
