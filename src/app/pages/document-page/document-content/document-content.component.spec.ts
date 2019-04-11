@@ -750,7 +750,8 @@ describe('DocumentContentComponent', () => {
     it('should call factory with the right arguments', () => {
       expect(factorySpy).toHaveBeenCalledWith({
         ownerId: testUser.id,
-        recipientEmail: email
+        recipientEmail: email,
+        blockIds: []
       });
     });
 

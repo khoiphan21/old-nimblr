@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from 'src/app/classes/document/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
@@ -312,10 +312,18 @@ export class DocumentContentComponent implements OnInit {
   }
 
   async sendDocument(email: string) {
-    // create a new SubmissionDocument
+    // First duplicate all blocks
+    const blocks: Array<Block> = await Promise.all(
+      this.blockIds.map(id => this.getCurrentBlock(id))
+    );
+    const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
+    const duplicatedIds = duplicatedBlocks.map(block => block.id);
+
+    // create a new SubmissionDocument, passing in the info + blocks
     const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
       ownerId: this.currentUser.id,
-      recipientEmail: email
+      recipientEmail: email,
+      blockIds: duplicatedIds
     });
 
     // call createDocument for the new document
@@ -336,6 +344,14 @@ export class DocumentContentComponent implements OnInit {
       email,
       documentId: submission.id,
       sender: this.currentUser
+    });
+  }
+
+  private async getCurrentBlock(id: BlockId): Promise<Block> {
+    return new Promise(resolve => {
+      this.blockQueryService.getBlock$(id).pipe(take(1)).subscribe(value => {
+        resolve(value);
+      });
     });
   }
 

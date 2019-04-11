@@ -114,6 +114,12 @@ describe('DocumentFactoryService', () => {
     it('should store the lastUpdatedBy', () => {
       expect(submission.lastUpdatedBy).toEqual(submissionInput.ownerId);
     });
+
+    it('should store the blockIds if given', () => {
+      submissionInput.blockIds = [uuidv4()];
+      submission = service.createNewSubmission(submissionInput);
+      expect(submission.blockIds).toEqual(submissionInput.blockIds);
+    });
   });
 
   describe('convertRawDocument()', () => {
