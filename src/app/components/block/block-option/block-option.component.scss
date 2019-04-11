@@ -2,6 +2,10 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 $input-gap: 7.5px;
+section.block-option.child-document {
+    left: 315px - 75px - $input-gap;
+}
+
 section.block-option {
     padding-top: 6.5px;
     width: auto;

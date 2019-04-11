@@ -56,6 +56,15 @@ section.content {
     
 }
 
+.child-document {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    min-height: 100vh;
+    z-index: 3;
+}
+
 @include media(lg) {
     section.content {
         height: 100%;
@@ -80,16 +89,17 @@ section.content {
                 }
             }
         }
-    }
-}
 
-.child-document {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    min-height: 100vh;
-    background: rgba(0, 0, 0, 0.46);
-    z-index: 3;
-    padding: 20vh 10vw 10vh 10vw;
+        div.title.child-document-padding {
+            padding: 0 150px 20px 150px;
+        }
+    }
+    .child-document {
+        background: rgba(0, 0, 0, 0.46);
+        z-index: 3;
+        padding: 20vh 10vw 10vh 10vw;
+        section.content {
+            padding-bottom: 10vh;
+        }
+    }
 }

@@ -24,6 +24,7 @@ export class BlockComponent implements OnInit {
   myVersions: Set<UUID> = new Set();
 
   @Input() blockId: string;
+  @Input() isChildDoc: boolean;
   @Input() isUserLoggedIn: boolean;
   @Input() focusBlockId: BlockId; // To check if it should be focused
 

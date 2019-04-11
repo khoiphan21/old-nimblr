@@ -1,6 +1,6 @@
 <section class="content">
 
-  <section class="document-tab">
+  <section class="document-tab" [ngClass]="{'child-document-padding': isChildDoc}">
     <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
       template</div>
     <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}"
