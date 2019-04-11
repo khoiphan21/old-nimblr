@@ -32,7 +32,7 @@ export class DocumentContentComponent implements OnInit {
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
   currentSharingStatus: SharingStatus;
-  currentTab = 'template';
+  // currentTab = 'template';
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
