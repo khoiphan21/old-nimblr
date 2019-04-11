@@ -721,7 +721,7 @@ describe('DocumentContentComponent', () => {
     });
   });
 
-  fdescribe('sendDocument()', () => {
+  describe('sendDocument()', () => {
     let submission: SubmissionDocument;
     let factorySpy: jasmine.Spy;
     let createDocumentSpy: jasmine.Spy;
@@ -764,7 +764,9 @@ describe('DocumentContentComponent', () => {
 
     it('should call to update document to backend', () => {
       expect(updateDocumentSpy).toHaveBeenCalledWith({
-        id, submissionDocIds: component.submissionDocIds
+        id,
+        submissionDocIds: component.submissionDocIds,
+        lastUpdatedBy: testUser.id
       });
     });
 

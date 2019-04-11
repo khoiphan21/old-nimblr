@@ -18,29 +18,24 @@ export class EmailService {
 
   constructor() { }
 
-  sendInvitationEmail(input: InvitationEmailDetails) {
-    'use strict';
+  async sendInvitationEmail(input: InvitationEmailDetails) {
 
     // Provide the full path to your config.json file.
     aws.config.accessKeyId = environment.AWS_ACCESS_KEY_ID;
     aws.config.secretAccessKey = environment.AWS_SECRET_ACCESS_KEY;
     aws.config.region = 'us-east-1';
 
-    // Replace sender@example.com with your "From" address.
     // This address must be verified with Amazon SES.
-    const sender = 'Khoi Phan <khoiphan21@gmail.com>';
+    const sender = 'Modulr Tech <contact@modulrtech.com>';
 
-    // Replace recipient@example.com with a "To" address. If your account
-    // is still in the sandbox, this address must be verified.
-    const recipient = 'khoiphan21@gmail.com';
+    const recipient = input.email;
 
     // The subject line for the email.
     const subject = 'Irisa Invitation Link';
 
+    const domain = 'localhost:4200';
     // The email body for recipients with non-HTML email clients.
-    const bodyText = 'Amazon SES Test (SDK for JavaScript in Node.js)\r\n'
-      + 'This email was sent with Amazon SES using the '
-      + 'AWS SDK for JavaScript in Node.js.';
+    const bodyText = `Invitation to shared document: http://${domain}/document/${input.documentId}`;
 
     // The HTML body of the email.
     const bodyHTML = `
@@ -49,7 +44,7 @@ export class EmailService {
       <body>
         <h1>Invitation to shared document</h1>
         <p>Click on this link to access document:
-          <a href='http://localhost:4200/document/${input.documentId}'>Shared Document</a>
+          <a href='http://${domain}/document/${input.documentId}'>Shared Document</a>
         </p>
       </body>
     </html>`;
@@ -86,14 +81,20 @@ export class EmailService {
       }
     };
 
-    // Try to send the email.
-    ses.sendEmail(params, (err, data) => {
-      // If something goes wrong, print an error message.
-      if (err) {
-        console.log(err.message);
-      } else {
-        console.log('Email sent! Message ID: ', data.MessageId);
-      }
+    await this.send(ses, params);
+  }
+
+  private async send(service: any, params: any) {
+    return new Promise((resolve, reject) => {
+      // Try to send the email.
+      service.sendEmail(params, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+          console.log('Email sent! Message ID: ', data.MessageId);
+        }
+      });
     });
   }
 }

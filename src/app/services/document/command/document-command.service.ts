@@ -24,12 +24,50 @@ export class DocumentCommandService {
   async createDocument(input: CreateDocumentInput): Promise<any> {
     this.validateCreateInput(input);
 
+    // Get a new input to prevent accidental properties
+    // tslint:disable:prefer-const
+    let {
+      id,
+      version,
+      type,
+      ownerId,
+      lastUpdatedBy,
+      sharingStatus,
+      title,
+      editorIds,
+      viewerIds,
+      blockIds,
+      createdAt,
+      updatedAt,
+      submissionDocIds,
+      recipientEmail,
+      submittedAt,
+      submissionStatus,
+    } = input;
+
     // Change title to null if an empty string
-    if (input.title === '') {
-      input.title = null;
+    if (title === '') {
+      title = null;
     }
 
-    const response: any = await this.graphQlService.query(createDocument, { input });
+    const response: any = await this.graphQlService.query(createDocument, { input: {
+      id,
+      version,
+      type,
+      ownerId,
+      lastUpdatedBy,
+      sharingStatus,
+      title,
+      editorIds,
+      viewerIds,
+      blockIds,
+      createdAt,
+      updatedAt,
+      submissionDocIds,
+      recipientEmail,
+      submittedAt,
+      submissionStatus,
+    } });
 
     return response.data.createDocument;
   }

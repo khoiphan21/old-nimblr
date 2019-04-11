@@ -20,7 +20,8 @@
     </div>
 
     <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
+      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId"
+      [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
       (deleteBlockEvent)="deleteBlock($event)"></app-template-document-content>
 
     <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds"

@@ -327,7 +327,8 @@ export class DocumentContentComponent implements OnInit {
     // call to updateDocument for current document
     await this.documentCommandService.updateDocument({
       id: this.documentId,
-      submissionDocIds: this.submissionDocIds
+      submissionDocIds: this.submissionDocIds,
+      lastUpdatedBy: this.currentUser.id
     });
 
     // if all good, then send the email
