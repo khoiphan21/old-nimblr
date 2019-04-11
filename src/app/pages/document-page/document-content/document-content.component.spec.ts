@@ -316,7 +316,7 @@ describe('DocumentContentComponent', () => {
       const type: any = 'abc';
       const message = `Error: BlockType "${type}" is not supported`;
       try {
-        await component.addNewBlock(type);
+        await component.addNewBlock({ type });
         fail('error must occur');
       } catch (error) {
         expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
@@ -348,7 +348,7 @@ describe('DocumentContentComponent', () => {
         const message = 'test';
         blockCommandSpy.and.returnValue(Promise.reject(message));
         try {
-          await component.addNewBlock(BlockType.TEXT);
+          await component.addNewBlock({ type: BlockType.TEXT });
           fail('error must occur');
         } catch (error) {
           expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
@@ -359,7 +359,7 @@ describe('DocumentContentComponent', () => {
         const message = 'test';
         documentCommandSpy.and.returnValue(Promise.reject(message));
         try {
-          await component.addNewBlock(BlockType.TEXT);
+          await component.addNewBlock({ type: BlockType.TEXT });
           fail('error must occur');
         } catch (error) {
           expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
@@ -370,7 +370,7 @@ describe('DocumentContentComponent', () => {
     describe('adding new TextBlock', () => {
 
       beforeEach(async () => {
-        block = await component.addNewBlock(BlockType.TEXT);
+        block = await component.addNewBlock({ type: BlockType.TEXT });
       });
 
       describe('[HAPPY PATH]', () => {
@@ -388,7 +388,7 @@ describe('DocumentContentComponent', () => {
           spyOn(component['blockFactoryService'], 'createNewTextBlock')
             .and.throwError(error.message);
           try {
-            await component.addNewBlock(BlockType.TEXT);
+            await component.addNewBlock({ type: BlockType.TEXT });
             fail('error must occur');
           } catch (thrownError) {
             expect(thrownError.message).toEqual(`DocumentPage failed to add block: ${error}`);
@@ -403,7 +403,7 @@ describe('DocumentContentComponent', () => {
     describe('adding new QuestionBlock', () => {
 
       beforeEach(async () => {
-        block = await component.addNewBlock(BlockType.QUESTION);
+        block = await component.addNewBlock({ type: BlockType.QUESTION });
       });
 
       describe('[HAPPY PATH]', () => {
@@ -421,7 +421,7 @@ describe('DocumentContentComponent', () => {
           spyOn(component['blockFactoryService'], 'createNewQuestionBlock')
             .and.throwError(error.message);
           try {
-            await component.addNewBlock(BlockType.QUESTION);
+            await component.addNewBlock({ type: BlockType.QUESTION });
             fail('error must occur');
           } catch (thrownError) {
             expect(thrownError.message).toEqual(`DocumentPage failed to add block: ${error}`);
@@ -455,7 +455,7 @@ describe('DocumentContentComponent', () => {
       describe('checking order', () => {
         beforeEach(async () => {
           // now then call to add new block
-          block = await component.addNewBlock(BlockType.TEXT, afterId);
+          block = await component.addNewBlock({ type: BlockType.TEXT, id: afterId });
         });
 
         it('should have the right order of blockIds in the document', () => {
@@ -473,17 +473,17 @@ describe('DocumentContentComponent', () => {
       describe('invalid "after" param', () => {
         it('should add to the end if the given index is null', async () => {
           const index = null;
-          block = await component.addNewBlock(BlockType.TEXT, index);
+          block = await component.addNewBlock({ type: BlockType.TEXT, id: index });
           expect(component.blockIds[4]).toEqual(block.id);
         });
         it('should add to the end if the given index is undefined', async () => {
           const index = undefined;
-          block = await component.addNewBlock(BlockType.TEXT, index);
+          block = await component.addNewBlock({ type: BlockType.TEXT, id: index });
           expect(component.blockIds[4]).toEqual(block.id);
         });
         it('should add to the end if the given index does not exist', async () => {
           const index = 'abcd';
-          block = await component.addNewBlock(BlockType.TEXT, index);
+          block = await component.addNewBlock({ type: BlockType.TEXT, id: index });
           expect(component.blockIds[4]).toEqual(block.id);
         });
       });

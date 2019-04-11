@@ -70,13 +70,17 @@ describe('BlockComponent', () => {
       expect(component.block).toEqual(block);
     });
 
-    it('should not set the block if the version is stored', () => {
+    it('should not set the block if the version is stored and the block already exists', () => {
       component.ngOnInit();
+      const originalBlock = blockFactoryService.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      component.block = originalBlock;
       component['versionService'].registerVersion(block.version);
       // now reset the stored block
-      component.block = null;
       subject.next(block);
-      expect(component.block).toBe(null);
+      expect(component.block.version).toBe(originalBlock.version);
     });
 
     it('for now, should log the error out to console', () => {

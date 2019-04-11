@@ -8,7 +8,7 @@
   </section>
 
   <section class="template" *ngIf="currentTab === 'template'">
-    <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds"
+    <app-block-section-content [blockIds]="blockIds"
       [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
       (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
   </section>
