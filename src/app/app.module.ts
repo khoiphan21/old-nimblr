@@ -36,6 +36,7 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentContentComponent } from './pages/document-page/document-content/document-content.component';
 import { TemplateDocumentContentComponent } from './pages/document-page/template-document-content/template-document-content.component';
 import { BlockSectionContentComponent } from './pages/document-page/block-section-content/block-section-content.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { BlockSectionContentComponent } from './pages/document-page/block-sectio
     ClickOutsideModule,
     BrowserAnimationsModule,
     ContenteditableModule,
-    ResponsiveModule.forRoot()
+    ResponsiveModule.forRoot(),
+    DragDropModule
   ],
 
   bootstrap: [AppComponent]
