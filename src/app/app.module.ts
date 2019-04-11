@@ -35,6 +35,7 @@ import { RequestAccessComponent } from './components/request-access/request-acce
 import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentContentComponent } from './pages/document-page/document-content/document-content.component';
 import { TemplateDocumentContentComponent } from './pages/document-page/template-document-content/template-document-content.component';
+import { BlockSectionContentComponent } from './pages/document-page/block-section-content/block-section-content.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { TemplateDocumentContentComponent } from './pages/document-page/template
     RequestAccessComponent,
     DocumentContentComponent,
     TemplateDocumentContentComponent,
+    BlockSectionContentComponent,
   ],
   imports: [
     BrowserModule,

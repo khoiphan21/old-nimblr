@@ -8,12 +8,9 @@
   </section>
 
   <section class="template" *ngIf="currentTab === 'template'">
-    <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id"
-      (createBlock)="addNewBlock($event)" [focusBlockId]="focusBlockId"
-      (deleteEvent)="deleteBlock($event)">
-    </app-block>
-    <app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock('TEXT')"
-      style="width: 100%"></app-add-information>
+    <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds"
+      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
+      (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
   </section>
 
   <table class="submissions" *ngIf="currentTab === 'submissions'">

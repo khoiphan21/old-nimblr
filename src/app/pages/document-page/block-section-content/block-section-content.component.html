@@ -1,0 +1,5 @@
+<app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id"
+  (createBlock)="addNewBlock($event)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
+</app-block>
+<app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock('TEXT')" style="width: 100%">
+</app-add-information>

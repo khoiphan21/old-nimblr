@@ -42,7 +42,7 @@ export class DocumentContentComponent implements OnInit {
   documentId: string;
   documentType: DocumentType;
   docTitle: string;
-  blockIds: Array<string>;
+  blockIds: Array<string> = [];
   isDocumentReady = false; // should be switched to true when document is loaded
 
   focusBlockId: BlockId; // the block that needs to be focused on after creation
