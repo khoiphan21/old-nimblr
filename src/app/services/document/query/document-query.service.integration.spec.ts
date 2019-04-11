@@ -119,48 +119,6 @@ describe('(Integration) DocumentQueryService', () => {
       }
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
-    it('should not notify for an update with a stored version', done => {
-      getService().then(service => {
-        helper.sendCreateDocument(input).then(createdDocument => {
-          storedDocument = createdDocument;
-          // setup to test subscription
-          setupSubscriptionTest(service);
-          // Create and register a version
-          const version = uuidv4();
-          service.registerUpdateVersion(version);
-          // Update the document
-          return helper.sendUpdateDocument({
-            id: storedDocument.id, title, version
-          }, environment.WAIT_TIME_BEFORE_UPDATE);
-        }).then(() => {
-          return helper.deleteDocument();
-        }).catch(error => processTestError(
-          'Error during test to check for update version', error, done
-        ));
-      });
-
-      function setupSubscriptionTest(service: DocumentQueryService) {
-        // Setup the default subscription from the service
-        service.getDocument$(storedDocument.id).subscribe(notifiedDocument => {
-          if (notifiedDocument === null) { return; }
-          // Check for notification
-          if (notifiedDocument.title === title) {
-            fail('Should not have notified for this version');
-            done();
-          }
-        }, error => processTestError('Error setting up subscription', error, done));
-
-        // Setup an additional subscription to know when the test is finished
-        graphQlService.getSubscription(onSpecificDocumentUpdate, { id: storedDocument.id }
-        ).pipe(take(1)).subscribe(notification => {
-          const document = notification.value.data.onSpecificDocumentUpdate;
-          if (document.title === title) {
-            setTimeout(() => done(), 500); // register the test as completed
-          }
-        }, error => processTestError('Error setting up subscription', error, done));
-      }
-    });
-
     describe('[ANONYMOUS ACCESS]', () => {
 
       it('should be able to access a public document', async () => {

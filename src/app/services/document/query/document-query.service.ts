@@ -11,7 +11,6 @@ import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 })
 export class DocumentQueryService {
 
-  private myVersions: Set<string> = new Set();
   private documentMap: Map<string, BehaviorSubject<Document>> = new Map();
   private subscriptionMap: Map<string, Subscription> = new Map();
 
@@ -78,18 +77,6 @@ export class DocumentQueryService {
   }
 
   /**
-   * Register a specific version into the list of 'ignored' notifications.
-   *
-   * Essentially, when a notification comes, its version is checked against the
-   * internal list of versions. If there's a match, the notification will be ignored
-   *
-   * @param version the version of the document to be ignored
-   */
-  registerUpdateVersion(version: string) {
-    this.myVersions.add(version);
-  }
-
-  /**
    * Subscribe to any changes to the document notified by GraphQL.
    *
    * Whenever a notification is received, the document observable will emit the
@@ -105,9 +92,7 @@ export class DocumentQueryService {
     ).subscribe(notification => {
       try {
         const document = this.parseNotification(notification);
-        if (!this.myVersions.has(document.version)) {
-          document$.next(document);
-        }
+        document$.next(document);
       } catch (error) {
         document$.error(error);
       }

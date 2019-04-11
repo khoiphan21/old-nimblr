@@ -1,4 +1,3 @@
-<div class="navigation-tab" (click)="navigateToDocument(navigationTab.id)" [ngClass]="{'current-tab': isCurrentDocument}">
-    <!-- {{navigationTab.title}} -->
-    Untitled Form
+<div *ngIf="navigationTab" class="navigation-tab" (click)="navigateToDocument(navigationTab.id)" [ngClass]="{'current-tab': isCurrentDocument}">
+    {{navigationTab.title ? navigationTab.title : 'Untitled'}}
 </div>

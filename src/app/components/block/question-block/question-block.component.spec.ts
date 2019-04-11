@@ -7,6 +7,8 @@ import { QuestionType, BlockType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
+import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
+import { RouterTestingModule } from '@angular/router/testing';
 const uuidv4 = require('uuid/v4');
 
 describe('QuestionBlockComponent', () => {
@@ -33,7 +35,8 @@ describe('QuestionBlockComponent', () => {
       ],
       imports: [
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        RouterTestingModule.withRoutes([])
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });

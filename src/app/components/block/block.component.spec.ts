@@ -2,12 +2,12 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockComponent, CreateBlockEvent } from './block.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { BlockQueryService } from '../../services/block/query/block-query.service';
-import { MockBlockQueryService } from 'src/app/services/block/query/block-query.service.spec';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
+import { Block } from 'src/app/classes/block/block';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const uuidv4 = require('uuid/v4');
 
@@ -32,13 +32,8 @@ describe('BlockComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        FormsModule
-      ],
-      providers: [
-        {
-          provide: BlockQueryService,
-          useClass: MockBlockQueryService
-        }
+        FormsModule,
+        RouterTestingModule.withRoutes([])
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -49,7 +44,6 @@ describe('BlockComponent', () => {
     fixture = TestBed.createComponent(BlockComponent);
     blockFactoryService = TestBed.get(BlockFactoryService);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -58,7 +52,7 @@ describe('BlockComponent', () => {
 
   /* tslint:disable:no-string-literal */
   describe('ngOnInit()', () => {
-    let block;
+    let block: Block;
     let getBlockSpy: jasmine.Spy;
     let subject: Subject<any>;
 
@@ -74,6 +68,15 @@ describe('BlockComponent', () => {
       component.ngOnInit();
       subject.next(block);
       expect(component.block).toEqual(block);
+    });
+
+    it('should not set the block if the version is stored', () => {
+      component.ngOnInit();
+      component['versionService'].registerVersion(block.version);
+      // now reset the stored block
+      component.block = null;
+      subject.next(block);
+      expect(component.block).toBe(null);
     });
 
     it('for now, should log the error out to console', () => {

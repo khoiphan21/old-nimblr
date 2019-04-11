@@ -110,6 +110,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   onBackSpaceAndEmptyTextbox(event: Event) {
     if (this.value === '') {
       this.deleteEvent.emit(this.block.id);
+      clearTimeout(this.timeout); // To prevent the last update call
       event.preventDefault();
     }
   }

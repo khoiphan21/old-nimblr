@@ -18,6 +18,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
+import { VersionService } from 'src/app/services/version.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -25,6 +26,7 @@ describe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
+  let versionService: VersionService;
   let router;
   // mock data for testing
   const id = uuidv4();
@@ -74,6 +76,7 @@ describe('DocumentContentComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentContentComponent);
     router = TestBed.get(Router);
+    versionService = TestBed.get(VersionService);
     component = fixture.componentInstance;
     component['currentUser'] = testUser;
     documentFactory = TestBed.get(DocumentFactoryService);
@@ -206,81 +209,63 @@ describe('DocumentContentComponent', () => {
       component['retrieveDocumentData']();
     });
 
-    it('should call getDocument$() with the id from route', done => {
-      setTimeout(() => {
-        expect(getDocumentSpy.calls.mostRecent().args[0]).toBe(id);
-        done();
-      }, 5);
+    it('should call getDocument$() with the id from route', () => {
+      expect(getDocumentSpy.calls.mostRecent().args[0]).toBe(id);
     });
 
-    it('should call setupBlockUpdateSubscription() when notified', done => {
+    it('should not update the properties if the version is stored', () => {
+      spyOn<any>(component['versionService'], 'subscribeToRouter');
+      component['versionService'].registerVersion(document.version);
+      spyOn<any>(component, 'updateStoredProperties');
+      // now emit and check
       getDocument$.next(document);
-      setTimeout(() => {
-        expect(setupSubscriptionSpy.calls.count()).toBe(1);
-        done();
-      }, 3);
+      expect(component['updateStoredProperties']).not.toHaveBeenCalled();
+    });
+
+    it('should call setupBlockUpdateSubscription() when notified', () => {
+      getDocument$.next(document);
+      expect(setupSubscriptionSpy.calls.count()).toBe(1);
     });
 
     describe('(storing values)', () => {
 
-      it('should store into documentId', done => {
+      it('should store into documentId', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.documentId).toEqual(document.id);
-          done();
-        }, 3);
+        expect(component.documentId).toEqual(document.id);
       });
 
-      it('should store into documentType', done => {
+      it('should store into documentType', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.documentType).toEqual(document.type);
-          done();
-        }, 3);
+        expect(component.documentType).toEqual(document.type);
       });
 
-      it('should store into blockIds', done => {
+      it('should store into blockIds', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.blockIds).toEqual(document.blockIds);
-          done();
-        }, 3);
+        expect(component.blockIds).toEqual(document.blockIds);
       });
 
-      it('should store into docTitle', done => {
+      it('should store into docTitle', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.docTitle).toEqual(document.title);
-          done();
-        }, 3);
+        expect(component.docTitle).toEqual(document.title);
       });
-      it('should store into currentSharingStatus', done => {
+      it('should store into currentSharingStatus', () => {
         getDocument$.next(document);
-        setTimeout(() => {
-          expect(component.currentSharingStatus).toEqual(document.sharingStatus);
-          done();
-        }, 3);
+        expect(component.currentSharingStatus).toEqual(document.sharingStatus);
       });
 
     });
 
-    it('should set isDocumentReady to be true', done => {
+    it('should set isDocumentReady to be true', () => {
       getDocument$.next(document);
-      setTimeout(() => {
-        expect(component.isDocumentReady).toBe(true);
-        done();
-      }, 3);
+      expect(component.isDocumentReady).toBe(true);
     });
 
-    it('should not do anything if document returned is null', done => {
+    it('should not do anything if document returned is null', () => {
       getDocument$.next(null);
-      setTimeout(() => {
-        expect(setupSubscriptionSpy.calls.count()).toBe(0);
-        done();
-      }, 3);
+      expect(setupSubscriptionSpy.calls.count()).toBe(0);
     });
 
-    it('should log the error received', done => {
+    it('should log the error received', () => {
       // Setup the spy on console
       const consoleSpy = spyOn(console, 'error');
       // setup the document to throw an error
@@ -288,7 +273,6 @@ describe('DocumentContentComponent', () => {
       getDocument$.error(mockError);
       const message = `DocumentPage failed to get document: ${mockError.message}`;
       expect(consoleSpy).toHaveBeenCalledWith(message);
-      done();
     });
   });
 
@@ -297,8 +281,8 @@ describe('DocumentContentComponent', () => {
     let document: Document;
     let user: User;
     let userFactory: UserFactoryService;
-    let blockQuerySpy: jasmine.Spy;
     let blockCommandSpy: jasmine.Spy;
+    let blockQuerySpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
     beforeEach(() => {
@@ -581,6 +565,7 @@ describe('DocumentContentComponent', () => {
       component.changeSharingStatus(SharingStatus.PRIVATE);
       expect(component.currentSharingStatus).toEqual(SharingStatus.PRIVATE);
     });
+
     it('should call the documentCommandService with the right args', () => {
       const status = SharingStatus.PUBLIC;
       component.changeSharingStatus(status);
@@ -723,6 +708,7 @@ describe('DocumentContentComponent', () => {
     it('should change the type stored', () => {
       expect(component.documentType).toEqual(DocumentType.TEMPLATE);
     });
+
     it('should call command service to update', () => {
       expect(commandSpy).toHaveBeenCalledWith({
         id: component.documentId,
