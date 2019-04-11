@@ -1,7 +1,12 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
-import { BlockType } from 'src/API';
+import { BlockType, TextBlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
+
+export interface CreateBlockInfo {
+  type: BlockType;
+  textblocktype?: TextBlockType;
+}
 
 @Component({
   selector: 'app-block-option',
@@ -9,12 +14,13 @@ import { Block } from 'src/app/classes/block/block';
   styleUrls: ['./block-option.component.scss'],
   animations: [fadeInOutAnimation]
 })
+
 export class BlockOptionComponent implements OnChanges {
 
   @Input() isBlockOptionsShown: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
-  @Output() createBlock = new EventEmitter<BlockType>();
+  @Output() createBlock = new EventEmitter<CreateBlockInfo>();
 
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
@@ -60,20 +66,29 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addTextBlock() {
-    this.createBlock.emit(BlockType.TEXT);
+    const input: CreateBlockInfo = {
+      type: BlockType.TEXT,
+    };
+    this.createBlock.emit(input);
     this.hideAddBlockContainer();
   }
 
   addQuestionBlock() {
-    this.createBlock.emit(BlockType.QUESTION);
+    const input: CreateBlockInfo = {
+      type: BlockType.QUESTION,
+    };
+    this.createBlock.emit(input);
     this.hideAddBlockContainer();
   }
 
   addHeaderBlock() {
-    // TODO: @bruno seems like i need to add BlockType.HEADER
-    console.log('fire up header');
-    // this.createBlock.emit(BlockType.HEADER);
-    // this.hideAddBlockContainer();
+    // TODO: @bruno tbt
+    const input: CreateBlockInfo = {
+      type: BlockType.TEXT,
+      textblocktype: TextBlockType.HEADER
+    };
+    this.createBlock.emit(input);
+    this.hideAddBlockContainer();
   }
 
   deleteHandler() {

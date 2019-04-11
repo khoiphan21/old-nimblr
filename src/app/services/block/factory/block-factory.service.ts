@@ -5,7 +5,7 @@ import { isUuid } from 'src/app/classes/helpers';
 import { BlockType, QuestionType, TextBlockType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { UUID } from '../../document/command/document-command.service';
-import { HeaderBlock, HeaderBlockInput } from 'src/app/classes/block/textBox/header-block';
+import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -23,25 +23,18 @@ export class BlockFactoryService {
 
   createNewTextBlock(input: CreateNewBlockInput): TextBlock {
     const newInput: CreateAppTextBlockInput = {
-      id: uuidv4(),
-      version: uuidv4(),
       documentId: input.documentId,
       lastUpdatedBy: input.lastUpdatedBy,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      value: ''
+      value: '',
+      textblocktype: null,
     };
     return new TextBlock(newInput);
   }
 
   createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
-    const newInput: HeaderBlockInput = {
-      id: uuidv4(),
-      version: uuidv4(),
+    const newInput: CreateAppTextBlockInput = {
       documentId: input.documentId,
       lastUpdatedBy: input.lastUpdatedBy,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
       value: '',
       textblocktype: TextBlockType.HEADER,
     };

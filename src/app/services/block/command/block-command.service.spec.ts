@@ -432,35 +432,6 @@ describe('BlockCommandService', () => {
           });
         });
       });
-
-      describe('correctness of mapTextBoxType() mapping', () => {
-
-        let createTextBlockSpy: jasmine.Spy;
-        let createHeaderBlockSpy: jasmine.Spy;
-
-        beforeEach(()=> {
-          createTextBlockSpy = spyOn<any>(service, 'createTextBlock').and.callThrough();
-          createHeaderBlockSpy = spyOn<any>(service, 'createHeaderBlock').and.callThrough();
-        });
-
-        it('should call createTextBlock', done => {
-          service['mapTextBoxType'](textInput).then(data => {
-            expect(createTextBlockSpy.calls.count()).toBe(1);
-            expect(createHeaderBlockSpy.calls.count()).toBe(0);
-            done();
-          });
-        });
-
-        it('should call createHeaderBlockSpy', done => {
-          service['mapTextBoxType'](headerInput).then(data => {
-            expect(createTextBlockSpy.calls.count()).toBe(0);
-            expect(createHeaderBlockSpy.calls.count()).toBe(1);
-            done();
-          });
-        });
-      });
-
-
     });
   });
 

@@ -1,4 +1,4 @@
-import { HeaderBlock, HeaderBlockInput } from './header-block';
+import { HeaderBlock } from './header-block';
 import { TextBlockType } from 'src/API';
 
 

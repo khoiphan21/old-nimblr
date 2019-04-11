@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType, CreateQuestionBlockInput } from 'src/API';
+import { BlockType, QuestionType, CreateQuestionBlockInput, TextBlockType } from 'src/API';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
@@ -107,7 +107,8 @@ describe('BlockCommandService', () => {
         type: BlockType.TEXT,
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
-        value: 'Created in BlockCommandService test'
+        value: 'Created in BlockCommandService test',
+        textblocktype: TextBlockType.HEADER,
       };
       service$.subscribe(service => {
         if (service === null) { return; }

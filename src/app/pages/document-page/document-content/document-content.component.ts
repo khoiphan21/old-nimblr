@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType } from 'src/API';
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -16,6 +16,7 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { balancePreviousStylesIntoKeyframes } from '@angular/animations/browser/src/util';
+import { CreateBlockInfo } from 'src/app/components/block/block-option/block-option.component';
 
 const uuidv4 = require('uuid/v4');
 
@@ -140,7 +141,7 @@ export class DocumentContentComponent implements OnInit {
    * @param after after a certain block. If not specified or invalid, the new
    *              block will be added to the end of the array
    */
-  async addNewBlock(type: BlockType, after?: BlockId): Promise<Block> {
+  async addNewBlock(blockInfo: CreateBlockInfo, after?: BlockId): Promise<Block> {
     try {
       // create a new block object
       let block: Block;
@@ -149,20 +150,17 @@ export class DocumentContentComponent implements OnInit {
         lastUpdatedBy: this.currentUser.id
       };
 
-      switch (type) {
+      switch (blockInfo.type) {
         case BlockType.TEXT:
-        block = this.blockFactoryService.createNewTextBlock(input);
-        break;
+          block = this.createAndSelectTextBlock(blockInfo.textblocktype, input);
+          break;
         case BlockType.QUESTION:
-        block = this.blockFactoryService.createNewQuestionBlock(input);
-        break;
-        // TODO: @bruno add new method here to activate header block creation
-        // case BlockType.HEADER:
-        //   block = this.blockFactoryService.createNewHeaderBlock(input);
-        //   break;
+          block = this.blockFactoryService.createNewQuestionBlock(input);
+          break;
         default:
-          throw Error(`BlockType "${type}" is not supported`);
+          throw Error(`BlockType "${blockInfo.type}" is not supported`);
       }
+
       // register it to the BlockQueryService so that the backend notification
       // will be ignored
       this.blockQueryService.registerBlockCreatedByUI(block);
@@ -176,20 +174,30 @@ export class DocumentContentComponent implements OnInit {
         this.blockIds.push(block.id);
       }
       // create a new block in backend with BlockCommandService
-      const createBlockPromise = this.blockCommandService.createBlock(block);
+      const createBlockPromise = await this.blockCommandService.createBlock(block);
       // Update the document in the backend
-      const updateDocPromise = this.documentCommandService.updateDocument({
+      const updateDocPromise = await this.documentCommandService.updateDocument({
         id: this.currentDocument.id,
         lastUpdatedBy: this.currentUser.id,
         blockIds: this.blockIds
       });
 
-      await createBlockPromise;
-      await updateDocPromise;
+      // await createBlockPromise;
+      // await updateDocPromise;
 
       return block;
     } catch (error) {
       throw new Error(`DocumentPage failed to add block: ${error}`);
+    }
+  }
+
+  private createAndSelectTextBlock(textblocktype, input) {
+    // TODO: @bruno tbt
+    switch (textblocktype) {
+      case TextBlockType.HEADER:
+        return this.blockFactoryService.createNewHeaderBlock(input);
+      default:
+        return this.blockFactoryService.createNewTextBlock(input);
     }
   }
 

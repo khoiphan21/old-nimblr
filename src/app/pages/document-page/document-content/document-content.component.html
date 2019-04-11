@@ -18,9 +18,9 @@
             <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}" (click)="currentTab = 'submissions'">submissions</div>
         </section>
         <section class="template" *ngIf="currentTab === 'template'">
-            <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
+            <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id" (createBlock)="addNewBlock($event.blockInfo, $event.id)" [focusBlockId]="focusBlockId" (deleteEvent)="deleteBlock($event)">
             </app-block>
-            <app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock('TEXT')" style="width: 100%"></app-add-information>
+            <app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock({type: 'TEXT'})" style="width: 100%"></app-add-information>
         </section>
         <table class="submissions" *ngIf="currentTab === 'submissions'">
             <tr>

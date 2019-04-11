@@ -136,7 +136,7 @@ describe('BlockOptionComponent', () => {
     describe('addTextBlock()', () => {
       it('should emit a BlockType.TEXT event', done => {
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value).toEqual(BlockType.TEXT);
+          expect(value).toEqual({ type: BlockType.TEXT });
           done();
         });
         component.addTextBlock();
@@ -149,7 +149,7 @@ describe('BlockOptionComponent', () => {
     describe('addQuestionBlock()', () => {
       it('should emit a BlockType.QUESTION event', done => {
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value).toEqual(BlockType.QUESTION);
+          expect(value).toEqual({type: BlockType.QUESTION});
           done();
         });
         component.addQuestionBlock();

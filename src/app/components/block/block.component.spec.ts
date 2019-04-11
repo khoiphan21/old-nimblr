@@ -8,6 +8,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
+import { CreateBlockInfo } from './block-option/block-option.component';
 
 const uuidv4 = require('uuid/v4');
 
@@ -104,13 +105,22 @@ describe('BlockComponent', () => {
   });
 
   describe('addBlock()', () => {
+
+    let mockBlockInfo: CreateBlockInfo;
+    beforeEach(() => {
+      mockBlockInfo = {
+        type: BlockType.TEXT,
+      };
+    });
+
     it('should emit the right type', done => {
       const type = BlockType.QUESTION;
+      mockBlockInfo.type = BlockType.QUESTION;
       component.createBlock.subscribe((value: CreateBlockEvent) => {
-        expect(value.type).toEqual(type);
+        expect(value.blockInfo.type).toEqual(type);
         done();
       });
-      component.addBlock(type);
+      component.addBlock(mockBlockInfo);
     });
     it('should emit the right id', done => {
       component.blockId = uuidv4();
@@ -118,7 +128,7 @@ describe('BlockComponent', () => {
         expect(value.id).toEqual(component.blockId);
         done();
       });
-      component.addBlock(BlockType.TEXT);
+      component.addBlock(mockBlockInfo);
     });
   });
 

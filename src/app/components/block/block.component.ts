@@ -2,10 +2,11 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Block, BlockId } from '../../classes/block/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockType } from 'src/API';
+import { CreateBlockInfo } from './block-option/block-option.component';
 
 export interface CreateBlockEvent {
   id: BlockId;
-  type: BlockType;
+  blockInfo: CreateBlockInfo;
 }
 
 @Component({
@@ -54,9 +55,10 @@ export class BlockComponent implements OnInit {
     this.isSelectedOptionShown = event;
   }
 
-  addBlock(type: BlockType) {
+  addBlock(info: CreateBlockInfo) {
     this.createBlock.emit({
-      type, id: this.blockId
+      id: this.blockId,
+      blockInfo: info,
     });
   }
 

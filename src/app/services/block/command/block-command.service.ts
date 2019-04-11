@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput, CreateHeaderBlockInput, TextBlockType } from '../../../../API';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput, TextBlockType } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
 
 @Injectable({
@@ -24,13 +24,15 @@ export class BlockCommandService {
     switch (input.type) {
       case BlockType.TEXT:
         const textInput = input as UpdateTextBlockInput;
+        console.log(textInput);
         return this.updateTextBlock({
           id: textInput.id,
           documentId: textInput.documentId,
           version: textInput.version,
           lastUpdatedBy: textInput.lastUpdatedBy,
           updatedAt: new Date().toISOString(),
-          value: textInput.value
+          value: textInput.value,
+          textblocktype: textInput.textblocktype,
         });
 
       case BlockType.QUESTION:
@@ -53,7 +55,7 @@ export class BlockCommandService {
 
   private async updateTextBlock(input: UpdateTextBlockInput): Promise<any> {
     const requiredParams = [
-      'id', 'documentId', 'version', 'lastUpdatedBy', 'value'
+      'id', 'documentId', 'version', 'lastUpdatedBy', 'value', 'textblocktype'
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'UpdateTextBlockInput');
@@ -63,15 +65,41 @@ export class BlockCommandService {
 
       this.blockQueryService.registerUpdateVersion(input.version);
 
-      return this.graphQLService.query(updateTextBlock, { input });
+      // TODO: @bruno -- the query doesnt work
+      /**
+       * mutation UpdateTextBlock($input: UpdateTextBlockInput!) {
+  updateTextBlock(input: $input) {
+    id
+    version
+    type
+    documentId
+    lastUpdatedBy
+    createdAt
+    updatedAt
+    value
+    question
+    answers
+    questionType 
+    options
+    textblocktype
+  }
+}
+
+
+{"input": 
+  {"id": "8c066cf2-628d-4872-96be-9565e853c88f",
+		"documentId": "62c7f550-3104-4b99-bb5f-daab2f9408b8",
+		"version": "960e5d15-bfab-4a0e-93e1-8e1a1e809f7c",
+		"lastUpdatedBy": "ded647b2-d591-4b32-b469-27e4e30aedf5",
+		"updatedAt": "2019-04-11T07:19:06.579Z",
+    "textblocktype": "TEXT",
+    "value": "sadsad"}
+}
+       */
+      return await this.graphQLService.query(updateTextBlock, { input });
     } catch (error) {
       return Promise.reject(error);
     }
-  }
-
-  private async updateHeaderBlock(): Promise<any> {
-    // TODO: @bruno Not implemented yet: header-block
-
   }
 
   private async updateQuestionBlock(input: UpdateQuestionBlockInput): Promise<any> {
@@ -112,27 +140,16 @@ export class BlockCommandService {
    */
   // Why do you need `CreateBlockInput`
   // createBlock(input: CreateBlockInput | CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
-  createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput | CreateHeaderBlockInput): Promise<any> {
+  createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
     switch (input.type) {
       case BlockType.TEXT:
-        return this.mapTextBoxType(input);
+        return this.createTextBlock(input);
       case BlockType.QUESTION:
         return this.createQuestionBlock(input);
       default:
         return Promise.reject('BlockType not supported');
     }
   }
-
-  private mapTextBoxType(input) {
-    if (!('textblocktype' in input)) {
-      return this.createTextBlock(input);
-    } else if (input.textblocktype === TextBlockType.HEADER) {
-      return this.createHeaderBlock(input);
-    } else {
-      return Promise.reject('BlockType not supported');
-    }
-  }
-
 
   private async createTextBlock(originalInput: CreateBlockInput): Promise<any> {
     const input = {
@@ -142,10 +159,13 @@ export class BlockCommandService {
       documentId: originalInput.documentId,
       lastUpdatedBy: originalInput.lastUpdatedBy,
       value: originalInput.value,
+      textblocktype: originalInput.textblocktype,
     };
+
     const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'textblocktype'
     ];
+
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 
@@ -157,39 +177,6 @@ export class BlockCommandService {
       return this.graphQLService.query(createTextBlock, { input });
     } catch (error) {
       return Promise.reject(error);
-    }
-  }
-
-  private async createHeaderBlock(originalInput: CreateHeaderBlockInput): Promise<any> {
-    // create input
-    const input = {
-      id: originalInput.id,
-      version: originalInput.version,
-      type: originalInput.type,
-      documentId: originalInput.documentId,
-      lastUpdatedBy: originalInput.lastUpdatedBy,
-      value: originalInput.value,
-      textblocktype: originalInput.textblocktype,
-    };
-
-    // param validation && versioning
-    const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'textblocktype'
-    ];
-
-    // query
-    try {
-      this.checkForNullOrUndefined(input, requiredParams, 'CreateHeaderBlockInput');
-      this.blockQueryService.registerUpdateVersion(input.version);
-
-      // Now do a convert for empty string in 'value'
-      input.value = input.value === '' ? null : input.value;
-
-      return this.graphQLService.query(createTextBlock, { input });
-
-    } catch (error) {
-      return Promise.reject(error);
-
     }
   }
 
