@@ -10,13 +10,20 @@ import { deleteBlock } from '../../../../graphql/mutations';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { configureTestSuite } from 'ng-bullet';
+import { BlockFactoryService } from '../factory/block-factory.service';
+import { BlockQueryService } from '../query/block-query.service';
+import { take } from 'rxjs/operators';
+import { getBlock } from 'src/graphql/queries';
 
 const uuidv4 = require('uuid/v4');
 
-
 describe('(Integration) BlockCommandService', () => {
   const service$ = new BehaviorSubject<BlockCommandService>(null);
+  let service: BlockCommandService;
+  let queryService: BlockQueryService;
+  let blockFactory: BlockFactoryService;
   let graphQlService: GraphQLService;
+
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -25,17 +32,19 @@ describe('(Integration) BlockCommandService', () => {
     });
   });
 
-  beforeAll(() => {
-    Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      service$.next(TestBed.get(BlockCommandService));
-    }).catch(error => service$.error(error));
+  beforeAll(async () => {
+    await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+    service$.next(TestBed.get(BlockCommandService));
   });
 
   beforeEach(() => {
+    service = TestBed.get(BlockCommandService);
+    queryService = TestBed.get(BlockQueryService);
+    blockFactory = TestBed.get(BlockFactoryService);
     graphQlService = TestBed.get(GraphQLService);
   });
 
-  describe('updateBlock', () => {
+  describe('updateBlock()', () => {
     it('textBlock - should update a block in the database', done => {
       const textInput = {
         id: uuidv4(),
@@ -106,7 +115,7 @@ describe('(Integration) BlockCommandService', () => {
     });
   });
 
-  describe('createBlock', () => {
+  describe('createBlock()', () => {
 
     it('TextBlock - should create a block in the database', done => {
       const textInput: CreateTextBlockInput = {
@@ -183,6 +192,48 @@ describe('(Integration) BlockCommandService', () => {
         });
       }, error => { console.error(error); fail(); done(); });
     });
+  });
+
+  describe('duplicateBlocks()', () => {
+    it('(TextBlock) should create a duplicate with all the right properties', async () => {
+      const block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+
+      await runTestFor(block);
+    });
+
+    it('(QuestionBlock) should create a duplicate with all the right properties', async () => {
+      const block = blockFactory.createNewQuestionBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+
+      await runTestFor(block);
+    });
+
+    async function runTestFor(block) {
+      const duplicatedBlocks = await service.duplicateBlocks([block]);
+      const createdBlock = await getFirstBlock(duplicatedBlocks[0].id);
+
+      // Now check that each value of the created block is the same as the original
+      const ignoredProperties = ['id', 'createdAt', 'updatedAt', 'version'];
+      Object.getOwnPropertyNames(createdBlock).forEach(property => {
+        if (ignoredProperties.includes(property)) { return; }
+
+        expect(`${property}: ` + block[property]).toEqual(`${property}: ` + createdBlock[property]);
+      });
+    }
+
+    async function getFirstBlock(id: string) {
+      return new Promise(resolve => {
+        queryService.getBlock$(id).pipe(take(2)).subscribe(value => {
+          if (value === null) { return; }
+          resolve(value);
+        });
+      });
+    }
   });
 
 });

@@ -6,6 +6,7 @@ import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBl
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
 import { RouterTestingModule } from '@angular/router/testing';
+import { BlockFactoryService } from '../factory/block-factory.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -491,4 +492,117 @@ describe('BlockCommandService', () => {
       });
     });
   }
+
+  describe('duplicateBlocks()', () => {
+
+    it('when given an empty array should return the same', async () => {
+      const blocks = await service.duplicateBlocks([]);
+      expect(blocks).toEqual([]);
+    });
+
+    it('should call duplicateOneBlock() for each input', () => {
+      const inputs = [
+        { id: uuidv4() }, { id: uuidv4 }
+      ];
+      const duplicateSpy = spyOn<any>(service, 'duplicateOneBlock');
+      service.duplicateBlocks(inputs);
+      expect(duplicateSpy.calls.count()).toBe(2);
+      duplicateSpy.calls.allArgs().forEach(arg => {
+        expect(inputs.includes(arg[0])).toBe(true);
+      });
+    });
+
+    it('should resolve with the results from duplicateOneBlock', async () => {
+      const inputs = [
+        { id: uuidv4() }, { id: uuidv4() }
+      ];
+      const duplicateSpy = spyOn<any>(service, 'duplicateOneBlock');
+      const resolveValue = { id: uuidv4() };
+      duplicateSpy.and.returnValue(Promise.resolve(resolveValue));
+      const results = await service.duplicateBlocks(inputs);
+      expect(results).toEqual([resolveValue, resolveValue]);
+    });
+  });
+
+  describe('duplicateOneBlock', () => {
+    let createSpy: jasmine.Spy;
+    let blockFactory: BlockFactoryService;
+    let block: any;
+
+    const testValue = { id: uuidv4() };
+
+    beforeEach(() => {
+      createSpy = spyOn(service, 'createBlock');
+      createSpy.and.returnValue(Promise.resolve({
+        data: {
+          createTextBlock: testValue,
+          createQuestionBlock: testValue
+        }
+      }));
+      blockFactory = TestBed.get(BlockFactoryService);
+    });
+
+    it('should call createBlock() with a new id', async () => {
+      block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      await service['duplicateOneBlock'](block);
+      expect(createSpy.calls.mostRecent().args[0].id).not.toEqual(block.id);
+    });
+
+    it('should resolve with the return value for TEXT', async () => {
+      block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      const value = await service['duplicateOneBlock'](block);
+      expect(value).toEqual(testValue);
+    });
+
+    it('should resolve with the return value for QUESTION', async () => {
+      block = blockFactory.createNewQuestionBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      const value = await service['duplicateOneBlock'](block);
+      expect(value).toEqual(testValue);
+    });
+
+    it('should call createBlock() with the right args for TEXT', async () => {
+      block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      await service['duplicateOneBlock'](block);
+
+      checkSpy();
+    });
+
+    it('should call createBlock() with the right args for QUESTION', async () => {
+      block = blockFactory.createNewQuestionBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      await service['duplicateOneBlock'](block);
+
+      checkSpy();
+    });
+
+    function checkSpy() {
+      const arg = {
+        id: createSpy.calls.mostRecent().args[0].id,
+        version: block.version,
+        type: block.type,
+        documentId: block.documentId,
+        lastUpdatedBy: block.lastUpdatedBy,
+        value: block.value,
+        question: block.question,
+        answers: block.answers,
+        questionType: block.questionType,
+        options: block.options
+      };
+      expect(createSpy).toHaveBeenCalledWith(arg);
+    }
+  });
 });

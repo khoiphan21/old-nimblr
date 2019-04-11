@@ -189,4 +189,51 @@ export class BlockCommandService {
 
     return response;
   }
+
+  async duplicateBlocks(inputs: Array<CreateBlockInput>): Promise<Array<CreateBlockInput>> {
+    const promises = [];
+
+    inputs.forEach(input => {
+      promises.push(this.duplicateOneBlock(input));
+    });
+
+    return await Promise.all(promises);
+  }
+
+  private async duplicateOneBlock(input: CreateBlockInput): Promise<CreateBlockInput> {
+    // Extract the required params
+    const {
+      // note: the id is left out so that a new id will be generated
+      version,
+      type,
+      documentId,
+      lastUpdatedBy,
+      value,
+      question,
+      answers,
+      questionType,
+      options
+    } = input;
+
+    const response = await this.createBlock({
+      id: uuidv4(),
+      version,
+      type,
+      documentId,
+      lastUpdatedBy,
+      value,
+      question,
+      answers,
+      questionType,
+      options
+    });
+
+    switch (type) {
+      case BlockType.TEXT:
+        return response.data.createTextBlock;
+      case BlockType.QUESTION:
+        return response.data.createQuestionBlock;
+    }
+
+  }
 }

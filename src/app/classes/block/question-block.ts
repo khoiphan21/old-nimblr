@@ -48,7 +48,7 @@ export class QuestionBlock extends BlockImpl implements Block {
       lastUpdatedBy,
       updatedAt,
       createdAt,
-    })
+    });
     // Parameter validation
     this.checkQuestionType(questionType);
     const { newAnswers, newOptions } = this.processOptionsAndAnswers(
@@ -56,7 +56,7 @@ export class QuestionBlock extends BlockImpl implements Block {
     );
 
     // Storing values
-    this.question = question;
+    this.question = question === null ? '' : question;
     this.immutableAnswers = newAnswers;
     this.questionType = questionType;
     this.immutableOptions = newOptions;
