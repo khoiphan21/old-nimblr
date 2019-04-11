@@ -29,8 +29,6 @@ export class SubmissionDocument extends DocumentImpl implements Document {
       this._submissionStatus = SubmissionStatus.NOT_STARTED;
     }
     // Throw error if submittedAt is not a valid date string
-    console.log('checking submittedAt');
-    // Throw error if submittedAt is not a valid date string
     if (!isValidDateString(this.submittedAt)) {
       const message = 'submittedAt must be a valid date string';
       throw new Error(this.baseErrorMessage + message);

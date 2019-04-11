@@ -31,7 +31,7 @@
 </section>
 
 <app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown"
-  (hideSendFormEvent)="isSendFormShown = false"></app-send-form>
+  (hideSendFormEvent)="isSendFormShown = false" (sendEmailEvent)="sendDocument($event)"></app-send-form>
 <app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown"
   (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
 <!-- <app-document-login></app-document-login> -->

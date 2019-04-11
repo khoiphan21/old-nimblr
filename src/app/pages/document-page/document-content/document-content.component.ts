@@ -305,4 +305,18 @@ export class DocumentContentComponent implements OnInit {
     await this.documentCommandService.updateDocument(input);
   }
 
+  async sendDocument(email: string) {
+    console.log(email);
+    // create a new SubmissionDocument
+
+    // call createDocument for the new document
+
+    // update the list of submissionDocIds
+
+    // call to updateDocument for current document
+
+    // if all good, then send the email
+
+  }
+
 }
