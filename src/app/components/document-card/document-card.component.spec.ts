@@ -31,7 +31,7 @@ describe('DocumentCardComponent', () => {
     fixture = TestBed.createComponent(DocumentCardComponent);
     component = fixture.componentInstance;
     documentFactory = TestBed.get(DocumentFactoryService);
-    component.document = documentFactory.createDocument({
+    component.document = documentFactory.convertRawDocument({
       id: documentId,
       ownerId: uuidv4()
     });

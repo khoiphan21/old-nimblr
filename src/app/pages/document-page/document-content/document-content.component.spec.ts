@@ -201,7 +201,7 @@ describe('DocumentContentComponent', () => {
       // spy on the blockQueryService so that setup subscription won't be called
       spyOn(component['blockQueryService'], 'subscribeToUpdate');
       // setup mock data for testing
-      document = documentFactory.createDocument({ id, ownerId: uuidv4() });
+      document = documentFactory.convertRawDocument({ id, ownerId: uuidv4() });
       // setup spies
       getDocumentSpy = spyOn(component['documentQueryService'], 'getDocument$');
       getDocumentSpy.and.returnValue(getDocument$);
@@ -289,7 +289,7 @@ describe('DocumentContentComponent', () => {
       userFactory = TestBed.get(UserFactoryService);
 
       // create mock data for testing
-      document = documentFactory.createDocument({
+      document = documentFactory.convertRawDocument({
         id: uuidv4(),
         ownerId: uuidv4()
       });
