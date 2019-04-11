@@ -1,4 +1,4 @@
-<section class="block-option desktop" *ngIf="isBlockOptionsShown" [@fadeInOutAnimation]>
+<section class="block-option desktop" *ngIf="isBlockOptionsShown" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]>
     <div class="add-button-container " (clickOutside)="hideAddBlockContainer()">
         <div class="add-button" (click)="showAddBlockContainer()" tooltip="Click to add a block view" placement="bottom" hide-delay="0" tooltip-class="epm-tooltip">
             <img src="./assets/icons/add-block.png" alt="plus icon">

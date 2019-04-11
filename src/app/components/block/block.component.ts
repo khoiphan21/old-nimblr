@@ -20,6 +20,7 @@ export class BlockComponent implements OnInit {
   block: Block;
 
   @Input() blockId: string;
+  @Input() isChildDoc: boolean;
   @Input() isUserLoggedIn: boolean;
   @Input() focusBlockId: BlockId; // To check if it should be focused
 

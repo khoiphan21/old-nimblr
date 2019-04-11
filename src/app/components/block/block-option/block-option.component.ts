@@ -12,6 +12,7 @@ import { Block } from 'src/app/classes/block/block';
 export class BlockOptionComponent implements OnChanges {
 
   @Input() isBlockOptionsShown: boolean;
+  @Input() isChildDoc: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
   @Output() createBlock = new EventEmitter<BlockType>();
