@@ -22,6 +22,7 @@ export class HeaderOptionsComponent implements OnInit {
   }
 
   saveAsTemplate() {
+    this.hideOptionEvent.emit(false);
     this.saveAsTemplateEvent.emit();
   }
 }
