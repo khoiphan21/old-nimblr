@@ -9,7 +9,7 @@
 
   <section class="template" *ngIf="currentTab === 'template'">
     <app-block [isUserLoggedIn]="isUserLoggedIn" *ngFor="let id of blockIds" [blockId]="id"
-      (createBlock)="addNewBlock($event.type, $event.id)" [focusBlockId]="focusBlockId"
+      (createBlock)="addNewBlock($event)" [focusBlockId]="focusBlockId"
       (deleteEvent)="deleteBlock($event)">
     </app-block>
     <app-add-information *ngIf="isUserLoggedIn && blockIds.length === 0" (click)="addNewBlock('TEXT')"

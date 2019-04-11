@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { BlockType } from 'src/API';
-import { BlockId, Block } from 'src/app/classes/block/block';
+import { BlockId } from 'src/app/classes/block/block';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
 
 @Component({
@@ -12,6 +11,7 @@ export class TemplateDocumentContentComponent implements OnInit {
 
   @Input() blockIds: Array<string>;
   @Input() isUserLoggedIn: boolean;
+  @Input() focusBlockId: BlockId;
 
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
@@ -23,18 +23,11 @@ export class TemplateDocumentContentComponent implements OnInit {
   ngOnInit() {
   }
 
-  /**
-   * Create a new block and add it to the list of blocks in the document
-   *
-   * @param type the type of the new block to be added
-   * @param after after a certain block. If not specified or invalid, the new
-   *              block will be added to the end of the array
-   */
-  async addNewBlock(type: BlockType, after?: BlockId): Promise<Block> {
-    return;
+  addNewBlock(event: CreateBlockEvent) {
+    this.addNewBlockEvent.emit(event);
   }
 
-  async deleteBlock(blockId: string) {
-
+  deleteBlock(blockId: string) {
+    this.deleteBlockEvent.emit(blockId);
   }
 }

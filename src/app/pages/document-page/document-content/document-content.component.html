@@ -12,7 +12,7 @@
                 <button class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND FORM</button>
             </h1>
         </div>
-        <app-template-document-content [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"></app-template-document-content>
+        <app-template-document-content [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"></app-template-document-content>
     </section>
 </section>
 
