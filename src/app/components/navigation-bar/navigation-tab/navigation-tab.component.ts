@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-navigation-tab',
@@ -13,15 +14,24 @@ export class NavigationTabComponent implements OnInit {
   @Input() navigationTab: NavigationTabDocument;
 
   constructor(
-    private router: Router
+    private router: Router,
   ) { }
 
   ngOnInit() {
     const url = this.router.url;
-    const uuidLength = 36;
-    const currentId = url.substring(url.length - uuidLength, url.length);
-    if (currentId === this.navigationTab.id) {
+    this.checkCurrentUrl(url);
+    this.router.events.subscribe((value) => {
+      if (value instanceof NavigationEnd) {
+        this.checkCurrentUrl(value.url);
+      }
+    });
+  }
+
+  private checkCurrentUrl(url) {
+    if (url.includes(this.navigationTab.id)) {
       this.isCurrentDocument = true;
+    } else {
+      this.isCurrentDocument = false;
     }
   }
 
