@@ -16,6 +16,7 @@ export interface NewSubmissionDocumentInput {
   recipientEmail: string;
   ownerId: UserId;
   blockIds?: Array<BlockId>;
+  title?: string;
 }
 
 @Injectable({
@@ -44,10 +45,10 @@ export class DocumentFactoryService {
 
   createNewSubmission(input: NewSubmissionDocumentInput): SubmissionDocument {
     // Extract the data from the original input
-    const { ownerId, recipientEmail, blockIds } = input;
+    const { ownerId, recipientEmail, blockIds, title } = input;
     // update some properties
     const newInput: CreateDocumentInput = {
-      ownerId, recipientEmail, blockIds,
+      ownerId, recipientEmail, blockIds, title,
       lastUpdatedBy: input.ownerId
     };
 

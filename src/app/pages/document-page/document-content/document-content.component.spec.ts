@@ -743,6 +743,8 @@ describe('DocumentContentComponent', () => {
       emailSpy = spyOn(component['emailService'], 'sendInvitationEmail');
       emailSpy.and.returnValue(Promise.resolve());
 
+      component.docTitle = 'test';
+
       await component.sendDocument(email);
       submission = factorySpy.calls.mostRecent().returnValue;
     });
@@ -751,7 +753,8 @@ describe('DocumentContentComponent', () => {
       expect(factorySpy).toHaveBeenCalledWith({
         ownerId: testUser.id,
         recipientEmail: email,
-        blockIds: []
+        blockIds: [],
+        title: component.docTitle
       });
     });
 

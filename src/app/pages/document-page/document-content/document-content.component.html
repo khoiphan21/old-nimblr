@@ -28,6 +28,10 @@
       [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
       (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
 
+      <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [blockIds]="blockIds"
+      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId"
+      [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
+      (deleteBlockEvent)="deleteBlock($event)"></app-submission-document-content>
   </section>
 </section>
 

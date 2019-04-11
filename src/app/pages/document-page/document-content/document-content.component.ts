@@ -323,7 +323,8 @@ export class DocumentContentComponent implements OnInit {
     const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
       ownerId: this.currentUser.id,
       recipientEmail: email,
-      blockIds: duplicatedIds
+      blockIds: duplicatedIds,
+      title: this.docTitle
     });
 
     // call createDocument for the new document
