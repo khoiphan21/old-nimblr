@@ -11,6 +11,11 @@ export interface NewDocumentInput {
   ownerId: UserId;
 }
 
+export interface NewSubmissionDocumentInput {
+  recipientEmail: string;
+  ownerId: UserId;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,6 +38,14 @@ export class DocumentFactoryService {
     newInput.lastUpdatedBy = input.ownerId;
 
     return new TemplateDocument(newInput);
+  }
+
+  createNewSubmission(input: NewSubmissionDocumentInput): SubmissionDocument {
+    // update some properties
+    const newInput: CreateDocumentInput = input;
+    newInput.lastUpdatedBy = input.ownerId;
+
+    return new SubmissionDocument(newInput);
   }
 
   convertRawDocument(input: CreateDocumentInput): Document | TemplateDocument | SubmissionDocument {

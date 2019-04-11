@@ -17,6 +17,8 @@ import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version.service';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
+import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
+import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -52,6 +54,7 @@ export class DocumentContentComponent implements OnInit {
   constructor(
     private documentQueryService: DocumentQueryService,
     private documentCommandService: DocumentCommandService,
+    private docFactoryService: DocumentFactoryService,
     private blockCommandService: BlockCommandService,
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
@@ -308,6 +311,10 @@ export class DocumentContentComponent implements OnInit {
   async sendDocument(email: string) {
     console.log(email);
     // create a new SubmissionDocument
+    const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
+      ownerId: this.currentUser.id,
+      recipientEmail: email
+    });
 
     // call createDocument for the new document
 
