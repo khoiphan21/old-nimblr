@@ -18,6 +18,7 @@ export enum BlockType {
 
 
 export enum TextBlockType {
+  TEXT = "TEXT",
   HEADER = "HEADER",
 }
 
