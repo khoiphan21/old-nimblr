@@ -9,10 +9,13 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./block-section-content.component.scss']
 })
 export class BlockSectionContentComponent implements OnInit {
+  // isBlockOptionsShown: boolean;
+  isSelectedOptionShown = false;
+  mouseFocusingBlock = '';
+
   @Input() blockIds: Array<string>;
   @Input() isUserLoggedIn: boolean;
   @Input() focusBlockId: BlockId;
-
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
 
@@ -27,6 +30,22 @@ export class BlockSectionContentComponent implements OnInit {
 
   deleteBlock(blockId: string) {
     this.deleteBlockEvent.emit(blockId);
+  }
+
+  updateOnHoverBlock(blockId: string) {
+    if (this.isSelectedOptionShown === false) {
+      this.mouseFocusingBlock = blockId;
+    }
+  }
+
+  clearOnHoverBlock() {
+    if (this.isSelectedOptionShown === false) {
+      this.mouseFocusingBlock = '';
+    }
+  }
+
+  toggleSelectedOptionStatus(event: boolean) {
+    this.isSelectedOptionShown = event;
   }
 
   drop(event: CdkDragDrop<string[]>) {
