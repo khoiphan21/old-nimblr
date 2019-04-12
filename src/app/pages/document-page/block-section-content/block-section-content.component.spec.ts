@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockSectionContentComponent } from './block-section-content.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BlockType } from 'src/API';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 describe('BlockSectionContentComponent', () => {
   let component: BlockSectionContentComponent;
@@ -81,5 +82,31 @@ describe('BlockSectionContentComponent', () => {
   it('toggleSelectedOptionStatus() - should set it to the right value', () => {
     component.toggleSelectedOptionStatus(true);
     expect(component.isSelectedOptionShown).toBe(true);
+  });
+
+  describe('drop()', () => {
+    let dragEvent;
+    beforeEach(() => {
+      component.blockIds = ['id1', 'id2'];
+      dragEvent = {
+        previousIndex: 0,
+        currentIndex: 1
+      } as CdkDragDrop<string[]>;
+    });
+
+    it('should move update the blockids into new postion', () => {
+      component.drop(dragEvent);
+      const newBlocksPosition = ['id2', 'id1'];
+      expect(component.blockIds).toEqual(newBlocksPosition);
+    });
+
+    it('should emit the new position', done => {
+      const newBlocksPosition = ['id2', 'id1'];
+      component.updateDocumentEvent.subscribe(value => {
+        expect(value).toEqual(newBlocksPosition);
+        done();
+      });
+      component.drop(dragEvent);
+    });
   });
 });

@@ -18,6 +18,7 @@ export class BlockSectionContentComponent implements OnInit {
   @Input() focusBlockId: BlockId;
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
+  @Output() updateDocumentEvent = new EventEmitter<Array<string>>();
 
   constructor() { }
 
@@ -50,5 +51,6 @@ export class BlockSectionContentComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.blockIds, event.previousIndex, event.currentIndex);
+    this.updateDocumentEvent.emit(this.blockIds);
   }
 }

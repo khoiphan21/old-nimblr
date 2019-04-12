@@ -26,6 +26,7 @@ describe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
+  let userFactory: UserFactoryService;
   let versionService: VersionService;
   let router;
   // mock data for testing
@@ -75,6 +76,7 @@ describe('DocumentContentComponent', () => {
   /* tslint:disable:no-string-literal */
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentContentComponent);
+    userFactory = TestBed.get(UserFactoryService);
     router = TestBed.get(Router);
     versionService = TestBed.get(VersionService);
     component = fixture.componentInstance;
@@ -280,13 +282,11 @@ describe('DocumentContentComponent', () => {
     let block: any;
     let document: Document;
     let user: User;
-    let userFactory: UserFactoryService;
     let blockCommandSpy: jasmine.Spy;
     let blockQuerySpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
     beforeEach(() => {
-      userFactory = TestBed.get(UserFactoryService);
 
       // create mock data for testing
       document = documentFactory.convertRawDocument({
@@ -488,6 +488,47 @@ describe('DocumentContentComponent', () => {
         });
       });
 
+    });
+  });
+
+  describe('updateDocument()', () => {
+    let document;
+    let user;
+    let documentCommandSpy: jasmine.Spy;
+    const newBlocksPosition = ['id2', 'id1'];
+    beforeEach(() => {
+      documentCommandSpy = spyOn(component['documentCommandService'], 'updateDocument');
+      document = documentFactory.convertRawDocument({
+        id: uuidv4(),
+        ownerId: uuidv4()
+      });
+      user = userFactory.createUser(
+        uuidv4(), 'first', 'last', 'email'
+      );
+      component['currentUser'] = user;
+      component.blockIds = ['id1', 'id2'];
+      component.documentId = document.id;
+    });
+
+    it('should call DocumentCommandService to update document', () => {
+      component.documentId = 'doc123';
+      const expectedArgs = {
+        id: component.documentId,
+        lastUpdatedBy: user.id,
+        blockIds: newBlocksPosition
+      };
+      documentCommandSpy.and.returnValue(Promise.resolve());
+      component.updateDocument(newBlocksPosition);
+      expect(documentCommandSpy).toHaveBeenCalledWith(expectedArgs);
+    });
+
+    it('should receive the error when it failed', done => {
+      const errMsg = 'failed to update Document';
+      documentCommandSpy.and.returnValue(Promise.reject(errMsg));
+      component.updateDocument(newBlocksPosition).catch(err => {
+        expect(err.message).toEqual(`DocumentPage failed to update content: ${errMsg}`);
+        done();
+      });
     });
   });
 
