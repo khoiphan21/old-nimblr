@@ -13,11 +13,10 @@ import { configureTestSuite } from 'ng-bullet';
 import { BlockFactoryService } from '../factory/block-factory.service';
 import { BlockQueryService } from '../query/block-query.service';
 import { take } from 'rxjs/operators';
-import { getBlock } from 'src/graphql/queries';
 
 const uuidv4 = require('uuid/v4');
 
-describe('(Integration) BlockCommandService', () => {
+fdescribe('(Integration) BlockCommandService', () => {
   const service$ = new BehaviorSubject<BlockCommandService>(null);
   let service: BlockCommandService;
   let queryService: BlockQueryService;
@@ -32,8 +31,11 @@ describe('(Integration) BlockCommandService', () => {
     });
   });
 
-  beforeAll(async () => {
-    await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+  beforeEach(async () => {
+    const session = await Auth.currentSession();
+    if (!session) {
+      await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
+    }
     service$.next(TestBed.get(BlockCommandService));
   });
 

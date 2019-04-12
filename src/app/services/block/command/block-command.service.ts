@@ -4,7 +4,7 @@ import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
 import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
-import { VersionService } from '../../version.service';
+import { VersionService } from '../../version/version.service';
 
 const uuidv4 = require('uuid/v4');
 

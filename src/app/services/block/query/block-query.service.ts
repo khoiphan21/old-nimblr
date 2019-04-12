@@ -5,7 +5,7 @@ import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockFactoryService } from '../factory/block-factory.service';
 import { getBlock, listBlocks } from '../../../../graphql/queries';
 import { onUpdateBlockInDocument } from '../../../../graphql/subscriptions';
-import { VersionService } from '../../version.service';
+import { VersionService } from '../../version/version.service';
 
 @Injectable({
   providedIn: 'root'

@@ -15,7 +15,7 @@ import { BlockId, Block } from 'src/app/classes/block/block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
-import { VersionService } from 'src/app/services/version.service';
+import { VersionService } from 'src/app/services/version/version.service';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';

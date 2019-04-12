@@ -18,7 +18,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
-import { VersionService } from 'src/app/services/version.service';
+import { VersionService } from 'src/app/services/version/version.service';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { InvitationEmailDetails } from 'src/app/services/email/email.service';
 

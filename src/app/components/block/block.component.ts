@@ -3,7 +3,7 @@ import { Block, BlockId } from '../../classes/block/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockType } from 'src/API';
 import { UUID } from 'src/app/services/document/command/document-command.service';
-import { VersionService } from 'src/app/services/version.service';
+import { VersionService } from 'src/app/services/version/version.service';
 
 export interface CreateBlockEvent {
   id?: BlockId;

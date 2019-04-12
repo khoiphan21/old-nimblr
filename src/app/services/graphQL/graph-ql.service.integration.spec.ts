@@ -82,7 +82,7 @@ describe('GraphQLService', () => {
     expect(compare.lastUpdatedBy).toEqual(source.lastUpdatedBy);
   }
 
-  describe('(subscription)', () => {
+  fdescribe('(subscription)', () => {
     it('should notify when createTextBlock mutation happens in a document', done => {
       let blockId: string;
       const documentId = uuidv4();

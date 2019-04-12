@@ -71,7 +71,7 @@ describe('(Integration) DocumentCommandService', () => {
 
   });
 
-  describe('updateDocument for FORM', () => {
+  describe('updateDocument', () => {
 
     it('should update a document with new values', done => {
       let service: DocumentCommandService;

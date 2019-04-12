@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SubmissionDocumentContentComponent } from './submission-document-content.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('SubmissionDocumentContentComponent', () => {
   let component: SubmissionDocumentContentComponent;
@@ -8,7 +9,8 @@ describe('SubmissionDocumentContentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SubmissionDocumentContentComponent ]
+      declarations: [ SubmissionDocumentContentComponent ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
   }));
