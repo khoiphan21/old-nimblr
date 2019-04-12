@@ -279,6 +279,25 @@ describe('DocumentContentComponent', () => {
     });
   });
 
+  describe('updateStoredProperties()', () => {
+    it('should set submissionDocIds to empty array if given null', () => {
+      // tslint:disable:no-shadowed-variable
+      const input: any = {
+        submissionDocIds: null
+      };
+      component['updateStoredProperties'](input);
+      expect(component.submissionDocIds).toEqual([]);
+    });
+    it('should set submissionDocIds to the given value', () => {
+      // tslint:disable:no-shadowed-variable
+      const input: any = {
+        submissionDocIds: ['id']
+      };
+      component['updateStoredProperties'](input);
+      expect(component.submissionDocIds).toEqual(input.submissionDocIds);
+    });
+  });
+
   describe('addNewBlock()', () => {
     let block: any;
     let document: Document;
