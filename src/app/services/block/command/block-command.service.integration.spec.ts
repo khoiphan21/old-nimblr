@@ -2,9 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
 import { BlockType, QuestionType, CreateQuestionBlockInput } from 'src/API';
-import { BehaviorSubject } from 'rxjs';
-import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
 import { CreateTextBlockInput } from '../../../../API';
 import { deleteBlock } from '../../../../graphql/mutations';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
@@ -13,15 +10,18 @@ import { configureTestSuite } from 'ng-bullet';
 import { BlockFactoryService } from '../factory/block-factory.service';
 import { BlockQueryService } from '../query/block-query.service';
 import { take } from 'rxjs/operators';
+import { LoginHelper } from '../../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('(Integration) BlockCommandService', () => {
-  const service$ = new BehaviorSubject<BlockCommandService>(null);
+describe('(Integration) BlockCommandService', () => {
   let service: BlockCommandService;
   let queryService: BlockQueryService;
   let blockFactory: BlockFactoryService;
   let graphQlService: GraphQLService;
+
+  // The variable to store responses for checking
+  let response: any;
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
@@ -31,12 +31,8 @@ fdescribe('(Integration) BlockCommandService', () => {
     });
   });
 
-  beforeEach(async () => {
-    const session = await Auth.currentSession();
-    if (!session) {
-      await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
-    }
-    service$.next(TestBed.get(BlockCommandService));
+  beforeAll(async () => {
+    await LoginHelper.login();
   });
 
   beforeEach(() => {
@@ -47,7 +43,8 @@ fdescribe('(Integration) BlockCommandService', () => {
   });
 
   describe('updateBlock()', () => {
-    it('textBlock - should update a block in the database', done => {
+
+    it('textBlock - should update a block in the database', async () => {
       const textInput = {
         id: uuidv4(),
         documentId: uuidv4(),
@@ -56,29 +53,22 @@ fdescribe('(Integration) BlockCommandService', () => {
         lastUpdatedBy: uuidv4(),
         value: 'from updateBlock test'
       };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(textInput).then(() => {
-          textInput.value = 'UPDATED VALUE (updateBlock test)';
-          // Update the block
-          return service.updateBlock(textInput);
-        }).then(response => {
-          const updatedBlock = response.data.updateTextBlock;
-          const id = updatedBlock.id;
-          expect(updatedBlock.value).toEqual(textInput.value);
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(textInput.id);
-          done();
-        }).catch(error => {
-          fail('Check console for details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
+      await service.createBlock(textInput);
+
+      textInput.value = 'UPDATED VALUE (updateBlock test)';
+
+      // Update the block
+      response = await service.updateBlock(textInput);
+      const updatedBlock = response.data.updateTextBlock;
+      const id = updatedBlock.id;
+      expect(updatedBlock.value).toEqual(textInput.value);
+
+      // Now delete the block
+      response = await graphQlService.query(deleteBlock, { input: { id } });
+      expect(response.data.deleteBlock.id).toEqual(textInput.id);
     });
 
-    it('QuestionBlock - should update a block in the database', done => {
+    it('QuestionBlock - should update a block in the database', async () => {
       const questionInput = {
         id: uuidv4(),
         version: uuidv4(),
@@ -90,36 +80,31 @@ fdescribe('(Integration) BlockCommandService', () => {
         questionType: QuestionType.PARAGRAPH,
         options: null
       };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(questionInput).then(() => {
-          questionInput.question = 'This is an updated question';
-          questionInput.questionType = QuestionType.CHECKBOX;
-          questionInput.options = ['option 1'];
-          // Update the block
-          return service.updateBlock(questionInput);
-        }).then(response => {
-          const updatedBlock = response.data.updateQuestionBlock;
-          const id = updatedBlock.id;
-          expect(updatedBlock.question).toEqual(questionInput.question);
-          expect(updatedBlock.questionType).toEqual(questionInput.questionType);
-          expect(updatedBlock.options).toEqual(questionInput.options);
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(questionInput.id);
-          done();
-        }).catch(error => {
-          fail('Check console for details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
+
+      await service.createBlock(questionInput);
+
+      // Update the block with new details
+      questionInput.question = 'This is an updated question';
+      questionInput.questionType = QuestionType.CHECKBOX;
+      questionInput.options = ['option 1'];
+      response = await service.updateBlock(questionInput);
+
+      // Check that the response is correct
+      const updatedBlock = response.data.updateQuestionBlock;
+      const id = updatedBlock.id;
+      expect(updatedBlock.question).toEqual(questionInput.question);
+      expect(updatedBlock.questionType).toEqual(questionInput.questionType);
+      expect(updatedBlock.options).toEqual(questionInput.options);
+
+      // Now delete the block
+      response = await graphQlService.query(deleteBlock, { input: { id } });
+      expect(response.data.deleteBlock.id).toEqual(questionInput.id);
     });
   });
 
   describe('createBlock()', () => {
 
-    it('TextBlock - should create a block in the database', done => {
+    it('TextBlock - should create a block in the database', async () => {
       const textInput: CreateTextBlockInput = {
         id: uuidv4(),
         version: uuidv4(),
@@ -128,33 +113,27 @@ fdescribe('(Integration) BlockCommandService', () => {
         lastUpdatedBy: uuidv4(),
         value: 'Created in BlockCommandService test'
       };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(textInput).then(response => {
-          const id = response.data.createTextBlock.id;
-          const createdBlock: any = response.data.createTextBlock;
 
-          // Check the created block here
-          expect(createdBlock.id).toEqual(textInput.id);
-          expect(createdBlock.version).toEqual(textInput.version);
-          expect(createdBlock.type).toEqual(textInput.type);
-          expect(createdBlock.documentId).toEqual(textInput.documentId);
-          expect(createdBlock.lastUpdatedBy).toEqual(textInput.lastUpdatedBy);
-          expect(createdBlock.value).toEqual(textInput.value);
+      // Create a block and check responses
+      response = await service.createBlock(textInput);
+      const id = response.data.createTextBlock.id;
+      const createdBlock: any = response.data.createTextBlock;
 
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(textInput.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
+      // Check the created block here
+      expect(createdBlock.id).toEqual(textInput.id);
+      expect(createdBlock.version).toEqual(textInput.version);
+      expect(createdBlock.type).toEqual(textInput.type);
+      expect(createdBlock.documentId).toEqual(textInput.documentId);
+      expect(createdBlock.lastUpdatedBy).toEqual(textInput.lastUpdatedBy);
+      expect(createdBlock.value).toEqual(textInput.value);
+
+      // Now delete the block
+      response = await graphQlService.query(deleteBlock, { input: { id } });
+
+      expect(response.data.deleteBlock.id).toEqual(textInput.id);
     });
 
-    it('QuestionBlock - should create a block in the database', done => {
+    it('QuestionBlock - should create a block in the database', async () => {
       const questionInput: CreateQuestionBlockInput = {
         id: uuidv4(),
         version: uuidv4(),
@@ -166,33 +145,27 @@ fdescribe('(Integration) BlockCommandService', () => {
         questionType: QuestionType.PARAGRAPH,
         options: null
       };
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        service.createBlock(questionInput).then(response => {
-          const id = response.data.createQuestionBlock.id;
-          const createdBlock: any = response.data.createQuestionBlock;
+      // Create a block
+      response = await service.createBlock(questionInput);
 
-          // Check the created block here
-          expect(createdBlock.id).toEqual(questionInput.id);
-          expect(createdBlock.version).toEqual(questionInput.version);
-          expect(createdBlock.type).toEqual(questionInput.type);
-          expect(createdBlock.documentId).toEqual(questionInput.documentId);
-          expect(createdBlock.lastUpdatedBy).toEqual(questionInput.lastUpdatedBy);
-          expect(createdBlock.question).toEqual(questionInput.question);
-          expect(createdBlock.answers).toEqual(questionInput.answers);
-          expect(createdBlock.questionType).toEqual(questionInput.questionType);
-          expect(createdBlock.options).toEqual(questionInput.options);
+      // Now check the properties
+      const id = response.data.createQuestionBlock.id;
+      const createdBlock: any = response.data.createQuestionBlock;
+      // Check the created block here
+      expect(createdBlock.id).toEqual(questionInput.id);
+      expect(createdBlock.version).toEqual(questionInput.version);
+      expect(createdBlock.type).toEqual(questionInput.type);
+      expect(createdBlock.documentId).toEqual(questionInput.documentId);
+      expect(createdBlock.lastUpdatedBy).toEqual(questionInput.lastUpdatedBy);
+      expect(createdBlock.question).toEqual(questionInput.question);
+      expect(createdBlock.answers).toEqual(questionInput.answers);
+      expect(createdBlock.questionType).toEqual(questionInput.questionType);
+      expect(createdBlock.options).toEqual(questionInput.options);
 
-          // Now delete the block
-          return graphQlService.query(deleteBlock, { input: { id } });
-        }).then(response => {
-          expect(response.data.deleteBlock.id).toEqual(questionInput.id);
-          done();
-        }).catch(error => {
-          fail('Check console for more details');
-          console.error(error); done();
-        });
-      }, error => { console.error(error); fail(); done(); });
+      // Now delete the block
+      response = await graphQlService.query(deleteBlock, { input: { id } });
+
+      expect(response.data.deleteBlock.id).toEqual(questionInput.id);
     });
   });
 

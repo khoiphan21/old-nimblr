@@ -35,7 +35,6 @@ export class DocumentQueryService {
     if (!this.subscriptionMap.has(id)) {
       this.subscribeToUpdate(id);
     }
-
     this.graphQlService.query(getDocument, { id }).then(response => {
 
       try {

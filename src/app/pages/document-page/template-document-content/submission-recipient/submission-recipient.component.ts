@@ -32,7 +32,6 @@ export class SubmissionRecipientComponent implements OnInit {
   storeDocumentContent(document: SubmissionDocument) {
     if (document === null) { return; }
     // now store relevant details for rendering
-    console.log(document);
     this.recipientEmail = document.recipientEmail;
 
     // Finally set the flag to be ready
