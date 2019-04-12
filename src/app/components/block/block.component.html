@@ -7,10 +7,9 @@
         <ng-content></ng-content>
         <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
     </div>
-    <!-- <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)" [ngClass]="{'child-document': isChildDoc}">
-        <app-block-option *ngIf="isUserLoggedIn" [isChildDoc]="isChildDoc" [isBlockOptionsShown]="isBlockOptionsShown" (createBlock)="addBlock($event)" (deleteEvent)="deleteTransmitter($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)>
-        </app-block-option>
+    <div class="block" *ngSwitchCase="'QUESTION'" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)" [ngClass]="{'child-document': isChildDoc}">
+        <ng-content></ng-content>
         <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
         <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>
-    </div> -->
+    </div>
 </ng-container>
