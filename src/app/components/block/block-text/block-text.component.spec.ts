@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockTextComponent } from './block-text.component';
 import { FormsModule } from '@angular/forms';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { BlockType } from 'src/API';
+import { BlockType, TextBlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlock } from 'src/app/classes/block/textBlock';
@@ -162,7 +162,7 @@ describe('BlockTextComponent', () => {
     });
 
     it('should call `createAppBlock` with the right argument', async () => {
-      await component.updateValue();
+      await component.updateValue(TextBlockType.TEXT);
       expect(component['factoryService'].createAppBlock).toHaveBeenCalledWith({
         id: component.block.id,
         type: component.block.type,
@@ -174,19 +174,19 @@ describe('BlockTextComponent', () => {
     });
 
     it('should resolve with the updated block', async () => {
-      const updatedBlock: TextBlock = await component.updateValue() as TextBlock;
+      const updatedBlock: TextBlock = await component.updateValue(TextBlockType.TEXT) as TextBlock;
       expect(updatedBlock.value).toEqual(component.value);
     });
 
     it('should call block command service with the right argument', async () => {
-      const updatedBlock = await component.updateValue();
+      const updatedBlock = await component.updateValue(TextBlockType.TEXT);
       expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
     });
 
     it('should not call block command service again for consecutive updates', done => {
-      component.updateValue();
+      component.updateValue(TextBlockType.TEXT);
       setTimeout(() => {
-        component.updateValue().then(() => {
+        component.updateValue(TextBlockType.TEXT).then(() => {
           expect(blockCommandSpy).toHaveBeenCalledTimes(1);
           done();
         });
