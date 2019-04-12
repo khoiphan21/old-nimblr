@@ -99,17 +99,6 @@ describe('BlockComponent', () => {
 
   });
 
-  it('toggleBlockOptions() - should set `isBlockOptionsShown` to the given value', () => {
-    component.isSelectedOptionShown = false;
-    component.toggleBlockOptions(true);
-    expect(component.isBlockOptionsShown).toBe(true);
-  });
-
-  it('toggleSelectedOptionStatus() - should set `isSelectedOptionShown` to the given value', () => {
-    component.toggleSelectedOptionStatus(true);
-    expect(component.isSelectedOptionShown).toBe(true);
-  });
-
   describe('addBlock()', () => {
     it('should emit the right type', done => {
       const type = BlockType.QUESTION;

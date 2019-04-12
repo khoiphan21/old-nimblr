@@ -1,38 +1,28 @@
-<section class="child-overlay" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]=true
-  (click)="backToParent()">
-  <section class="content" *ngIf="isDocumentReady" (click)="$event.stopPropagation()">
-    <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()"
-      (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%"
-      (saveAsTemplateEvent)="saveAsTemplate()"></app-header>
+<section class="child-overlay" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]=true (click)="backToParent()">
+    <section class="content" *ngIf="isDocumentReady" (click)="$event.stopPropagation()">
+        <app-header [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%" (saveAsTemplateEvent)="saveAsTemplate()"></app-header>
 
-    <div class="title mt-5 mt-lg-4" [ngClass]="{'child-document-padding': isChildDoc}">
-      <h1>
-        <div class="placeholder" *ngIf="!docTitle">Untitled</div>
-        <!-- When the user is logged in -->
-        <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" [(ngModel)]="docTitle"
-          (ngModelChange)="updateDocTitle()"></div>
-        <!-- When the user is anonymous -->
-        <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
-        <!-- Shown only when there's some content -->
-        <button class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND
+        <div class="title mt-5 mt-lg-4" [ngClass]="{'child-document-padding': isChildDoc}">
+            <h1>
+                <div class="placeholder" *ngIf="!docTitle">Untitled</div>
+                <!-- When the user is logged in -->
+                <div class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" [(ngModel)]="docTitle" (ngModelChange)="updateDocTitle()"></div>
+                <!-- When the user is anonymous -->
+                <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
+                <!-- Shown only when there's some content -->
+                <button class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND
           FORM</button>
-      </h1>
-    </div>
+            </h1>
+        </div>
 
-    <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
-      (deleteBlockEvent)="deleteBlock($event)"></app-template-document-content>
+        <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
 
-    <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
-      (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
+        <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
 
-  </section>
+    </section>
 </section>
 
-<app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown"
-  (hideSendFormEvent)="isSendFormShown = false"></app-send-form>
-<app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown"
-  (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
+<app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown" (hideSendFormEvent)="isSendFormShown = false"></app-send-form>
+<app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown" (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
 <!-- <app-document-login></app-document-login> -->
 <!-- <app-request-access></app-request-access> -->

@@ -16,22 +16,14 @@ export interface CreateBlockEvent {
   styleUrls: ['./block.component.scss']
 })
 export class BlockComponent implements OnInit {
-  isBlockOptionsShown: boolean;
-  isSelectedOptionShown = false;
-
   block: Block;
-
   myVersions: Set<UUID> = new Set();
-
   @Input() blockId: string;
   @Input() isChildDoc: boolean;
   @Input() isUserLoggedIn: boolean;
   @Input() focusBlockId: BlockId; // To check if it should be focused
-
   @Output() createBlock = new EventEmitter<CreateBlockEvent>();
-
   @Output() deleteEvent = new EventEmitter<string>();
-
   constructor(
     private blockQueryService: BlockQueryService,
     private versionService: VersionService
@@ -55,16 +47,6 @@ export class BlockComponent implements OnInit {
     });
   }
 
-  toggleBlockOptions(status: boolean) {
-    if (this.isSelectedOptionShown === false) {
-      this.isBlockOptionsShown = status;
-    }
-  }
-
-  toggleSelectedOptionStatus(event: boolean) {
-    this.isSelectedOptionShown = event;
-  }
-
   addBlock(type: BlockType) {
     this.createBlock.emit({
       type, id: this.blockId
@@ -74,4 +56,5 @@ export class BlockComponent implements OnInit {
   deleteTransmitter(blockId: string) {
     this.deleteEvent.emit(blockId);
   }
+
 }

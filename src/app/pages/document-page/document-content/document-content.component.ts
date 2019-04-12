@@ -201,6 +201,18 @@ export class DocumentContentComponent implements OnInit {
     }
   }
 
+  async updateDocument(blockIds: Array<string>) {
+    try {
+      await this.documentCommandService.updateDocument({
+        id: this.documentId,
+        lastUpdatedBy: this.currentUser.id,
+        blockIds
+      });
+    } catch (error) {
+      throw new Error(`DocumentPage failed to update content: ${error}`);
+    }
+  }
+
   async updateDocTitle(limit = 500): Promise<any> {
 
     return new Promise((resolve, reject) => {

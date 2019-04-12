@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BlockId } from 'src/app/classes/block/block';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { BlockType } from 'src/API';
 
 @Component({
@@ -9,12 +10,16 @@ import { BlockType } from 'src/API';
   styleUrls: ['./block-section-content.component.scss']
 })
 export class BlockSectionContentComponent implements OnInit {
+  // isBlockOptionsShown: boolean;
+  isSelectedOptionShown = false;
+  mouseFocusingBlock = '';
+
   @Input() blockIds: Array<string>;
   @Input() isUserLoggedIn: boolean;
   @Input() focusBlockId: BlockId;
-
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
+  @Output() updateDocumentEvent = new EventEmitter<Array<string>>();
 
   constructor() { }
 
@@ -33,4 +38,24 @@ export class BlockSectionContentComponent implements OnInit {
     this.deleteBlockEvent.emit(event);
   }
 
+  updateOnHoverBlock(blockId: string) {
+    if (this.isSelectedOptionShown === false) {
+      this.mouseFocusingBlock = blockId;
+    }
+  }
+
+  clearOnHoverBlock() {
+    if (this.isSelectedOptionShown === false) {
+      this.mouseFocusingBlock = '';
+    }
+  }
+
+  toggleSelectedOptionStatus(event: boolean) {
+    this.isSelectedOptionShown = event;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.blockIds, event.previousIndex, event.currentIndex);
+    this.updateDocumentEvent.emit(this.blockIds);
+  }
 }
