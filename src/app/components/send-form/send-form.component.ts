@@ -8,8 +8,12 @@ import { slideBottomToTopAnimation, fadeInOutAnimation } from 'src/app/animation
   animations: [fadeInOutAnimation, slideBottomToTopAnimation]
 })
 export class SendFormComponent implements OnInit {
+  recipientInput: string;
+
   @Input() isSendFormShown: boolean;
+
   @Output() hideSendFormEvent = new EventEmitter<boolean>();
+  @Output() sendEmailEvent = new EventEmitter<string>();
 
   constructor() { }
 
@@ -18,6 +22,11 @@ export class SendFormComponent implements OnInit {
 
   hideContainer() {
     this.hideSendFormEvent.emit(false);
+  }
+
+  send() {
+    this.sendEmailEvent.emit(this.recipientInput);
+    this.hideContainer();
   }
 
 }

@@ -4,11 +4,11 @@ import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { UUID } from 'src/app/services/document/command/document-command.service';
 
 @Component({
-  selector: 'app-template-document-content',
-  templateUrl: './template-document-content.component.html',
-  styleUrls: ['./template-document-content.component.scss']
+  selector: 'app-submission-document-content',
+  templateUrl: './submission-document-content.component.html',
+  styleUrls: ['./submission-document-content.component.scss']
 })
-export class TemplateDocumentContentComponent implements OnInit {
+export class SubmissionDocumentContentComponent implements OnInit {
 
   @Input() blockIds: Array<string>;
   @Input() isUserLoggedIn: boolean;
@@ -17,8 +17,6 @@ export class TemplateDocumentContentComponent implements OnInit {
 
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
-  @Output() navigateToChildEvent = new EventEmitter<UUID>();
-  @Output() updateDocumentEvent = new EventEmitter<Array<string>>();
 
   currentTab = 'template';
 
@@ -35,10 +33,4 @@ export class TemplateDocumentContentComponent implements OnInit {
     this.deleteBlockEvent.emit(blockId);
   }
 
-  navigateToChild(id: UUID) {
-    this.navigateToChildEvent.emit(id);
-  }
-  updateDocument(blockIds: Array<string>) {
-    this.updateDocumentEvent.emit(blockIds);
-  }
 }

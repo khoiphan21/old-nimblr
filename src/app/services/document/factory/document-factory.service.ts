@@ -6,9 +6,17 @@ import { CreateDocumentInput } from '../../../../API';
 import { UserId } from 'src/app/classes/user';
 import { TemplateDocument } from 'src/app/classes/document/templateDocument';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
+import { BlockId } from 'src/app/classes/block/block';
 
 export interface NewDocumentInput {
   ownerId: UserId;
+}
+
+export interface NewSubmissionDocumentInput {
+  recipientEmail: string;
+  ownerId: UserId;
+  blockIds?: Array<BlockId>;
+  title?: string;
 }
 
 @Injectable({
@@ -35,6 +43,18 @@ export class DocumentFactoryService {
     return new TemplateDocument(newInput);
   }
 
+  createNewSubmission(input: NewSubmissionDocumentInput): SubmissionDocument {
+    // Extract the data from the original input
+    const { ownerId, recipientEmail, blockIds, title } = input;
+    // update some properties
+    const newInput: CreateDocumentInput = {
+      ownerId, recipientEmail, blockIds, title,
+      lastUpdatedBy: input.ownerId
+    };
+
+    return new SubmissionDocument(newInput);
+  }
+
   convertRawDocument(input: CreateDocumentInput): Document | TemplateDocument | SubmissionDocument {
     switch (input.type) {
       case DocumentType.GENERIC:
@@ -48,40 +68,4 @@ export class DocumentFactoryService {
     }
   }
 
-  // createDocument({
-  //   id,
-  //   ownerId,
-  //   title = null,
-  //   version = uuidv4(),
-  //   type = DocumentType.GENERIC,
-  //   editorIds = [],
-  //   viewerIds = [],
-  //   blockIds = [],
-  //   lastUpdatedBy = ownerId,
-  //   createdAt = new Date().toUTCString(),
-  //   updatedAt = new Date().toUTCString(),
-  //   sharingStatus = null
-  // }): Document {
-  //   const input: CreateDocumentInput = {
-  //     id, version, type, title, ownerId, editorIds, viewerIds,
-  //     blockIds, lastUpdatedBy, createdAt, updatedAt, sharingStatus
-  //   };
-
-  //   this.checkForNullOrUndefined(input);
-
-  //   return new DocumentImpl(input);
-  // }
-
-  // private checkForNullOrUndefined(input: any) {
-  //   const requiredUuidParams = [
-  //     'id', 'ownerId'
-  //   ];
-  //   requiredUuidParams.forEach(param => {
-  //     if (!input[param]) {
-  //       throw new Error(`Invalid parameter: missing ${param}`);
-  //     } else if (!isUuid(input[param])) {
-  //       throw new Error(`Invalid parameter: ${param} must be a uuid`);
-  //     }
-  //   });
-  // }
 }

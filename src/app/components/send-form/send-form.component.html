@@ -13,8 +13,8 @@
                 </div>
             </div>
             <div class="input-container">
-                <input type="text" placeholder="Search a person or type an email address">
-                <button class="filled-button-primary">send</button>
+                <input [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address">
+                <button class="filled-button-primary" (click)="send()">send</button>
             </div>
             <div class="title">
                 select a person

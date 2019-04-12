@@ -29,7 +29,7 @@ describe('HeaderComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
-});
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
@@ -41,7 +41,7 @@ describe('HeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-/* tslint:disable:no-string-literal */
+  /* tslint:disable:no-string-literal */
   it('showNavigationBar() - should call setNavigationBarStatus() from the service', () => {
     spyOn(component['navigationBarService'], 'setNavigationBarStatus');
     component.showNavigationBar();
@@ -80,4 +80,12 @@ describe('HeaderComponent', () => {
       component.changeSharingStatus(SharingStatus.PUBLIC);
     });
   });
+
+  describe('saveAsTemplate()', () => {
+    it('should emit the event', done => {
+      component.saveAsTemplateEvent.subscribe(() => done());
+      component.saveAsTemplate();
+    });
+  });
+
 });

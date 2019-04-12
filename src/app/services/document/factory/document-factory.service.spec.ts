@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentFactoryService, NewDocumentInput } from './document-factory.service';
+import { DocumentFactoryService, NewDocumentInput, NewSubmissionDocumentInput } from './document-factory.service';
 import { isUuid } from '../../../classes/helpers';
 import { DocumentType, SharingStatus, SubmissionStatus } from 'src/API';
 import { Document } from 'src/app/classes/document/document';
@@ -81,6 +81,45 @@ describe('DocumentFactoryService', () => {
     });
 
     // no need to check for errors as the DocumentImpl will do the validation
+  });
+
+  describe('createNewSubmission()', () => {
+    let submission: SubmissionDocument;
+    let submissionInput: NewSubmissionDocumentInput;
+
+    beforeEach(() => {
+      submissionInput = {
+        recipientEmail: 'test@email.com',
+        ownerId: uuidv4()
+      };
+      submission = service.createNewSubmission(submissionInput);
+    });
+
+    it('should create a document of type SubmissionDocument', () => {
+      expect(submission instanceof SubmissionDocument).toBe(true);
+    });
+
+    it('should store the recipientEmail', () => {
+      expect(submission.recipientEmail).toEqual(submissionInput.recipientEmail);
+    });
+
+    it('should set submissionStatus to NOT_STARTED', () => {
+      expect(submission.submissionStatus).toEqual(SubmissionStatus.NOT_STARTED);
+    });
+
+    it('should store the ownerId', () => {
+      expect(submission.ownerId).toEqual(submissionInput.ownerId);
+    });
+
+    it('should store the lastUpdatedBy', () => {
+      expect(submission.lastUpdatedBy).toEqual(submissionInput.ownerId);
+    });
+
+    it('should store the blockIds if given', () => {
+      submissionInput.blockIds = [uuidv4()];
+      submission = service.createNewSubmission(submissionInput);
+      expect(submission.blockIds).toEqual(submissionInput.blockIds);
+    });
   });
 
   describe('convertRawDocument()', () => {

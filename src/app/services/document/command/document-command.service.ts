@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, UpdateDocumentInput } from '../../../../API';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { createDocument, updateDocument } from '../../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
-import { DocumentQueryService } from '../query/document-query.service';
-import { VersionService } from '../../version.service';
+import { VersionService } from '../../version/version.service';
 
 export type UUID = string;
 export type ISOTimeString = string;
@@ -24,12 +23,50 @@ export class DocumentCommandService {
   async createDocument(input: CreateDocumentInput): Promise<any> {
     this.validateCreateInput(input);
 
+    // Get a new input to prevent accidental properties
+    // tslint:disable:prefer-const
+    let {
+      id,
+      version,
+      type,
+      ownerId,
+      lastUpdatedBy,
+      sharingStatus,
+      title,
+      editorIds,
+      viewerIds,
+      blockIds,
+      createdAt,
+      updatedAt,
+      submissionDocIds,
+      recipientEmail,
+      submittedAt,
+      submissionStatus,
+    } = input;
+
     // Change title to null if an empty string
-    if (input.title === '') {
-      input.title = null;
+    if (title === '') {
+      title = null;
     }
 
-    const response: any = await this.graphQlService.query(createDocument, { input });
+    const response: any = await this.graphQlService.query(createDocument, { input: {
+      id,
+      version,
+      type,
+      ownerId,
+      lastUpdatedBy,
+      sharingStatus,
+      title,
+      editorIds,
+      viewerIds,
+      blockIds,
+      createdAt,
+      updatedAt,
+      submissionDocIds,
+      recipientEmail,
+      submittedAt,
+      submissionStatus,
+    } });
 
     return response.data.createDocument;
   }

@@ -4,6 +4,8 @@ import { BlockSectionContentComponent } from './block-section-content.component'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { BlockType } from 'src/API';
+import { CreateBlockEvent } from '../../../components/block/block.component';
+import { take } from 'rxjs/operators';
 
 describe('BlockSectionContentComponent', () => {
   let component: BlockSectionContentComponent;
@@ -34,6 +36,17 @@ describe('BlockSectionContentComponent', () => {
       done();
     });
     component.addNewBlock({type});
+  });
+
+  it('addFirstBlock() - should emit the right event', done => {
+    const event: CreateBlockEvent = {
+      type: BlockType.TEXT
+    };
+    component.addNewBlockEvent.pipe(take(1)).subscribe(value => {
+      expect(value).toEqual(event);
+      done();
+    });
+    component.addFirstBlock();
   });
 
   it('deleteBlock() - should emit the right value', done => {

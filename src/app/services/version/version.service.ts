@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UUID } from './document/command/document-command.service';
+import { UUID } from '../document/command/document-command.service';
 import { Router, NavigationStart } from '@angular/router';
 @Injectable({
   providedIn: 'root'

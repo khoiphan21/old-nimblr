@@ -36,7 +36,9 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentContentComponent } from './pages/document-page/document-content/document-content.component';
 import { TemplateDocumentContentComponent } from './pages/document-page/template-document-content/template-document-content.component';
 import { BlockSectionContentComponent } from './pages/document-page/block-section-content/block-section-content.component';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { SubmissionDocumentContentComponent } from './pages/document-page/submission-document-content/submission-document-content.component';
+import { SubmissionRecipientComponent } from './pages/document-page/template-document-content/submission-recipient/submission-recipient.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     DocumentContentComponent,
     TemplateDocumentContentComponent,
     BlockSectionContentComponent,
+    SubmissionDocumentContentComponent,
+    SubmissionRecipientComponent,
   ],
   imports: [
     BrowserModule,

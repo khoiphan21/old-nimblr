@@ -4,7 +4,7 @@ import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
 import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
-import { VersionService } from '../../version.service';
+import { VersionService } from '../../version/version.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -188,5 +188,52 @@ export class BlockCommandService {
     const response = await this.graphQLService.query(deleteBlock, { input });
 
     return response;
+  }
+
+  async duplicateBlocks(inputs: Array<CreateBlockInput>): Promise<Array<CreateBlockInput>> {
+    const promises = [];
+
+    inputs.forEach(input => {
+      promises.push(this.duplicateOneBlock(input));
+    });
+
+    return await Promise.all(promises);
+  }
+
+  private async duplicateOneBlock(input: CreateBlockInput): Promise<CreateBlockInput> {
+    // Extract the required params
+    const {
+      // note: the id is left out so that a new id will be generated
+      version,
+      type,
+      documentId,
+      lastUpdatedBy,
+      value,
+      question,
+      answers,
+      questionType,
+      options
+    } = input;
+
+    const response = await this.createBlock({
+      id: uuidv4(),
+      version,
+      type,
+      documentId,
+      lastUpdatedBy,
+      value,
+      question,
+      answers,
+      questionType,
+      options
+    });
+
+    switch (type) {
+      case BlockType.TEXT:
+        return response.data.createTextBlock;
+      case BlockType.QUESTION:
+        return response.data.createQuestionBlock;
+    }
+
   }
 }

@@ -120,6 +120,13 @@ describe('QuestionBlock -', () => {
       expect(questionBlock.question).toEqual('This is a question');
     });
 
+    it('should set the value of `question` to empty string if null', () => {
+      input.question = null;
+      input.answers = ['answer'];
+      const questionBlock = new QuestionBlock(input);
+      expect(questionBlock.question).toEqual('');
+    });
+
     it('should set the right value for `questionType`', () => {
       input.questionType = QuestionType.PARAGRAPH;
       const questionBlock = new QuestionBlock(input);

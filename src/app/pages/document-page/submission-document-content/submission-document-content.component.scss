@@ -1,0 +1,15 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+
+.content {
+    height: 100%;
+    background: white;
+}
+
+
+@include media(lg) {
+    section.content {
+        height: 100%;
+    }
+}

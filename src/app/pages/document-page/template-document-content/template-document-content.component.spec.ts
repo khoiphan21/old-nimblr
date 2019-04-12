@@ -52,4 +52,13 @@ describe('TemplateDocumentContentComponent', () => {
     });
     component.updateDocument(newBlocksPosition);
   });
+
+  it('navigateToChild() - should emit the event', done => {
+    const event = 'test';
+    component.navigateToChildEvent.subscribe(value => {
+      expect(value).toEqual(event);
+      done();
+    });
+    component.navigateToChild(event);
+  });
 });
