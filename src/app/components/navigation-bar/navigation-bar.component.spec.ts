@@ -13,6 +13,7 @@ import { MockAccountService } from 'src/app/services/account/account-impl.servic
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { ResponsiveModule } from 'ngx-responsive';
+import { DocumentType } from '../../../API';
 class MockNavigationBarService {
   getNavigationBar$() {
     return new BehaviorSubject(false);
@@ -108,8 +109,12 @@ describe('NavigationBarComponent', () => {
   });
 
   it('should receive get the right value for the navigationTabs when the data comes in', () => {
-    const tab1 = new NavigationTabDocument('tab1', 'nav tab 1', []);
-    const tab2 = new NavigationTabDocument('tab2', 'nav tab 2', []);
+    const tab1 = new NavigationTabDocument({
+      id: 'tab1', title: 'nav tab 1', type: DocumentType.GENERIC, children: []
+    });
+    const tab2 = new NavigationTabDocument({
+      id: 'tab2', title: 'nav tab 2', type: DocumentType.GENERIC, children: []
+    });
     const expectedResult = [tab1, tab2];
     spyOn(navigationBarService, 'getNavigationBar$').and.callFake(() => {
       return new BehaviorSubject(expectedResult);

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UUID } from 'src/app/services/document/command/document-command.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-document-page',
   templateUrl: './document-page.component.html',

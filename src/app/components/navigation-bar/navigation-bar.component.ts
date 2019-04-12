@@ -4,6 +4,7 @@ import { NavigationTabDocument } from '../../classes/navigation-tab';
 import { slideLeftToRightAnimation, fadeInOutAnimation } from 'src/app/animation';
 import { User } from 'src/app/classes/user';
 import { AccountService } from 'src/app/services/account/account.service';
+import { DocumentType } from 'src/API';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -12,7 +13,7 @@ import { AccountService } from 'src/app/services/account/account.service';
   animations: [slideLeftToRightAnimation, fadeInOutAnimation]
 })
 export class NavigationBarComponent implements OnInit {
-  @Input() documentId: string;
+  @Input() documentId;
 
   currentUser: User;
   initialName: string;
@@ -25,15 +26,16 @@ export class NavigationBarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // TODO FIX THIS ISSUE ABOUT NAVIGATION BAR WHEN USER IS **NOT LOGGED IN**
     this.documentId = 'c9e9f6ed-1365-4ff9-aacc-b23a08454fc4';
     this.navigationBarService.getNavigationBarStatus$().subscribe(status => {
       this.isNavigationTabShown = status;
     });
     this.navigationBarService.getNavigationBar$(this.documentId).subscribe((navigationTabs: NavigationTabDocument[]) => {
-      this.navigationTabs = [];
-      for (const navigationTab of navigationTabs) {
-        this.navigationTabs.push(navigationTab);
-      }
+      // now do a filter
+      this.navigationTabs = navigationTabs.filter(tab => {
+        return tab.type !== DocumentType.SUBMISSION;
+      });
     });
     this.accountService.getUser$().subscribe((user) => {
       if (user !== null) {

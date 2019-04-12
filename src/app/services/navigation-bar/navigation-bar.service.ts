@@ -82,9 +82,11 @@ export class NavigationBarService {
     for (const document of documents) {
       const id = document.id;
       const title = document.title;
+      const type = document.type;
+      const children = [];
       // currently no header tab implementation
       // const children = this.processChildrenTab();
-      const navigationTab = new NavigationTabDocument(id, title, []);
+      const navigationTab = new NavigationTabDocument({id, title, type, children});
       navigationTabs.push(navigationTab);
     }
     return navigationTabs;

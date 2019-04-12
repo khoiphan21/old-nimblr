@@ -1,20 +1,26 @@
+import { UUID } from '../services/document/command/document-command.service';
+import { DocumentType } from '../../API';
 interface NavigationTab {
     id: string;
     title: string;
 }
 
-export class NavigationTabDocument implements NavigationTab {
-    id: string;
+export interface CreateNavigationTabInput {
+    id: UUID;
     title: string;
+    type: DocumentType;
     children: Array<NavigationTabHeader>;
-    constructor(
-        id: string,
-        title: string,
-        children: Array<NavigationTabHeader>
-    ) {
-        this.id = id;
-        this.title = title;
-        this.children = children;
+}
+export class NavigationTabDocument implements NavigationTab {
+    id: UUID;
+    title: string;
+    type: DocumentType;
+    children: Array<NavigationTabHeader>;
+    constructor(input: CreateNavigationTabInput) {
+        this.id = input.id;
+        this.title = input.title;
+        this.type = input.type;
+        this.children = input.children;
     }
 }
 
