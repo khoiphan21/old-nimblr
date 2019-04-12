@@ -4,7 +4,6 @@ import { NavigationBarComponent } from './navigation-bar.component';
 import { NavigationTabComponent } from './navigation-tab/navigation-tab.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
@@ -14,20 +13,20 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentType } from '../../../API';
-class MockNavigationBarService {
-  getNavigationBar$() {
-    return new BehaviorSubject(false);
-  }
-  getNavigationBarStatus$() {
-    return new BehaviorSubject(false);
-  }
-}
 
+// tslint:disable:no-string-literal
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
-  let navigationBarService: NavigationBarService;
   let userFactory: UserFactoryService;
+
+  // spies
+  let getStatusSpy: jasmine.Spy;
+  let getNavBarSpy: jasmine.Spy;
+  let accountSpy: jasmine.Spy;
+
+  let navigationBar$: BehaviorSubject<any>;
+
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -40,11 +39,6 @@ describe('NavigationBarComponent', () => {
         ResponsiveModule.forRoot()
       ],
       providers: [
-        ServicesModule,
-        {
-          provide: NavigationBarService,
-          useClass: MockNavigationBarService
-        },
         {
           provide: AccountService,
           useClass: MockAccountService
@@ -57,9 +51,24 @@ describe('NavigationBarComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(NavigationBarComponent);
     userFactory = TestBed.get(UserFactoryService);
-    navigationBarService = TestBed.get(NavigationBarService);
     component = fixture.componentInstance;
+
+    // Setup spies
+    navigationBar$ = new BehaviorSubject([]);
+    getStatusSpy = spyOn(component['navigationBarService'], 'getNavigationBarStatus$');
+    getStatusSpy.and.returnValue(new BehaviorSubject(true));
+
+    getNavBarSpy = spyOn(component['navigationBarService'], 'getNavigationBar$');
+    getNavBarSpy.and.returnValue(navigationBar$);
+
+    accountSpy = spyOn(component['accountService'], 'getUser$');
+    accountSpy.and.returnValue(new BehaviorSubject(null));
+
+    // Setup component
     component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
+    component.navigationTabs = [];
+
+    // call to render
     fixture.detectChanges();
   });
 
@@ -67,14 +76,12 @@ describe('NavigationBarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  /* tslint:disable:no-string-literal */
   describe('ngOnInit', () => {
     let user;
+
     beforeEach(() => {
       user = userFactory.createUser('user1', 'john', 'doe', 'johndoe@gmail.com');
-      spyOn(component['accountService'], 'getUser$').and.callFake(() => {
-        return new BehaviorSubject(user);
-      });
+      accountSpy.and.returnValue(new BehaviorSubject(user));
       spyOn<any>(component, 'processInitialName');
     });
 
@@ -98,12 +105,8 @@ describe('NavigationBarComponent', () => {
 
   it('should receive get the right value for the navigation bar status', () => {
     const expectedResult = false;
-    spyOn(navigationBarService, 'getNavigationBarStatus$').and.callFake(() => {
-      return new BehaviorSubject(expectedResult);
-    });
-    spyOn(navigationBarService, 'getNavigationBar$').and.callFake(() => {
-      return new Subject();
-    });
+    getStatusSpy.and.returnValue(new BehaviorSubject(expectedResult));
+    getNavBarSpy.and.returnValue(new Subject());
     component.ngOnInit();
     expect(component.isNavigationTabShown).toEqual(expectedResult);
   });
@@ -116,9 +119,7 @@ describe('NavigationBarComponent', () => {
       id: 'tab2', title: 'nav tab 2', type: DocumentType.GENERIC, children: []
     });
     const expectedResult = [tab1, tab2];
-    spyOn(navigationBarService, 'getNavigationBar$').and.callFake(() => {
-      return new BehaviorSubject(expectedResult);
-    });
+    getNavBarSpy.and.returnValue(new BehaviorSubject(expectedResult));
     component.ngOnInit();
     expect(component.navigationTabs).toEqual(expectedResult);
   });

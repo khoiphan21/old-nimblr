@@ -17,7 +17,7 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentType } from '../../../API';
 import { By } from '@angular/platform-browser';
 
-describe('NavigationBarComponent', () => {
+describe('(UI) NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let userFactory: UserFactoryService;
