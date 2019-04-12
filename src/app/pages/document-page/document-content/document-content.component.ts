@@ -20,6 +20,7 @@ import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { EmailService } from 'src/app/services/email/email.service';
+import { TemplateDocument } from '../../../classes/document/templateDocument';
 
 const uuidv4 = require('uuid/v4');
 
@@ -132,6 +133,9 @@ export class DocumentContentComponent implements OnInit {
     this.blockIds = document.blockIds;
     this.docTitle = document.title;
     this.currentSharingStatus = document.sharingStatus;
+    // For submission documents
+    const template = document as TemplateDocument;
+    this.submissionDocIds = template.submissionDocIds ? template.submissionDocIds : [];
   }
 
   private checkIsChildDocument() {

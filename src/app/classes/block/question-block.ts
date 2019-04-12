@@ -92,7 +92,7 @@ export class QuestionBlock extends BlockImpl implements Block {
     }
     const arrayValue = value as Array<any>;
     arrayValue.forEach(item => {
-      if (typeof item !== 'string') {
+      if (typeof item !== 'string' && item !== null) {
         throw new Error(BASE_ERROR_MESSAGE + `"${name}" must contain only strings`);
       }
     });

@@ -20,18 +20,17 @@
     </div>
 
     <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId"
-      [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
-      (deleteBlockEvent)="deleteBlock($event)"></app-template-document-content>
+      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds"
+      (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)"></app-template-document-content>
 
     <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds"
       [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
       (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
 
-      <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId"
-      [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
-      (deleteBlockEvent)="deleteBlock($event)"></app-submission-document-content>
+    <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [blockIds]="blockIds"
+      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds"
+      (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)">
+    </app-submission-document-content>
   </section>
 </section>
 
