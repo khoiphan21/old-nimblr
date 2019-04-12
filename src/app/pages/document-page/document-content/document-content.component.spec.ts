@@ -24,7 +24,7 @@ import { InvitationEmailDetails } from 'src/app/services/email/email.service';
 
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentContentComponent', () => {
+fdescribe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
@@ -783,14 +783,27 @@ describe('DocumentContentComponent', () => {
 
   describe('sendDocument()', () => {
     let submission: SubmissionDocument;
+
+    let block$: BehaviorSubject<any>;
+    let querySpy: jasmine.Spy;
+    let duplicateSpy: jasmine.Spy;
     let factorySpy: jasmine.Spy;
     let createDocumentSpy: jasmine.Spy;
     let updateDocumentSpy: jasmine.Spy;
     let emailSpy: jasmine.Spy;
 
     const email = 'test@email.com';
+    const id1 = uuidv4();
+    const id2 = uuidv4();
 
     beforeEach(async () => {
+      querySpy = spyOn(component['blockQueryService'], 'getBlock$');
+      block$ = new BehaviorSubject(null);
+      querySpy.and.returnValue(block$);
+
+      duplicateSpy = spyOn(component['blockCommandService'], 'duplicateBlocks');
+      duplicateSpy.and.returnValue([{ id: id1 }, { id: id2 }]);
+
       factorySpy = spyOn(component['docFactoryService'], 'createNewSubmission');
       factorySpy.and.callThrough();
 
@@ -804,16 +817,28 @@ describe('DocumentContentComponent', () => {
       emailSpy.and.returnValue(Promise.resolve());
 
       component.docTitle = 'test';
+      component.blockIds = [id1, id2];
 
       await component.sendDocument(email);
       submission = factorySpy.calls.mostRecent().returnValue;
+    });
+
+    it('should call blockQueryService with the ids from blockIds', () => {
+      expect(querySpy.calls.count()).toBe(2);
+      querySpy.calls.all().forEach(call => {
+        expect([id1, id2].includes(call.args[0])).toBe(true);
+      });
+    });
+
+    it('should call to duplicate the blocks with the ids from blockIds', () => {
+      expect(duplicateSpy).toHaveBeenCalled();
     });
 
     it('should call factory with the right arguments', () => {
       expect(factorySpy).toHaveBeenCalledWith({
         ownerId: testUser.id,
         recipientEmail: email,
-        blockIds: [],
+        blockIds: [id1, id2],
         title: component.docTitle
       });
     });
