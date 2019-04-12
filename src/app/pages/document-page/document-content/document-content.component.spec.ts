@@ -24,7 +24,7 @@ import { InvitationEmailDetails } from 'src/app/services/email/email.service';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('DocumentContentComponent', () => {
+describe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
