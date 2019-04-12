@@ -24,7 +24,7 @@ export class BlockCommandService {
     switch (input.type) {
       case BlockType.TEXT:
         const textInput = input as UpdateTextBlockInput;
-        console.log(textInput);
+        console.log('Updating block: ', textInput);
         return this.updateTextBlock({
           id: textInput.id,
           documentId: textInput.documentId,
@@ -66,36 +66,6 @@ export class BlockCommandService {
       this.blockQueryService.registerUpdateVersion(input.version);
 
       // TODO: @bruno -- the query doesnt work
-      /**
-       * mutation UpdateTextBlock($input: UpdateTextBlockInput!) {
-  updateTextBlock(input: $input) {
-    id
-    version
-    type
-    documentId
-    lastUpdatedBy
-    createdAt
-    updatedAt
-    value
-    question
-    answers
-    questionType 
-    options
-    textblocktype
-  }
-}
-
-
-{"input": 
-  {"id": "8c066cf2-628d-4872-96be-9565e853c88f",
-		"documentId": "62c7f550-3104-4b99-bb5f-daab2f9408b8",
-		"version": "960e5d15-bfab-4a0e-93e1-8e1a1e809f7c",
-		"lastUpdatedBy": "ded647b2-d591-4b32-b469-27e4e30aedf5",
-		"updatedAt": "2019-04-11T07:19:06.579Z",
-    "textblocktype": "TEXT",
-    "value": "sadsad"}
-}
-       */
       return await this.graphQLService.query(updateTextBlock, { input });
     } catch (error) {
       return Promise.reject(error);

@@ -16,8 +16,12 @@ export class HeaderBlock extends TextBlock implements Block {
 
     constructor(input: CreateAppTextBlockInput) {
         super({
+            id: input.id,
+            version: input.version,
             documentId: input.documentId,
             lastUpdatedBy: input.lastUpdatedBy,
+            createdAt: input.createdAt,
+            updatedAt: input.updatedAt,
             value: input.value, // register enum
             textblocktype: input.textblocktype,
         });

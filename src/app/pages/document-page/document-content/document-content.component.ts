@@ -174,16 +174,16 @@ export class DocumentContentComponent implements OnInit {
         this.blockIds.push(block.id);
       }
       // create a new block in backend with BlockCommandService
-      const createBlockPromise = await this.blockCommandService.createBlock(block);
+      const createBlockPromise = this.blockCommandService.createBlock(block);
       // Update the document in the backend
-      const updateDocPromise = await this.documentCommandService.updateDocument({
+      const updateDocPromise = this.documentCommandService.updateDocument({
         id: this.currentDocument.id,
         lastUpdatedBy: this.currentUser.id,
         blockIds: this.blockIds
       });
 
-      // await createBlockPromise;
-      // await updateDocPromise;
+      await createBlockPromise;
+      await updateDocPromise;
 
       return block;
     } catch (error) {

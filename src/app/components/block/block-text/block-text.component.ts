@@ -3,6 +3,7 @@ import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
+import { TextBlockType } from 'src/API';
 
 @Component({
   selector: 'app-block-text',
@@ -56,7 +57,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
     }
   }
 
-  async updateValue(): Promise<Block> {
+  async updateValue(textblocktype: TextBlockType): Promise<Block> {
     // Show place holder if value becomes ''
     this.isPlaceholderShown = true;
 
@@ -69,7 +70,8 @@ export class BlockTextComponent implements OnInit, OnChanges {
           documentId: this.block.documentId,
           lastUpdatedBy: this.block.lastUpdatedBy,
           value: this.value,
-          createdAt: this.block.createdAt
+          createdAt: this.block.createdAt,
+          textblocktype,
         });
         this.blockCommandService.updateBlock(updatedBlock).then(() => {
           resolve(updatedBlock);

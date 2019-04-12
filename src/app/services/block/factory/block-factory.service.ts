@@ -23,8 +23,12 @@ export class BlockFactoryService {
 
   createNewTextBlock(input: CreateNewBlockInput): TextBlock {
     const newInput: CreateAppTextBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
       documentId: input.documentId,
       lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       value: '',
       textblocktype: null,
     };
@@ -33,8 +37,12 @@ export class BlockFactoryService {
 
   createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
     const newInput: CreateAppTextBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
       documentId: input.documentId,
       lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       value: '',
       textblocktype: TextBlockType.HEADER,
     };
@@ -85,11 +93,13 @@ export class BlockFactoryService {
     question = '',
     answers = [],
     questionType = QuestionType.SHORT_ANSWER,
-    options = []
+    options = [],
+    textblocktype = TextBlockType.TEXT,
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
-      value, updatedAt, createdAt, question, answers, questionType, options
+      value, updatedAt, createdAt, question, answers, questionType, options,
+      textblocktype
     };
 
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
@@ -110,12 +120,22 @@ export class BlockFactoryService {
 
     switch (type) {
       case BlockType.TEXT:
-        return new TextBlock(input);
+        return this.selectTextBlock(input);
       case BlockType.QUESTION:
         return new QuestionBlock(input);
       default:
         throw new Error('BlockType not supported');
     }
+  }
+
+  private selectTextBlock(input) {
+    switch (input.textblocktype) {
+      case TextBlockType.HEADER:
+        return new HeaderBlock(input);
+      default:
+        return new TextBlock(input);
+    }
+
   }
 
   private checkForNullOrUndefined(parameter, parameterName) {
