@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BlockId } from 'src/app/classes/block/block';
 import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { BlockType } from 'src/API';
 
 @Component({
   selector: 'app-block-section-content',
@@ -29,8 +30,12 @@ export class BlockSectionContentComponent implements OnInit {
     this.addNewBlockEvent.emit(event);
   }
 
-  deleteBlock(blockId: string) {
-    this.deleteBlockEvent.emit(blockId);
+  addFirstBlock() {
+    this.addNewBlockEvent.emit({ type: BlockType.TEXT });
+  }
+
+  deleteBlock(event: string) {
+    this.deleteBlockEvent.emit(event);
   }
 
   updateOnHoverBlock(blockId: string) {

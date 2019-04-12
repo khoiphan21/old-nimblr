@@ -2,8 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlockSectionContentComponent } from './block-section-content.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BlockType } from 'src/API';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { BlockType } from 'src/API';
 
 describe('BlockSectionContentComponent', () => {
   let component: BlockSectionContentComponent;

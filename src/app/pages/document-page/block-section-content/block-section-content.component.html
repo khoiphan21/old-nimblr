@@ -4,9 +4,6 @@
             <app-block-option cdkDragHandle *ngIf="isUserLoggedIn" [blockId]="id" [isChildDoc]="isChildDoc" [mouseFocusingBlock]="mouseFocusingBlock" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
                 (switchBlockOptionsOff)=clearOnHoverBlock()>
             </app-block-option>
-            <!-- <app-block-option cdkDragHandle *ngIf="isUserLoggedIn" [blockId]="id" [isChildDoc]="isChildDoc" [isBlockOptionsShown]="isBlockOptionsShown" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
-                (switchBlockOptionsOff)=toggleBlockOptions($event)>
-            </app-block-option> -->
         </app-block>
     </ng-container>
 </div>

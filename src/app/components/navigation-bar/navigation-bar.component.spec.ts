@@ -12,6 +12,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
+import { ResponsiveModule } from 'ngx-responsive';
 class MockNavigationBarService {
   getNavigationBar$() {
     return new BehaviorSubject(false);
@@ -21,7 +22,7 @@ class MockNavigationBarService {
   }
 }
 
-xdescribe('NavigationBarComponent', () => {
+describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let navigationBarService: NavigationBarService;
@@ -34,7 +35,8 @@ xdescribe('NavigationBarComponent', () => {
       ],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule.withRoutes([]),
+        ResponsiveModule.forRoot()
       ],
       providers: [
         ServicesModule,

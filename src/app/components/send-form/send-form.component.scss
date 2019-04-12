@@ -7,7 +7,7 @@ section.mobile.container.option-container {
         width: 100%;
         font-size: 16px;
         border: 0;
-        border-bottom: 1px solid #DDD;
+        border-bottom: 1px solid #97A0BF;
         padding: 20px $horizontal-padding;
         &::placeholder {
             color: $color-grey-3;
@@ -50,7 +50,7 @@ section.mobile.container.option-container {
         .header {
             @include row-center;
             justify-content: flex-start;
-            border-bottom: 1px solid #DDD;
+            border-bottom: 1px solid #97A0BF;
             padding: 0 $horizontal-padding;
             i {
                 font-size: 25px;
@@ -71,15 +71,26 @@ section.mobile.container.option-container {
             letter-spacing: 1.5px;
             font-weight: 500;
         }
-        input[type=text] {
+        .input-container {
             width: 100%;
-            font-size: 12px;
-            border: 0;
-            border-bottom: 1px solid #DDD;
-            padding: 10px $horizontal-padding;
-            &::placeholder {
-                color: $color-grey-3;
-                opacity: 0.8;
+            border-bottom: 1px solid #97A0BF;
+            input[type=text] {
+                width: 80%;
+                border: 0;
+                font-size: 12px;
+                padding: 15px $horizontal-padding;
+                &::placeholder {
+                    color: $color-grey-3;
+                    opacity: 0.8;
+                }
+            }
+            button {
+                background: #E8E8E8;
+                height: 26.27px;
+                padding: 0 1.05rem;
+                font-size: 12px;
+                letter-spacing: 1.2px;
+                font-weight: 500;
             }
         }
         .recipient {

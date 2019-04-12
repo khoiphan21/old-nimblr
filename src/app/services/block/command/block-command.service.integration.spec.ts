@@ -8,14 +8,22 @@ import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service
 import { CreateTextBlockInput } from '../../../../API';
 import { deleteBlock } from '../../../../graphql/mutations';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
 
-describe('BlockCommandService', () => {
+describe('(Integration) BlockCommandService', () => {
   const service$ = new BehaviorSubject<BlockCommandService>(null);
   let graphQlService: GraphQLService;
-  TestBed.configureTestingModule({});
+  configureTestSuite(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
+  });
 
   beforeAll(() => {
     Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {

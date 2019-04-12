@@ -2,7 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TemplateDocumentContentComponent } from './template-document-content.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+<<<<<<< HEAD
 import { BlockType } from 'src/API';
+=======
+import { CreateBlockEvent } from 'src/app/components/block/block.component';
+import { BlockType } from 'src/API';
+import { take } from 'rxjs/operators';
+>>>>>>> master
 
 describe('TemplateDocumentContentComponent', () => {
   let component: TemplateDocumentContentComponent;

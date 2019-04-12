@@ -7,6 +7,8 @@ import { Auth } from 'aws-amplify';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
 import { deleteDocument } from '../../../../graphql/mutations';
+import { RouterTestingModule } from '@angular/router/testing';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -17,8 +19,15 @@ describe('(Integration) DocumentCommandService', () => {
   let input: CreateDocumentInput;
   let storedDocument: any;
 
+  configureTestSuite(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
+  });
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
     input = {
       type: DocumentType.GENERIC,
       version: uuidv4(),
