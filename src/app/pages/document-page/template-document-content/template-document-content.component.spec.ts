@@ -2,9 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TemplateDocumentContentComponent } from './template-document-content.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { BlockType } from 'src/API';
-import { take } from 'rxjs/operators';
 
 describe('TemplateDocumentContentComponent', () => {
   let component: TemplateDocumentContentComponent;
@@ -28,26 +26,31 @@ describe('TemplateDocumentContentComponent', () => {
     expect(component).toBeTruthy();
   });
 
-
-  it('addNewBlock() - should emit the event', done => {
-    const event: CreateBlockEvent = {
-      id: 'test',
-      type: BlockType.TEXT
-    };
-    component.addNewBlockEvent.pipe(take(1)).subscribe(value => {
-      expect(value).toEqual(event);
+  it('andNewBlock() - should emit the right value', done => {
+    const type = BlockType.QUESTION;
+    component.addNewBlockEvent.subscribe(value => {
+      expect(value.type).toEqual(type);
       done();
     });
-    component.addNewBlock(event);
+    component.addNewBlock({type});
   });
 
-  it('deleteBlock() - should emit the event', done => {
-    const event = 'test';
-    component.deleteBlockEvent.pipe(take(1)).subscribe(value => {
-      expect(value).toEqual(event);
+  it('deleteBlock() - should emit the right value', done => {
+    const blockId = 'id123';
+    component.deleteBlockEvent.subscribe(value => {
+      expect(value).toEqual(blockId);
       done();
     });
-    component.deleteBlock(event);
+    component.deleteBlock(blockId);
+  });
+
+  it('should emit the new position', done => {
+    const newBlocksPosition = ['id2', 'id1'];
+    component.updateDocumentEvent.subscribe(value => {
+      expect(value).toEqual(newBlocksPosition);
+      done();
+    });
+    component.updateDocument(newBlocksPosition);
   });
 
   it('navigateToChild() - should emit the event', done => {

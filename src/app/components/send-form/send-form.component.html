@@ -8,12 +8,14 @@
                         send document
                     </div>
                     <div class="description">
-                        Anyone you send this form to can only edit input fields
+                        Anyone you send this document to can only edit input fields
                     </div>
                 </div>
             </div>
-            <input [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address">
-            <button (click)="send()">SEND (JEREMY PLS FIX)</button>
+            <div class="input-container">
+                <input [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address">
+                <button class="filled-button-primary" (click)="send()">send</button>
+            </div>
             <div class="title">
                 select a person
             </div>

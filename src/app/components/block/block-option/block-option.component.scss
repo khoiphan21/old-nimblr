@@ -6,6 +6,15 @@ section.block-option.child-document {
     left: 315px - 75px - $input-gap;
 }
 
+.blocker {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    cursor: auto;
+}
+
 section.block-option {
     padding-top: 6.5px;
     width: auto;
@@ -79,6 +88,7 @@ section.block-option {
                 color: $color-grey-3;
                 letter-spacing: 0.5px;
                 font-weight: normal;
+                cursor: auto;
             }
             .title.form {
                 border-top: 1px solid $color-grey-4;

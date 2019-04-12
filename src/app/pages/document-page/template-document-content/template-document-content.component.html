@@ -1,17 +1,14 @@
 <section class="content">
 
-  <section class="document-tab" [ngClass]="{'child-document-padding': isChildDoc}">
-    <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
-      template</div>
-    <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}"
-      (click)="currentTab = 'submissions'">submissions</div>
-  </section>
+    <section class="document-tab" [ngClass]="{'child-document-padding': isChildDoc}">
+        <div class="template" [ngClass]="{'current-tab': currentTab === 'template'}" (click)="currentTab = 'template'">
+            template</div>
+        <div class="submissions" [ngClass]="{'current-tab': currentTab === 'submissions'}" (click)="currentTab = 'submissions'">submissions</div>
+    </section>
 
-  <section class="template" *ngIf="currentTab === 'template'">
-    <app-block-section-content [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
-      (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
-  </section>
+    <section class="template" *ngIf="currentTab === 'template'">
+        <app-block-section-content [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
+    </section>
 
   <table class="submissions" *ngIf="currentTab === 'submissions'">
     <tr>

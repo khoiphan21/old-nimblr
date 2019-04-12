@@ -38,6 +38,7 @@ import { TemplateDocumentContentComponent } from './pages/document-page/template
 import { BlockSectionContentComponent } from './pages/document-page/block-section-content/block-section-content.component';
 import { SubmissionDocumentContentComponent } from './pages/document-page/submission-document-content/submission-document-content.component';
 import { SubmissionRecipientComponent } from './pages/document-page/template-document-content/submission-recipient/submission-recipient.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { SubmissionRecipientComponent } from './pages/document-page/template-doc
     ClickOutsideModule,
     BrowserAnimationsModule,
     ContenteditableModule,
-    ResponsiveModule.forRoot()
+    ResponsiveModule.forRoot(),
+    DragDropModule
   ],
 
   bootstrap: [AppComponent]

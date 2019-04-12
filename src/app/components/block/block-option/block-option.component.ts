@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core
 import { fadeInOutAnimation } from '../../../animation';
 import { BlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
+import { CreateBlockEvent } from '../block.component';
 
 @Component({
   selector: 'app-block-option',
@@ -10,24 +11,29 @@ import { Block } from 'src/app/classes/block/block';
   animations: [fadeInOutAnimation]
 })
 export class BlockOptionComponent implements OnChanges {
-
-  @Input() isBlockOptionsShown: boolean;
+  showBlock = false;
+  @Input() blockId: string;
+  @Input() mouseFocusingBlock: string;
   @Input() isChildDoc: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
-  @Output() createBlock = new EventEmitter<BlockType>();
+  @Output() createBlock = new EventEmitter<CreateBlockEvent>();
 
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
   @Output() deleteEvent = new EventEmitter<string>();
-  @Input() block: Block;
 
   constructor() { }
 
   ngOnChanges() {
     this.isAddBlockContainerShown = false;
     this.isMenuSelectionContainerShown = false;
+    if (this.mouseFocusingBlock === this.blockId) {
+      this.showBlock = true;
+    } else {
+      this.showBlock = false;
+    }
   }
 
   showAddBlockContainer() {
@@ -61,17 +67,24 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addTextBlock() {
-    this.createBlock.emit(BlockType.TEXT);
+    const type = BlockType.TEXT;
+    this.createBlock.emit({
+      type, id: this.blockId
+    });
     this.hideAddBlockContainer();
   }
 
   addQuestionBlock() {
-    this.createBlock.emit(BlockType.QUESTION);
+    const type = BlockType.QUESTION;
+    this.createBlock.emit({
+      type, id: this.blockId
+    });
     this.hideAddBlockContainer();
   }
 
   deleteHandler() {
-    this.deleteEvent.emit(this.block.id);
+    this.toggleSelectedOptionsStatus(false);
+    this.deleteEvent.emit(this.blockId);
   }
 
 }
