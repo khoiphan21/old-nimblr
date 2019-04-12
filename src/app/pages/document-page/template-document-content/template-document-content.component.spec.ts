@@ -44,7 +44,7 @@ describe('TemplateDocumentContentComponent', () => {
     component.deleteBlock(blockId);
   });
 
-  fit('should emit the new position', done => {
+  it('should emit the new position', done => {
     const newBlocksPosition = ['id2', 'id1'];
     component.updateDocumentEvent.subscribe(value => {
       expect(value).toEqual(newBlocksPosition);
