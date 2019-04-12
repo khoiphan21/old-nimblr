@@ -1,5 +1,7 @@
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from './account/account-impl.service.spec';
+
+const TEST_USERNAME = 'khoiphan21@gmail.com';
+const TEST_PASSWORD = 'Khoi1234';
 
 export class LoginHelper {
   /**
