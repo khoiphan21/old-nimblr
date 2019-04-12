@@ -1,10 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SubmissionRecipientComponent } from './submission-recipient.component';
+import { BehaviorSubject } from 'rxjs';
 
+// tslint:disable:no-string-literal
 describe('SubmissionRecipientComponent', () => {
   let component: SubmissionRecipientComponent;
   let fixture: ComponentFixture<SubmissionRecipientComponent>;
+  let document$: BehaviorSubject<any>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -16,6 +19,10 @@ describe('SubmissionRecipientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SubmissionRecipientComponent);
     component = fixture.componentInstance;
+    // Spy on the queryService first
+    document$ = new BehaviorSubject(null);
+    spyOn(component['queryService'], 'getDocument$').and.returnValue(document$);
+
     fixture.detectChanges();
   });
 
