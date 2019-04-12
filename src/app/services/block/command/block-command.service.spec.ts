@@ -30,7 +30,8 @@ describe('BlockCommandService', () => {
       type: BlockType.TEXT,
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
-      value: 'from updateBlock test'
+      value: 'from updateBlock test',
+      textblocktype: TextBlockType.TEXT,
     };
 
     headerInput = {

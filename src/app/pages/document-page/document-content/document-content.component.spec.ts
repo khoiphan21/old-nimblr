@@ -11,7 +11,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document';
-import { DocumentType, SharingStatus, BlockType } from 'src/API';
+import { DocumentType, SharingStatus, BlockType, TextBlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -298,10 +298,13 @@ describe('DocumentContentComponent', () => {
     });
 
     it('should throw an error if the block type is not supported', async () => {
-      const type: any = 'abc';
-      const message = `Error: BlockType "${type}" is not supported`;
+      const blockInfo = {
+        type: null,
+        textblocktype: null,
+      } as CreateBlockInfo;
+      const message = `Error: BlockType "${blockInfo.type}" is not supported`;
       try {
-        await component.addNewBlock(type);
+        await component.addNewBlock(blockInfo);
         fail('error must occur');
       } catch (error) {
         expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);

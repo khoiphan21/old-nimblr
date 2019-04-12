@@ -16,7 +16,6 @@ describe('HeaderBlock', () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       value: 'abcd',
-      textblocktype: TextBlockType.HEADER
     };
   };
 
@@ -31,7 +30,7 @@ describe('HeaderBlock', () => {
       mockInput.textblocktype = TextBlockType.HEADER;
 
       try {
-        const block = new HeaderBlock(mockInput);
+        new HeaderBlock(mockInput);
         done();
       } catch (err) {
         fail();
@@ -42,21 +41,23 @@ describe('HeaderBlock', () => {
       mockInput.textblocktype = 400;
 
       try {
-        const block = new HeaderBlock(mockInput);
+        new HeaderBlock(mockInput);
         fail();
       } catch (err) {
         done();
       }
     });
 
-    it('should fail to instantiate when textblocktype is null', done => {
+    it('should instantiate when textblocktype is null by replacing as TEXT', done => {
       mockInput.textblocktype = null;
 
       try {
-        const block = new HeaderBlock(mockInput);
-        fail();
-      } catch (err) {
+        const response = new HeaderBlock(mockInput);
+        expect(response.textblocktype).toEqual(TextBlockType.TEXT);
         done();
+
+      } catch (err) {
+        fail();
       }
     });
 
