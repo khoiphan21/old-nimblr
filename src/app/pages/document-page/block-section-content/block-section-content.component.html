@@ -4,6 +4,9 @@
             <app-block-option cdkDragHandle *ngIf="isUserLoggedIn" [blockId]="id" [isChildDoc]="isChildDoc" [mouseFocusingBlock]="mouseFocusingBlock" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
                 (switchBlockOptionsOff)=clearOnHoverBlock()>
             </app-block-option>
+            <div *cdkDragPlaceholder class="drag-placeholder" [ngClass]="{'child-document': isChildDoc}">
+                <div class="placeholder-underline"></div>
+            </div>
         </app-block>
     </ng-container>
 </div>
