@@ -1,6 +1,7 @@
 <div cdkDropList (cdkDropListDropped)="drop($event)">
     <ng-container *ngFor="let id of blockIds">
-        <app-block cdkDrag [cdkDragDisabled]="isSelectedOptionShown" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (mouseover)="updateOnHoverBlock(id)" (mouseleave)="clearOnHoverBlock()" [blockId]="id" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)">
+        <app-block cdkDrag [cdkDragDisabled]="isSelectedOptionShown" [isUserLoggedIn]="isUserLoggedIn" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" (mouseover)="updateOnHoverBlock(id)" (mouseleave)="clearOnHoverBlock()" [blockId]="id" (createBlock)="addNewBlock($event)"
+            (deleteEvent)="deleteBlock($event)">
             <app-block-option cdkDragHandle *ngIf="isUserLoggedIn" [blockId]="id" [isChildDoc]="isChildDoc" [mouseFocusingBlock]="mouseFocusingBlock" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
                 (switchBlockOptionsOff)=clearOnHoverBlock()>
             </app-block-option>

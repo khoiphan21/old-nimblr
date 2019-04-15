@@ -14,6 +14,7 @@ export class TemplateDocumentContentComponent implements OnInit {
   @Input() isUserLoggedIn: boolean;
   @Input() focusBlockId: BlockId;
   @Input() submissionDocIds: Array<UUID>;
+  @Input() isChildDoc: boolean;
 
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();

@@ -15,19 +15,17 @@
             </h1>
         </div>
 
-        <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds"
-      (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
+        <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
+            (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
 
 
-        <app-block-section-content *ngIf="documentType === 'GENERIC'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
+        <app-block-section-content *ngIf="documentType === 'GENERIC'" [isChildDoc]="isChildDoc" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"
+            (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
 
-        <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [blockIds]="blockIds"
-      [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds"
-      (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)">
-    </app-submission-document-content>
-    
-  </section>
+        <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)">
+        </app-submission-document-content>
+
+    </section>
 </section>
 
 <app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown" (hideSendFormEvent)="isSendFormShown = false" (sendEmailEvent)="sendDocument($event)"></app-send-form>
