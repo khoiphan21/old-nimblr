@@ -60,6 +60,7 @@ type Block @model {
   answers: [String]
   questionType: QuestionType
   options: [String]
+  textBlockType: TextBlockType
 }
 
 enum BlockType {
@@ -74,11 +75,17 @@ enum QuestionType {
   CHECKBOX
 }
 
+enum TextBlockType{
+  TEXT
+  HEADER
+}
+
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block
   updateTextBlock(input: UpdateTextBlockInput!): Block
   createQuestionBlock(input: CreateQuestionBlockInput!): Block
   updateQuestionBlock(input: UpdateQuestionBlockInput!): Block
+
 }
 
 type Subscription {
@@ -104,6 +111,7 @@ input CreateTextBlockInput {
   documentId: String!
   lastUpdatedBy: String!
   value: String
+  textBlockType: TextBlockType
 }
 
 input UpdateTextBlockInput {
@@ -114,6 +122,7 @@ input UpdateTextBlockInput {
   lastUpdatedBy: String!
   updatedAt: String!
   value: String
+  textBlockType: TextBlockType
 }
 
 input CreateQuestionBlockInput {

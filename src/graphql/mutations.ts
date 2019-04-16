@@ -15,6 +15,7 @@ export const createTextBlock = `mutation CreateTextBlock($input: CreateTextBlock
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;
@@ -32,6 +33,7 @@ export const updateTextBlock = `mutation UpdateTextBlock($input: UpdateTextBlock
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;
@@ -49,6 +51,7 @@ export const createQuestionBlock = `mutation CreateQuestionBlock($input: CreateQ
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;
@@ -66,6 +69,7 @@ export const updateQuestionBlock = `mutation UpdateQuestionBlock($input: UpdateQ
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;
@@ -179,6 +183,7 @@ export const createBlock = `mutation CreateBlock($input: CreateBlockInput!) {
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;
@@ -196,6 +201,7 @@ export const updateBlock = `mutation UpdateBlock($input: UpdateBlockInput!) {
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;
@@ -213,6 +219,7 @@ export const deleteBlock = `mutation DeleteBlock($input: DeleteBlockInput!) {
     answers
     questionType
     options
+    textBlockType
   }
 }
 `;

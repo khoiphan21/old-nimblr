@@ -4,11 +4,8 @@ import { BlockQueryService } from '../../services/block/query/block-query.servic
 import { BlockType } from 'src/API';
 import { UUID } from 'src/app/services/document/command/document-command.service';
 import { VersionService } from 'src/app/services/version/version.service';
-
-export interface CreateBlockEvent {
-  id?: BlockId;
-  type: BlockType;
-}
+import { TextBlockType } from '../../../API';
+import { CreateBlockEvent } from './createBlockEvent';
 
 @Component({
   selector: 'app-block',
@@ -49,7 +46,8 @@ export class BlockComponent implements OnInit {
 
   addBlock(type: BlockType) {
     this.createBlock.emit({
-      type, id: this.blockId
+      id: this.blockId,
+      type
     });
   }
 

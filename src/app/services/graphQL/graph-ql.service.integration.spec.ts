@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { GraphQLService } from './graph-ql.service';
 import { take } from 'rxjs/operators';
-import { CreateTextBlockInput, BlockType, UpdateBlockInput } from '../../../API';
+import { CreateTextBlockInput, BlockType, UpdateBlockInput, TextBlockType } from '../../../API';
 import { createTextBlock, deleteBlock, updateTextBlock } from '../../../graphql/mutations';
 import { onUpdateBlockInDocument } from '../../../graphql/subscriptions';
 import { Block } from 'src/app/classes/block/block';
@@ -29,7 +29,8 @@ describe('GraphQLService', () => {
       type: BlockType.TEXT,
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
-      value: 'TextBlock created from test'
+      value: 'TextBlock created from test',
+      textBlockType: TextBlockType.HEADER,
     };
     updateBlockInput = {
       id: null, // need to be updated during test

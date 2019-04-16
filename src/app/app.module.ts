@@ -18,7 +18,6 @@ import { NavigationBarComponent } from './components/navigation-bar/navigation-b
 import { BlockComponent } from './components/block/block.component';
 import { BlockOptionComponent } from './components/block/block-option/block-option.component';
 import { BlockTextComponent } from './components/block/block-text/block-text.component';
-import { BlockHeaderComponent } from './components/block/block-header/block-header.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
 import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
@@ -53,7 +52,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     BlockComponent,
     BlockOptionComponent,
     BlockTextComponent,
-    BlockHeaderComponent,
     DocumentOptionsComponent,
     QuestionBlockComponent,
     NavigationTabComponent,

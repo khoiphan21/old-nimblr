@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
+import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput, TextBlockType } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
 import { VersionService } from '../../version/version.service';
 
@@ -38,7 +38,8 @@ export class BlockCommandService {
           version,
           lastUpdatedBy: textInput.lastUpdatedBy,
           updatedAt: new Date().toISOString(),
-          value: textInput.value
+          value: textInput.value,
+          textBlockType: textInput.textBlockType,
         });
 
       case BlockType.QUESTION:
@@ -122,6 +123,7 @@ export class BlockCommandService {
         return Promise.reject('BlockType not supported');
     }
   }
+
   private async createTextBlock(originalInput: CreateBlockInput): Promise<any> {
     const input = {
       id: originalInput.id,
@@ -130,10 +132,13 @@ export class BlockCommandService {
       documentId: originalInput.documentId,
       lastUpdatedBy: originalInput.lastUpdatedBy,
       value: originalInput.value,
+      textBlockType: originalInput.textBlockType,
     };
+
     const requiredParams = [
       'id', 'version', 'type', 'documentId', 'lastUpdatedBy'
     ];
+
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 

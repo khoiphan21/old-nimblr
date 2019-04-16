@@ -4,8 +4,9 @@ import { BlockFactoryService, CreateNewBlockInput } from './block-factory.servic
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { isUuid } from '../../../classes/helpers';
-import { BlockType, QuestionType } from 'src/API';
+import { BlockType, QuestionType, TextBlockType } from 'src/API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -49,6 +50,26 @@ describe('BlockFactoryService', () => {
     });
 
     // no need to check for other properties as they are validated within the class
+  });
+
+  describe('createNewHeaderBlock()', () => {
+    let block: HeaderBlock;
+
+    beforeEach(() => {
+      block = factory.createNewHeaderBlock(input);
+    });
+
+    it('should inherit from Textbox ', () => {
+      expect(block instanceof TextBlock).toBeTruthy();
+    });
+
+    it('should create an object of type HeaderBlock', () => {
+      expect(block instanceof HeaderBlock).toBeTruthy();
+    });
+
+    it('should have textBlockType of HEADER type', () => {
+      expect(block.textBlockType).toEqual(TextBlockType.HEADER);
+    });
   });
 
   describe('createNewQuestionBlock()', () => {

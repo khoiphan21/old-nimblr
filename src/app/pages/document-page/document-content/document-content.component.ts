@@ -6,7 +6,7 @@ import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, DocumentType, SharingStatus, UpdateDocumentInput, DeleteBlockInput } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,  } from 'src/API';
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -16,11 +16,11 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
-import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { EmailService } from 'src/app/services/email/email.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
+import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
@@ -173,16 +173,17 @@ export class DocumentContentComponent implements OnInit {
         lastUpdatedBy: this.currentUser.id
       };
 
-      switch (type) {
+      switch (event.type) {
         case BlockType.TEXT:
-          block = this.blockFactoryService.createNewTextBlock(input);
+          block = this.createAndSelectTextBlock(event.textBlockType, input);
           break;
         case BlockType.QUESTION:
           block = this.blockFactoryService.createNewQuestionBlock(input);
           break;
         default:
-          throw Error(`BlockType "${type}" is not supported`);
+          throw Error(`BlockType "${event.type}" is not supported`);
       }
+
       // register it to the BlockQueryService so that the backend notification
       // will be ignored
       this.blockQueryService.registerBlockCreatedByUI(block);
@@ -208,6 +209,16 @@ export class DocumentContentComponent implements OnInit {
       return block;
     } catch (error) {
       throw new Error(`DocumentPage failed to add block: ${error}`);
+    }
+  }
+
+  private createAndSelectTextBlock(textBlockType: TextBlockType, input) {
+    // TODO: @bruno tbt
+    switch (textBlockType) {
+      case TextBlockType.HEADER:
+        return this.blockFactoryService.createNewHeaderBlock(input);
+      default:
+        return this.blockFactoryService.createNewTextBlock(input);
     }
   }
 

@@ -2,7 +2,6 @@ import {
   Component,
   OnChanges,
   Input,
-  ChangeDetectorRef,
   SimpleChanges,
   Output,
   EventEmitter,
@@ -94,7 +93,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
           documentId: this.block.documentId,
           lastUpdatedBy: this.block.lastUpdatedBy,
           value: this.value,
-          createdAt: this.block.createdAt
+          createdAt: this.block.createdAt,
         });
         this.blockCommandService.updateBlock(updatedBlock).then(() => {
           resolve(updatedBlock);

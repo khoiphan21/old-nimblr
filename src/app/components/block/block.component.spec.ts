@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BlockComponent, CreateBlockEvent } from './block.component';
+import { BlockComponent } from './block.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -8,6 +8,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CreateBlockEvent } from './createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
@@ -100,13 +101,23 @@ describe('BlockComponent', () => {
   });
 
   describe('addBlock()', () => {
+
+    let mockBlockInfo: CreateBlockEvent;
+
+    beforeEach(() => {
+      mockBlockInfo = {
+        type: BlockType.TEXT,
+      };
+    });
+
     it('should emit the right type', done => {
       const type = BlockType.QUESTION;
+      mockBlockInfo.type = BlockType.QUESTION;
       component.createBlock.subscribe((value: CreateBlockEvent) => {
         expect(value.type).toEqual(type);
         done();
       });
-      component.addBlock(type);
+      component.addBlock(mockBlockInfo.type);
     });
     it('should emit the right id', done => {
       component.blockId = uuidv4();
@@ -114,7 +125,7 @@ describe('BlockComponent', () => {
         expect(value.id).toEqual(component.blockId);
         done();
       });
-      component.addBlock(BlockType.TEXT);
+      component.addBlock(mockBlockInfo.type);
     });
   });
 

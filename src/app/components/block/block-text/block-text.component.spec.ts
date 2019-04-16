@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockTextComponent } from './block-text.component';
 import { FormsModule } from '@angular/forms';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { BlockType } from 'src/API';
+import { BlockType, TextBlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlock } from 'src/app/classes/block/textBlock';

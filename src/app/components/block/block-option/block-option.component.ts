@@ -1,8 +1,7 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
-import { BlockType } from 'src/API';
-import { Block } from 'src/app/classes/block/block';
-import { CreateBlockEvent } from '../block.component';
+import { BlockType, TextBlockType } from 'src/API';
+import { CreateBlockEvent } from '../createBlockEvent';
 
 @Component({
   selector: 'app-block-option',
@@ -10,6 +9,7 @@ import { CreateBlockEvent } from '../block.component';
   styleUrls: ['./block-option.component.scss'],
   animations: [fadeInOutAnimation]
 })
+
 export class BlockOptionComponent implements OnChanges {
   showBlock = false;
   @Input() blockId: string;
@@ -67,18 +67,29 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addTextBlock() {
-    const type = BlockType.TEXT;
-    this.createBlock.emit({
-      type, id: this.blockId
-    });
+    const input: CreateBlockEvent = {
+      type: BlockType.TEXT,
+      id: this.blockId
+    };
+    this.createBlock.emit(input);
     this.hideAddBlockContainer();
   }
 
   addQuestionBlock() {
-    const type = BlockType.QUESTION;
-    this.createBlock.emit({
-      type, id: this.blockId
-    });
+    const input: CreateBlockEvent = {
+      type: BlockType.QUESTION,
+    };
+    this.createBlock.emit(input);
+    this.hideAddBlockContainer();
+  }
+
+  addHeaderBlock() {
+    const input: CreateBlockEvent = {
+      type: BlockType.TEXT,
+      id: this.blockId,
+      textBlockType: TextBlockType.HEADER
+    };
+    this.createBlock.emit(input);
     this.hideAddBlockContainer();
   }
 

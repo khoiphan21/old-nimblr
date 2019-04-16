@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BlockId } from 'src/app/classes/block/block';
-import { CreateBlockEvent } from 'src/app/components/block/block.component';
 import { UUID } from 'src/app/services/document/command/document-command.service';
+import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 @Component({
   selector: 'app-template-document-content',

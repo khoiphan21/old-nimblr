@@ -11,7 +11,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document/document';
-import { SharingStatus, BlockType, DocumentType } from 'src/API';
+import { SharingStatus, BlockType, DocumentType, TextBlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -21,6 +21,7 @@ import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { InvitationEmailDetails } from 'src/app/services/email/email.service';
+import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
@@ -308,6 +309,10 @@ describe('DocumentContentComponent', () => {
     let blockQuerySpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
+    const mockBlockInfo: CreateBlockEvent = {
+      type: BlockType.TEXT,
+    };
+
     beforeEach(() => {
 
       // create mock data for testing
@@ -335,10 +340,13 @@ describe('DocumentContentComponent', () => {
     });
 
     it('should throw an error if the block type is not supported', async () => {
-      const type: any = 'abc';
-      const message = `Error: BlockType "${type}" is not supported`;
+      const blockInfo = {
+        type: null,
+        textBlockType: null,
+      } as CreateBlockEvent;
+      const message = `Error: BlockType "${blockInfo.type}" is not supported`;
       try {
-        await component.addNewBlock({ type });
+        await component.addNewBlock(blockInfo);
         fail('error must occur');
       } catch (error) {
         expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
@@ -366,11 +374,12 @@ describe('DocumentContentComponent', () => {
     }
 
     function testGenericErrorPaths() {
+
       it('should throw the error raised by BlockCommandService', async () => {
         const message = 'test';
         blockCommandSpy.and.returnValue(Promise.reject(message));
         try {
-          await component.addNewBlock({ type: BlockType.TEXT });
+          await component.addNewBlock(mockBlockInfo);
           fail('error must occur');
         } catch (error) {
           expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
@@ -381,7 +390,7 @@ describe('DocumentContentComponent', () => {
         const message = 'test';
         documentCommandSpy.and.returnValue(Promise.reject(message));
         try {
-          await component.addNewBlock({ type: BlockType.TEXT });
+          await component.addNewBlock(mockBlockInfo);
           fail('error must occur');
         } catch (error) {
           expect(error.message).toEqual(`DocumentPage failed to add block: ${message}`);
@@ -392,7 +401,7 @@ describe('DocumentContentComponent', () => {
     describe('adding new TextBlock', () => {
 
       beforeEach(async () => {
-        block = await component.addNewBlock({ type: BlockType.TEXT });
+        block = await component.addNewBlock(mockBlockInfo);
       });
 
       describe('[HAPPY PATH]', () => {
@@ -410,7 +419,7 @@ describe('DocumentContentComponent', () => {
           spyOn(component['blockFactoryService'], 'createNewTextBlock')
             .and.throwError(error.message);
           try {
-            await component.addNewBlock({ type: BlockType.TEXT });
+            await component.addNewBlock(mockBlockInfo);
             fail('error must occur');
           } catch (thrownError) {
             expect(thrownError.message).toEqual(`DocumentPage failed to add block: ${error}`);
@@ -425,7 +434,8 @@ describe('DocumentContentComponent', () => {
     describe('adding new QuestionBlock', () => {
 
       beforeEach(async () => {
-        block = await component.addNewBlock({ type: BlockType.QUESTION });
+        mockBlockInfo.type = BlockType.QUESTION;
+        block = await component.addNewBlock(mockBlockInfo);
       });
 
       describe('[HAPPY PATH]', () => {
@@ -443,7 +453,7 @@ describe('DocumentContentComponent', () => {
           spyOn(component['blockFactoryService'], 'createNewQuestionBlock')
             .and.throwError(error.message);
           try {
-            await component.addNewBlock({ type: BlockType.QUESTION });
+            await component.addNewBlock(mockBlockInfo);
             fail('error must occur');
           } catch (thrownError) {
             expect(thrownError.message).toEqual(`DocumentPage failed to add block: ${error}`);

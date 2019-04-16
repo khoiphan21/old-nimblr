@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType, CreateQuestionBlockInput } from 'src/API';
+import { BlockType, QuestionType, CreateQuestionBlockInput, TextBlockType } from 'src/API';
 import { CreateTextBlockInput } from '../../../../API';
 import { deleteBlock } from '../../../../graphql/mutations';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
@@ -111,7 +111,8 @@ describe('(Integration) BlockCommandService', () => {
         type: BlockType.TEXT,
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
-        value: 'Created in BlockCommandService test'
+        value: 'Created in BlockCommandService test',
+        textBlockType: TextBlockType.HEADER,
       };
 
       // Create a block and check responses

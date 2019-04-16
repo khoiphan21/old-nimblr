@@ -8,6 +8,7 @@ import { getBlock } from '../../../graphql/queries';
 
 // Injected service
 import { API, graphqlOperation } from 'aws-amplify';
+import { TextBlockType } from 'src/API';
 
 
 export class mockGraphqlService {
@@ -24,7 +25,6 @@ describe('GraphQlCommandService -Integration Tests', () => {
     expect(service).toBeTruthy();
   });
 
-  
   describe('Integration Tests', () => {
     let graphQlService: any;
     let TestBlockId = "test123";
@@ -89,7 +89,8 @@ describe('GraphQlCommandService -Integration Tests', () => {
         documentId: 'random',
         lastUpdatedBy: 'random',
         updatedAt: 'random',
-        value: 'random'
+        value: 'random',
+        textBlockType: TextBlockType.TEXT,
       };
 
       // PARAMETERS = { id: TestBlockId };

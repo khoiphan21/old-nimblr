@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock, CreateAppTextBlockInput } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
-import { BlockType, QuestionType } from '../../../../API';
+import { BlockType, QuestionType, TextBlockType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { UUID } from '../../document/command/document-command.service';
+import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -28,9 +29,25 @@ export class BlockFactoryService {
       lastUpdatedBy: input.lastUpdatedBy,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      value: ''
+      value: '',
+      textBlockType: null,
     };
     return new TextBlock(newInput);
+  }
+
+  createNewHeaderBlock(input: CreateNewBlockInput): HeaderBlock {
+    const newInput: CreateAppTextBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      value: '',
+      textBlockType: TextBlockType.HEADER,
+    };
+
+    return new HeaderBlock(newInput);
   }
 
   /**
@@ -76,11 +93,13 @@ export class BlockFactoryService {
     question = '',
     answers = [],
     questionType = QuestionType.SHORT_ANSWER,
-    options = []
+    options = [],
+    textBlockType = TextBlockType.TEXT,
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
-      value, updatedAt, createdAt, question, answers, questionType, options
+      value, updatedAt, createdAt, question, answers, questionType, options,
+      textBlockType
     };
 
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
@@ -101,12 +120,22 @@ export class BlockFactoryService {
 
     switch (type) {
       case BlockType.TEXT:
-        return new TextBlock(input);
+        return this.selectTextBlock(input);
       case BlockType.QUESTION:
         return new QuestionBlock(input);
       default:
         throw new Error('BlockType not supported');
     }
+  }
+
+  private selectTextBlock(input) {
+    switch (input.textBlockType) {
+      case TextBlockType.HEADER:
+        return new HeaderBlock(input);
+      default:
+        return new TextBlock(input);
+    }
+
   }
 
   private checkForNullOrUndefined(parameter, parameterName) {

@@ -1,8 +1,5 @@
 <ng-container *ngIf="block" [ngSwitch]=block.type>
-    <!-- <div class="block" (mouseover)="toggleBlockOptions(true)" (mouseleave)="toggleBlockOptions(false)">
-        <app-block-option class="desktop" [isBlockOptionsShown]="isBlockOptionsShown" (isSelectedOptionShown)=toggleSelectedOptionStatus($event) (switchBlockOptionsOff)=toggleBlockOptions($event)></app-block-option>
-        <app-block-header [block]="block"></app-block-header>
-    </div> -->
+    
     <ng-content></ng-content>
     <div class="block" *ngSwitchCase="'TEXT'" [ngClass]="{'child-document': isChildDoc}">
         <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
