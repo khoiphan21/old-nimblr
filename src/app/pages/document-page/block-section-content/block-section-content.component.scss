@@ -8,7 +8,7 @@
     .placeholder-underline {
         width: 100%;
         height: 100%;
-        background: transparentize($color: #97a0bf, $amount: 0.8)
+        background: transparentize($color: $color-blue-2, $amount: 0.8)
     }
 }
 
