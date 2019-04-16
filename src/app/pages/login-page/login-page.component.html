@@ -7,18 +7,24 @@
                 <h3>Enter your details below</h3>
             </section>
             <form [formGroup]="loginForm">
-                <div class="form-input">
+                <div class="form-input mb-4">
                     <div class="input-label  mb-1">Email</div>
-                    <input class="mb-4" formControlName="email" type="text" required>
+                    <input formControlName="email" type="text" required>
+                    <div class="error" *ngIf="errorMessage === 'USER_NOT_FOUND'">
+                        <i class="fas fa-exclamation-circle"></i> Couldn't find an account with this email
+                    </div>
                 </div>
-                <div class="form-input">
+                <div class="form-input mb-4">
                     <div class="password-label">
                         <div class="input-label mb-1">Password</div>
                         <div class="forgot-password">Forgot Password?</div>
                     </div>
-                    <input class="mb-4" formControlName="password" type="{{passwordType}}" required>
+                    <input formControlName="password" type="{{passwordType}}" required>
                     <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                     <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
+                    <div class="error" *ngIf="errorMessage === 'INCORRECT_PASSWORD'">
+                        <i class="fas fa-exclamation-circle"></i> Incorrect password
+                    </div>
                 </div>
                 <!-- <button class="filled-button-primary ml-auto mr-auto" [disabled]="loginForm.invalid" (click)="signIn()">Sign in</button> -->
                 <button class="filled-button-primary ml-auto mr-auto" (click)="signIn()">Sign in</button>

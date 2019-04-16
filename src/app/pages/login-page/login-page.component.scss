@@ -51,6 +51,17 @@ div.fluid-container {
                 .form-input {
                     width: 100%;
                     position: relative;
+                    .error {
+                        @include row-center;
+                        justify-content: flex-start;
+                        margin-top: 3px;
+                        color: $color-error-red;
+                        font-size: 11px;
+                        i {
+                            font-size: 14px;
+                            margin-right: 5px;
+                        }
+                    }
                     .input-label {
                         font-size: 15px;
                         text-transform: uppercase;

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LoginPageComponent } from './login-page.component';
+import { LoginPageComponent, LoginError } from './login-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -87,6 +87,33 @@ describe('LoginPageComponent', () => {
       }).catch(() => {
         const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
         expect(navigatedPath).toBe('register');
+        done();
+      });
+    });
+
+    it('should set the loginError to USER_NOT_FOUND', done => {
+      spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
+        code: 'UserNotFoundException'
+      }));
+      component.signIn().then(() => {
+        fail('should not sign in successfully');
+        done();
+      }).catch(() => {
+        expect(component.errorMessage).toBe(LoginError.USER_NOT_FOUND);
+        done();
+      });
+    });
+
+
+    it('should set the loginError to INCORRECT_PASSWORD', done => {
+      spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
+        code: 'NotAuthorizedException'
+      }));
+      component.signIn().then(() => {
+        fail('should not sign in successfully');
+        done();
+      }).catch(() => {
+        expect(component.errorMessage).toBe(LoginError.INCORRECT_PASSWORD);
         done();
       });
     });

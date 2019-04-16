@@ -75,6 +75,9 @@
                             cursor: pointer;
                         }
                     }
+                    &:disabled {
+                        opacity: 0.5;
+                    }
                 }
                 div.sign-up {
                     font-size: 0.85rem;
