@@ -7,7 +7,7 @@
     <div class="block" *ngSwitchCase="'TEXT'" [ngClass]="{'child-document': isChildDoc}">
         <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
     </div>
-    <div class="block" *ngSwitchCase="'QUESTION'">
+    <div class="block" *ngSwitchCase="'QUESTION'" [ngClass]="{'child-document': isChildDoc}">
         <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
         <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>
     </div>

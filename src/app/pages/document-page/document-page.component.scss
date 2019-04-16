@@ -25,12 +25,13 @@ div.fluid-container {
         color: $color-grey-1;
         div.row {
             width: 100%;
-            flex-grow: 1;
             flex-direction: row;
             section.navigation-bar {
                 width: $navigation-width;
+                position: relative;
             }
             section.document-content {
+                position: relative;
                 width: -webkit-calc(100vw - #{$navigation-width});
                 width: -moz-calc(100vw - #{$navigation-width});
                 width: calc(100vw - #{$navigation-width});

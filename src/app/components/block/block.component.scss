@@ -7,9 +7,9 @@ div.block {
 
 @include media(lg) {
     .block.child-document {
-        padding: 0 150px;
+        padding: 0 $desktop-child-document-horizontal-padding;
     }
     div.block {
-        padding: 0 275px;
+        padding: 0 $desktop-document-horizontal-padding;
     }
 }

@@ -3,7 +3,7 @@
 @import '../../../_sass/base';
 $input-gap: 7.5px;
 section.block-option.child-document {
-    left: 315px - 75px - $input-gap;
+    left: 12.5%;
 }
 
 .blocker {
@@ -20,7 +20,7 @@ section.block-option {
     width: auto;
     height: auto;
     position: absolute;
-    left: 435px;
+    left: 12.5%;
     @include row-center;
     align-items: flex-start;
     font-family: $font-roboto;

@@ -7,16 +7,16 @@
     </section>
 
     <section class="template" *ngIf="currentTab === 'template'">
-        <app-block-section-content [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
+        <app-block-section-content [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
     </section>
 
-  <table class="submissions" *ngIf="currentTab === 'submissions'">
-    <tr>
-      <td class="title">recipients</td>
-    </tr>
-    <ng-container *ngFor="let id of submissionDocIds">
-      <app-submission-recipient [documentId]="id" (navigateToEvent)="navigateToChild($event)"></app-submission-recipient>
-    </ng-container>
-    
-  </table>
+    <table class="submissions" *ngIf="currentTab === 'submissions'">
+        <tr>
+            <td class="title">recipients</td>
+        </tr>
+        <ng-container *ngFor="let id of submissionDocIds">
+            <app-submission-recipient [documentId]="id" (navigateToEvent)="navigateToChild($event)"></app-submission-recipient>
+        </ng-container>
+
+    </table>
 </section>

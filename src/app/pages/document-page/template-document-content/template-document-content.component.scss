@@ -1,7 +1,6 @@
 @import '../../../_sass/interface';
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
-
 .content {
     height: 100%;
     background: white;
@@ -17,7 +16,6 @@
         font-weight: normal;
         letter-spacing: 1.5px;
         font-size: 17px;
-
         .template,
         .submissions {
             padding: 10px 0;
@@ -26,25 +24,21 @@
             color: #97A0BF;
             @include row-center;
         }
-
         .current-tab {
             border-bottom: 3px solid #97A0BF;
             font-weight: bold;
         }
     }
-
     section.template {
         width: 100%;
         // padding: 0 $mobile-frame-horizontal-padding;
     }
-
     table.submissions {
         width: 100%;
         margin-left: auto;
         margin-right: auto;
         border-collapse: separate;
         padding: 0 $mobile-frame-horizontal-padding + 0.5rem;
-
         .title {
             font-weight: 500;
             color: #97A0BF;
@@ -53,35 +47,29 @@
             letter-spacing: 1.5px;
             padding-bottom: 10px;
         }
-
         .recipient {
             width: 100%;
             height: 40px;
             @include row-center;
             justify-content: space-between;
-
             .name {
                 font-size: 16px;
                 width: 50%;
                 @include row-center;
                 justify-content: flex-start;
                 color: $color-grey-1;
-
                 i.fa-circle {
                     font-size: 30px;
                     margin-right: 10px;
                 }
             }
-
             .information {
                 display: none;
             }
-
             .view-submission {
                 width: 50%;
                 @include row-center;
                 justify-content: flex-end;
-
                 button {
                     background: transparent;
                     opacity: 1;
@@ -96,26 +84,22 @@
     }
 }
 
-
 @include media(lg) {
     section.content {
         height: 100%;
-
         section.document-tab {
             width: 100%;
-            padding: 0 275px;
+            padding: 0 $desktop-document-horizontal-padding;
             margin-top: 30px;
         }
         section.document-tab.child-document-padding {
-            padding: 0 150px;
+            padding: 0 $desktop-child-document-horizontal-padding;
         }
-
         table.submissions {
             // width: 70%;
             margin-left: auto;
             margin-right: auto;
-            padding: 0 275px;
-
+            padding: 0 $desktop-document-horizontal-padding;
             .title {
                 font-weight: 500;
                 color: #97A0BF;
@@ -124,7 +108,6 @@
                 letter-spacing: 1.5px;
                 padding-bottom: 10px;
             }
-
             .recipient {
                 width: 100%;
                 height: 40px;
@@ -133,20 +116,17 @@
                 @include row-center;
                 justify-content: space-between;
                 padding: 0 10px;
-
                 .name {
                     font-size: 14px;
                     width: 30%;
                     @include row-center;
                     justify-content: flex-start;
                     color: $color-grey-1;
-
                     i.fa-circle {
                         font-size: 24px;
                         margin-right: 20px;
                     }
                 }
-
                 .information {
                     width: 30%;
                     @include row-center;
@@ -155,12 +135,10 @@
                     font-weight: normal;
                     color: #B2B9D0;
                 }
-
                 .view-submission {
                     width: 40%;
                     @include row-center;
                     justify-content: flex-end;
-
                     button {
                         color: white;
                         opacity: 0;
@@ -170,7 +148,6 @@
                         padding: 0 1.75rem;
                     }
                 }
-
                 &:hover {
                     .view-submission {
                         button {

@@ -23,7 +23,7 @@
 
 @include media(lg) {
     .add-information {
-        padding: 7.5px 275px;
+        padding: 7.5px $desktop-document-horizontal-padding;
         section.clickable {
             background: white;
         }
