@@ -25,8 +25,7 @@ describe('GraphQlCommandService -Integration Tests', () => {
     expect(service).toBeTruthy();
   });
 
-  
-  fdescribe('Integration Tests', () => {
+  describe('Integration Tests', () => {
     let graphQlService: any;
     let TestBlockId = "test123";
     let PARAMETERS: object;

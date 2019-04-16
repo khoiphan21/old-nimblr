@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { BlockOptionComponent } from './block-option.component';
-import { BlockType } from 'src/API';
+import { BlockOptionComponent, CreateBlockInfo } from './block-option.component';
+import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 
@@ -128,6 +128,7 @@ describe('BlockOptionComponent', () => {
 
   describe('add new block', () => {
     let hideSpy: jasmine.Spy;
+    let expectedInfo: CreateBlockInfo;
 
     beforeEach(() => {
       hideSpy = spyOn(component, 'hideAddBlockContainer');
@@ -135,8 +136,10 @@ describe('BlockOptionComponent', () => {
 
     describe('addTextBlock()', () => {
       it('should emit a BlockType.TEXT event', done => {
+        expectedInfo = { type: BlockType.TEXT };
+
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value).toEqual({ type: BlockType.TEXT });
+          expect(value).toEqual(expectedInfo);
           done();
         });
         component.addTextBlock();
@@ -147,13 +150,15 @@ describe('BlockOptionComponent', () => {
       });
     });
     describe('addQuestionBlock()', () => {
-      it('should emit a BlockType.QUESTION event', done => {
+      it('should emit a CreateBlockInfo event', done => {
+        expectedInfo = { type: BlockType.QUESTION };
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value).toEqual({type: BlockType.QUESTION});
+          expect(value).toEqual(expectedInfo);
           done();
         });
         component.addQuestionBlock();
       });
+
       it('should call to hide the container', () => {
         component.addQuestionBlock();
         expect(hideSpy).toHaveBeenCalled();
@@ -161,7 +166,22 @@ describe('BlockOptionComponent', () => {
     });
 
     describe('addHeaderBlock()', () => {
-      // TODO: @bruno not implemented
+      it('should emit a CreateBlockInfo event', done => {
+        expectedInfo = {
+          type: BlockType.TEXT,
+          textblocktype: TextBlockType.HEADER,
+        };
+        component.createBlock.pipe(take(1)).subscribe(value => {
+          expect(value).toEqual(expectedInfo);
+          done();
+        });
+        component.addHeaderBlock();
+      });
+
+      it('should call to hide the container', () => {
+        component.addHeaderBlock();
+        expect(hideSpy).toHaveBeenCalled();
+      });
 
     });
   });

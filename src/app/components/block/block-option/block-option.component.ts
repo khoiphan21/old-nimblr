@@ -82,7 +82,6 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addHeaderBlock() {
-    // TODO: @bruno tbt
     const input: CreateBlockInfo = {
       type: BlockType.TEXT,
       textblocktype: TextBlockType.HEADER
