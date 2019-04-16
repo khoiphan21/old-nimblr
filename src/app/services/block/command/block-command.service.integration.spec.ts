@@ -112,7 +112,7 @@ describe('(Integration) BlockCommandService', () => {
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
         value: 'Created in BlockCommandService test',
-        textblocktype: TextBlockType.HEADER,
+        textBlockType: TextBlockType.HEADER,
       };
 
       // Create a block and check responses

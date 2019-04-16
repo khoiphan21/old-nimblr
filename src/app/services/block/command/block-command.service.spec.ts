@@ -37,7 +37,7 @@ describe('BlockCommandService', () => {
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
       value: 'from updateBlock test',
-      textblocktype: TextBlockType.TEXT,
+      textBlockType: TextBlockType.TEXT,
     };
 
     headerInput = {
@@ -47,7 +47,7 @@ describe('BlockCommandService', () => {
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
       value: 'header value test',
-      textblocktype: TextBlockType.HEADER,
+      textBlockType: TextBlockType.HEADER,
     };
 
     questionInput = {

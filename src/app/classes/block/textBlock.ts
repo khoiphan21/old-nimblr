@@ -13,14 +13,14 @@ export interface CreateAppTextBlockInput {
   createdAt: ISOTimeString;
   updatedAt: ISOTimeString;
   value: string;
-  textblocktype?: TextBlockType;
+  textBlockType?: TextBlockType;
 }
 /**
  * A simple block type that contains a string value
  */
 export class TextBlock extends BlockImpl implements Block {
   readonly value: string;
-  readonly textblocktype: TextBlockType;
+  readonly textBlockType: TextBlockType;
 
   constructor(input: CreateAppTextBlockInput) {
     super({
@@ -34,6 +34,6 @@ export class TextBlock extends BlockImpl implements Block {
     });
 
     this.value = input.value ? input.value : '';
-    this.textblocktype = input.textblocktype ? input.textblocktype : TextBlockType.TEXT;
+    this.textBlockType = input.textBlockType ? input.textBlockType : TextBlockType.TEXT;
   }
 }

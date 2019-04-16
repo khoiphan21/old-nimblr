@@ -342,7 +342,7 @@ describe('DocumentContentComponent', () => {
     it('should throw an error if the block type is not supported', async () => {
       const blockInfo = {
         type: null,
-        textblocktype: null,
+        textBlockType: null,
       } as CreateBlockEvent;
       const message = `Error: BlockType "${blockInfo.type}" is not supported`;
       try {

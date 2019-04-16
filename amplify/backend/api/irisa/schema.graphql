@@ -60,7 +60,7 @@ type Block @model {
   answers: [String]
   questionType: QuestionType
   options: [String]
-  textblocktype: TextBlockType
+  textBlockType: TextBlockType
 }
 
 enum BlockType {
@@ -111,7 +111,7 @@ input CreateTextBlockInput {
   documentId: String!
   lastUpdatedBy: String!
   value: String
-  textblocktype: TextBlockType!
+  textBlockType: TextBlockType!
 }
 
 input UpdateTextBlockInput {
@@ -122,7 +122,7 @@ input UpdateTextBlockInput {
   lastUpdatedBy: String!
   updatedAt: String!
   value: String
-  textblocktype: TextBlockType!
+  textBlockType: TextBlockType!
 }
 
 input CreateQuestionBlockInput {

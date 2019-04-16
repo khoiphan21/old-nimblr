@@ -30,7 +30,7 @@ export class BlockFactoryService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       value: '',
-      textblocktype: null,
+      textBlockType: null,
     };
     return new TextBlock(newInput);
   }
@@ -44,7 +44,7 @@ export class BlockFactoryService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       value: '',
-      textblocktype: TextBlockType.HEADER,
+      textBlockType: TextBlockType.HEADER,
     };
 
     return new HeaderBlock(newInput);
@@ -94,12 +94,12 @@ export class BlockFactoryService {
     answers = [],
     questionType = QuestionType.SHORT_ANSWER,
     options = [],
-    textblocktype = TextBlockType.TEXT,
+    textBlockType = TextBlockType.TEXT,
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
       value, updatedAt, createdAt, question, answers, questionType, options,
-      textblocktype
+      textBlockType
     };
 
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
@@ -129,7 +129,7 @@ export class BlockFactoryService {
   }
 
   private selectTextBlock(input) {
-    switch (input.textblocktype) {
+    switch (input.textBlockType) {
       case TextBlockType.HEADER:
         return new HeaderBlock(input);
       default:

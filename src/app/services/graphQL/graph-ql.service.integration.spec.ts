@@ -30,7 +30,7 @@ describe('GraphQLService', () => {
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
       value: 'TextBlock created from test',
-      textblocktype: TextBlockType.HEADER,
+      textBlockType: TextBlockType.HEADER,
     };
     updateBlockInput = {
       id: null, // need to be updated during test

@@ -93,7 +93,7 @@ export const getBlock = `query GetBlock($id: ID!) {
     answers
     questionType
     options
-    textblocktype
+    textBlockType
   }
 }
 `;
@@ -116,7 +116,7 @@ export const listBlocks = `query ListBlocks(
       answers
       questionType
       options
-      textblocktype
+      textBlockType
     }
     nextToken
   }

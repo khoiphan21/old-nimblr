@@ -39,7 +39,7 @@ export class BlockCommandService {
           lastUpdatedBy: textInput.lastUpdatedBy,
           updatedAt: new Date().toISOString(),
           value: textInput.value,
-          textblocktype: textInput.textblocktype,
+          textBlockType: textInput.textBlockType,
         });
 
       case BlockType.QUESTION:
@@ -62,7 +62,7 @@ export class BlockCommandService {
 
   private async updateTextBlock(input: UpdateTextBlockInput): Promise<any> {
     const requiredParams = [
-      'id', 'documentId', 'version', 'lastUpdatedBy', 'value', 'textblocktype'
+      'id', 'documentId', 'version', 'lastUpdatedBy', 'value', 'textBlockType'
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'UpdateTextBlockInput');
@@ -132,11 +132,11 @@ export class BlockCommandService {
       documentId: originalInput.documentId,
       lastUpdatedBy: originalInput.lastUpdatedBy,
       value: originalInput.value,
-      textblocktype: originalInput.textblocktype,
+      textBlockType: originalInput.textBlockType,
     };
 
     const requiredParams = [
-      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'textblocktype'
+      'id', 'version', 'type', 'documentId', 'lastUpdatedBy', 'textBlockType'
     ];
 
     try {

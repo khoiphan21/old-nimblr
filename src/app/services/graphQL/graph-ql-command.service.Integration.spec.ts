@@ -90,7 +90,7 @@ describe('GraphQlCommandService -Integration Tests', () => {
         lastUpdatedBy: 'random',
         updatedAt: 'random',
         value: 'random',
-        textblocktype: TextBlockType.TEXT,
+        textBlockType: TextBlockType.TEXT,
       };
 
       // PARAMETERS = { id: TestBlockId };

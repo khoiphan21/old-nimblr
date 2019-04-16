@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockOptionComponent } from './block-option.component';
 import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
+import { CreateBlockEvent } from '../createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
@@ -48,6 +49,7 @@ describe('BlockOptionComponent', () => {
     it('should set value to true if `mouseFocusingBlock` is same as `blockID`', () => {
       component.mouseFocusingBlock = 'id123';
       component.blockId = 'id123';
+      component.ngOnChanges();
       expect(component.showBlock).toBe(true);
     });
 
@@ -178,10 +180,10 @@ describe('BlockOptionComponent', () => {
 
     describe('addHeaderBlock()', () => {
       it('should emit a CreateBlockInfo event', done => {
-        const expectedInfo = {
+        const expectedInfo: CreateBlockEvent = {
           type: BlockType.TEXT,
           id: component.blockId,
-          textblocktype: TextBlockType.HEADER,
+          textBlockType: TextBlockType.HEADER,
         };
         component.createBlock.pipe(take(1)).subscribe(value => {
           expect(value).toEqual(expectedInfo);

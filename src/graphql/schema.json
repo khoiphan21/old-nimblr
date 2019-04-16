@@ -1387,7 +1387,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "textblocktype",
+          "name" : "textBlockType",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -1618,7 +1618,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "textblocktype",
+          "name" : "textBlockType",
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
@@ -2143,7 +2143,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "textblocktype",
+          "name" : "textBlockType",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -2244,7 +2244,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "textblocktype",
+          "name" : "textBlockType",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -3139,7 +3139,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "textblocktype",
+          "name" : "textBlockType",
           "description" : null,
           "type" : {
             "kind" : "ENUM",
@@ -3277,7 +3277,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "textblocktype",
+          "name" : "textBlockType",
           "description" : null,
           "type" : {
             "kind" : "ENUM",

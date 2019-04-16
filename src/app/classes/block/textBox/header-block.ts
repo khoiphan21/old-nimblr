@@ -23,7 +23,7 @@ export class HeaderBlock extends TextBlock implements Block {
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
             value: input.value, // register enum
-            textblocktype: input.textblocktype,
+            textBlockType: input.textBlockType,
         });
 
         this.validateTextblocktype();
@@ -31,8 +31,8 @@ export class HeaderBlock extends TextBlock implements Block {
 
     private validateTextblocktype() {
         // validation will only be done in this block
-        const isRegisteredTextBlockType = Object.values(TextBlockType).includes(this.textblocktype);
-        const isNotNull = this.textblocktype !== null;
+        const isRegisteredTextBlockType = Object.values(TextBlockType).includes(this.textBlockType);
+        const isNotNull = this.textBlockType !== null;
         if (isRegisteredTextBlockType && isNotNull) { } else {
             throw new Error('TextBlockType not supported');
         };

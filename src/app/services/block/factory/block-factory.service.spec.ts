@@ -67,8 +67,8 @@ describe('BlockFactoryService', () => {
       expect(block instanceof HeaderBlock).toBeTruthy();
     });
 
-    it('should have textblocktype of HEADER type', () => {
-      expect(block.textblocktype).toEqual(TextBlockType.HEADER);
+    it('should have textBlockType of HEADER type', () => {
+      expect(block.textBlockType).toEqual(TextBlockType.HEADER);
     });
   });
 

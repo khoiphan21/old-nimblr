@@ -15,7 +15,7 @@ export const onUpdateBlockInDocument = `subscription OnUpdateBlockInDocument($do
     answers
     questionType
     options
-    textblocktype
+    textBlockType
   }
 }
 `;
@@ -150,7 +150,7 @@ export const onCreateBlock = `subscription OnCreateBlock {
     answers
     questionType
     options
-    textblocktype
+    textBlockType
   }
 }
 `;
@@ -168,7 +168,7 @@ export const onUpdateBlock = `subscription OnUpdateBlock {
     answers
     questionType
     options
-    textblocktype
+    textBlockType
   }
 }
 `;
@@ -186,7 +186,7 @@ export const onDeleteBlock = `subscription OnDeleteBlock {
     answers
     questionType
     options
-    textblocktype
+    textBlockType
   }
 }
 `;

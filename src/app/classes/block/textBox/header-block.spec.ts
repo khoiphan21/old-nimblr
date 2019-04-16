@@ -26,8 +26,8 @@ describe('HeaderBlock', () => {
   describe('Parameters validation', () => {
     beforeEach(() => { });
 
-    it('should instantiate when textblocktype is a valid type', done => {
-      mockInput.textblocktype = TextBlockType.HEADER;
+    it('should instantiate when textBlockType is a valid type', done => {
+      mockInput.textBlockType = TextBlockType.HEADER;
 
       try {
         new HeaderBlock(mockInput);
@@ -37,8 +37,8 @@ describe('HeaderBlock', () => {
       }
     });
 
-    it('should fail to instantiate when textblocktype is not a valid type', done => {
-      mockInput.textblocktype = 400;
+    it('should fail to instantiate when textBlockType is not a valid type', done => {
+      mockInput.textBlockType = 400;
 
       try {
         new HeaderBlock(mockInput);
@@ -48,12 +48,12 @@ describe('HeaderBlock', () => {
       }
     });
 
-    it('should instantiate when textblocktype is null by replacing as TEXT', done => {
-      mockInput.textblocktype = null;
+    it('should instantiate when textBlockType is null by replacing as TEXT', done => {
+      mockInput.textBlockType = null;
 
       try {
         const response = new HeaderBlock(mockInput);
-        expect(response.textblocktype).toEqual(TextBlockType.TEXT);
+        expect(response.textBlockType).toEqual(TextBlockType.TEXT);
         done();
 
       } catch (err) {
