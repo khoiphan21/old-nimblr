@@ -85,12 +85,15 @@ section.mobile.container.option-container {
                 }
             }
             button {
-                background: #E8E8E8;
+                background-color: $color-blue-2;
                 height: 26.27px;
                 padding: 0 1.05rem;
                 font-size: 12px;
                 letter-spacing: 1.2px;
                 font-weight: 500;
+                &:disabled {
+                    background: #E8E8E8;
+                }
             }
         }
         .recipient {

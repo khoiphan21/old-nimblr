@@ -14,7 +14,7 @@
             </div>
             <div class="input-container">
                 <input [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address">
-                <button class="filled-button-primary" (click)="send()">send</button>
+                <button class="filled-button-primary" (click)="send()" [disabled]="!recipientInput">send</button>
             </div>
             <div class="title">
                 select a person
