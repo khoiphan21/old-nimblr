@@ -8,6 +8,6 @@
         <span class="share clickable desktop" (click)="isSharingShown = !isSharingShown">Share</span>
         <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = !isOptionShown"></i>
         <app-header-sharing [sharingStatus]="sharingStatus" [isSharingShown]="isSharingShown" (showInviteEvent)="showInvite()" (hideSharingEvent)="isSharingShown = $event" (changeSharingStatus)="changeSharingStatus($event)"></app-header-sharing>
-        <app-header-options [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event" (saveAsTemplateEvent)="saveAsTemplate()"></app-header-options>
+        <app-header-options [documentType]="documentType" [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event" (saveAsTemplateEvent)="saveAsTemplate()"></app-header-options>
     </section>
 </div>

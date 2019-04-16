@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -13,6 +14,8 @@ import { DocumentFactoryService } from 'src/app/services/document/factory/docume
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
+import { DocumentType } from '../../../../API';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const uuidv4 = require('uuid/v4');
 
@@ -39,6 +42,7 @@ describe('(Interface Unit Tests) DocumentContentComponent', () => {
         ServicesModule,
         FormsModule,
         ReactiveFormsModule,
+        BrowserAnimationsModule,
         RouterTestingModule.withRoutes([])
       ],
       providers: [
@@ -70,14 +74,42 @@ describe('(Interface Unit Tests) DocumentContentComponent', () => {
     fixture = TestBed.createComponent(DocumentContentComponent);
     router = TestBed.get(Router);
     component = fixture.componentInstance;
+    // set some default values
     component['currentUser'] = testUser;
+    component.isDocumentReady = true; // so that the content will get rendered
+
     documentFactory = TestBed.get(DocumentFactoryService);
     fixture.detectChanges();
   });
 
-  describe('Story: Change document type to a Form Template', () => {
-    // it('should not show the template and submission elements initially', () => {
-    //   fail('to be tested');
-    // });
+  describe('Send Form button', () => {
+    const BUTTON_CLASS_SELECTOR = '.filled-button-primary';
+
+    it('should show when the documentType is TEMPLATE', () => {
+      component.documentType = DocumentType.TEMPLATE;
+      fixture.detectChanges();
+
+      const sendFormButton = fixture.debugElement.query(By.css(BUTTON_CLASS_SELECTOR));
+
+      expect(sendFormButton).not.toBe(null);
+    });
+
+    it('should not show when the documentType is SUBMISSION', () => {
+      component.documentType = DocumentType.SUBMISSION;
+      fixture.detectChanges();
+
+      const sendFormButton = fixture.debugElement.query(By.css(BUTTON_CLASS_SELECTOR));
+
+      expect(sendFormButton).toBe(null);
+    });
+
+    it('should not show when the documentType is GENERIC', () => {
+      component.documentType = DocumentType.GENERIC;
+      fixture.detectChanges();
+
+      const sendFormButton = fixture.debugElement.query(By.css(BUTTON_CLASS_SELECTOR));
+
+      expect(sendFormButton).toBe(null);
+    });
   });
 });

@@ -2,7 +2,7 @@
     <section class="blocker" (click)="hideOption()" *ngIf="isOptionShown" [@fadeInOutAnimation]>
         <section class="container options-block popup" (click)="$event.stopPropagation()">
             <section class="document-options">
-                <div class="option" (click)="saveAsTemplate()">
+                <div *ngIf="documentType === 'GENERIC'" class="option" (click)="saveAsTemplate()">
                     <i class="fas fa-file"></i><span>Save as template</span>
                 </div>
                 <div class="option">

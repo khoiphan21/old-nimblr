@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit {
   isSharingShown = false;
 
   @Input() sharingStatus: SharingStatus;
+  @Input() documentType: DocumentType;
 
   @Output() sharingChange = new EventEmitter<SharingStatus>();
   @Output() showInviteEvent = new EventEmitter<boolean>();

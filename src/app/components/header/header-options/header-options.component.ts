@@ -9,6 +9,7 @@ import { slideBottomToTopAnimation, fadeInOutAnimation } from 'src/app/animation
 })
 export class HeaderOptionsComponent implements OnInit {
   @Input() isOptionShown: boolean;
+  @Input() documentType: DocumentType;
 
   @Output() hideOptionEvent = new EventEmitter<boolean>();
   @Output() saveAsTemplateEvent = new EventEmitter<any>();
