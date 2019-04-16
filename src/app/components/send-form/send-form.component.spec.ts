@@ -51,6 +51,19 @@ describe('SendFormComponent', () => {
       component.send();
       expect(component.hideContainer).toHaveBeenCalled();
     });
+    it('should call to clear the input', () => {
+      spyOn(component, 'clearInput');
+      component.send();
+      expect(component.clearInput).toHaveBeenCalled();
+    });
+  });
+
+  describe('clearInput()', () => {
+    it('should clear the recipientInput', () => {
+      component.recipientInput = 'test';
+      component.clearInput();
+      expect(component.recipientInput).toEqual('');
+    });
   });
 
 });

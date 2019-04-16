@@ -27,6 +27,11 @@ export class SendFormComponent implements OnInit {
   send() {
     this.sendEmailEvent.emit(this.recipientInput);
     this.hideContainer();
+    this.clearInput();
+  }
+
+  clearInput() {
+    this.recipientInput = '';
   }
 
 }
