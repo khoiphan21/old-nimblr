@@ -2,9 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SubmissionDocumentContentComponent } from './submission-document-content.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CreateBlockEvent } from '../../../components/block/block.component';
 import { BlockType } from '../../../../API';
 import { take } from 'rxjs/operators';
+import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 describe('SubmissionDocumentContentComponent', () => {
   let component: SubmissionDocumentContentComponent;

@@ -203,7 +203,7 @@ describe('BlockTextComponent', () => {
     });
 
     it('should call `createAppBlock` with the right argument', async () => {
-      await component.updateValue(TextBlockType.TEXT);
+      await component.updateValue();
       expect(component['factoryService'].createAppBlock).toHaveBeenCalledWith({
         id: component.block.id,
         type: component.block.type,
@@ -216,19 +216,19 @@ describe('BlockTextComponent', () => {
     });
 
     it('should resolve with the updated block', async () => {
-      const updatedBlock: TextBlock = await component.updateValue(TextBlockType.TEXT) as TextBlock;
+      const updatedBlock: TextBlock = await component.updateValue() as TextBlock;
       expect(updatedBlock.value).toEqual(component.value);
     });
 
     it('should call block command service with the right argument', async () => {
-      const updatedBlock = await component.updateValue(TextBlockType.TEXT);
+      const updatedBlock = await component.updateValue();
       expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
     });
 
     it('should not call block command service again for consecutive updates', done => {
-      component.updateValue(TextBlockType.TEXT);
+      component.updateValue();
       setTimeout(() => {
-        component.updateValue(TextBlockType.TEXT).then(() => {
+        component.updateValue().then(() => {
           expect(blockCommandSpy).toHaveBeenCalledTimes(1);
           done();
         });

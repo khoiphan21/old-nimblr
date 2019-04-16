@@ -4,8 +4,8 @@ import { BlockSectionContentComponent } from './block-section-content.component'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { BlockType } from 'src/API';
-import { CreateBlockEvent } from '../../../components/block/block.component';
 import { take } from 'rxjs/operators';
+import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 describe('BlockSectionContentComponent', () => {
   let component: BlockSectionContentComponent;
