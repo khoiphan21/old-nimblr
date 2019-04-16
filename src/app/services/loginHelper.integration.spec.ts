@@ -2,7 +2,7 @@ import { Auth } from 'aws-amplify';
 import { LoginHelper, TEST_USERNAME, TEST_PASSWORD } from './loginHelper';
 import { environment } from '../../environments/environment';
 
-fdescribe('(Integration) LoginHelper', () => {
+describe('(Integration) LoginHelper', () => {
   beforeEach(async () => {
     await Auth.signOut();
   });
