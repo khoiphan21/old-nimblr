@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType, DeleteBlockInput, TextBlockType } from 'src/API';
+import { BlockType, QuestionType, DeleteBlockInput, TextBlockType, UpdateTextBlockInput } from 'src/API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
@@ -40,7 +40,7 @@ describe('BlockCommandService', () => {
       type: BlockType.TEXT,
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
-      value: 'from updateBlock test',
+      value: 'header value test',
       textblocktype: TextBlockType.HEADER,
     };
 
@@ -223,8 +223,47 @@ describe('BlockCommandService', () => {
     });
 
     describe('HeaderBlock -', () => {
-      // TODO: @bruno Not implemented yet: header-block
+      beforeEach(() => {
+        graphQlSpy.and.returnValue(Promise.resolve(textBlockBackendResponse));
+      });
 
+      it('should resolve with the response from backend', done => {
+        service.updateBlock(headerInput).then(value => {
+          // The value resolved must be the value returned by graphql
+          expect(value).toEqual(textBlockBackendResponse);
+          done();
+        });
+      });
+
+      it('should call graphQlService with the right query', done => {
+        service.updateBlock(headerInput).then(value => {
+          // The value resolved must be the value returned by graphql
+          expect(graphQlSpy.calls.mostRecent().args[0]).toEqual(updateTextBlock);
+          done();
+        });
+      });
+
+      it('should call graphQlService with the right argument', done => {
+        service.updateBlock(headerInput).then(value => {
+          // The value resolved must be the value returned by graphql
+          const actualyInput: UpdateTextBlockInput = graphQlSpy.calls.mostRecent().args[1].input;
+
+          delete headerInput.type;
+          delete actualyInput.updatedAt;
+
+          expect(graphQlSpy.calls.mostRecent().args[1].input).toEqual(headerInput);
+          done();
+        });
+      });
+
+      it('should change the value to null if is an empty string', done => {
+        headerInput.value = '';
+        service.updateBlock(headerInput).then(value => {
+          const actualInput = graphQlSpy.calls.mostRecent().args[1].input;
+          expect(actualInput.value).toBe(null);
+          done();
+        });
+      });
     });
 
   });
@@ -418,13 +457,13 @@ describe('BlockCommandService', () => {
             expect(data).toEqual(questionBlockBackendResponse);
           });
         });
-  
+
         it('should call query method', () => {
           service.createBlock(headerInput).then(() => {
             expect(graphQlSpy.calls.count()).toBe(1);
           });
         });
-  
+
         it('should reject promise when query method failed', () => {
           const expectedError = 'test err';
           graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));

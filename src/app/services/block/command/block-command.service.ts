@@ -24,7 +24,6 @@ export class BlockCommandService {
     switch (input.type) {
       case BlockType.TEXT:
         const textInput = input as UpdateTextBlockInput;
-        console.log('Updating block: ', textInput);
         return this.updateTextBlock({
           id: textInput.id,
           documentId: textInput.documentId,
@@ -65,7 +64,6 @@ export class BlockCommandService {
 
       this.blockQueryService.registerUpdateVersion(input.version);
 
-      // TODO: @bruno -- the query doesnt work
       return await this.graphQLService.query(updateTextBlock, { input });
     } catch (error) {
       return Promise.reject(error);

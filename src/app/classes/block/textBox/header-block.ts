@@ -27,16 +27,12 @@ export class HeaderBlock extends TextBlock implements Block {
         });
 
         this.validateTextblocktype();
-        console.log('instantiated!');
     }
 
     private validateTextblocktype() {
         // validation will only be done in this block
         const isRegisteredTextBlockType = Object.values(TextBlockType).includes(this.textblocktype);
         const isNotNull = this.textblocktype !== null;
-        console.log('tbt: ', this.textblocktype);
-        console.log(isRegisteredTextBlockType);
-        console.log(isNotNull);
         if (isRegisteredTextBlockType && isNotNull) { } else {
             throw new Error('TextBlockType not supported');
         };
