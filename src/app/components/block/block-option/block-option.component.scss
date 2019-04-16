@@ -2,20 +2,33 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 $input-gap: 7.5px;
+section.block-option.child-document {
+    left: 315px - 75px - $input-gap;
+}
+
+.blocker {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    cursor: auto;
+}
+
 section.block-option {
-    padding-top: 7.5px;
+    padding-top: 6.5px;
     width: auto;
     height: auto;
     position: absolute;
-    left: 100px - 52.5px - $input-gap;
+    left: 435px;
     @include row-center;
     align-items: flex-start;
     font-family: $font-roboto;
     z-index: 5;
     .add-button-container,
     .menu-drag-container {
-        width: 22.5px;
-        height: 22.55px;
+        width: 31px;
+        height: 31px;
         cursor: pointer;
         transition: 0.3s;
         @include row-center;
@@ -25,8 +38,8 @@ section.block-option {
             position: relative;
             @include row-center;
             &:hover {
-                border-radius: 3px;
-                background-color: #E5E5E5;
+                border-radius: 50px;
+                background-color: $color-light-blue;
                 div.tooltiptext {
                     visibility: visible;
                 }
@@ -75,6 +88,7 @@ section.block-option {
                 color: $color-grey-3;
                 letter-spacing: 0.5px;
                 font-weight: normal;
+                cursor: auto;
             }
             .title.form {
                 border-top: 1px solid $color-grey-4;

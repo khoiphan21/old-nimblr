@@ -1,8 +1,9 @@
-<section class="block-option desktop" *ngIf="isBlockOptionsShown" [@fadeInOutAnimation]>
-    <div class="add-button-container " (clickOutside)="hideAddBlockContainer()">
-        <div class="add-button" (click)="showAddBlockContainer()" tooltip="Click to add a block view" placement="bottom" hide-delay="0" tooltip-class="epm-tooltip">
+<section class="block-option desktop" *ngIf="showBlock" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]>
+    <div class="add-button-container">
+        <div class="add-button" (click)="showAddBlockContainer()">
             <img src="./assets/icons/add-block.png" alt="plus icon">
         </div>
+        <div class="blocker" *ngIf="isAddBlockContainerShown" (click)="hideAddBlockContainer()"></div>
         <div class="add-basic-blocks  options-block" *ngIf="isAddBlockContainerShown">
             <div class="title basic">BASIC BLOCKS</div>
 
@@ -36,11 +37,13 @@
                 </div>
             </div>
         </div>
+
     </div>
-    <div class="menu-drag-container" (clickOutside)="hideMenuSelectionContainer()">
-        <div class="menu-drag" (click)="showMenuSelectionContainer()" tooltip="Click to open menu" placement="bottom" hide-delay="0" tooltip-class="epm-tooltip">
+    <div class="menu-drag-container">
+        <div class="menu-drag" (click)="showMenuSelectionContainer()">
             <img src="./assets/icons/menu-drag.png" alt="menu icon">
         </div>
+        <div class="blocker" *ngIf="isMenuSelectionContainerShown" (click)="hideMenuSelectionContainer()"></div>
         <div class="menu-blocks  options-block" *ngIf="isMenuSelectionContainerShown">
             <div class="menu-selection" (click)="deleteHandler()">
                 <div class="selection-image">

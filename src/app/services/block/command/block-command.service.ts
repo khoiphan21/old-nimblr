@@ -4,6 +4,9 @@ import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
 import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput, TextBlockType } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
+import { VersionService } from '../../version/version.service';
+
+const uuidv4 = require('uuid/v4');
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +15,7 @@ export class BlockCommandService {
 
   constructor(
     private graphQLService: GraphQLService,
-    private blockQueryService: BlockQueryService
+    private versionService: VersionService
   ) { }
 
   /**
@@ -21,13 +24,18 @@ export class BlockCommandService {
    * @param input the input to the update query
    */
   updateBlock(input: UpdateTextBlockInput | UpdateQuestionBlockInput): Promise<any> {
+    // The version that this query will use, to prevent misuse of the version
+    const version = uuidv4();
+    // Register the version to the service
+    this.versionService.registerVersion(version);
+
     switch (input.type) {
       case BlockType.TEXT:
         const textInput = input as UpdateTextBlockInput;
         return this.updateTextBlock({
           id: textInput.id,
           documentId: textInput.documentId,
-          version: textInput.version,
+          version,
           lastUpdatedBy: textInput.lastUpdatedBy,
           updatedAt: new Date().toISOString(),
           value: textInput.value,
@@ -39,7 +47,7 @@ export class BlockCommandService {
         return this.updateQuestionBlock({
           id: questionInput.id,
           documentId: questionInput.documentId,
-          version: questionInput.version,
+          version,
           lastUpdatedBy: questionInput.lastUpdatedBy,
           updatedAt: new Date().toISOString(),
           question: questionInput.question,
@@ -62,9 +70,7 @@ export class BlockCommandService {
       // Now do a convert for empty string in 'value'
       input.value = input.value === '' ? null : input.value;
 
-      this.blockQueryService.registerUpdateVersion(input.version);
-
-      return await this.graphQLService.query(updateTextBlock, { input });
+      return this.graphQLService.query(updateTextBlock, { input });
     } catch (error) {
       return Promise.reject(error);
     }
@@ -80,8 +86,6 @@ export class BlockCommandService {
       // Now do a convert for empty string in 'question'
       input.question = input.question === '' ? null : input.question;
       input.options = this.cleanQuestionOptions(input.options);
-
-      this.blockQueryService.registerUpdateVersion(input.version);
 
       return this.graphQLService.query(updateQuestionBlock, { input });
     } catch (error) {
@@ -106,9 +110,10 @@ export class BlockCommandService {
    * This will also notify BlockQueryService of the created block's version
    * @param input the input to the create query
    */
-  // Why do you need `CreateBlockInput`
-  // createBlock(input: CreateBlockInput | CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
   createBlock(input: CreateTextBlockInput | CreateQuestionBlockInput): Promise<any> {
+    // reset the input's version to a new value
+    input.version = uuidv4();
+
     switch (input.type) {
       case BlockType.TEXT:
         return this.createTextBlock(input);
@@ -137,8 +142,6 @@ export class BlockCommandService {
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateTextBlockInput');
 
-      this.blockQueryService.registerUpdateVersion(input.version);
-
       // Now do a convert for empty string in 'value'
       input.value = input.value === '' ? null : input.value;
 
@@ -166,8 +169,6 @@ export class BlockCommandService {
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'CreateQuestionBlockInput');
 
-      this.blockQueryService.registerUpdateVersion(input.version);
-
       input.question = input.question === '' ? null : input.question;
       input.options = this.cleanQuestionOptions(input.options);
 
@@ -192,5 +193,52 @@ export class BlockCommandService {
     const response = await this.graphQLService.query(deleteBlock, { input });
 
     return response;
+  }
+
+  async duplicateBlocks(inputs: Array<CreateBlockInput>): Promise<Array<CreateBlockInput>> {
+    const promises = [];
+
+    inputs.forEach(input => {
+      promises.push(this.duplicateOneBlock(input));
+    });
+
+    return await Promise.all(promises);
+  }
+
+  private async duplicateOneBlock(input: CreateBlockInput): Promise<CreateBlockInput> {
+    // Extract the required params
+    const {
+      // note: the id is left out so that a new id will be generated
+      version,
+      type,
+      documentId,
+      lastUpdatedBy,
+      value,
+      question,
+      answers,
+      questionType,
+      options
+    } = input;
+
+    const response = await this.createBlock({
+      id: uuidv4(),
+      version,
+      type,
+      documentId,
+      lastUpdatedBy,
+      value,
+      question,
+      answers,
+      questionType,
+      options
+    });
+
+    switch (type) {
+      case BlockType.TEXT:
+        return response.data.createTextBlock;
+      case BlockType.QUESTION:
+        return response.data.createQuestionBlock;
+    }
+
   }
 }

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, UpdateDocumentInput } from '../../../../API';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { createDocument, updateDocument } from '../../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
-import { DocumentQueryService } from '../query/document-query.service';
+import { VersionService } from '../../version/version.service';
 
 export type UUID = string;
 export type ISOTimeString = string;
@@ -17,18 +17,56 @@ export class DocumentCommandService {
 
   constructor(
     private graphQlService: GraphQLService,
-    private queryService: DocumentQueryService
+    private versionService: VersionService
   ) { }
 
   async createDocument(input: CreateDocumentInput): Promise<any> {
     this.validateCreateInput(input);
 
+    // Get a new input to prevent accidental properties
+    // tslint:disable:prefer-const
+    let {
+      id,
+      version,
+      type,
+      ownerId,
+      lastUpdatedBy,
+      sharingStatus,
+      title,
+      editorIds,
+      viewerIds,
+      blockIds,
+      createdAt,
+      updatedAt,
+      submissionDocIds,
+      recipientEmail,
+      submittedAt,
+      submissionStatus,
+    } = input;
+
     // Change title to null if an empty string
-    if (input.title === '') {
-      input.title = null;
+    if (title === '') {
+      title = null;
     }
 
-    const response: any = await this.graphQlService.query(createDocument, { input });
+    const response: any = await this.graphQlService.query(createDocument, { input: {
+      id,
+      version,
+      type,
+      ownerId,
+      lastUpdatedBy,
+      sharingStatus,
+      title,
+      editorIds,
+      viewerIds,
+      blockIds,
+      createdAt,
+      updatedAt,
+      submissionDocIds,
+      recipientEmail,
+      submittedAt,
+      submissionStatus,
+    } });
 
     return response.data.createDocument;
   }
@@ -71,18 +109,18 @@ export class DocumentCommandService {
   async updateDocument(input: UpdateDocumentInput): Promise<any> {
     try {
       // Automatically set some properties to prevent accidental values
-      input.version = uuidv4(); // Must be new every time
+      input.version = uuidv4(); // a new version
       input.updatedAt = new Date().toISOString(); // The most recent time
       delete input.createdAt; // This should not be updated
+
+      // Now tell the VersionService to register this version
+      this.versionService.registerVersion(input.version);
 
       // Convert title to null if empty string
       input.title = input.title === '' ? null : input.title;
 
       this.validateUpdateInput(input);
-      
-      // Update the list of versions to be ignored
-      this.queryService.registerUpdateVersion(input.version);
-      
+
       const response: any = await this.graphQlService.query(updateDocument, { input });
       return response.data.updateDocument;
     } catch (error) {

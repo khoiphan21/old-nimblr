@@ -2,13 +2,20 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationTabComponent } from './navigation-tab.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Auth } from 'aws-amplify';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
+import { BehaviorSubject } from 'rxjs';
 
+const uuid = '8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
+const falseUuid = '7d232med-4be2-4d84-bcaa-37ebc8c3e24a';
+const navigationEnd = new NavigationEnd(0, '', '/document');
+const routerEvent = new BehaviorSubject(navigationEnd);
 describe('NavigationTabComponent', () => {
   let component: NavigationTabComponent;
   let fixture: ComponentFixture<NavigationTabComponent>;
   let routerSpy;
+  let router;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -17,6 +24,16 @@ describe('NavigationTabComponent', () => {
       imports: [
         RouterTestingModule.withRoutes([])
       ],
+      providers: [
+        {
+          provide: Router,
+          useValue: {
+            url: '/document',
+            navigate: '',
+            events: routerEvent
+         }
+       }
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
@@ -24,20 +41,36 @@ describe('NavigationTabComponent', () => {
 
   /* tslint:disable:no-string-literal */
   beforeEach(() => {
+    fixture = TestBed.createComponent(NavigationTabComponent);
+    router = TestBed.get(Router);
+    component = fixture.componentInstance;
+    component.navigationTab = new NavigationTabDocument(uuid, 'test', []);
+    fixture.detectChanges();
   });
 
-  it('should create', done => {
-    Auth.signOut().then(() => {
-      fixture = TestBed.createComponent(NavigationTabComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      expect(component).toBeTruthy();
-      done();
-    });
+  describe('ngOnInit', () => {
+      beforeEach(() => {
+        router.url = '/document/8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
+      });
+
+      it('should set value to true if it is the same document', () => {
+        spyOn(router.events, 'subscribe').and.callFake(() => {
+          return;
+        });
+        component.navigationTab = new NavigationTabDocument(uuid, 'test', []);
+        component.ngOnInit();
+        expect(component.isCurrentDocument).toBe(true);
+      });
+
+      it('should set value to false if it is the same document', () => {
+        component.navigationTab = new NavigationTabDocument(falseUuid, 'test', []);
+        component.ngOnInit();
+        expect(component.isCurrentDocument).toBe(false);
+      });
   });
 
   it('navigateToDocument() - should navigate to the right path', () => {
-    routerSpy = spyOn(component['router'], 'navigate');
+    routerSpy = spyOn(router, 'navigate');
     const expectedId = 'document123';
     component.navigateToDocument(expectedId);
     const navigatedPath = routerSpy.calls.mostRecent().args[0];

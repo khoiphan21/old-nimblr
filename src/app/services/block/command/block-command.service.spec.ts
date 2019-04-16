@@ -5,6 +5,8 @@ import { BlockType, QuestionType, DeleteBlockInput, TextBlockType, UpdateTextBlo
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BlockFactoryService } from '../factory/block-factory.service';
 
 const uuidv4 = require('uuid/v4');
 
@@ -21,7 +23,11 @@ describe('BlockCommandService', () => {
   let questionBlockBackendResponse: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
 
     // Setup the input to be used in the tests
     textInput = {
@@ -69,7 +75,7 @@ describe('BlockCommandService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('updateBlock', () => {
+  describe('updateBlock()', () => {
 
     it('should return an error if the type is not supported', done => {
       textInput.type = 'ABCD';
@@ -81,16 +87,21 @@ describe('BlockCommandService', () => {
       });
     });
 
-    /* tslint:disable:no-string-literal */
-    it(`should store the updated block's version in the query service`, done => {
-      service.updateBlock(textInput).then(() => {
-        // The version must be stored
-        expect(service['blockQueryService']['myVersions']
-          .has(textInput.version)).toBe(true);
-        done();
-      }).catch(error =>
-        processTestError('unable to update block', error, done)
-      );
+    it('should set a new version', async () => {
+      // Updating text block
+      await service.updateBlock(textInput);
+      let version = graphQlSpy.calls.mostRecent().args[1].input.version;
+      expect(version).not.toEqual(textInput.version);
+      // Updating question block
+      await service.updateBlock(questionInput);
+      version = graphQlSpy.calls.mostRecent().args[1].input.version;
+      expect(version).not.toEqual(questionInput.version);
+    });
+
+    it('should register the version to the VersionService', () => {
+      service.updateBlock(textInput);
+      const version = graphQlSpy.calls.mostRecent().args[1].input.version;
+      expect(service['versionService'].isRegistered(version)).toBe(true);
     });
 
     describe('TextBlock -', () => {
@@ -126,6 +137,9 @@ describe('BlockCommandService', () => {
           delete textInput.type;
           // delete 'updatedAt' from queryArg as it's auto-generated
           delete queryArg.input.updatedAt;
+          // delete version as it is reset
+          delete textInput.version;
+          delete queryArg.input.version;
           // now check all other args
           expect(queryArg.input).toEqual(textInput);
           done();
@@ -145,7 +159,7 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = [
-          'id', 'version', 'documentId', 'lastUpdatedBy', 'value'
+          'id', 'documentId', 'lastUpdatedBy', 'value'
         ];
         runTestForTextMissingParams(
           requiredParams, 'updateBlock', 'UpdateTextBlockInput'
@@ -186,6 +200,9 @@ describe('BlockCommandService', () => {
           delete questionInput.type;
           // delete 'updatedAt' from queryArg as it's auto-generated
           delete queryArg.input.updatedAt;
+          // delete version as it will be reset
+          delete queryArg.input.version;
+          delete questionInput.version;
           // now check all other args
           expect(queryArg.input).toEqual(questionInput);
           done();
@@ -214,7 +231,7 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = [
-          'id', 'version', 'documentId', 'lastUpdatedBy', 'answers', 'questionType'
+          'id', 'documentId', 'lastUpdatedBy', 'answers', 'questionType'
         ];
         runTestForQuestionMissingParams(
           requiredParams, 'updateBlock', 'UpdateQuestionBlockInput'
@@ -280,14 +297,11 @@ describe('BlockCommandService', () => {
       });
     });
 
-    /* tslint:disable:no-string-literal */
-    it(`should store the created block's version in the query service`, done => {
-      service.createBlock(textInput).then(() => {
-        // The version must be stored
-        expect(service['blockQueryService']['myVersions']
-          .has(textInput.version)).toBe(true);
-        done();
-      });
+    it('should set a new version', () => {
+      const version = uuidv4();
+      textInput.version = version;
+      service.createBlock(textInput);
+      expect(textInput.version).not.toEqual(version);
     });
 
     describe('TextBlock -', () => {
@@ -349,7 +363,7 @@ describe('BlockCommandService', () => {
       });
 
       describe('(error pathways)', () => {
-        const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+        const requiredParams = ['id', 'documentId', 'lastUpdatedBy'];
         runTestForTextMissingParams(
           requiredParams, 'createBlock', 'CreateTextBlockInput'
         );
@@ -439,7 +453,7 @@ describe('BlockCommandService', () => {
       });
 
       describe('(error pathways)', () => {
-        const requiredParams = ['id', 'version', 'documentId', 'lastUpdatedBy'];
+        const requiredParams = ['id', 'documentId', 'lastUpdatedBy'];
         runTestForQuestionMissingParams(
           requiredParams, 'createBlock', 'CreateQuestionBlockInput'
         );
@@ -562,4 +576,117 @@ describe('BlockCommandService', () => {
       });
     });
   }
+
+  describe('duplicateBlocks()', () => {
+
+    it('when given an empty array should return the same', async () => {
+      const blocks = await service.duplicateBlocks([]);
+      expect(blocks).toEqual([]);
+    });
+
+    it('should call duplicateOneBlock() for each input', () => {
+      const inputs = [
+        { id: uuidv4() }, { id: uuidv4 }
+      ];
+      const duplicateSpy = spyOn<any>(service, 'duplicateOneBlock');
+      service.duplicateBlocks(inputs);
+      expect(duplicateSpy.calls.count()).toBe(2);
+      duplicateSpy.calls.allArgs().forEach(arg => {
+        expect(inputs.includes(arg[0])).toBe(true);
+      });
+    });
+
+    it('should resolve with the results from duplicateOneBlock', async () => {
+      const inputs = [
+        { id: uuidv4() }, { id: uuidv4() }
+      ];
+      const duplicateSpy = spyOn<any>(service, 'duplicateOneBlock');
+      const resolveValue = { id: uuidv4() };
+      duplicateSpy.and.returnValue(Promise.resolve(resolveValue));
+      const results = await service.duplicateBlocks(inputs);
+      expect(results).toEqual([resolveValue, resolveValue]);
+    });
+  });
+
+  describe('duplicateOneBlock', () => {
+    let createSpy: jasmine.Spy;
+    let blockFactory: BlockFactoryService;
+    let block: any;
+
+    const testValue = { id: uuidv4() };
+
+    beforeEach(() => {
+      createSpy = spyOn(service, 'createBlock');
+      createSpy.and.returnValue(Promise.resolve({
+        data: {
+          createTextBlock: testValue,
+          createQuestionBlock: testValue
+        }
+      }));
+      blockFactory = TestBed.get(BlockFactoryService);
+    });
+
+    it('should call createBlock() with a new id', async () => {
+      block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      await service['duplicateOneBlock'](block);
+      expect(createSpy.calls.mostRecent().args[0].id).not.toEqual(block.id);
+    });
+
+    it('should resolve with the return value for TEXT', async () => {
+      block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      const value = await service['duplicateOneBlock'](block);
+      expect(value).toEqual(testValue);
+    });
+
+    it('should resolve with the return value for QUESTION', async () => {
+      block = blockFactory.createNewQuestionBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      const value = await service['duplicateOneBlock'](block);
+      expect(value).toEqual(testValue);
+    });
+
+    it('should call createBlock() with the right args for TEXT', async () => {
+      block = blockFactory.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      await service['duplicateOneBlock'](block);
+
+      checkSpy();
+    });
+
+    it('should call createBlock() with the right args for QUESTION', async () => {
+      block = blockFactory.createNewQuestionBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      await service['duplicateOneBlock'](block);
+
+      checkSpy();
+    });
+
+    function checkSpy() {
+      const arg = {
+        id: createSpy.calls.mostRecent().args[0].id,
+        version: block.version,
+        type: block.type,
+        documentId: block.documentId,
+        lastUpdatedBy: block.lastUpdatedBy,
+        value: block.value,
+        question: block.question,
+        answers: block.answers,
+        questionType: block.questionType,
+        options: block.options
+      };
+      expect(createSpy).toHaveBeenCalledWith(arg);
+    }
+  });
 });

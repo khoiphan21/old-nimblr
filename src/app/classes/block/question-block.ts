@@ -48,7 +48,7 @@ export class QuestionBlock extends BlockImpl implements Block {
       lastUpdatedBy,
       updatedAt,
       createdAt,
-    })
+    });
     // Parameter validation
     this.checkQuestionType(questionType);
     const { newAnswers, newOptions } = this.processOptionsAndAnswers(
@@ -56,7 +56,7 @@ export class QuestionBlock extends BlockImpl implements Block {
     );
 
     // Storing values
-    this.question = question;
+    this.question = question === null ? '' : question;
     this.immutableAnswers = newAnswers;
     this.questionType = questionType;
     this.immutableOptions = newOptions;
@@ -92,7 +92,7 @@ export class QuestionBlock extends BlockImpl implements Block {
     }
     const arrayValue = value as Array<any>;
     arrayValue.forEach(item => {
-      if (typeof item !== 'string') {
+      if (typeof item !== 'string' && item !== null) {
         throw new Error(BASE_ERROR_MESSAGE + `"${name}" must contain only strings`);
       }
     });

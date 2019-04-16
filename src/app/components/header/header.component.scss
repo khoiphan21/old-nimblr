@@ -7,8 +7,6 @@ div.row {
     width: 100%;
     height: 50px;
     font-family: $font-roboto;
-    background-color: $color-blue-3;
-    border-bottom: $header-background solid 1px;
     @include row-center;
     justify-content: space-between;
     i {
@@ -16,6 +14,7 @@ div.row {
     }
     section.header-left {
         i {
+            color: $color-dark-steel-blue;
             margin: 0 $mobile-frame-horizontal-padding;
         }
     }

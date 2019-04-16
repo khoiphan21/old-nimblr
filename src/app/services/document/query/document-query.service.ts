@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { getDocument } from '../../../../graphql/queries';
@@ -11,7 +11,6 @@ import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 })
 export class DocumentQueryService {
 
-  private myVersions: Set<string> = new Set();
   private documentMap: Map<string, BehaviorSubject<Document>> = new Map();
   private subscriptionMap: Map<string, Subscription> = new Map();
 
@@ -36,7 +35,6 @@ export class DocumentQueryService {
     if (!this.subscriptionMap.has(id)) {
       this.subscribeToUpdate(id);
     }
-
     this.graphQlService.query(getDocument, { id }).then(response => {
 
       try {
@@ -60,33 +58,21 @@ export class DocumentQueryService {
    * @param id The id of the document, for error message formatting
    */
   private parseDocument(response: any, id: string): Document {
-    let rawData: any;
+    let data: any;
 
     try {
-      rawData = response.data.getDocument;
+      data = response.data.getDocument;
     } catch (error) {
       throw new Error(`Unable to parse response: ${error.message}`);
     }
 
-    if (rawData === null) {
+    if (data === null) {
       throw new Error(`Document with id ${id} does not exist`);
     }
 
-    const document: Document = this.documentFactory.createDocument(rawData);
+    const document: Document = this.documentFactory.convertRawDocument(data);
 
     return document;
-  }
-
-  /**
-   * Register a specific version into the list of 'ignored' notifications.
-   *
-   * Essentially, when a notification comes, its version is checked against the
-   * internal list of versions. If there's a match, the notification will be ignored
-   *
-   * @param version the version of the document to be ignored
-   */
-  registerUpdateVersion(version: string) {
-    this.myVersions.add(version);
   }
 
   /**
@@ -105,9 +91,7 @@ export class DocumentQueryService {
     ).subscribe(notification => {
       try {
         const document = this.parseNotification(notification);
-        if (!this.myVersions.has(document.version)) {
-          document$.next(document);
-        }
+        document$.next(document);
       } catch (error) {
         document$.error(error);
       }
@@ -139,7 +123,7 @@ export class DocumentQueryService {
 
     // check if createDocument can be called successfully
     try {
-      document = this.documentFactory.createDocument(rawData);
+      document = this.documentFactory.convertRawDocument(rawData);
     } catch (error) {
       throw new Error(`DocumentFactory failed to create document: ${error.message}`);
     }

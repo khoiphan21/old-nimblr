@@ -27,6 +27,14 @@ div.fluid-container {
             width: 100%;
             flex-grow: 1;
             flex-direction: row;
+            section.navigation-bar {
+                width: $navigation-width;
+            }
+            section.document-content {
+                width: -webkit-calc(100vw - #{$navigation-width});
+                width: -moz-calc(100vw - #{$navigation-width});
+                width: calc(100vw - #{$navigation-width});
+            }
         }
     }
 }

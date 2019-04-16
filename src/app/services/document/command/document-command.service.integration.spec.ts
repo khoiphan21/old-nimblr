@@ -1,24 +1,30 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
-import { BehaviorSubject } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
 import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
 import { deleteDocument } from '../../../../graphql/mutations';
+import { RouterTestingModule } from '@angular/router/testing';
+import { configureTestSuite } from 'ng-bullet';
+import { LoginHelper } from '../../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
 describe('(Integration) DocumentCommandService', () => {
-  const service$ = new BehaviorSubject<DocumentCommandService>(null);
+  let service: DocumentCommandService;
   let graphQlService: GraphQLService;
 
   let input: CreateDocumentInput;
-  let storedDocument: any;
+
+  configureTestSuite(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
+    });
+  });
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
     input = {
       type: DocumentType.GENERIC,
       version: uuidv4(),
@@ -26,78 +32,50 @@ describe('(Integration) DocumentCommandService', () => {
       lastUpdatedBy: uuidv4(),
       sharingStatus: SharingStatus.PRIVATE
     };
+    service = TestBed.get(DocumentCommandService);
     graphQlService = TestBed.get(GraphQLService);
   });
 
-  beforeAll(() => {
-    Auth.signIn(TEST_USERNAME, TEST_PASSWORD).then(() => {
-      service$.next(TestBed.get(DocumentCommandService));
-    }).catch(error => service$.error(error));
+  beforeAll(async () => {
+    await LoginHelper.login();
   });
-
-  async function getService(): Promise<DocumentCommandService> {
-    return new Promise((resolve, reject) => {
-      service$.subscribe(service => {
-        if (service === null) { return; }
-        resolve(service);
-      }, error => reject(error));
-    });
-  }
 
   describe('createDocument', () => {
 
-    it('should create a GENERIC document', done => {
-      getService().then(service => {
-        return service.createDocument(input);
-      }).then(createdDocument => {
-        storedDocument = createdDocument;
-        expect(createdDocument).toBeTruthy();
-        return graphQlService.query(deleteDocument, { input: { id: storedDocument.id } });
-      }).then(response => {
-        const deletedDocument = response.data.deleteDocument;
-        expect(deletedDocument.id).toEqual(storedDocument.id);
-        done();
-      }).catch(error => console.error(error));
-    }, 10000);
+    it('should create a GENERIC document', async () => {
+      const createdDocument = await service.createDocument(input);
+      expect(createdDocument).toBeTruthy();
+
+      // Now delete it
+      const deletedDocument = await graphQlService.query(
+        deleteDocument, { input: { id: createdDocument.id } }
+      );
+      expect(deletedDocument.data.deleteDocument.id).toEqual(createdDocument.id);
+    });
 
   });
 
-  describe('updateDocument for FORM', () => {
+  describe('updateDocument', () => {
 
-    it('should update a document with new values', done => {
-      let service: DocumentCommandService;
+    it('should update a document with new values', async () => {
       const updatedInput: UpdateDocumentInput = {
         id: null,
         title: 'test title',
         version: uuidv4(),
-        lastUpdatedBy: uuidv4(),
-        updatedAt: new Date().toISOString()
+        lastUpdatedBy: uuidv4()
       };
 
-      getService().then(retrievedService => {
-        service = retrievedService;
-        return service.createDocument(input);
-      }).then(createdDocument => {
-        storedDocument = createdDocument;
-        // Update the input
-        updatedInput.id = storedDocument.id;
-        return service.updateDocument(updatedInput);
-      }).then(updatedDocument => {
-        verifyUpdatedDocument(updatedDocument);
-        return graphQlService.query(
-          deleteDocument, { input: { id: storedDocument.id } }
-        );
-      }).then(response => {
-        const deletedDocument = response.data.deleteDocument;
-        expect(deletedDocument.id).toEqual(storedDocument.id);
-        done();
-      }).catch(error => console.error(error));
+      const createdDocument = await service.createDocument(input);
+      // update the input
+      updatedInput.id = createdDocument.id;
+      const updatedDocument = await service.updateDocument(updatedInput);
+      expect(`id: ${updatedDocument.id}`).toEqual(`id: ${updatedInput.id}`);
+      expect(`title: ${updatedDocument.title}`).toEqual(`title: ${updatedInput.title}`);
+      expect(`version: ${updatedDocument.version}`).toEqual(`version: ${updatedInput.version}`);
+      expect(`lastUpdatedBy: ${updatedDocument.lastUpdatedBy}`).toEqual(`lastUpdatedBy: ${updatedInput.lastUpdatedBy}`);
 
-      function verifyUpdatedDocument(document) {
-        expect(document.id).toEqual(updatedInput.id);
-        expect(document.title).toEqual(updatedInput.title);
-      }
-
+      // Delete it
+      await graphQlService.query(deleteDocument, { input: { id: createdDocument.id } });
     });
 
   });

@@ -1,16 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { BlockOptionComponent, CreateBlockInfo } from './block-option.component';
+import { BlockOptionComponent } from './block-option.component';
 import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
-import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 
 const uuidv4 = require('uuid/v4');
 
 describe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
   let fixture: ComponentFixture<BlockOptionComponent>;
-
-  // Spies
   let toggleSpy: jasmine.Spy;
 
   beforeEach(async(() => {
@@ -23,6 +20,10 @@ describe('BlockOptionComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockOptionComponent);
     component = fixture.componentInstance;
+
+    // Set some default values
+    component.blockId = uuidv4();
+
     toggleSpy = spyOn<any>(component, 'toggleSelectedOptionsStatus');
     fixture.detectChanges();
   });
@@ -42,6 +43,19 @@ describe('BlockOptionComponent', () => {
 
     it('should change `isMenuSelectionContainerShown` to false', () => {
       expect(component.isMenuSelectionContainerShown).toBe(false);
+    });
+
+    it('should set value to true if `mouseFocusingBlock` is same as `blockID`', () => {
+      component.mouseFocusingBlock = 'id123';
+      component.blockId = 'id123';
+      expect(component.showBlock).toBe(true);
+    });
+
+    it('should set value to false if `mouseFocusingBlock` is not the same as `blockID`', () => {
+      component.mouseFocusingBlock = 'id123';
+      component.blockId = 'id098';
+      component.ngOnChanges();
+      expect(component.showBlock).toBe(false);
     });
   });
 
@@ -128,7 +142,6 @@ describe('BlockOptionComponent', () => {
 
   describe('add new block', () => {
     let hideSpy: jasmine.Spy;
-    let expectedInfo: CreateBlockInfo;
 
     beforeEach(() => {
       hideSpy = spyOn(component, 'hideAddBlockContainer');
@@ -136,10 +149,8 @@ describe('BlockOptionComponent', () => {
 
     describe('addTextBlock()', () => {
       it('should emit a BlockType.TEXT event', done => {
-        expectedInfo = { type: BlockType.TEXT };
-
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value).toEqual(expectedInfo);
+          expect(value.type).toEqual(BlockType.TEXT);
           done();
         });
         component.addTextBlock();
@@ -149,11 +160,11 @@ describe('BlockOptionComponent', () => {
         expect(hideSpy).toHaveBeenCalled();
       });
     });
+
     describe('addQuestionBlock()', () => {
       it('should emit a CreateBlockInfo event', done => {
-        expectedInfo = { type: BlockType.QUESTION };
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value).toEqual(expectedInfo);
+          expect(value.type).toEqual(BlockType.QUESTION);
           done();
         });
         component.addQuestionBlock();
@@ -167,8 +178,9 @@ describe('BlockOptionComponent', () => {
 
     describe('addHeaderBlock()', () => {
       it('should emit a CreateBlockInfo event', done => {
-        expectedInfo = {
+        const expectedInfo = {
           type: BlockType.TEXT,
+          id: component.blockId,
           textblocktype: TextBlockType.HEADER,
         };
         component.createBlock.pipe(take(1)).subscribe(value => {
@@ -187,19 +199,9 @@ describe('BlockOptionComponent', () => {
   });
 
   describe('deleteHandler()', () => {
-    let factory: BlockFactoryService;
-
-    beforeEach(() => {
-      factory = TestBed.get(BlockFactoryService);
-    });
     it('should emit the block id', done => {
-      component.block = factory.createAppBlock({
-        type: BlockType.TEXT,
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4()
-      });
       component.deleteEvent.subscribe(value => {
-        expect(value).toEqual(component.block.id);
+        expect(value).toEqual(component.blockId);
         done();
       });
       component.deleteHandler();

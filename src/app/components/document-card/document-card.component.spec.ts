@@ -4,6 +4,7 @@ import { DocumentCardComponent } from './document-card.component';
 import { DocumentOptionsComponent } from './document-options/document-options.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../../services/document/factory/document-factory.service';
+import { DocumentImpl } from 'src/app/classes/document/document-impl';
 
 const uuidv4 = require('uuid/v4');
 
@@ -30,7 +31,7 @@ describe('DocumentCardComponent', () => {
     fixture = TestBed.createComponent(DocumentCardComponent);
     component = fixture.componentInstance;
     documentFactory = TestBed.get(DocumentFactoryService);
-    component.document = documentFactory.createDocument({
+    component.document = documentFactory.convertRawDocument({
       id: documentId,
       ownerId: uuidv4()
     });
@@ -43,15 +44,15 @@ describe('DocumentCardComponent', () => {
   });
 
   describe('ngOnInit()', () => {
-    it('should set the title if it exist', () => {
+    it('should set the title if it does not exist', () => {
       expect(component.title).toBe('Untitled');
     });
 
     it('should set the title if it exist', () => {
-      const ecpectedTitle = 'test document';
-      component.document.title = ecpectedTitle;
+      const title = 'test document';
+      component.document = new DocumentImpl({title});
       component.ngOnInit();
-      expect(component.title).toBe(ecpectedTitle);
+      expect(component.title).toBe(title);
     });
   });
 

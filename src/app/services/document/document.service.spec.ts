@@ -8,13 +8,13 @@ import { AccountServiceImpl } from '../account/account-impl.service';
 import { UUID } from './command/document-command.service';
 import { GraphQLError } from '../graphQL/error';
 import { listDocuments } from 'src/graphql/queries';
-import { DocumentType } from 'src/API';
-import { createDocument, deleteDocument } from 'src/graphql/mutations';
+import { deleteDocument } from 'src/graphql/mutations';
 import { take, skip } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { DocumentFactoryService } from './factory/document-factory.service';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { configureTestSuite } from 'ng-bullet';
+
 const uuidv4 = require('uuid/v4');
 
 describe('DocumentService', () => {
@@ -22,9 +22,9 @@ describe('DocumentService', () => {
   let documentFactory: DocumentFactoryService;
   // spies
   let querySpy: jasmine.Spy;
+  let listSpy: jasmine.Spy;
   let accountServiceSpy: jasmine.Spy;
   // mock data
-  let listQueryResponse: any;
   let documentData: any;
   let userId: UUID;
 
@@ -58,16 +58,10 @@ describe('DocumentService', () => {
     /* tslint:disable:no-string-literal */
     // Spy on the graphQlService 'query' function
     querySpy = spyOn(service['graphQlService'], 'query');
+    listSpy = spyOn(service['graphQlService'], 'list');
+
     // Setup the default response values for the spy
     documentData = { id: uuidv4(), ownerId: uuidv4() };
-    // the mock response
-    listQueryResponse = {
-      data: {
-        listDocuments: {
-          items: [documentData]
-        }
-      }
-    };
   }
 
   function setupAccountServiceSpy() {
@@ -89,10 +83,14 @@ describe('DocumentService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('getDocumentsForUserId()', () => {
+    let listQueryResponse: any;
 
     beforeEach(() => {
-      // tell the spy to return the expected data
-      querySpy.and.returnValue(Promise.resolve(listQueryResponse));
+      // the mock response
+      listQueryResponse = {
+        items: [documentData]
+      };
+      listSpy.and.returnValue(Promise.resolve(listQueryResponse));
     });
 
     it('should return the right number of documents', done => {
@@ -116,7 +114,7 @@ describe('DocumentService', () => {
       beforeEach(() => {
         // Setup the spy to fail the promise
         backendResponse = new Error('test');
-        querySpy.and.returnValue(Promise.reject(backendResponse));
+        listSpy.and.returnValue(Promise.reject(backendResponse));
       });
 
       it('should throw an error with the right message', done => {
@@ -239,7 +237,7 @@ describe('DocumentService', () => {
       backendSubject = new Subject();
       subscriptionSpy.and.returnValue(backendSubject);
       // setup the document to be returned when getUserDocument is called;
-      testDocument = documentFactory.createDocument(
+      testDocument = documentFactory.convertRawDocument(
         { id: uuidv4(), ownerId: uuidv4() }
       );
       // Setup the spy for getDocumentsForUserId()
@@ -301,7 +299,7 @@ describe('DocumentService', () => {
     beforeEach(() => {
       // setup the mock deleted document
       id = uuidv4();
-      deletedDocument = documentFactory.createDocument({
+      deletedDocument = documentFactory.convertRawDocument({
         id, ownerId: uuidv4()
       });
       // setup the return value of query spy
@@ -317,7 +315,7 @@ describe('DocumentService', () => {
 
     it('should call the graphQl query with the right argument', done => {
       service.deleteDocument(id).then(() => {
-        expect(querySpy.calls.mostRecent().args[1]).toEqual({input: {id}});
+        expect(querySpy.calls.mostRecent().args[1]).toEqual({ input: { id } });
         done();
       });
     });

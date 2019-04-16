@@ -1,0 +1,15 @@
+@import '../../_sass/interface';
+@import '../../_sass/variables';
+@import '../../_sass/base';
+div.block {
+    padding: 0 $mobile-frame-horizontal-padding;
+}
+
+@include media(lg) {
+    .block.child-document {
+        padding: 0 150px;
+    }
+    div.block {
+        padding: 0 275px;
+    }
+}

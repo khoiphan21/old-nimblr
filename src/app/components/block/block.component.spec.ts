@@ -1,14 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BlockComponent, CreateBlockEvent } from './block.component';
+import { BlockComponent } from './block.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { BlockQueryService } from '../../services/block/query/block-query.service';
-import { MockBlockQueryService } from 'src/app/services/block/query/block-query.service.spec';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
-import { CreateBlockInfo } from './block-option/block-option.component';
+import { Block } from 'src/app/classes/block/block';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CreateBlockEvent } from './createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
@@ -33,13 +33,8 @@ describe('BlockComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        FormsModule
-      ],
-      providers: [
-        {
-          provide: BlockQueryService,
-          useClass: MockBlockQueryService
-        }
+        FormsModule,
+        RouterTestingModule.withRoutes([])
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -50,7 +45,6 @@ describe('BlockComponent', () => {
     fixture = TestBed.createComponent(BlockComponent);
     blockFactoryService = TestBed.get(BlockFactoryService);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -59,7 +53,7 @@ describe('BlockComponent', () => {
 
   /* tslint:disable:no-string-literal */
   describe('ngOnInit()', () => {
-    let block;
+    let block: Block;
     let getBlockSpy: jasmine.Spy;
     let subject: Subject<any>;
 
@@ -75,6 +69,19 @@ describe('BlockComponent', () => {
       component.ngOnInit();
       subject.next(block);
       expect(component.block).toEqual(block);
+    });
+
+    it('should not set the block if the version is stored and the block already exists', () => {
+      component.ngOnInit();
+      const originalBlock = blockFactoryService.createNewTextBlock({
+        documentId: uuidv4(),
+        lastUpdatedBy: uuidv4()
+      });
+      component.block = originalBlock;
+      component['versionService'].registerVersion(block.version);
+      // now reset the stored block
+      subject.next(block);
+      expect(component.block.version).toBe(originalBlock.version);
     });
 
     it('for now, should log the error out to console', () => {
@@ -93,20 +100,10 @@ describe('BlockComponent', () => {
 
   });
 
-  it('toggleBlockOptions() - should set `isBlockOptionsShown` to the given value', () => {
-    component.isSelectedOptionShown = false;
-    component.toggleBlockOptions(true);
-    expect(component.isBlockOptionsShown).toBe(true);
-  });
-
-  it('toggleSelectedOptionStatus() - should set `isSelectedOptionShown` to the given value', () => {
-    component.toggleSelectedOptionStatus(true);
-    expect(component.isSelectedOptionShown).toBe(true);
-  });
-
   describe('addBlock()', () => {
 
-    let mockBlockInfo: CreateBlockInfo;
+    let mockBlockInfo: CreateBlockEvent;
+
     beforeEach(() => {
       mockBlockInfo = {
         type: BlockType.TEXT,
@@ -117,10 +114,10 @@ describe('BlockComponent', () => {
       const type = BlockType.QUESTION;
       mockBlockInfo.type = BlockType.QUESTION;
       component.createBlock.subscribe((value: CreateBlockEvent) => {
-        expect(value.blockInfo.type).toEqual(type);
+        expect(value.type).toEqual(type);
         done();
       });
-      component.addBlock(mockBlockInfo);
+      component.addBlock(mockBlockInfo.type);
     });
     it('should emit the right id', done => {
       component.blockId = uuidv4();
@@ -128,7 +125,7 @@ describe('BlockComponent', () => {
         expect(value.id).toEqual(component.blockId);
         done();
       });
-      component.addBlock(mockBlockInfo);
+      component.addBlock(mockBlockInfo.type);
     });
   });
 

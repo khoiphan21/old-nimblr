@@ -6,9 +6,9 @@ import { take, skip } from 'rxjs/operators';
 import { getDocument } from 'src/graphql/queries';
 import { UUID } from '../command/document-command.service';
 import { DocumentFactoryService } from '../factory/document-factory.service';
-import { DocumentImpl } from 'src/app/classes/document-impl';
+import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { onSpecificDocumentUpdate } from 'src/graphql/subscriptions';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 
 const uuidv4 = require('uuid/v4');
 
@@ -25,7 +25,7 @@ describe('DocumentQueryService', () => {
     factory = TestBed.get(DocumentFactoryService);
     // setup mock data
     id = uuidv4();
-    backendResponse = factory.createDocument({ id, ownerId: uuidv4() });
+    backendResponse = factory.convertRawDocument({ id, ownerId: uuidv4() });
   });
 
   it('should be created', () => {
@@ -147,7 +147,7 @@ describe('DocumentQueryService', () => {
         it('should emit the error thrown by the factory', done => {
           // setup factory to throw an error
           const message = 'test';
-          spyOn(service['documentFactory'], 'createDocument')
+          spyOn(service['documentFactory'], 'convertRawDocument')
             .and.throwError(message);
           // call service
           service.getDocument$(id).subscribe(() => { }, error => {
@@ -171,15 +171,6 @@ describe('DocumentQueryService', () => {
       });
     });
 
-  });
-
-  /* tslint:disable:no-string-literal */
-  describe('registerUpdateVersion()', () => {
-    it('should store the given version', () => {
-      const version = uuidv4();
-      service.registerUpdateVersion(version);
-      expect(service['myVersions'].has(version)).toBe(true);
-    });
   });
 
   describe('subscribeToUpdate()', () => {
@@ -239,22 +230,6 @@ describe('DocumentQueryService', () => {
           });
           notify();
         });
-        it('should not emit if the version is already stored', done => {
-          // first store the version
-          service.registerUpdateVersion(backendResponse.version);
-          // Then call the service
-          service['subscribeToUpdate'](id);
-          service['documentMap'].get(id).subscribe(value => {
-            if (value === null) {
-              // set timeout to call done
-              setTimeout(() => done(), 5);
-              return;
-            }
-            fail('should not have been notified');
-            done();
-          });
-          notify();
-        });
       });
 
       describe('[ERROR]', () => {
@@ -270,7 +245,7 @@ describe('DocumentQueryService', () => {
         it('should emit the error thrown by factory', done => {
           // setup factory to throw an error
           const message = 'test';
-          spyOn(service['documentFactory'], 'createDocument')
+          spyOn(service['documentFactory'], 'convertRawDocument')
             .and.throwError(message);
           // call the service
           service['subscribeToUpdate'](id);

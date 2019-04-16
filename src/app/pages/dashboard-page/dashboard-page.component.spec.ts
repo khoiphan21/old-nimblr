@@ -9,7 +9,7 @@ import { DocumentFactoryService } from 'src/app/services/document/factory/docume
 import { configureTestSuite } from 'ng-bullet';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AccountServiceImpl } from 'src/app/services/account/account-impl.service';
-import { Document } from 'src/app/classes/document';
+import { Document } from 'src/app/classes/document/document';
 import { isUuid } from 'src/app/classes/helpers';
 import { UUID } from 'src/app/services/document/command/document-command.service';
 import { CreateDocumentInput, DocumentType, SharingStatus } from 'src/API';
@@ -58,8 +58,7 @@ describe('DashboardPageComponent', () => {
     component = fixture.componentInstance;
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);
-    document = documentFactory.createDocument({
-      id: uuidv4(),
+    document = documentFactory.createNewDocument({
       ownerId: uuidv4()
     });
     // Spy on the account service

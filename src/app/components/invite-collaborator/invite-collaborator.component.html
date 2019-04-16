@@ -1,13 +1,21 @@
 <ng-container *responsive="{sizes:{min:576, max:2000}}">
     <section class="overlay" *ngIf="isInviteCollaboratorShown" (click)="hideContainer()" [@fadeInOutAnimation]>
         <section class="invitation options-block" (click)="$event.stopPropagation()">
-            <div class="title">
-                Invite to collaborate
+            <div class="header">
+                <i class="fas fa-users"></i>
+                <div class="content">
+                    <div class="title">
+                        Share document
+                    </div>
+                    <div class="description">
+                        Anyone you share this document with can view, edit and comment.
+                    </div>
+                </div>
             </div>
-            <div class="description">
-                Anyone you invite to this document can view, edit and comment.
+            <div class="input-container">
+                <input type="text" placeholder="Search a person or type an email address">
+                <button class="filled-button-primary">invite</button>
             </div>
-            <input type="text" placeholder="Search a person or type an email address">
             <div class="title">
                 select a person
             </div>

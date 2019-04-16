@@ -1,9 +1,17 @@
-import { Component, OnChanges, Input, ChangeDetectorRef, SimpleChanges, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  Input,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+  OnInit
+} from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
-import { TextBlockType } from 'src/API';
+import { BlockType } from 'src/API';
 
 @Component({
   selector: 'app-block-text',
@@ -21,11 +29,11 @@ export class BlockTextComponent implements OnInit, OnChanges {
   @Input() focusBlockId: string;
 
   @Output() deleteEvent = new EventEmitter<string>();
+  @Output() createBlock = new EventEmitter<BlockType>();
 
   constructor(
     private blockCommandService: BlockCommandService,
-    private factoryService: BlockFactoryService,
-    private changeDetector: ChangeDetectorRef
+    private factoryService: BlockFactoryService
   ) { }
 
   ngOnInit() {
@@ -36,20 +44,15 @@ export class BlockTextComponent implements OnInit, OnChanges {
     this.value = value ? value : '';
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    // NOTE: call this AFTER setting all values first due to the call to
-    // detectChanges()
+  async ngOnChanges(changes: SimpleChanges) {
     const focus = changes.focusBlockId;
+
     if (focus) {
-      if (!focus.currentValue) { return; }
-
+      if (!focus.currentValue) {
+        return;
+      }
       if (focus.currentValue.includes(this.block.id)) {
-        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
-        this.changeDetector.detectChanges();
-        const element = document.getElementById(this.block.id);
-        element.focus();
-        // TODO @jeremyng Move caret to the end
-
+        await this.setCaretToEnd();
       }
     } else if (changes.block) {
       const newBlock = changes.block.currentValue;
@@ -57,7 +60,27 @@ export class BlockTextComponent implements OnInit, OnChanges {
     }
   }
 
-  async updateValue(textblocktype: TextBlockType): Promise<Block> {
+  async setCaretToEnd() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          const element = document.getElementById(this.block.id);
+          element.focus();
+          if (this.value) {
+            window.getSelection().setPosition(element, 1);
+          } else {
+            window.getSelection().setPosition(element, 0);
+          }
+          resolve();
+
+        } catch (error) {
+          reject(Error('Failed to set caret: element does not exist'));
+        }
+      });
+    });
+  }
+
+  async updateValue(): Promise<Block> {
     // Show place holder if value becomes ''
     this.isPlaceholderShown = true;
 
@@ -71,7 +94,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
           lastUpdatedBy: this.block.lastUpdatedBy,
           value: this.value,
           createdAt: this.block.createdAt,
-          textblocktype,
         });
         this.blockCommandService.updateBlock(updatedBlock).then(() => {
           resolve(updatedBlock);
@@ -84,10 +106,16 @@ export class BlockTextComponent implements OnInit, OnChanges {
     this.isPlaceholderShown = status;
   }
 
-  onBackSpaceAndEmptyTextbox() {
+  onBackSpaceAndEmptyTextbox(event: Event) {
     if (this.value === '') {
       this.deleteEvent.emit(this.block.id);
+      clearTimeout(this.timeout); // To prevent the last update call
+      event.preventDefault();
     }
   }
 
+  createTextBlockOnEnter(event: Event) {
+    this.createBlock.emit(BlockType.TEXT);
+    event.preventDefault();
+  }
 }

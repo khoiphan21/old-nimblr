@@ -1,8 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentFactoryService } from './document-factory.service';
+import { DocumentFactoryService, NewDocumentInput, NewSubmissionDocumentInput } from './document-factory.service';
 import { isUuid } from '../../../classes/helpers';
-import { DocumentType, SharingStatus } from 'src/API';
+import { DocumentType, SharingStatus, SubmissionStatus } from 'src/API';
+import { Document } from 'src/app/classes/document/document';
+import { DocumentImpl } from 'src/app/classes/document/document-impl';
+import { TemplateDocument } from 'src/app/classes/document/templateDocument';
+import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 
 const uuidv4 = require('uuid/v4');
 
@@ -23,163 +27,221 @@ describe('DocumentFactoryService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('(creation logic)', () => {
+  describe('createNewDocument()', () => {
+    let document: Document;
+    input = input as NewDocumentInput;
 
-    describe('with only id and ownerId', () => {
-      let document: any;
-
-      beforeEach(() => {
-        document = service.createDocument(input);
-      });
-
-      it('should create a version', () => {
-        expect(isUuid(document.ownerId)).toBe(true);
-      });
-      it('should set the type', () => {
-        expect(document.type).toEqual(DocumentType.GENERIC);
-      });
-      it('should create an editorIds array', () => {
-        expect(document.editorIds.length).toBe(0);
-      });
-      it('should create a viewerIds array', () => {
-        expect(document.viewerIds.length).toBe(0);
-      });
-      it('should create a blockIds array', () => {
-        expect(document.blockIds.length).toBe(0);
-      });
-      it('should set lastUpdatedBy to ownerId', () => {
-        expect(document.lastUpdatedBy).toEqual(input.ownerId);
-      });
-      it('should set createdAt', () => {
-        expect(new Date(document.createdAt) instanceof Date).toBe(true);
-      });
-      it('should set updatedAt', () => {
-        expect(new Date(document.updatedAt) instanceof Date).toBe(true);
-      });
-      it('should set sharingStatus', () => {
-        expect(document.sharingStatus).toBe(null);
-      });
+    beforeEach(() => {
+      input = {
+        ownerId: uuidv4()
+      };
+      document = service.createNewDocument(input);
     });
 
-    it('should store the id', () => {
-      const document = service.createDocument(input);
-      expect(document.id).toEqual(input.id);
+    it('should return a Document object', () => {
+      expect(document instanceof DocumentImpl).toBe(true);
     });
 
-    it('should store the ownerId', () => {
-      const document = service.createDocument(input);
+    it('should have the default type to be GENERIC', () => {
+      expect(document.type).toEqual(DocumentType.GENERIC);
+    });
+
+    it('should store the given ownerId', () => {
       expect(document.ownerId).toEqual(input.ownerId);
     });
 
-    it('should store the title', () => {
-      input.title = 'test title';
-      const document = service.createDocument(input);
-      expect(document.title).toEqual(input.title);
+    it('should automatically set the lastUpdatedBy as the ownerId', () => {
+      expect(document.lastUpdatedBy).toEqual(input.ownerId);
     });
 
-    it('should store the version if given', () => {
-      input.version = uuidv4();
-      const document = service.createDocument(input);
-      expect(document.version).toEqual(input.version);
+    // no need to check for errors as the DocumentImpl will do the validation
+  });
+
+  describe('createNewTemplateDocument()', () => {
+    let document: Document;
+
+    beforeEach(() => {
+      input = {
+        ownerId: uuidv4()
+      };
+      document = service.createNewTemplateDocument(input);
     });
 
-    it('should store the type if given', () => {
-      input.type = DocumentType.GENERIC;
-      const document = service.createDocument(input);
-      expect(document.type).toEqual(input.type);
+    it('should return a TemplateDocument object', () => {
+      expect(document instanceof TemplateDocument).toBe(true);
+    });
+    it('should have the type TEMPLATE', () => {
+      expect(document.type).toEqual(DocumentType.TEMPLATE);
+    });
+    it('should have the right ownerId', () => {
+      expect(document.ownerId).toEqual(input.ownerId);
+    });
+    it('should store the lastUpdatedBy from the given ownerId', () => {
+      expect(document.lastUpdatedBy).toEqual(input.ownerId);
     });
 
-    it('should store the editorIds if given', () => {
-      input.editorIds = [uuidv4()];
-      const document = service.createDocument(input);
-      expect(document.editorIds[0]).toEqual(input.editorIds[0]);
+    // no need to check for errors as the DocumentImpl will do the validation
+  });
+
+  describe('createNewSubmission()', () => {
+    let submission: SubmissionDocument;
+    let submissionInput: NewSubmissionDocumentInput;
+
+    beforeEach(() => {
+      submissionInput = {
+        recipientEmail: 'test@email.com',
+        ownerId: uuidv4()
+      };
+      submission = service.createNewSubmission(submissionInput);
     });
 
-    it('should store the viewerIds if given', () => {
-      input.viewerIds = [uuidv4()];
-      const document = service.createDocument(input);
-      expect(document.viewerIds[0]).toEqual(input.viewerIds[0]);
+    it('should create a document of type SubmissionDocument', () => {
+      expect(submission instanceof SubmissionDocument).toBe(true);
+    });
+
+    it('should store the recipientEmail', () => {
+      expect(submission.recipientEmail).toEqual(submissionInput.recipientEmail);
+    });
+
+    it('should set submissionStatus to NOT_STARTED', () => {
+      expect(submission.submissionStatus).toEqual(SubmissionStatus.NOT_STARTED);
+    });
+
+    it('should store the ownerId', () => {
+      expect(submission.ownerId).toEqual(submissionInput.ownerId);
+    });
+
+    it('should store the lastUpdatedBy', () => {
+      expect(submission.lastUpdatedBy).toEqual(submissionInput.ownerId);
     });
 
     it('should store the blockIds if given', () => {
-      input.blockIds = [uuidv4()];
-      const document = service.createDocument(input);
-      expect(document.blockIds[0]).toEqual(input.blockIds[0]);
+      submissionInput.blockIds = [uuidv4()];
+      submission = service.createNewSubmission(submissionInput);
+      expect(submission.blockIds).toEqual(submissionInput.blockIds);
     });
-
-    it('should store the lastUpdatedBy if given', () => {
-      input.lastUpdatedBy = uuidv4();
-      const document = service.createDocument(input);
-      expect(document.lastUpdatedBy).toEqual(input.lastUpdatedBy);
-    });
-
-    it('should store the createdAt if given', () => {
-      input.createdAt = new Date().toISOString();
-      const document = service.createDocument(input);
-      expect(document.createdAt).toEqual(input.createdAt);
-    });
-
-    it('should store the updatedAt if given', () => {
-      input.updatedAt = new Date().toISOString();
-      const document = service.createDocument(input);
-      expect(document.updatedAt).toEqual(input.updatedAt);
-    });
-
-    it('should store the sharingStatus if given', () => {
-      input.sharingStatus = SharingStatus.PUBLIC;
-      const document = service.createDocument(input);
-      expect(document.sharingStatus).toEqual(input.sharingStatus);
-    });
-
   });
 
-  describe('(parameter checking)', () => {
-    const requiredUuidParams = [
-      'id', 'ownerId'
-    ];
+  describe('convertRawDocument()', () => {
+    let document: Document;
 
-    requiredUuidParams.forEach(param => {
-      it(`${param} should throw an error if null or undefined`, () => {
-        testForNullOrUndefined(param);
+    function checkPropertyInitialisation() {
+      it('created document should have initialised all properties', () => {
+        Object.getOwnPropertyNames(document).forEach(property => {
+          expect(document[property]).toBeDefined();
+        });
       });
-    });
-
-    requiredUuidParams.forEach(param => {
-      it(`${param} should throw an error if not a uuid`, () => {
-        testIfUuid(param);
-      });
-    });
-
-    function testForNullOrUndefined(param: string) {
-      const errorMessage = `Invalid parameter: missing ${param}`;
-      // Test for undefined
-      try {
-        delete input[param];
-        service.createDocument(input);
-        fail('error should occur');
-      } catch (error) {
-        expect(error.message).toEqual(errorMessage);
-      }
-      // Test for null
-      try {
-        input[param] = null;
-        service.createDocument(input);
-        fail('error should occur');
-      } catch (error) {
-        expect(error.message).toEqual(errorMessage);
-      }
     }
 
-    function testIfUuid(param: string) {
-      const errorMessage = `Invalid parameter: ${param} must be a uuid`;
+    describe('with only "type" defined', () => {
+      describe('GENERIC', () => {
+        runTestForType(DocumentType.GENERIC);
+      });
+      describe('TEMPLATE', () => {
+        runTestForType(DocumentType.TEMPLATE);
+      });
+      describe('SUBMISSION', () => {
+        runTestForType(DocumentType.SUBMISSION);
+      });
 
-      try {
-        input[param] = 'abcd';
-        service.createDocument(input);
-        fail('error should occur');
-      } catch (error) {
-        expect(error.message).toEqual(errorMessage);
+      function runTestForType(type: DocumentType) {
+        beforeEach(() => {
+          input = { type };
+          document = service.convertRawDocument(input);
+        });
+        switch (type) {
+          case DocumentType.GENERIC:
+            checkInstanceType(DocumentImpl);
+            break;
+          case DocumentType.TEMPLATE:
+            checkInstanceType(TemplateDocument);
+            break;
+          case DocumentType.SUBMISSION:
+            checkInstanceType(SubmissionDocument);
+            break;
+        }
+        checkPropertyInitialisation();
+        checkDocumentType(type);
       }
-    }
+
+      function checkInstanceType(type) {
+        it(`should create an instance of ${type.name}`, () => {
+          expect(document instanceof type).toBe(true);
+        });
+      }
+
+      function checkDocumentType(type: DocumentType) {
+        it(`should create a document with type ${type}`, () => {
+          expect(document.type).toEqual(type);
+        });
+      }
+
+    });
+
+    describe('with all arguments defined (valid values)', () => {
+      beforeEach(() => {
+        input = {
+          id: uuidv4(),
+          version: uuidv4(),
+          type: undefined,
+          ownerId: uuidv4(),
+          lastUpdatedBy: uuidv4(),
+          sharingStatus: SharingStatus.PUBLIC,
+          title: 'abcd',
+          editorIds: [uuidv4()],
+          viewerIds: [uuidv4()],
+          blockIds: [uuidv4(), uuidv4()],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          submissionDocIds: [uuidv4()],
+          recipientEmail: 'abcd@mail.com',
+          submittedAt: new Date().toISOString(),
+          submissionStatus: SubmissionStatus.SUBMITTED
+        };
+      });
+      describe('with "type" not defined', () => {
+        it('should create a GENERIC document', () => {
+          input = {};
+          document = service.convertRawDocument(input);
+          expect(document.type).toEqual(DocumentType.GENERIC);
+          Object.getOwnPropertyNames(document).forEach(property => {
+            expect(document[property]).toBeDefined();
+          });
+        });
+        it('should store all given values', () => {
+          document = service.convertRawDocument(input);
+          input.type = DocumentType.GENERIC; // for comparison step
+          checkPropertyValues();
+        });
+      });
+      it('GENERIC - should store all given values', () => {
+        runTestFor(DocumentType.GENERIC);
+      });
+      it('TEMPLATE - should store all given values', () => {
+        runTestFor(DocumentType.TEMPLATE);
+      });
+      it('SUBMISSION - should store all given values', () => {
+        runTestFor(DocumentType.SUBMISSION);
+      });
+
+      function runTestFor(type: DocumentType) {
+        input.type = type;
+        document = service.convertRawDocument(input);
+        checkPropertyValues();
+      }
+
+      function checkPropertyValues() {
+        Object.getOwnPropertyNames(document).forEach(property => {
+          if (property.indexOf('_') === 0) {
+            // This is a private property with a getter. Check it.
+            const getterName = property.split('_')[1];
+            expect(document[getterName]).toEqual(input[getterName]);
+          }
+        });
+      }
+    });
+
+    // No need to check for error values as the classes will handle them.
   });
+
 });

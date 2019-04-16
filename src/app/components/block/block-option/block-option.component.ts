@@ -1,12 +1,7 @@
 import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
 import { BlockType, TextBlockType } from 'src/API';
-import { Block } from 'src/app/classes/block/block';
-
-export interface CreateBlockInfo {
-  type: BlockType;
-  textblocktype?: TextBlockType;
-}
+import { CreateBlockEvent } from '../createBlockEvent';
 
 @Component({
   selector: 'app-block-option',
@@ -16,23 +11,29 @@ export interface CreateBlockInfo {
 })
 
 export class BlockOptionComponent implements OnChanges {
-
-  @Input() isBlockOptionsShown: boolean;
+  showBlock = false;
+  @Input() blockId: string;
+  @Input() mouseFocusingBlock: string;
+  @Input() isChildDoc: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
-  @Output() createBlock = new EventEmitter<CreateBlockInfo>();
+  @Output() createBlock = new EventEmitter<CreateBlockEvent>();
 
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
   @Output() deleteEvent = new EventEmitter<string>();
-  @Input() block: Block;
 
   constructor() { }
 
   ngOnChanges() {
     this.isAddBlockContainerShown = false;
     this.isMenuSelectionContainerShown = false;
+    if (this.mouseFocusingBlock === this.blockId) {
+      this.showBlock = true;
+    } else {
+      this.showBlock = false;
+    }
   }
 
   showAddBlockContainer() {
@@ -66,15 +67,16 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addTextBlock() {
-    const input: CreateBlockInfo = {
+    const input: CreateBlockEvent = {
       type: BlockType.TEXT,
+      id: this.blockId
     };
     this.createBlock.emit(input);
     this.hideAddBlockContainer();
   }
 
   addQuestionBlock() {
-    const input: CreateBlockInfo = {
+    const input: CreateBlockEvent = {
       type: BlockType.QUESTION,
     };
     this.createBlock.emit(input);
@@ -82,16 +84,18 @@ export class BlockOptionComponent implements OnChanges {
   }
 
   addHeaderBlock() {
-    const input: CreateBlockInfo = {
+    const input: CreateBlockEvent = {
       type: BlockType.TEXT,
-      textblocktype: TextBlockType.HEADER
+      id: this.blockId,
+      textBlockType: TextBlockType.HEADER
     };
     this.createBlock.emit(input);
     this.hideAddBlockContainer();
   }
 
   deleteHandler() {
-    this.deleteEvent.emit(this.block.id);
+    this.toggleSelectedOptionsStatus(false);
+    this.deleteEvent.emit(this.blockId);
   }
 
 }

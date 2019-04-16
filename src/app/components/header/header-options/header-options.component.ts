@@ -9,7 +9,9 @@ import { slideBottomToTopAnimation, fadeInOutAnimation } from 'src/app/animation
 })
 export class HeaderOptionsComponent implements OnInit {
   @Input() isOptionShown: boolean;
+
   @Output() hideOptionEvent = new EventEmitter<boolean>();
+  @Output() saveAsTemplateEvent = new EventEmitter<any>();
   constructor() { }
 
   ngOnInit() {
@@ -19,4 +21,8 @@ export class HeaderOptionsComponent implements OnInit {
     this.hideOptionEvent.emit(false);
   }
 
+  saveAsTemplate() {
+    this.hideOptionEvent.emit(false);
+    this.saveAsTemplateEvent.emit();
+  }
 }

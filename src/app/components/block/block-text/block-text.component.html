@@ -1,24 +1,16 @@
 <div class="content text-block" *ngIf="block">
+
   <!-- When the user is logged in -->
-  <ng-container [ngSwitch]=block.textblocktype>
-    <ng-container *ngSwitchCase="'TEXT'">
-      <div [id]="block.id" class="text-input" *ngIf="isUserLoggedIn" contenteditable="true"
-        (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id" ngDefaultControl
-        [(ngModel)]="value" (ngModelChange)="updateValue('TEXT')" (keydown.backspace)="onBackSpaceAndEmptyTextbox()"></div>
-      <div class="text-input text" *ngIf="!isUserLoggedIn">{{value}}</div>
-      <div class="placeholder text" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Type something here...</div>
-    </ng-container>
-    <ng-container *ngSwitchCase="'HEADER'">
+  <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'" class="text-input" *ngIf="isUserLoggedIn"
+    contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id"
+    ngDefaultControl [(ngModel)]="value" (ngModelChange)="updateValue()"
+    (keydown.enter)="createTextBlockOnEnter($event)" (keydown.backspace)="onBackSpaceAndEmptyTextbox($event)"></div>
 
-      <div [id]="block.id" class="text-input header" *ngIf="isUserLoggedIn" contenteditable="true"
-        (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id" ngDefaultControl
-        [(ngModel)]="value" (ngModelChange)="updateValue('HEADER')" (keydown.backspace)="onBackSpaceAndEmptyTextbox()"></div>
-      <div class="text-input header" *ngIf="!isUserLoggedIn">{{value}}</div>
-      <div class="placeholder header" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Type something here...
-      </div>
-    </ng-container>
+  <!-- When the user is not logged in -->
+  <div class="text-input" [class.header]="block.textBlockType === 'HEADER'" *ngIf="!isUserLoggedIn">{{value}}</div>
 
-  </ng-container>
+  <!-- Placeholder -->
+  <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'"
+    *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Type something here...</div>
 
-  <!-- When the user is anonymous -->
 </div>
