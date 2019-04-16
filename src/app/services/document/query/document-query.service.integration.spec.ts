@@ -110,7 +110,7 @@ describe('(Integration) DocumentQueryService', () => {
         await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
 
         await helper.deleteDocument();
-      });
+      }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
       it('should not be able to query a non-public document ', async done => {
         await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
