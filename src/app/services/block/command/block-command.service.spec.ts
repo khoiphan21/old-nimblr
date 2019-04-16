@@ -260,19 +260,6 @@ describe('BlockCommandService', () => {
         });
       });
 
-      it('should call graphQlService with the right argument', done => {
-        service.updateBlock(headerInput).then(value => {
-          // The value resolved must be the value returned by graphql
-          const actualyInput: UpdateTextBlockInput = graphQlSpy.calls.mostRecent().args[1].input;
-
-          delete headerInput.type;
-          delete actualyInput.updatedAt;
-
-          expect(graphQlSpy.calls.mostRecent().args[1].input).toEqual(headerInput);
-          done();
-        });
-      });
-
       it('should change the value to null if is an empty string', done => {
         headerInput.value = '';
         service.updateBlock(headerInput).then(value => {

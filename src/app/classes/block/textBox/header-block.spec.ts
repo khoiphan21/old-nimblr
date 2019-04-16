@@ -17,50 +17,10 @@ describe('HeaderBlock', () => {
       updatedAt: new Date().toISOString(),
       value: 'abcd',
     };
-  };
+  }
 
   beforeEach(() => {
     getMockInput();
-  });
-
-  describe('Parameters validation', () => {
-    beforeEach(() => { });
-
-    it('should instantiate when textBlockType is a valid type', done => {
-      mockInput.textBlockType = TextBlockType.HEADER;
-
-      try {
-        new HeaderBlock(mockInput);
-        done();
-      } catch (err) {
-        fail();
-      }
-    });
-
-    it('should fail to instantiate when textBlockType is not a valid type', done => {
-      mockInput.textBlockType = 400;
-
-      try {
-        new HeaderBlock(mockInput);
-        fail();
-      } catch (err) {
-        done();
-      }
-    });
-
-    it('should instantiate when textBlockType is null by replacing as TEXT', done => {
-      mockInput.textBlockType = null;
-
-      try {
-        const response = new HeaderBlock(mockInput);
-        expect(response.textBlockType).toEqual(TextBlockType.TEXT);
-        done();
-
-      } catch (err) {
-        fail();
-      }
-    });
-
   });
 
   describe('Storing values', () => {
@@ -74,10 +34,17 @@ describe('HeaderBlock', () => {
     getMockInput();
     keys = Object.keys(mockInput);
 
-    for (let property of keys) {
+    for (const property of keys) {
       it(`should store the right ${property}`, () => {
         expect(block[property]).toEqual(mockInput[property]);
       });
-    };
+    }
+
+    it('should always store textBlockType as HEADER', () => {
+      // even when given a different type
+      mockInput.textBlockType = TextBlockType.TEXT;
+      block = new HeaderBlock(mockInput);
+      expect(block.textBlockType).toEqual(TextBlockType.HEADER);
+    });
   });
 });
