@@ -2,12 +2,11 @@ import { TestBed } from '@angular/core/testing';
 
 import { DocumentQueryService } from './document-query.service';
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../../account/account-impl.service.spec';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../../API';
 import { DocumentQueryTestHelper } from '../helper';
 import { environment } from '../../../../environments/environment';
-import { LoginHelper } from '../../loginHelper';
+import { LoginHelper, TEST_USERNAME, TEST_PASSWORD } from '../../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 

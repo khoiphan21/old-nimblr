@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { NavigationBarService } from './navigation-bar.service';
 import { DocumentService } from '../document/document.service';
 import { AccountService } from '../account/account.service';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { ServicesModule } from '../../modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
@@ -11,6 +10,7 @@ import { DocumentFactoryService } from '../document/factory/document-factory.ser
 import { environment } from '../../../environments/environment';
 import { DocumentCommandService } from '../document/command/document-command.service';
 import { CreateDocumentInput, SharingStatus, DocumentType } from 'src/API';
+import { TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 

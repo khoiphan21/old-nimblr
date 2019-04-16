@@ -3,9 +3,9 @@ import { GraphQLService } from '../graphQL/graph-ql.service';
 import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { Auth } from 'aws-amplify';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../API';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
+import { TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 

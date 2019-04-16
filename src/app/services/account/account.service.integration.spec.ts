@@ -13,8 +13,7 @@ import awsmobile from 'src/aws-exports.js';
 import { environment } from '../../../environments/environment';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
-import { TEST_USERNAME, TEST_PASSWORD } from './account-impl.service.spec';
-import { deleteAppUser, adminDeleteCognitoUser, adminConfirmUser } from '../loginHelper';
+import { deleteAppUser, adminDeleteCognitoUser, adminConfirmUser, TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 

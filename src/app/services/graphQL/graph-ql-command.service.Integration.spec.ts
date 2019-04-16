@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { GraphQlCommandService } from './graph-ql-command.service';
 import { Auth } from 'aws-amplify';
 
@@ -27,7 +26,7 @@ describe('GraphQlCommandService -Integration Tests', () => {
 
   describe('Integration Tests', () => {
     let graphQlService: any;
-    let TestBlockId = "test123";
+    const TestBlockId = 'test123';
     let PARAMETERS: object;
 
     TestBed.configureTestingModule({});
