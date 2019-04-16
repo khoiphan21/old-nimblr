@@ -95,8 +95,6 @@ describe('(Integration) DocumentQueryService', () => {
     describe('[ANONYMOUS ACCESS]', () => {
 
       it('should be able to access a public document', async () => {
-        await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
-
         // set the document sharing to be public
         input.sharingStatus = SharingStatus.PUBLIC;
         await helper.sendCreateDocument(input);

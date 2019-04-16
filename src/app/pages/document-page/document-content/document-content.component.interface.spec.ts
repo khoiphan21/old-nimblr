@@ -19,7 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const uuidv4 = require('uuid/v4');
 
-describe('(Interface Unit Tests) DocumentContentComponent', () => {
+describe('(UI) DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
