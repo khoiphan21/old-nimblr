@@ -2,29 +2,19 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 .content {
-  z-index: 1;
-  .text-input {
-    padding: 7.5px 0;
-  }
-
-  .placeholder {
-    z-index: -1;
-  }
-
-  .text-input.header {
-    color: #4A4A4A;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: normal;
-    line-height: 24px;
-  }
-
-  .placeholder.header {
-    color: #4A4A4A;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: normal;
-    line-height: 24px;
-  }
-
+    z-index: 1;
+    .text-input {
+        padding: 7.5px 0;
+    }
+    .placeholder {
+        z-index: -1;
+    }
+    .text-input.header,
+    .placeholder.header {
+        color: #4A4A4A;
+        font-size: 30px;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 24px;
+    }
 }
