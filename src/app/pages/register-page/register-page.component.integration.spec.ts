@@ -6,9 +6,9 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AccountService } from '../../services/account/account.service';
 import { AccountServiceImpl } from '../../services/account/account-impl.service';
-import { TEST_USERNAME, TEST_PASSWORD } from '../../services/account/account-impl.service.spec';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { environment } from 'src/environments/environment';
+import { TEST_USERNAME, TEST_PASSWORD } from '../../services/loginHelper';
 
 describe('(Integration) RegisterPageComponent', () => {
   let component: RegisterPageComponent;

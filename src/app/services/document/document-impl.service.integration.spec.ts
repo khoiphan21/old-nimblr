@@ -4,7 +4,6 @@ import { DocumentService } from './document.service';
 import { AccountService } from '../account/account.service';
 import { ServicesModule } from 'src/app/modules/services.module';
 
-import { TEST_USERNAME, TEST_PASSWORD } from '../account/account-impl.service.spec';
 import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { RouterTestingModule } from '@angular/router/testing';
 import { skip, take } from 'rxjs/operators';
@@ -15,6 +14,7 @@ import { CreateDocumentInput, DocumentType, SharingStatus } from '../../../API';
 import { Document } from 'src/app/classes/document/document';
 import { User } from 'src/app/classes/user';
 import { DocumentCommandService } from './command/document-command.service';
+import { TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 

@@ -11,10 +11,9 @@ import { User } from 'src/app/classes/user';
 import { CognitoSignUpUser } from '../../classes/user';
 import awsmobile from 'src/aws-exports.js';
 import { environment } from '../../../environments/environment';
-import { deleteUser } from '../../../graphql/mutations';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
-import { TEST_USERNAME, TEST_PASSWORD } from './account-impl.service.spec';
+import { deleteAppUser, adminDeleteCognitoUser, adminConfirmUser, TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
@@ -72,54 +71,6 @@ describe('(Integration) AccountImplService', () => {
       expect(message).toEqual('SUCCESS');
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
-    async function adminConfirmUser(username: any): Promise<any> {
-
-      return new Promise((resolve, reject) => {
-        // configure cognito identity service provider
-        const options = {
-          accessKeyId: environment.AWS_ACCESS_KEY_ID,
-          secretAccessKey: environment.AWS_SECRET_ACCESS_KEY,
-          region: awsmobile.aws_cognito_region
-        };
-        const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider(options);
-
-        const params = {
-          UserPoolId: awsmobile.aws_user_pools_id, /* required */
-          Username: username /* required */
-        };
-
-        // set the status of the user to 'CONFIRMED'
-        cognitoidentityserviceprovider.adminConfirmSignUp(params, (err, data) => {
-          if (err) { reject(err); } else { resolve(data); } // successful response
-        });
-      });
-    }
-
-    function adminDeleteCognitoUser(givenUser: any): Promise<any> {
-
-      return new Promise((resolve, reject) => {
-        const userData = {
-          Username: givenUser.username,
-          Pool: userPool
-        };
-        const authenticationData = {
-          Username: givenUser.username,
-          Password: givenUser.password
-        };
-        const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-        cognitoUser.authenticateUser(authenticationDetails, {
-          onSuccess: () => {
-            cognitoUser.deleteUser((err, result) => {
-              if (err) { reject(err); return; }
-              resolve(result);
-            });
-          },
-          onFailure: error => reject(error)
-        });
-      });
-    }
-
     it('should create then delete a user for the app in DynamoDB', done => {
       // mock the verification function
       let cognitoUserId: string;
@@ -161,18 +112,6 @@ describe('(Integration) AccountImplService', () => {
         done();
       }).catch(error => { fail(error); done(); });
 
-      async function deleteAppUser(id: string): Promise<any> {
-        try {
-          const input = {
-            input: { id }
-          };
-          const response: any = await API.graphql(graphqlOperation(deleteUser, input));
-          expect(response.data.deleteUser.id).toEqual(id);
-          return Promise.resolve('app user deleted');
-        } catch (error) {
-          return Promise.reject(error);
-        }
-      }
     }, 10000);
 
   });

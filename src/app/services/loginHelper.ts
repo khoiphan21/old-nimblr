@@ -62,7 +62,6 @@ export class LoginHelper {
   }
 }
 
-/* istanbul ignore next */
 export async function adminConfirmUser(username: any): Promise<any> {
 
   return new Promise((resolve, reject) => {
@@ -86,7 +85,6 @@ export async function adminConfirmUser(username: any): Promise<any> {
   });
 }
 
-/* istanbul ignore next */
 export async function deleteAppUser(id: string): Promise<any> {
   try {
     const input = {
@@ -99,7 +97,6 @@ export async function deleteAppUser(id: string): Promise<any> {
   }
 }
 
-/* istanbul ignore next */
 export function adminDeleteCognitoUser(givenUser: any): Promise<any> {
 
   return new Promise((resolve, reject) => {
