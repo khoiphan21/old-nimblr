@@ -15,7 +15,15 @@ export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
   verificationForm: FormGroup;
   steps = 'one';
+
+  // For password input
   passwordType = 'password';
+  password = '';
+  hasUpperCase = false;
+  hasLowerCase = false;
+  hasNumber = false;
+  hasLength = false;
+
   uuid: string;
   newCognitoUser: CognitoSignUpUser = {
     username: '',
@@ -138,6 +146,32 @@ export class RegisterPageComponent implements OnInit {
       given_name: `${value.firstName}`,
       family_name: `${value.lastName}`
     };
+  }
+
+  /* tslint:disable:no-string-literal */
+  validatePassword() {
+    this.registerForm.controls['password'].valueChanges.subscribe(value => {
+      this.hasLowerCase = this.checkLowerCase(value);
+      this.hasUpperCase = this.checkUpperCase(value);
+      this.hasNumber = this.checkNumber(value);
+      this.hasLength = this.checkLength(value);
+    });
+  }
+
+  private checkLowerCase(value) {
+    return value.match(/[a-z]/);
+  }
+
+  private checkUpperCase(value) {
+    return value.match(/[A-Z]/);
+  }
+
+  private checkNumber(value) {
+    return /\d/.test(value);
+  }
+
+  private checkLength(value) {
+    return value.length >= 7;
   }
 
 }
