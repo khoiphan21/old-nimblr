@@ -88,4 +88,11 @@ describe('HeaderComponent', () => {
     });
   });
 
+  describe('deleteThisDocument()', () => {
+    it('should emit deleteDocumentEvent', done => {
+      component.deleteDocumentEvent.subscribe(() => done());
+      component.deleteThisDocument();
+    });
+  });
+
 });

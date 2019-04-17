@@ -4,6 +4,7 @@ import { HeaderOptionsComponent } from './header-options.component';
 import { configureTestSuite } from 'ng-bullet';
 import { ResponsiveModule } from 'ngx-responsive';
 import { take } from 'rxjs/operators';
+import { domRendererFactory3 } from '@angular/core/src/render3/interfaces/renderer';
 describe('HeaderOptionsComponent', () => {
   let component: HeaderOptionsComponent;
   let fixture: ComponentFixture<HeaderOptionsComponent>;
@@ -47,4 +48,16 @@ describe('HeaderOptionsComponent', () => {
       component.saveAsTemplate();
     });
   });
+
+  describe('deleteDocument()', () => {
+    it('should emit deleteDocumentEvent fucntion', done => {
+      component.deleteDocumentEvent.pipe(take(1)).subscribe(() => done());
+      component.deleteDocument();
+    });
+
+    it('should emit the event to hide option', done => {
+      component.hideOptionEvent.pipe(take(1)).subscribe(() => done());
+      component.deleteDocument();
+    });
+  })
 });

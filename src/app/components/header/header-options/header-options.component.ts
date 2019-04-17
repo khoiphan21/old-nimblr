@@ -13,6 +13,8 @@ export class HeaderOptionsComponent implements OnInit {
 
   @Output() hideOptionEvent = new EventEmitter<boolean>();
   @Output() saveAsTemplateEvent = new EventEmitter<any>();
+  @Output() deleteDocumentEvent = new EventEmitter<any>();
+
   constructor() { }
 
   ngOnInit() {
@@ -25,5 +27,10 @@ export class HeaderOptionsComponent implements OnInit {
   saveAsTemplate() {
     this.hideOptionEvent.emit(false);
     this.saveAsTemplateEvent.emit();
+  }
+
+  deleteDocument() {
+    this.hideOptionEvent.emit(false);
+    this.deleteDocumentEvent.emit();
   }
 }

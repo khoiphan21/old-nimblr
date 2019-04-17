@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit {
   @Output() sharingChange = new EventEmitter<SharingStatus>();
   @Output() showInviteEvent = new EventEmitter<boolean>();
   @Output() saveAsTemplateEvent = new EventEmitter<any>();
+  @Output() deleteDocumentEvent = new EventEmitter<any>();
 
   constructor(
     private navigationBarService: NavigationBarService,
@@ -53,5 +54,9 @@ export class HeaderComponent implements OnInit {
 
   saveAsTemplate() {
     this.saveAsTemplateEvent.emit();
+  }
+
+  deleteThisDocument() {
+    this.deleteDocumentEvent.emit();
   }
 }
