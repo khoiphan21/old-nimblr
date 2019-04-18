@@ -4,7 +4,6 @@ import { BlockQueryService } from '../../services/block/query/block-query.servic
 import { BlockType } from 'src/API';
 import { UUID } from 'src/app/services/document/command/document-command.service';
 import { VersionService } from 'src/app/services/version/version.service';
-import { TextBlockType } from '../../../API';
 import { CreateBlockEvent } from './createBlockEvent';
 
 @Component({
