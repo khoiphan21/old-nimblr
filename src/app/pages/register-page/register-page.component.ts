@@ -159,19 +159,21 @@ export class RegisterPageComponent implements OnInit {
   }
 
   private checkLowerCase(value) {
-    return value.match(/[a-z]/);
+    const match = value.match(/[a-z]/);
+    return match !== null;
   }
 
   private checkUpperCase(value) {
-    return value.match(/[A-Z]/);
+    const match = value.match(/[A-Z]/);
+    return match !== null;
   }
 
   private checkNumber(value) {
-    return /\d/.test(value);
+    const match = value.match(/\d/);
+    return match !== null;
   }
-
   private checkLength(value) {
-    return value.length >= 7;
+    return value.length > 7;
   }
 
 }

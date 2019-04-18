@@ -286,4 +286,55 @@ describe('RegisterPageComponent', () => {
     expect(component.newCognitoUser.attributes.family_name).toBe(lastName);
     expect(component.uuid).toBe(id);
   });
+
+  describe('validatePassword()', () => {
+      let formControlSpy: jasmine.Spy;
+      let callbackFn;
+      beforeEach(() => {
+        formControlSpy = spyOn(component.registerForm.controls['password'].valueChanges, 'subscribe');
+        component.validatePassword();
+        callbackFn = formControlSpy.calls.mostRecent().args[0];
+      });
+
+      it('should set value to true if there is any lower case', () => {
+        callbackFn('test');
+        expect(component.hasLowerCase).toBe(true);
+      });
+
+      it('should set value to false if there is no lower case', () => {
+        callbackFn('TEST');
+        expect(component.hasLowerCase).toBe(false);
+      });
+
+      it('should set value to true if there is any upper case', () => {
+        callbackFn('Test');
+        expect(component.hasUpperCase).toBe(true);
+      });
+
+      it('should set value to false if there is no upper case', () => {
+        callbackFn('test');
+        expect(component.hasUpperCase).toBe(false);
+      });
+
+      it('should set value to true if there is any number', () => {
+        callbackFn('test1');
+        expect(component.hasNumber).toBe(true);
+      });
+
+      it('should set value to false if there is no number', () => {
+        callbackFn('test');
+        expect(component.hasNumber).toBe(false);
+      });
+
+      it('should set value to true if there is more than 8 characters', () => {
+        callbackFn('test1234');
+        expect(component.hasLength).toBe(true);
+      });
+
+      it('should set value to false if there is less than 8 characters', () => {
+        callbackFn('test14');
+        expect(component.hasLength).toBe(false);
+      });
+
+  });
 });
