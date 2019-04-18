@@ -362,4 +362,25 @@ describe('DocumentCommandService', () => {
     });
 
   });
+
+  describe('deleteDocument()', () => {
+    // TODO: @bruno impl
+
+    beforeEach(() => {
+
+    });
+
+    it('should execute the document deletion query', done => {
+
+    });
+
+    it('should execute the document deletion with correct parameters', done => {
+
+    });
+
+    it('should throw expected error when query failed', done => {
+
+    });
+
+  });
 });

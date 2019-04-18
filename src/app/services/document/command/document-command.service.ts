@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CreateDocumentInput, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, UpdateDocumentInput, DeleteDocumentInput } from '../../../../API';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { createDocument, updateDocument } from '../../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
@@ -143,5 +143,9 @@ export class DocumentCommandService {
       // 'version', 'ownerId', 'lastUpdatedBy'
     ];
     this.checkIfUuid(input, shouldBeUuids);
+  }
+
+  async deleteDocument(input: DeleteDocumentInput): Promise<any>  {
+    // TODO: @bruno impl
   }
 }

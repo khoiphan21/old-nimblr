@@ -385,7 +385,22 @@ export class DocumentContentComponent implements OnInit {
 
 
   deleteThisDocument() {
+    // TODO: @bruno impl
     console.log('delete document id: ', this.documentId);
+
+    try {
+      // send query to delete document
+
+
+
+
+    } catch (error) {
+
+    };
+
+
+
+
   }
 
 }

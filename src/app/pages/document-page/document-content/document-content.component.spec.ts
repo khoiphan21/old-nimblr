@@ -879,4 +879,22 @@ describe('DocumentContentComponent', () => {
     });
   });
 
+  describe('deleteThisDocument()', () => {
+    // TODO: @bruno impl
+
+
+    it('should call the command service', done => {
+
+    });
+
+    it('should call the command service with expected parameters', done => {
+
+    });
+
+    it('should throw expected error when query failed', done => {
+
+    });
+
+  });
+
 });
