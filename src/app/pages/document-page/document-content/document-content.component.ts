@@ -6,7 +6,10 @@ import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType, } from 'src/API';
+import {
+  BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,
+  DeleteDocumentInput,
+} from 'src/API';
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -381,24 +384,19 @@ export class DocumentContentComponent implements OnInit {
     });
   }
 
-
-  deleteThisDocument() {
+  async deleteThisDocument() {
     // TODO: @bruno impl
     console.log('delete document id: ', this.documentId);
 
     try {
       // send query to delete document
-
-
-
+      const input: DeleteDocumentInput = { id: this.documentId };
+      return await this.documentCommandService.deleteDocument(input);
 
     } catch (error) {
+      throw new Error('Failed to delete document: ' + error.message);
 
     };
-
-
-
-
   }
 
 }
