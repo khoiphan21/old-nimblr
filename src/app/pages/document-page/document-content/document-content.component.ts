@@ -154,7 +154,6 @@ export class DocumentContentComponent implements OnInit {
     this.blockQueryService.subscribeToUpdate(this.documentId);
   }
 
-
   /**
    * Create a new block and add it to the list of blocks in the document
    *
@@ -213,7 +212,6 @@ export class DocumentContentComponent implements OnInit {
   }
 
   private createAndSelectTextBlock(textBlockType: TextBlockType, input) {
-    // TODO: @bruno tbt
     switch (textBlockType) {
       case TextBlockType.HEADER:
         return this.blockFactoryService.createNewHeaderBlock(input);
