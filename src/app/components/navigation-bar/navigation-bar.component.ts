@@ -27,11 +27,10 @@ export class NavigationBarComponent implements OnInit {
 
   ngOnInit() {
     // TODO FIX THIS ISSUE ABOUT NAVIGATION BAR WHEN USER IS **NOT LOGGED IN**
-    this.documentId = 'c9e9f6ed-1365-4ff9-aacc-b23a08454fc4';
     this.navigationBarService.getNavigationBarStatus$().subscribe(status => {
       this.isNavigationTabShown = status;
     });
-    this.navigationBarService.getNavigationBar$(this.documentId).subscribe((navigationTabs: NavigationTabDocument[]) => {
+    this.navigationBarService.getNavigationBar$().subscribe((navigationTabs: NavigationTabDocument[]) => {
       // now do a filter
       this.navigationTabs = navigationTabs.filter(tab => {
         return tab.type !== DocumentType.SUBMISSION;

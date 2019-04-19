@@ -68,6 +68,7 @@ export class NavigationBarService {
   private async getForDocument(documentId: string) {
     return new Promise((resolve, reject) => {
       this.documentQueryService.getDocument$(documentId).subscribe(document => {
+        if (document === null) { return; }
         this.processDocuments([document]);
         resolve();
       }, error => {

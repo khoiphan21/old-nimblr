@@ -9,13 +9,18 @@
     .placeholder {
         z-index: -1;
     }
-    .text-input.header,
-    .placeholder.header {
+    .text-input.header {
         color: #4A4A4A;
-        font-size: 30px;
-        font-weight: 400;
+        font-size: 22px;
+        font-weight: 500;
         letter-spacing: normal;
         line-height: 24px;
-        margin-top: 30px;
+    }
+    .placeholder.header {
+        color: #4A4A4A;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: normal;
+        line-height: 24px;
     }
 }
