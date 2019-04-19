@@ -5,7 +5,8 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
-  OnInit
+  OnInit,
+  HostListener
 } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
@@ -116,6 +117,14 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   createTextBlockOnEnter(event: Event) {
     this.createBlock.emit(BlockType.TEXT);
+    event.preventDefault();
+  }
+
+  onPaste(event: ClipboardEvent) {
+    const pastedData = event.clipboardData.getData('Text');
+    this.value += pastedData;
+    this.setCaretToEnd();
+    this.updateValue();
     event.preventDefault();
   }
 }
