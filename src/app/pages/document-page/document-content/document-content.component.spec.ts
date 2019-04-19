@@ -25,7 +25,7 @@ import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('DocumentContentComponent', () => {
+describe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;
@@ -198,14 +198,13 @@ fdescribe('DocumentContentComponent', () => {
   });
 
   describe('retrieveDocumentData()', () => {
-    const getDocument$ = new Subject();
+    let getDocument$: Subject<any>;
     let document: Document;
     let getDocumentSpy: jasmine.Spy;
     let setupSubscriptionSpy: jasmine.Spy;
 
     beforeEach(() => {
-      // spy on the blockQueryService so that setup subscription won't be called
-      spyOn(component['blockQueryService'], 'subscribeToUpdate');
+      getDocument$ = new Subject();
       // setup mock data for testing
       document = documentFactory.convertRawDocument({ id, ownerId: uuidv4() });
       // setup spies
@@ -222,7 +221,7 @@ fdescribe('DocumentContentComponent', () => {
     it('should not update the properties if the version is stored', () => {
       spyOn<any>(component['versionService'], 'subscribeToRouter');
       component['versionService'].registerVersion(document.version);
-      spyOn<any>(component, 'updateStoredProperties');
+      spyOn<any>(component, 'updateStoredProperties').and.callThrough();
       // now emit and check
       getDocument$.next(document);
       expect(component['updateStoredProperties']).not.toHaveBeenCalled();
@@ -261,9 +260,12 @@ fdescribe('DocumentContentComponent', () => {
 
     });
 
-    it('should set isDocumentReady to be true', () => {
+    it('should set isDocumentReady to be true', done => {
       getDocument$.next(document);
-      expect(component.isDocumentReady).toBe(true);
+      setTimeout(() => {
+        expect(component.isDocumentReady).toBe(true);
+        done();
+      });
     });
 
     it('should not do anything if document returned is null', () => {
