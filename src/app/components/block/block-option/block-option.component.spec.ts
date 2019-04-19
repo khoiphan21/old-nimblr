@@ -128,9 +128,10 @@ describe('BlockOptionComponent', () => {
       expect(component['toggleSelectedOptionsStatus']).toHaveBeenCalledWith(false);
     });
 
-    it('should emit the right value to parent', () => {
-      component.switchBlockOptionsOff.subscribe((value) => {
+    it('should emit the right value to parent', done => {
+      component.switchBlockOptionsOff.subscribe(value => {
         expect(value).toEqual(false);
+        done();
       });
     });
   });

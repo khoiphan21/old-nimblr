@@ -83,7 +83,10 @@ describe('HeaderComponent', () => {
 
   describe('saveAsTemplate()', () => {
     it('should emit the event', done => {
-      component.saveAsTemplateEvent.subscribe(() => done());
+      component.saveAsTemplateEvent.subscribe(() => {
+        expect().nothing();
+        done();
+      });
       component.saveAsTemplate();
     });
   });

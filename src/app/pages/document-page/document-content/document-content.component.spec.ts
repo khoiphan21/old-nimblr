@@ -25,7 +25,7 @@ import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 
 const uuidv4 = require('uuid/v4');
 
-describe('DocumentContentComponent', () => {
+fdescribe('DocumentContentComponent', () => {
   let component: DocumentContentComponent;
   let fixture: ComponentFixture<DocumentContentComponent>;
   let documentFactory: DocumentFactoryService;

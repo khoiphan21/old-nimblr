@@ -271,6 +271,7 @@ describe('AccountImplService', () => {
 
     it('should resolve when signout successfully', async () => {
       await service.logout();
+      expect().nothing();
       // should be okay if control reaches here
     });
 
@@ -282,11 +283,12 @@ describe('AccountImplService', () => {
       expect(spy).toHaveBeenCalledWith(null);
     });
 
-    it('should reject with error emitted by signout if failed', () => {
+    it('should reject with error emitted by signout if failed', done => {
       const message = 'test err';
       signOutSpy.and.returnValue(Promise.reject(message));
       service.logout().catch(error => {
         expect(error).toBe(message);
+        done();
       });
     });
   });

@@ -216,7 +216,10 @@ describe('BlockQueryService', () => {
         });
         return Promise.all(observables.map(observable => {
           return awaitAndCheckObservable(observable);
-        })).then(() => done());
+        })).then(() => {
+          expect().nothing();
+          done();
+        });
       }).catch(error => processTestError('ERROR in BlockQueryService', error, done));
     });
 
