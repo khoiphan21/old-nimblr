@@ -84,6 +84,7 @@ describe('(Integration) NavigationBarService', () => {
             case originalCount + 1:
               const docId = navigationTabs[0].id;
               documentService.deleteDocument(docId).then(() => {
+                expect().nothing();
                 done();
               });
               break;

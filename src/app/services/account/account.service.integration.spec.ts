@@ -124,6 +124,7 @@ describe('(Integration) AccountImplService', () => {
     it('should login if the credentials are correct', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // should resolve
+        expect().nothing();
         done();
       }).catch(error => processTestError('failed to login', error, done));
     });
@@ -134,7 +135,10 @@ describe('(Integration) AccountImplService', () => {
 
       service.login(TEST_USERNAME, password).then(() =>
         processTestError(errorMessage, errorMessage, done)
-      ).catch(() => done());
+      ).catch(() => {
+        done();
+        expect().nothing();
+      });
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     it('should emit a new user object if successfully logged in', done => {
@@ -151,7 +155,7 @@ describe('(Integration) AccountImplService', () => {
 
   });
 
-  describe('Logout()', () => {
+  describe('logout()', () => {
     const user: User = {
       id: 'abc123',
       firstName: 'tester',
@@ -240,6 +244,7 @@ describe('(Integration) AccountImplService', () => {
         service.isUserReady().then(() => {
           fail('error must occur');
         }).catch(() => {
+          expect().nothing();
           done();
         });
       }).catch(error => processTestError('unable to sign out', error, done));
