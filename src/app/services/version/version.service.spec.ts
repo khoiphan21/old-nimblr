@@ -25,6 +25,8 @@ describe('VersionService', () => {
     let subscribeSpy: jasmine.Spy;
 
     beforeEach(() => {
+      // tslint:disable:no-string-literal
+      service['isRouterSubscriptionReady'] = false;
       subscribeSpy = spyOn<any>(service, 'subscribeToRouter');
     });
 
@@ -51,12 +53,16 @@ describe('VersionService', () => {
 
   describe('subscribeToRouter()', () => {
     let handler: any;
+    const version = '1234';
 
     beforeEach(() => {
       const eventSpy = spyOn(service['router'].events, 'forEach');
       service['subscribeToRouter']();
       handler = eventSpy.calls.mostRecent().args[0];
-      service.registerVersion('test');
+
+      // Reset the versions
+      service['myVersions'].clear();
+      service['myVersions'].add(version);
     });
     it('should clear the versions if the event is of type NavigationStart', () => {
       const event = new NavigationStart(1234, 'abcd');
