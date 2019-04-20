@@ -10,6 +10,7 @@ import { processTestError } from '../../../classes/test-helpers.spec';
 import { MockAPIDataFactory } from '../../graphQL/mockData';
 import { getBlock } from '../../../../graphql/queries';
 import { RouterTestingModule } from '@angular/router/testing';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -23,12 +24,15 @@ describe('BlockQueryService', () => {
   let subscriptionSpy: jasmine.Spy;
   let backendSubject: Subject<any>;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(BlockQueryService);
 
     // Setup testing data

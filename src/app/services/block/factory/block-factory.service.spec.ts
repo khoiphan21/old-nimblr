@@ -7,6 +7,7 @@ import { isUuid } from '../../../classes/helpers';
 import { BlockType, QuestionType, TextBlockType } from 'src/API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -14,9 +15,11 @@ describe('BlockFactoryService', () => {
   let factory: BlockFactoryService;
   let input: CreateNewBlockInput;
 
-
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+  
+  beforeEach(() => {
     factory = TestBed.get(BlockFactoryService);
     input = {
       documentId: uuidv4(),

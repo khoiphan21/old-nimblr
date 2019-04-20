@@ -3,11 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { VersionService } from './version.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavigationStart } from '@angular/router';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('VersionService', () => {
   let service: VersionService;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])

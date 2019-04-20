@@ -9,6 +9,7 @@ import { BlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CreateBlockEvent } from './createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -26,7 +27,8 @@ describe('BlockComponent', () => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  beforeEach(async(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         BlockComponent,
@@ -39,7 +41,7 @@ describe('BlockComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockComponent);

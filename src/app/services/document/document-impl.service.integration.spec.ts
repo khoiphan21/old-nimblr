@@ -15,6 +15,7 @@ import { Document } from 'src/app/classes/document/document';
 import { User } from 'src/app/classes/user';
 import { DocumentCommandService } from './command/document-command.service';
 import { TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -24,7 +25,7 @@ describe('(Integration) DocumentService', () => {
   let accountService: AccountService;
   let graphQlService: GraphQLService;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [
         DocumentService
@@ -34,6 +35,9 @@ describe('(Integration) DocumentService', () => {
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
 
     accountService = TestBed.get(AccountService);
     service = TestBed.get(DocumentService);

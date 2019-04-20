@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment';
 import { DocumentCommandService } from '../document/command/document-command.service';
 import { CreateDocumentInput, SharingStatus, DocumentType } from 'src/API';
 import { TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -20,13 +21,16 @@ describe('(Integration) NavigationBarService', () => {
   let documentCommandService: DocumentCommandService;
   let service: NavigationBarService;
   let documentFactory: DocumentFactoryService;
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         ServicesModule,
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
     accountService = TestBed.get(AccountService);
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);

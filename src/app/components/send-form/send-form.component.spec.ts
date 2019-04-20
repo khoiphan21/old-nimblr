@@ -3,12 +3,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SendFormComponent } from './send-form.component';
 import { ResponsiveModule } from 'ngx-responsive';
 import { FormsModule } from '@angular/forms';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('SendFormComponent', () => {
   let component: SendFormComponent;
   let fixture: ComponentFixture<SendFormComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [SendFormComponent],
       imports: [
@@ -17,7 +18,7 @@ describe('SendFormComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SendFormComponent);

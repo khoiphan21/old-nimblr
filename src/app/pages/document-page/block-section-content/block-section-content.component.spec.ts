@@ -6,18 +6,19 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { BlockType } from 'src/API';
 import { take } from 'rxjs/operators';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('BlockSectionContentComponent', () => {
   let component: BlockSectionContentComponent;
   let fixture: ComponentFixture<BlockSectionContentComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ BlockSectionContentComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockSectionContentComponent);

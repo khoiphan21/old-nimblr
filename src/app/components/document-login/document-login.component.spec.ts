@@ -5,12 +5,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
 import { RouterTestingModule } from '@angular/router/testing';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('DocumentLoginComponent', () => {
   let component: DocumentLoginComponent;
   let fixture: ComponentFixture<DocumentLoginComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [DocumentLoginComponent],
       imports: [
@@ -25,7 +26,7 @@ describe('DocumentLoginComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentLoginComponent);

@@ -11,6 +11,7 @@ import { updateUser } from 'src/graphql/mutations';
 import { getUser } from 'src/graphql/queries';
 import { UserFactoryService } from '../user/user-factory.service';
 import { skip } from 'rxjs/operators';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -36,7 +37,7 @@ describe('AccountImplService', () => {
     await Auth.signOut();
   });
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [AccountServiceImpl],
       imports: [
@@ -44,6 +45,9 @@ describe('AccountImplService', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
   });

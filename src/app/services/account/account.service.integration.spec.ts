@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { deleteAppUser, adminDeleteCognitoUser, adminConfirmUser, TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -24,7 +25,7 @@ describe('(Integration) AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [AccountServiceImpl],
       imports: [
@@ -33,6 +34,9 @@ describe('(Integration) AccountImplService', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
   });

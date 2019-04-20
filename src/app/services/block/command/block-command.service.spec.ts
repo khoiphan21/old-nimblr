@@ -7,9 +7,9 @@ import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BlockFactoryService } from '../factory/block-factory.service';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
-
 
 describe('BlockCommandService', () => {
   let service: BlockCommandService;
@@ -22,12 +22,15 @@ describe('BlockCommandService', () => {
   let textBlockBackendResponse: any;
   let questionBlockBackendResponse: any;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
 
     // Setup the input to be used in the tests
     textInput = {
