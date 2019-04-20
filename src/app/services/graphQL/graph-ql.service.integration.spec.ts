@@ -12,7 +12,7 @@ import { LoginHelper } from '../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
-describe('GraphQLService', () => {
+describe('(Integration) GraphQLService', () => {
   TestBed.configureTestingModule({});
 
   let service: GraphQLService;

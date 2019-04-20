@@ -107,9 +107,6 @@ describe('GraphQlCommandService -Integration Tests', () => {
       expect((initialValue !== afterValue)).toBeTruthy();
     });
 
-    it('should resend the same query after timeout if there is no response from cloud API', () => {
-      // skip for now
-    });
   });
 
 });

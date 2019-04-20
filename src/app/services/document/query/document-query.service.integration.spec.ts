@@ -86,6 +86,7 @@ describe('(Integration) DocumentQueryService', () => {
           // Check for notification
           if (notifiedDocument.title === title) {
             // received the latest update
+            expect().nothing();
             done();
           } // otherwise, continue waiting for more notifications
         });

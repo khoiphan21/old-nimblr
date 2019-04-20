@@ -21,8 +21,7 @@ export class AccountServiceImpl implements AccountService {
 
   constructor(
     private userFactory: UserFactoryService,
-    private graphQLService: GraphQLService,
-    private router: Router
+    private graphQLService: GraphQLService
   ) {
   }
 

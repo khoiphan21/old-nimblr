@@ -3,6 +3,7 @@ import { BlockOptionComponent } from './block-option.component';
 import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
 import { CreateBlockEvent } from '../createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -11,12 +12,12 @@ describe('BlockOptionComponent', () => {
   let fixture: ComponentFixture<BlockOptionComponent>;
   let toggleSpy: jasmine.Spy;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [BlockOptionComponent]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockOptionComponent);
@@ -91,10 +92,13 @@ describe('BlockOptionComponent', () => {
       expect(component['toggleSelectedOptionsStatus']).toHaveBeenCalledWith(false);
     });
 
-    it('should emit the right value to parent', () => {
+    it('should emit the right value to parent', done => {
       component.switchBlockOptionsOff.subscribe((value) => {
         expect(value).toEqual(false);
+        done();
       });
+      component.isAddBlockContainerShown = true;
+      component.hideAddBlockContainer();
     });
   });
 
@@ -128,10 +132,14 @@ describe('BlockOptionComponent', () => {
       expect(component['toggleSelectedOptionsStatus']).toHaveBeenCalledWith(false);
     });
 
-    it('should emit the right value to parent', () => {
-      component.switchBlockOptionsOff.subscribe((value) => {
+    it('should emit the right value to parent', done => {
+      component.switchBlockOptionsOff.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(false);
+        done();
       });
+      // First set this to true, otherwise it will not run the code
+      component.isMenuSelectionContainerShown = true;
+      component.hideMenuSelectionContainer();
     });
   });
 

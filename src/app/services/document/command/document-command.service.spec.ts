@@ -5,6 +5,7 @@ import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus }
 import { createDocument } from 'src/graphql/mutations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../factory/document-factory.service';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 interface RunTestInput {
@@ -21,13 +22,16 @@ describe('DocumentCommandService', () => {
   let querySpy: jasmine.Spy;
   let input: any;
 
-  /* tslint:disable:no-string-literal */
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  /* tslint:disable:no-string-literal */
+  beforeEach(() => {
     input = {
       type: DocumentType.GENERIC,
       version: uuidv4(),

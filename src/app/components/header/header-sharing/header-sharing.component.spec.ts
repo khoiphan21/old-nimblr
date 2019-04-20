@@ -3,18 +3,20 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderSharingComponent } from './header-sharing.component';
 import { SharingStatus } from 'src/API';
 import { ResponsiveModule } from 'ngx-responsive';
+import { configureTestSuite } from 'ng-bullet';
+
 
 describe('HeaderSharingComponent', () => {
   let component: HeaderSharingComponent;
   let fixture: ComponentFixture<HeaderSharingComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [HeaderSharingComponent],
       imports: [ResponsiveModule.forRoot()]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderSharingComponent);

@@ -36,7 +36,10 @@ describe('HeaderOptionsComponent', () => {
 
   describe('saveAsTemplate()', () => {
     it('should emit the saveAsTemplateEvent', done => {
-      component.saveAsTemplateEvent.pipe(take(1)).subscribe(() => done());
+      component.saveAsTemplateEvent.pipe(take(1)).subscribe(value => {
+        expect().nothing();
+        done();
+      });
       component.saveAsTemplate();
     });
     it('should emit the event for hiding to option', done => {

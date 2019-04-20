@@ -26,6 +26,7 @@ describe('(Integration) LoginHelper', () => {
 
   describe('createTestUser()', () => {
     it('should create a new test user', async () => {
+      expect().nothing();
       try {
         await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
       } catch (error) {

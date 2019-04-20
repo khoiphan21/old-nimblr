@@ -1,17 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DocumentOptionsComponent } from './document-options.component';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('DocumentOptionsComponent', () => {
   let component: DocumentOptionsComponent;
   let fixture: ComponentFixture<DocumentOptionsComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ DocumentOptionsComponent ]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentOptionsComponent);

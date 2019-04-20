@@ -4,19 +4,21 @@ import { QuestionOptionComponent } from './question-option.component';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { QuestionType } from 'src/API';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('QuestionOptionComponent', () => {
   let component: QuestionOptionComponent;
   let fixture: ComponentFixture<QuestionOptionComponent>;
   let emitValueSpy: jasmine.Spy;
-  beforeEach(async(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ QuestionOptionComponent ],
       imports: [ReactiveFormsModule, FormsModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(QuestionOptionComponent);

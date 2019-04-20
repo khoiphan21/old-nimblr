@@ -170,7 +170,8 @@ describe('RegisterPageComponent', () => {
       };
       component.createAccountInDatabase().then(() => {
         processTestError('should not create account', '', done);
-      }).catch(error => {
+      }).catch(() => {
+        expect().nothing();
         done();
       });
     });
@@ -248,21 +249,23 @@ describe('RegisterPageComponent', () => {
       });
     });
 
-    it('should not should create a user if there is any error in the process - (Auth.signIn)', done => {
+    it('should not create a user if there is any error in the process - (Auth.signIn)', done => {
       spyOn(Auth, 'signIn').and.returnValue(Promise.reject());
       component.getCognitoUserDetails().then(() => {
         processTestError('should not create account', 'Failed in Auth.signIn()', done);
-      }).catch(error => {
+      }).catch(() => {
+        expect().nothing();
         done();
       });
     });
 
-    it('should not should create a user if there is any error in the process - (Auth.currentAuthenticatedUser)', done => {
+    it('should not create a user if there is any error in the process - (Auth.currentAuthenticatedUser)', done => {
       spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
       spyOn(Auth, 'currentAuthenticatedUser').and.returnValue(Promise.reject());
       component.getCognitoUserDetails().then(() => {
         processTestError('should not create account', 'Failed in Auth.currentAuthenticatedUser()', done);
-      }).catch(error => {
+      }).catch(() => {
+        expect().nothing();
         done();
       });
     });

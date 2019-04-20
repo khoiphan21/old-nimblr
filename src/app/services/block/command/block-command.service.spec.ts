@@ -7,9 +7,9 @@ import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BlockFactoryService } from '../factory/block-factory.service';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
-
 
 describe('BlockCommandService', () => {
   let service: BlockCommandService;
@@ -22,12 +22,15 @@ describe('BlockCommandService', () => {
   let textBlockBackendResponse: any;
   let questionBlockBackendResponse: any;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
 
     // Setup the input to be used in the tests
     textInput = {
@@ -453,23 +456,22 @@ describe('BlockCommandService', () => {
       });
 
       describe('execution in createTextBlock()', () => {
-        it('should resolve response from backend', () => {
-          service.createBlock(headerInput).then(data => {
-            expect(data).toEqual(questionBlockBackendResponse);
-          });
+        it('should resolve response from backend', async () => {
+          const data = await service.createBlock(headerInput);
+          expect(data).toEqual(questionBlockBackendResponse);
         });
 
-        it('should call query method', () => {
-          service.createBlock(headerInput).then(() => {
-            expect(graphQlSpy.calls.count()).toBe(1);
-          });
+        it('should call query method', async () => {
+          await service.createBlock(headerInput);
+          expect(graphQlSpy.calls.count()).toBe(1);
         });
 
-        it('should reject promise when query method failed', () => {
+        it('should reject promise when query method failed', done => {
           const expectedError = 'test err';
           graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));
           service.createBlock(headerInput).catch(err => {
             expect(err.message).toEqual(expectedError);
+            done();
           });
         });
       });
