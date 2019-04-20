@@ -136,8 +136,8 @@ describe('(Integration) AccountImplService', () => {
       service.login(TEST_USERNAME, password).then(() =>
         processTestError(errorMessage, errorMessage, done)
       ).catch(() => {
-        done();
         expect().nothing();
+        done();
       });
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
