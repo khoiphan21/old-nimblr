@@ -214,11 +214,6 @@ describe('AccountImplService', () => {
       spyGetAppUser.and.returnValue(Promise.resolve(mockUserData));
     });
 
-    it('should always return a promise', () => {
-      const data = service.login('', '');
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
     it('should call signIn api', async () => {
       await service.login('', '');
       expect(spyAuth.calls.count()).toBe(1);
@@ -367,14 +362,9 @@ describe('AccountImplService', () => {
       spyAPI = spyOn(API, 'graphql').and.returnValue(Promise.resolve(mockUser));
     });
 
-    it('should return promise', () => {
-      const data = service.update(mockUser);
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
     it('should call currentAuthenticatedUser first', async () => {
-      service.update(mockUser);
-      expect(spyCurrentAuthUser.calls.count()).toBe(1);
+      await service.update(mockUser);
+      expect(spyCurrentAuthUser).toHaveBeenCalled();
     });
 
     it('should call updateUserAttributes with the right args', async () => {
