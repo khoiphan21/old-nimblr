@@ -210,8 +210,7 @@ describe('BlockTextComponent', () => {
         documentId: component.block.documentId,
         lastUpdatedBy: component.block.lastUpdatedBy,
         value: component.value,
-        createdAt: component.block.createdAt,
-        textBlockType: component.block.textBlockType
+        createdAt: component.block.createdAt
       });
     });
 
@@ -283,17 +282,20 @@ describe('BlockTextComponent', () => {
     component.createTextBlockOnEnter(event);
   });
 
-  // TODO: Help fixing this
   describe('onPaste()', () => {
-    let pasteEvent: ClipboardEvent;
+    let pasteEvent: any;
     let setCaretSpy;
     let updateValueSpy;
     const value = 'test';
     beforeEach(() => {
       setCaretSpy = spyOn(component, 'setCaretToEnd');
       updateValueSpy = spyOn(component, 'updateValue');
-      pasteEvent = new ClipboardEvent('paste', {clipboardData: new DataTransfer()});
-      pasteEvent.clipboardData.setData('Text', value);
+      pasteEvent = {
+        preventDefault: () => {},
+        clipboardData: {
+          getData: () => value
+        }
+      };
     });
 
     it('should call updateValue()', () => {
