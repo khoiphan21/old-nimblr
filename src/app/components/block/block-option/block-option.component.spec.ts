@@ -133,6 +133,7 @@ describe('BlockOptionComponent', () => {
         expect(value).toEqual(false);
         done();
       });
+      component.hideMenuSelectionContainer();
     });
   });
 

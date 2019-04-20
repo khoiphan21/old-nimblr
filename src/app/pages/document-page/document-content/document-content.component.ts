@@ -6,7 +6,7 @@ import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,  } from 'src/API';
+import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType, } from 'src/API';
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -100,28 +100,32 @@ export class DocumentContentComponent implements OnInit {
     });
   }
 
-  private retrieveDocumentData() {
-    // get the id from the route and then retrieve the document observable
-    this.document$ = this.route.paramMap.pipe(
-      switchMap((params: ParamMap) =>
-        this.documentQueryService.getDocument$(params.get('id'))
-      )
-    );
-    // subscribe to and process the document from the observable
-    this.document$.subscribe((document: Document) => {
-      if (document === null) { return; }
-      this.checkIsChildDocument();
+  private async retrieveDocumentData() {
+    return new Promise((resolve, reject) => {
+      // get the id from the route and then retrieve the document observable
+      this.document$ = this.route.paramMap.pipe(
+        switchMap((params: ParamMap) =>
+          this.documentQueryService.getDocument$(params.get('id'))
+        )
+      );
+      // subscribe to and process the document from the observable
+      this.document$.subscribe((document: Document) => {
+        if (document === null) { return; }
+        this.checkIsChildDocument();
 
-      if (!this.versionService.isRegistered(document.version)) {
-        this.updateStoredProperties(document);
-      }
+        if (!this.versionService.isRegistered(document.version)) {
+          this.updateStoredProperties(document);
+        }
 
-      // now set the flag for document ready to be true for rendering
-      this.isDocumentReady = true;
+        // now set the flag for document ready to be true for rendering
+        this.isDocumentReady = true;
+        resolve();
 
-      this.setupBlockUpdateSubscription();
-    }, error => {
-      console.error(`DocumentPage failed to get document: ${error.message}`);
+        this.setupBlockUpdateSubscription();
+      }, error => {
+        reject(`DocumentPage failed to get document: ${error}`);
+      });
+
     });
 
   }
