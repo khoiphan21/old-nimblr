@@ -326,9 +326,7 @@ describe('DocumentContentComponent', () => {
     let blockQuerySpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
-    const mockBlockInfo: CreateBlockEvent = {
-      type: BlockType.TEXT,
-    };
+    let mockBlockInfo: CreateBlockEvent;
 
     beforeEach(() => {
 
@@ -340,6 +338,9 @@ describe('DocumentContentComponent', () => {
       user = userFactory.createUser(
         uuidv4(), 'first', 'last', 'email'
       );
+      mockBlockInfo = {
+        type: BlockType.TEXT,
+      };
 
       // Set the component's data to the mock data
       component['currentUser'] = user;
@@ -422,7 +423,7 @@ describe('DocumentContentComponent', () => {
       });
 
       describe('[HAPPY PATH]', () => {
-        it('should resolve a TextBlock if successful', () => {
+        it('should resolve a TextBlock if successful', async () => {
           expect(block instanceof TextBlock).toBe(true);
           // No need to check for any other values, as they are checked in the
           // TextBlock class and the factory already
