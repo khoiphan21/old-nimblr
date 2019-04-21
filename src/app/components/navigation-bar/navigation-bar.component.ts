@@ -5,7 +5,10 @@ import { slideLeftToRightAnimation, fadeInOutAnimation } from 'src/app/animation
 import { User } from 'src/app/classes/user';
 import { AccountService } from 'src/app/services/account/account.service';
 import { DocumentType } from 'src/API';
-
+import { CreateDocumentInput, SharingStatus } from '../../../API';
+import { Router } from '@angular/router';
+import { DocumentCommandService } from '../../services/document/command/document-command.service';
+const uuidv4 = require('uuid/v4');
 @Component({
   selector: 'app-navigation-bar',
   templateUrl: './navigation-bar.component.html',
@@ -21,8 +24,10 @@ export class NavigationBarComponent implements OnInit {
   navigationTabs: NavigationTabDocument[] = [];
 
   constructor(
+    private documentCommandService: DocumentCommandService,
     private navigationBarService: NavigationBarService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -47,6 +52,19 @@ export class NavigationBarComponent implements OnInit {
 
   private processInitialName(fName: string) {
     this.initialName = fName.charAt(0);
+  }
+
+  async createNewDocument() {
+    const user = await this.accountService.isUserReady();
+    const input: CreateDocumentInput = {
+      version: uuidv4(),
+      type: DocumentType.GENERIC,
+      ownerId: user.id,
+      lastUpdatedBy: user.id,
+      sharingStatus: SharingStatus.PRIVATE
+    };
+    const document = await this.documentCommandService.createDocument(input);
+    this.router.navigate([`/document/${document.id}`]);
   }
 
 }

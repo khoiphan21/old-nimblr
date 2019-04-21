@@ -12,13 +12,17 @@ import { MockAccountService } from 'src/app/services/account/account-impl.servic
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { ResponsiveModule } from 'ngx-responsive';
-import { DocumentType } from '../../../API';
+import { DocumentType, CreateDocumentInput, SharingStatus } from '../../../API';
+import { isUuid } from '../../classes/helpers';
+import { UUID } from '../../services/document/command/document-command.service';
 
+const uuidv4 = require('uuid/v4');
 // tslint:disable:no-string-literal
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let userFactory: UserFactoryService;
+  let userId: UUID;
 
   // spies
   let getStatusSpy: jasmine.Spy;
@@ -57,16 +61,18 @@ describe('NavigationBarComponent', () => {
     navigationBar$ = new BehaviorSubject([]);
     getStatusSpy = spyOn(component['navigationBarService'], 'getNavigationBarStatus$');
     getStatusSpy.and.returnValue(new BehaviorSubject(true));
-
     getNavBarSpy = spyOn(component['navigationBarService'], 'getNavigationBar$');
     getNavBarSpy.and.returnValue(navigationBar$);
-
     accountSpy = spyOn(component['accountService'], 'getUser$');
     accountSpy.and.returnValue(new BehaviorSubject(null));
 
     // Setup component
     component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
     component.navigationTabs = [];
+    userId = uuidv4();
+    spyOn(component['accountService'], 'isUserReady').and.returnValue(
+      Promise.resolve({ id: userId })
+    );
 
     // call to render
     fixture.detectChanges();
@@ -122,5 +128,48 @@ describe('NavigationBarComponent', () => {
     getNavBarSpy.and.returnValue(new BehaviorSubject(expectedResult));
     component.ngOnInit();
     expect(component.navigationTabs).toEqual(expectedResult);
+  });
+
+  describe('createNewDocument()', () => {
+    let routerSpy: jasmine.Spy;
+    let commandService: jasmine.Spy;
+    const id = 'abcde';
+
+    beforeEach(() => {
+      routerSpy = spyOn(component['router'], 'navigate');
+      commandService = spyOn(component['documentCommandService'], 'createDocument');
+      commandService.and.returnValue({ id });
+    });
+
+    describe('calls to createDocument()', () => {
+      let args: CreateDocumentInput;
+      beforeEach(async () => {
+        await component.createNewDocument();
+        args = commandService.calls.mostRecent().args[0];
+      });
+      it('should call createDocument() from Document Service', async () => {
+        expect(commandService).toHaveBeenCalled();
+      });
+      it('should call with a uuid version', async () => {
+        expect(isUuid(args.version)).toBe(true);
+      });
+      it('should call with a GENERIC type', async () => {
+        expect(args.type).toBe(DocumentType.GENERIC);
+      });
+      it('should call with the right ownerId', async () => {
+        expect(args.ownerId).toBe(userId);
+      });
+      it('should call with the right lastUpdatedBy', async () => {
+        expect(args.lastUpdatedBy).toBe(userId);
+      });
+      it('should call with PRIVATE sharing status', async () => {
+        expect(args.sharingStatus).toBe(SharingStatus.PRIVATE);
+      });
+    });
+
+    it('should navigate to the right "document" page when done', async () => {
+      await component.createNewDocument();
+      expect(routerSpy).toHaveBeenCalledWith([`/document/abcde`]);
+    });
   });
 });
