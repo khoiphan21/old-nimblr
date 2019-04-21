@@ -1,12 +1,29 @@
 <div class="row no-pad">
-    <section class="header-left mobile">
-        <i class="fas fa-bars" (click)="showNavigationBar()"></i>
-        <span *ngIf="currentUrl === 'document'">The alchemist</span>
+    <section class="header-left pl-4">
+        <i class="fas fa-bars mobile" (click)="showNavigationBar()"></i>
+        <span *ngIf="currentUrl === 'document'">{{docTitle}}</span>
     </section>
-    <section class="document-tab pr-4" *ngIf="currentUrl === 'document'">
-        <span class="mobile" (click)="isSharingShown = !isSharingShown"><i class="fas fa-share-alt"></i></span>
-        <span class="share clickable desktop" (click)="isSharingShown = !isSharingShown">Share</span>
-        <i class="fas fa-ellipsis-h clickable" (click)="isOptionShown = !isOptionShown"></i>
+    <section class="document-tab" *ngIf="currentUrl === 'document'">
+        <ng-container *responsive="{sizes:{min:576, max:2000}}">
+            <div class="option clickable" (click)="isSharingShown = !isSharingShown">
+                <object data="./assets/icons/share.svg" type="image/svg+xml">
+                    <i class="fas fa-share-alt"></i>
+                </object>
+                <span>Share</span>
+            </div>
+            <div class="option clickable mt-4" (click)="isOptionShown = !isOptionShown">
+                <i class="fas fa-ellipsis-h"></i>
+                <span>Options</span>
+            </div>
+        </ng-container>
+        <ng-container *responsive="{sizes:{min:0,max:575}}">
+            <span (click)="isSharingShown = !isSharingShown"> 
+                <object data="./assets/icons/share.svg" type="image/svg+xml">
+                    <i class="fas fa-share-alt"></i>
+                </object>
+            </span>
+            <i class="fas fa-ellipsis-h clickable pr-4" (click)="isOptionShown = !isOptionShown"></i>
+        </ng-container>
         <app-header-sharing [sharingStatus]="sharingStatus" [isSharingShown]="isSharingShown" (showInviteEvent)="showInvite()" (hideSharingEvent)="isSharingShown = $event" (changeSharingStatus)="changeSharingStatus($event)"></app-header-sharing>
         <app-header-options [documentType]="documentType" [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event" (saveAsTemplateEvent)="saveAsTemplate()"></app-header-options>
     </section>

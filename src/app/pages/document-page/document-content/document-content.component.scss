@@ -67,6 +67,7 @@ section.content {
 @include media(lg) {
     section.content {
         height: 100%;
+        margin-top: 100px;
         div.title {
             font-size: 2.2rem;
             padding: 0 $desktop-document-horizontal-padding 20px $desktop-document-horizontal-padding;
