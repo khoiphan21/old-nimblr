@@ -5,8 +5,7 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
-  OnInit,
-  HostListener
+  OnInit
 } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';

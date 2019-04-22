@@ -12,6 +12,7 @@ import { CreateBlockEvent } from '../createBlockEvent';
 
 export class BlockOptionComponent implements OnChanges {
   showBlock = false;
+  isConverterShown = false;
   @Input() blockId: string;
   @Input() mouseFocusingBlock: string;
   @Input() isChildDoc: boolean;
@@ -46,6 +47,7 @@ export class BlockOptionComponent implements OnChanges {
       this.isAddBlockContainerShown = false;
       this.toggleSelectedOptionsStatus(false);
       this.switchBlockOptionsOff.emit(false);
+      this.isConverterShown = false;
     }
   }
 
@@ -59,6 +61,7 @@ export class BlockOptionComponent implements OnChanges {
       this.isMenuSelectionContainerShown = false;
       this.toggleSelectedOptionsStatus(false);
       this.switchBlockOptionsOff.emit(false);
+      this.isConverterShown = false;
     }
   }
 
