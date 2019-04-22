@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderComponent } from './header.component';
 import { AccountService } from '../../services/account/account.service';
@@ -8,6 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { configureTestSuite } from 'ng-bullet';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharingStatus } from 'src/API';
+import { ResponsiveModule } from 'ngx-responsive';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -18,7 +19,8 @@ describe('HeaderComponent', () => {
         HeaderComponent
       ],
       imports: [
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule.withRoutes([]),
+        ResponsiveModule.forRoot()
       ],
       providers: [
         DocumentService,
