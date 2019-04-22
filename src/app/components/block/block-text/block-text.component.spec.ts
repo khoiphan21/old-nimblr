@@ -210,7 +210,8 @@ describe('BlockTextComponent', () => {
         documentId: component.block.documentId,
         lastUpdatedBy: component.block.lastUpdatedBy,
         value: component.value,
-        createdAt: component.block.createdAt
+        createdAt: component.block.createdAt,
+        textBlockType: component.block.textBlockType
       });
     });
 

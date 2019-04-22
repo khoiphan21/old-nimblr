@@ -94,6 +94,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
           lastUpdatedBy: this.block.lastUpdatedBy,
           value: this.value,
           createdAt: this.block.createdAt,
+          textBlockType: this.block.textBlockType
         });
         this.blockCommandService.updateBlock(updatedBlock).then(() => {
           resolve(updatedBlock);
