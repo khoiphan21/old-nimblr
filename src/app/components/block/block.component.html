@@ -1,5 +1,5 @@
 <ng-container *ngIf="block" [ngSwitch]=block.type>
-    <div class="block" [ngClass]="{'child-document': isChildDoc}">
+    <div class="block" [ngClass]="{'child-document': isChildDoc, 'header-block': blockStyle === 'HEADER'}">
         <ng-content></ng-content>
         <ng-container *ngSwitchCase="'TEXT'">
             <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>

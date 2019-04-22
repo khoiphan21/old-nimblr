@@ -5,6 +5,10 @@ div.block {
     padding: 0 $mobile-frame-horizontal-padding;
 }
 
+.header-block {
+    margin-top: 20px;
+}
+
 @include media(lg) {
     .block.child-document {
         padding: 0 $desktop-child-document-horizontal-padding;

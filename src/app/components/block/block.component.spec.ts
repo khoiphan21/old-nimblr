@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BlockComponent } from './block.component';
+import { BlockComponent, BlockStyle } from './block.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -10,6 +10,7 @@ import { Block } from 'src/app/classes/block/block';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CreateBlockEvent } from './createBlockEvent';
 import { configureTestSuite } from 'ng-bullet';
+import { TextBlockType } from '../../../API';
 
 const uuidv4 = require('uuid/v4');
 
@@ -26,6 +27,7 @@ describe('BlockComponent', () => {
     value: 'test',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    textBlockType: TextBlockType.TEXT
   };
 
   configureTestSuite(() => {
@@ -140,6 +142,22 @@ describe('BlockComponent', () => {
         done();
       });
       component.deleteTransmitter(id);
+    });
+  });
+
+  describe('styleBlock()', () => {
+
+    it('should not set the style if it is TEXT type', () => {
+      component.block = blockFactoryService.createAppBlock(rawData);
+      component['styleBlock']();
+      expect(component.blockStyle).toEqual(undefined);
+    });
+
+    it('should set the style if it is HEADER type', () => {
+      rawData.textBlockType = TextBlockType.HEADER;
+      component.block = blockFactoryService.createAppBlock(rawData);
+      component['styleBlock']();
+      expect(component.blockStyle).toEqual(BlockStyle.HEADER);
     });
   });
 });
