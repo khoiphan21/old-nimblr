@@ -363,7 +363,7 @@ describe('DocumentCommandService', () => {
 
   });
 
-  fdescribe('deleteDocument()', () => {
+  describe('deleteDocument()', () => {
     // TODO: @bruno impl
     let input: DeleteDocumentInput;
 

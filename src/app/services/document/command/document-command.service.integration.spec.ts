@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus, DeleteDocumentInput } from '../../../../API';
 import { deleteDocument } from '../../../../graphql/mutations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { configureTestSuite } from 'ng-bullet';
@@ -76,6 +76,36 @@ describe('(Integration) DocumentCommandService', () => {
 
       // Delete it
       await graphQlService.query(deleteDocument, { input: { id: createdDocument.id } });
+    });
+
+  });
+
+  describe('deleteDocument', () => {
+    let deleteInput: DeleteDocumentInput;
+
+    it('should delete a specific document', async () => {
+      const testId = 'test123';
+
+      // create a document with these parameters
+      input.id = testId;
+      const creationResponse = await service.createDocument(input);
+      expect(creationResponse).toBeTruthy();
+
+      // QUESTION: as far as i can see in previous integration tests, we implemented the 
+      // actual deletion function on graphql to test things. But after the deletion is done, 
+      // they call an be replaced by this function. My question is, would it be quicker and easier
+      // if we implemnet all these CRUD functions before writing any integration test or even before
+      // we actually need these functions. We know that we need a 'deletion' function anyways.
+      // So we dont have to waste time writing the implmentation in integration tests?
+
+      // delete this document
+      deleteInput = {
+        id: testId
+      };
+      const deletionResponse = await service.deleteDocument(deleteInput);
+
+      // check whether document exist
+      expect(deletionResponse).toBeTruthy();
     });
 
   });
