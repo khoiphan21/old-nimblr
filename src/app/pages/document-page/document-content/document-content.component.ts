@@ -385,9 +385,6 @@ export class DocumentContentComponent implements OnInit {
   }
 
   async deleteThisDocument() {
-    // TODO: @bruno impl
-    console.log('delete document id: ', this.documentId);
-
     try {
       // send query to delete document
       const input: DeleteDocumentInput = { id: this.documentId };

@@ -910,14 +910,6 @@ describe('DocumentContentComponent', () => {
         done();
       });
     });
-
-    it('should not exist uncaught err', () => {
-      spyDeleteDocument.and.returnValue(Promise.reject(new Error('del failed')));
-      component.deleteThisDocument().catch(err => {
-        // TODO: @bruno impl
-        fail('not impl');
-      });
-    });
   });
 
 });

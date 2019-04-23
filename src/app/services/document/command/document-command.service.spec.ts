@@ -364,7 +364,6 @@ describe('DocumentCommandService', () => {
   });
 
   describe('deleteDocument()', () => {
-    // TODO: @bruno impl
     let input: DeleteDocumentInput;
 
     beforeEach(() => {

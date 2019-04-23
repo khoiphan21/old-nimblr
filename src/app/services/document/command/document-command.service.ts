@@ -148,7 +148,6 @@ export class DocumentCommandService {
   }
 
   async deleteDocument(input: DeleteDocumentInput): Promise<any> {
-    // TODO: @bruno impl
     try {
       const response: any = await this.graphQlService.query(deleteDocument, { input });
       return response.data.deleteDocument;
