@@ -911,8 +911,12 @@ describe('DocumentContentComponent', () => {
       });
     });
 
-    fit('should not exist uncaught err', () => {
-      // TODO: @bruno impl
+    it('should not exist uncaught err', () => {
+      spyDeleteDocument.and.returnValue(Promise.reject(new Error('del failed')));
+      component.deleteThisDocument().catch(err => {
+        // TODO: @bruno impl
+        fail('not impl');
+      });
     });
   });
 
