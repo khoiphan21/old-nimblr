@@ -2,7 +2,6 @@ import { BlockCommandService } from '../../../services/block/command/block-comma
 import { DocumentCommandService, UUID } from '../../../services/document/command/document-command.service';
 import { DocumentFactoryService } from '../../../services/document/factory/document-factory.service';
 import { EmailService } from '../../../services/email/email.service';
-import { SubmissionDocument } from '../../document/submissionDocument';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { Block, BlockId } from '../../block/block';
 import { DocumentQueryService } from '../../../services/document/query/document-query.service';
@@ -38,11 +37,15 @@ export class SendDocumentCommand {
 
   async execute(documentId: string, email: string) {
     // First duplicate all blocks
-    const blocks: Array<Block> = await this.getBlocks(documentId);
-    const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
-    const duplicatedIds = duplicatedBlocks.map(block => block.id);
+    const duplicatedIds = await this.duplicateBlocksFor(documentId);
 
     // Create a new SubmissionDocument, passing in the info + blocks
+    // const submission = this.documentFactoryService.createNewSubmission({
+    //   ownerId: this.currentUser.id,
+    //   recipientEmail: email,
+    //   blockIds: duplicatedIds,
+    //   title: this.docTitle
+    // });
 
     // call createDocument for the new document
 
@@ -52,6 +55,21 @@ export class SendDocumentCommand {
 
     // if all good, then send the email
 
+  }
+
+  /**
+   * Duplicate all blocks for the given document.
+   *
+   * Return the array of the ids of the duplicated blocks in the same order as
+   * the original document
+   *
+   * @param documentId the document to get blocks from
+   */
+  private async duplicateBlocksFor(documentId: UUID): Promise<Array<UUID>> {
+    const blocks: Array<Block> = await this.getBlocks(documentId);
+    const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
+
+    return duplicatedBlocks.map(block => block.id);
   }
 
   /**

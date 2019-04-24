@@ -38,8 +38,30 @@ fdescribe('SendDocumentCommand', () => {
   });
 
   describe('execute()', () => {
-    let docId: any;
+    let documentId: string;
     let email: string;
+    let blockIds: Array<string>;
+
+    let duplicateBlockSpy: jasmine.Spy;
+
+    beforeEach(async () => {
+      documentId = '1234';
+      email = 'test@email.com';
+      blockIds = ['blockId1', 'blockId2'];
+
+      duplicateBlockSpy = spyOn<any>(command, 'duplicateBlocksFor');
+      duplicateBlockSpy.and.returnValue(Promise.resolve(blockIds));
+
+      await command.execute(documentId, email);
+    });
+
+    it('should call duplicateBlocksFor() with the right id', () => {
+      expect(duplicateBlockSpy).toHaveBeenCalledWith(documentId);
+    });
+  });
+
+  describe('duplicateBlocksFor()', () => {
+    let docId: any;
     let mockBlocks: Array<any>;
 
     // spies
@@ -49,7 +71,6 @@ fdescribe('SendDocumentCommand', () => {
     beforeEach(async () => {
       // mock data
       docId = 'docId';
-      email = 'test@example.com';
       mockBlocks = [
         { id: 'blockId123' }
       ];
@@ -63,7 +84,7 @@ fdescribe('SendDocumentCommand', () => {
       duplicateBlockSpy.and.returnValue(Promise.resolve(mockBlocks));
 
       // call the method
-      await command.execute(docId, email);
+      await command['duplicateBlocksFor'](docId);
     });
 
     it('should call to getBlocks with the right id', () => {
