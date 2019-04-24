@@ -15,7 +15,7 @@ import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
 /* tslint:disable:no-string-literal */
-describe('BlockQueryService', () => {
+fdescribe('BlockQueryService', () => {
   let service: BlockQueryService;
   let id: string;
   let documentId: string;
@@ -190,8 +190,43 @@ describe('BlockQueryService', () => {
       }));
     });
 
+    it('should return a list of blocks', done => {
+      service.getBlocksForDocument(documentId).then(blocks => {
+        expect(blocks.length).toBe(2);
+        done();
+      }).catch(error => processTestError('ERROR in BlockQueryService', error, done));
+    });
+
+    it('should throw an error if graphQlService call fails', done => {
+      // Setup the 'list' spy to throw an error
+      const errorMessage = 'test error';
+      listSpy.and.returnValue(Promise.reject(errorMessage));
+      // now try to get blocks for a document
+      service.getBlocksForDocument(documentId).then(() => {
+        fail('error should have occurred'); done();
+      }).catch(error => {
+        expect(error).toEqual(errorMessage);
+        done();
+      });
+    });
+  });
+
+  describe('getBlocksObservablesForDocument()', () => {
+    let listSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      // Setup the 'list' spy
+      listSpy = spyOn(service['graphQlService'], 'list');
+      listSpy.and.returnValue(Promise.resolve({
+        items: [
+          MockAPIDataFactory.createBlock({ documentId }),
+          MockAPIDataFactory.createBlock({ documentId })
+        ]
+      }));
+    });
+
     it('should return observables with values for all blocks', done => {
-      service.getBlocksForDocument(documentId).then(observables => {
+      service.getBlocksObservablesForDocument(documentId).then(observables => {
         expect(observables.length).toBe(2);
 
         return Promise.all(observables.map(observable => {
@@ -213,7 +248,7 @@ describe('BlockQueryService', () => {
     }
 
     it('should update blockMaps', done => {
-      service.getBlocksForDocument(documentId).then(() => {
+      service.getBlocksObservablesForDocument(documentId).then(() => {
         const observables = [];
         Object.keys(service['blocksMap']).forEach(key => {
           observables.push(service['blocksMap'].get(key));
@@ -232,7 +267,7 @@ describe('BlockQueryService', () => {
       const errorMessage = 'test error';
       listSpy.and.returnValue(Promise.reject(errorMessage));
       // now try to get blocks for a document
-      service.getBlocksForDocument(documentId).then(() => {
+      service.getBlocksObservablesForDocument(documentId).then(() => {
         fail('error should have occurred'); done();
       }).catch(error => {
         expect(error).toEqual(errorMessage);

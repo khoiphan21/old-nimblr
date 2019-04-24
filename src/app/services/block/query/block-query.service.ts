@@ -56,7 +56,26 @@ export class BlockQueryService {
     }
   }
 
-  async getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
+  async getBlocksForDocument(id: string): Promise<Array<Block>> {
+    return new Promise((resolve, reject) => {
+      const params = {
+        filter: {
+          documentId: { eq: id }
+        }
+      };
+
+      this.graphQlService.list({
+        query: listBlocks,
+        queryName: 'listBlocks',
+        params,
+        listAll: true
+      }).then(response => {
+        resolve(response.items);
+      }).catch(error => reject(error));
+    });
+  }
+
+  async getBlocksObservablesForDocument(id: string): Promise<Array<Observable<Block>>> {
     return new Promise((resolve, reject) => {
       const params = {
         filter: {
