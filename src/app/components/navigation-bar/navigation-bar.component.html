@@ -5,13 +5,20 @@
             <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
         </section>
         <section class="tabs private">
-            <div class="title">my documents</div>
+            <div class="title"><span>my documents</span><i class="fas fa-plus-circle clickable" (click)="createNewDocument()"></i></div>
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section>
         <!-- <section class="tabs shared">
             <div class="title">shared</div>
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section> -->
+        <section class="tabs document-outline">
+            <div class="title">Document Outline</div>
+            <div class="document-title">Sample Document</div>
+            <div class="document-tab" *ngFor="let tab of documentStructure">
+                {{tab.title}}
+            </div>
+        </section>
     </section>
 </ng-container>
 
