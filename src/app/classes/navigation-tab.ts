@@ -5,12 +5,28 @@ interface NavigationTab {
     title: string;
 }
 
+export class DocumentStructureTab {
+    title: string;
+    id: UUID;
+
+    constructor(
+      {
+        title,
+        id
+      }
+    ) {
+      this.id = id;
+      this.title = title;
+    }
+  }
+
 export interface CreateNavigationTabInput {
     id: UUID;
     title: string;
     type: DocumentType;
     children: Array<NavigationTabHeader>;
 }
+
 export class NavigationTabDocument implements NavigationTab {
     id: UUID;
     title: string;

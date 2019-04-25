@@ -12,13 +12,12 @@
             <div class="title">shared</div>
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section> -->
-        <!-- <section class="tabs document-outline">
+        <section class="tabs document-outline" *ngIf="documentStructure">
             <div class="title">Document Outline</div>
-            <div class="document-title">Sample Document</div>
             <div class="document-tab" *ngFor="let tab of documentStructure">
-                {{tab.title}}
+                {{tab.title ? tab.title : 'Untitled'}}
             </div>
-        </section> -->
+        </section>
     </section>
 </ng-container>
 

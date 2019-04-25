@@ -2,21 +2,28 @@ import { Injectable } from '@angular/core';
 import { DocumentService } from '../document/document.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Document } from '../../classes/document/document';
-import { NavigationTabDocument } from '../../classes/navigation-tab';
+import { NavigationTabDocument, DocumentStructureTab } from '../../classes/navigation-tab';
 import { DocumentQueryService } from '../document/query/document-query.service';
 import { AccountService } from '../account/account.service';
+import { UUID } from '../document/command/document-command.service';
+import { TextBlockType } from '../../../API';
+import { Block } from '../../classes/block/block';
+import { TextBlock } from '../../classes/block/textBlock';
+import { BlockQueryService } from '../block/query/block-query.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavigationBarService {
   private navigationBar$: BehaviorSubject<Array<NavigationTabDocument>>;
+  private documentStructure$: BehaviorSubject<Array<DocumentStructureTab>>;
   private navigationBarStatus$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private documentService: DocumentService,
     private documentQueryService: DocumentQueryService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private blockQueryService: BlockQueryService
   ) { }
 
   getNavigationBarStatus$(): Observable<boolean> {
@@ -80,11 +87,53 @@ export class NavigationBarService {
       const title = document.title;
       const type = document.type;
       const children = [];
-      // currently no header tab implementation
-      // const children = this.processChildrenTab();
       const navigationTab = new NavigationTabDocument({id, title, type, children});
       navigationTabs.push(navigationTab);
     }
     return navigationTabs;
+  }
+
+
+  /**
+   * Return an observable for the document structures
+   *
+   * @param documentId the document id to fall back to if user is not logged in
+   */
+  getDocumentStructure$(documentId: UUID): Observable<Array<DocumentStructureTab>> {
+    if (!this.documentStructure$) {
+      this.documentStructure$ = new BehaviorSubject([]);
+      this.getTabsForDocument(documentId);
+    }
+    return this.documentStructure$;
+  }
+
+  private async getTabsForDocument(documentId: UUID) {
+    return new Promise((resolve, reject) => {
+      this.documentQueryService.getDocument$(documentId).subscribe(() => {
+        this.blockQueryService.getBlocksForDocument(documentId).then(blocks => {
+          const documentStructure = this.processDocumentStructure(blocks);
+          this.documentStructure$.next(documentStructure);
+          resolve();
+        });
+      }, error => {
+        this.documentStructure$.error(error);
+        reject();
+      });
+    });
+  }
+
+  private processDocumentStructure(blocks: Array<Block>): Array<DocumentStructureTab> {
+    const tabs: Array<DocumentStructureTab> = [];
+    const headerBlocks = blocks.filter((block: any) => {
+      return block.textBlockType === TextBlockType.HEADER;
+    });
+    for (const block of headerBlocks) {
+      const textBlock = block as TextBlock;
+      const id = textBlock.id;
+      const title = textBlock.value;
+      const tab = new DocumentStructureTab({id, title});
+      tabs.push(tab);
+    }
+    return tabs;
   }
 }

@@ -99,11 +99,14 @@ section.mobile.navigation-bar {
             }
         }
     }
-    .document-outline {
-        padding-top: 5px;
+    section.tabs.document-outline {
         border-top: 1px solid $color-dark-steel-blue;
         background: #EEF2FF;
         height: stretch;
+        .title {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
         .document-title,
         .document-tab {
             padding: 0 25px;
@@ -115,8 +118,6 @@ section.mobile.navigation-bar {
             justify-content: flex-start;
         }
         .document-tab {
-            padding: 0 25px;
-            padding-left: 45px;
             font-weight: normal;
             cursor: pointer;
             &:hover {
