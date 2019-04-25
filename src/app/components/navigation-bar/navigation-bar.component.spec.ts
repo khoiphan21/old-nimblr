@@ -264,4 +264,17 @@ describe('NavigationBarComponent', () => {
       });
     });
   });
+
+  describe('scrollToSection()', () => {
+    let getElementSpy: jasmine.Spy;
+    beforeEach(() => {
+      const dummyElement = document.createElement('div');
+      getElementSpy = spyOn(document, 'getElementById').and.returnValue(dummyElement);
+    });
+    it('should call the getElementById() with the right arguement', () => {
+      const uuid = uuidv4();
+      component.scrollToSection(uuid);
+      expect(getElementSpy).toHaveBeenCalledWith(uuid);
+    });
+  });
 });

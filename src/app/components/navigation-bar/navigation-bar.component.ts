@@ -7,7 +7,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { DocumentType } from 'src/API';
 import { CreateDocumentInput, SharingStatus } from '../../../API';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { DocumentCommandService } from '../../services/document/command/document-command.service';
+import { DocumentCommandService, UUID } from '../../services/document/command/document-command.service';
 const uuidv4 = require('uuid/v4');
 
 @Component({
@@ -98,4 +98,8 @@ export class NavigationBarComponent implements OnInit {
     this.router.navigate([`/document/${document.id}`]);
   }
 
+  scrollToSection(uuid: UUID) {
+    const element = document.getElementById(uuid);
+    element.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});
+  }
 }

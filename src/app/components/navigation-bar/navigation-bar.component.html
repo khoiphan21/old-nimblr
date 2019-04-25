@@ -14,7 +14,7 @@
         </section> -->
         <section class="tabs document-outline" *ngIf="documentStructure">
             <div class="title">Document Outline</div>
-            <div class="document-tab" *ngFor="let tab of documentStructure">
+            <div class="document-tab" *ngFor="let tab of documentStructure" (click)="scrollToSection(tab.id)">
                 {{tab.title ? tab.title : 'Untitled'}}
             </div>
         </section>
