@@ -6,18 +6,40 @@ fdescribe('SendDocumentCommand', () => {
   let input: any;
   let command: SendDocumentCommand;
 
+  // mock data for testing
+  const testError = new Error('test error from sendDocumentCommand');
+  const mockUser = {
+    id: 'user-1234'
+  };
+
+  // spies
+  let getUserSpy: jasmine.Spy;
+
   beforeEach(() => {
+    resetCommand();
+
+    // Setting up spies
+    // getCurrentUser()
+    getUserSpy = spyOn<any>(command, 'getCurrentUser');
+    getUserSpy.and.returnValue(Promise.resolve(mockUser));
+
+  });
+
+  function resetCommand() {
     input = {
       accountService: { getUser$: () => { } },
       blockCommandService: { duplicateBlocks: () => { } },
       blockQueryService: { getBlock$: () => { } },
-      documentCommandService: { createDocument: () => { } },
+      documentCommandService: {
+        createDocument: () => { },
+        updateDocument: () => { }
+      },
       documentQueryService: { getDocument$: () => { } },
       documentFactoryService: { createNewSubmission: () => { } },
-      emailService: { foo5: 'bar5' }
+      emailService: { sendInvitationEmail: () => { } }
     };
     command = new SendDocumentCommand(input);
-  });
+  }
 
   describe('constructor()', () => {
 
@@ -43,16 +65,26 @@ fdescribe('SendDocumentCommand', () => {
     let documentId: string;
     let email: string;
     let blockIds: Array<string>;
+    let mockSubmission: any;
+    let returnValue: any;
 
     let getDocumentSpy: jasmine.Spy;
     let duplicateBlockSpy: jasmine.Spy;
     let createSubmissionSpy: jasmine.Spy;
     let createDocumentSpy: jasmine.Spy;
+    let updateDocumentSpy: jasmine.Spy;
+    let sendEmailSpy: jasmine.Spy;
 
     beforeEach(async () => {
       documentId = '1234';
       email = 'test@email.com';
       blockIds = ['blockId1', 'blockId2'];
+      mockSubmission = {
+        id: 'submission-1234'
+      };
+
+      // setup mock data of the command
+      command['submission'] = mockSubmission;
 
       // setup spies
       // getDocument()
@@ -67,8 +99,14 @@ fdescribe('SendDocumentCommand', () => {
       // createDocumentInGraphQL()
       createDocumentSpy = spyOn<any>(command, 'createDocumentInGraphQL');
       createDocumentSpy.and.returnValue(Promise.resolve());
+      // updateTemplateDocument()
+      updateDocumentSpy = spyOn<any>(command, 'updateTemplateDocument');
+      updateDocumentSpy.and.returnValue(Promise.resolve());
+      // sendEmail()
+      sendEmailSpy = spyOn<any>(command, 'sendEmail');
+      sendEmailSpy.and.returnValue(Promise.resolve());
 
-      await command.execute(documentId, email);
+      returnValue = await command.execute(documentId, email);
     });
 
     it('should store the email given', () => {
@@ -89,6 +127,18 @@ fdescribe('SendDocumentCommand', () => {
 
     it('should call to createDocumentInGraphQL()', () => {
       expect(createDocumentSpy).toHaveBeenCalled();
+    });
+
+    it('should call to update the template document', () => {
+      expect(updateDocumentSpy).toHaveBeenCalled();
+    });
+
+    it('should call to send the email', () => {
+      expect(sendEmailSpy).toHaveBeenCalled();
+    });
+
+    it('should return the id of the submission', () => {
+      expect(returnValue).toEqual(mockSubmission.id);
     });
   });
 
@@ -282,11 +332,9 @@ fdescribe('SendDocumentCommand', () => {
   describe('createSubmission()', () => {
     const document: any = { title: 'test title' };
     const duplicatedBlockIds = ['block-1234'];
-    const id = 'user-abcd';
     const email = 'test@email.com';
     const submission = { foo: 'bar' };
 
-    let accountSpy: jasmine.Spy;
     let submissionSpy: jasmine.Spy;
 
     beforeEach(async () => {
@@ -295,8 +343,6 @@ fdescribe('SendDocumentCommand', () => {
       command['document'] = document;
       command['duplicatedBlockIds'] = duplicatedBlockIds;
 
-      accountSpy = spyOn(command['accountService'], 'getUser$');
-      accountSpy.and.returnValue(new BehaviorSubject({ id }));
       // createNewSubmission()
       submissionSpy = spyOn(command['documentFactoryService'], 'createNewSubmission');
       submissionSpy.and.returnValue(submission);
@@ -307,7 +353,7 @@ fdescribe('SendDocumentCommand', () => {
 
     it('should call docFactory with the right arguments', () => {
       const expectedArg = {
-        ownerId: id,
+        ownerId: mockUser.id,
         recipientEmail: email,
         blockIds: duplicatedBlockIds,
         title: document.title
@@ -317,6 +363,31 @@ fdescribe('SendDocumentCommand', () => {
 
     it('should store the document created by docFactory', () => {
       expect(command['submission'] as any).toEqual(submission);
+    });
+  });
+
+  describe('getCurrentUser()', () => {
+    let spy: jasmine.Spy;
+
+    beforeEach(() => {
+      resetCommand(); // this is needed as getCurrentUser() is spied on
+      spy = spyOn(command['accountService'], 'getUser$');
+    });
+
+    it('should resolve with the user', async () => {
+      spy.and.returnValue(new BehaviorSubject(mockUser));
+      const returnValue: any = await command['getCurrentUser']();
+      expect(returnValue).toEqual(mockUser);
+    });
+
+    it('should reject if error', done => {
+      const observable$ = new Subject();
+      spy.and.returnValue(observable$);
+      command['getCurrentUser']().then(fail).catch(error => {
+        expect(error).toEqual(testError);
+        done();
+      });
+      observable$.error(testError);
     });
   });
 
@@ -347,6 +418,81 @@ fdescribe('SendDocumentCommand', () => {
       } catch (error) {
         expect(error).toEqual(mockError);
       }
+    });
+  });
+
+  describe('updateTemplateDocument()', () => {
+    let mockDocument: any;
+    const mockSubmission: any = {
+      id: 'submission-id'
+    };
+
+    let commandSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      mockDocument = {
+        id: 'doc-id',
+        submissionDocIds: []
+      };
+
+      command['document'] = mockDocument;
+      command['submission'] = mockSubmission;
+
+      // setup spies
+      commandSpy = spyOn(command['documentCommandService'], 'updateDocument');
+    });
+
+    it('should call to update document with the right args', async () => {
+      await command['updateTemplateDocument']();
+      const expectedArg = {
+        id: mockDocument.id,
+        submissionDocIds: [mockSubmission.id],
+        lastUpdatedBy: mockUser.id
+      };
+      expect(commandSpy).toHaveBeenCalledWith(expectedArg);
+    });
+
+    it('should reject with the error from backend', done => {
+      commandSpy.and.returnValue(Promise.reject(testError));
+      command['updateTemplateDocument']().catch(error => {
+        expect(error).toEqual(testError);
+        done();
+      });
+    });
+  });
+
+  describe('sendEmail()', () => {
+    const email = 'email@test.com';
+    const mockSubmission: any = {
+      id: 'submission-id'
+    };
+
+    let emailSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      command['email'] = email;
+      command['submission'] = mockSubmission;
+
+      // setup spies
+      emailSpy = spyOn(command['emailService'], 'sendInvitationEmail');
+    });
+
+    it('should call sendInvitationEmail() with the right arg', async () => {
+      await command['sendEmail']();
+      const expectedArg = {
+        email,
+        documentId: mockSubmission.id,
+        sender: mockUser
+      };
+      expect(emailSpy).toHaveBeenCalledWith(expectedArg);
+    });
+
+    it('should reject the error from backend', done => {
+      emailSpy.and.returnValue(Promise.reject(testError));
+      command['sendEmail']().catch(error => {
+        expect(error).toEqual(testError);
+        done();
+      });
     });
   });
 });

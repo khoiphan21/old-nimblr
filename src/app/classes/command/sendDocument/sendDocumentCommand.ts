@@ -6,10 +6,10 @@ import { BlockQueryService } from '../../../services/block/query/block-query.ser
 import { Block, BlockId } from '../../block/block';
 import { DocumentQueryService } from '../../../services/document/query/document-query.service';
 import { take } from 'rxjs/operators';
-import { Document } from '../../document/document';
 import { AccountService } from '../../../services/account/account.service';
 import { SubmissionDocument } from '../../document/submissionDocument';
 import { User } from '../../user';
+import { TemplateDocument } from '../../document/templateDocument';
 
 export interface SendDocumentCommandInput {
   accountService: AccountService;
@@ -33,7 +33,7 @@ export class SendDocumentCommand {
 
   // Properties for the execute() method
   private email: string;
-  private document: Document;
+  private document: TemplateDocument;
   private duplicatedBlockIds: Array<UUID>;
   private submission: SubmissionDocument;
 
@@ -47,7 +47,16 @@ export class SendDocumentCommand {
     this.emailService = input.emailService;
   }
 
-  async execute(documentId: string, email: string) {
+  /**
+   * Handles the use cases of creating and sending a document to a recipient
+   * based on a template.
+   *
+   * @param documentId the template document to produce the submission from
+   * @param email the email of the recipient
+   *
+   * @returns the id of the submission document
+   */
+  async execute(documentId: string, email: string): Promise<UUID> {
     // store the email to be used by other methods
     this.email = email;
 
@@ -60,14 +69,17 @@ export class SendDocumentCommand {
     // 3. Create a submission document
     await this.createSubmission();
 
-    // call createDocument for the new document
+    // 4. Create the actual document in the backend by calling GraphQL
+    await this.createDocumentInGraphQL();
 
-    // update the list of submissionDocIds
+    // 5. Update the template document's submissionDocIds array
+    await this.updateTemplateDocument();
 
-    // call to updateDocument for current document
+    // 6. Send the email
+    await this.sendEmail();
 
-    // if all good, then send the email
-
+    // finally, return the id of the new submission document
+    return this.submission.id;
   }
 
   /**
@@ -80,7 +92,7 @@ export class SendDocumentCommand {
       this.documentQueryService.getDocument$(id)
         .pipe(take(1))
         .subscribe(document => {
-          this.document = document;
+          this.document = document as TemplateDocument;
           resolve();
         }, reject);
     });
@@ -89,8 +101,6 @@ export class SendDocumentCommand {
   /**
    * Duplicate all blocks for the given document. The duplicated block IDs
    * will be stored in this.duplicatedBlockIds
-   *
-   * @param documentId the document to get blocks from
    */
   private async duplicateBlocks() {
     const blocks: Array<Block> = await this.getBlocks();
@@ -101,8 +111,6 @@ export class SendDocumentCommand {
 
   /**
    * Retrieve the current block objects for the given document id
-   *
-   * @param documentId the document to get the blocks from
    */
   private async getBlocks(): Promise<Array<Block>> {
     const blocks: Array<Block> = await Promise.all(
@@ -153,28 +161,34 @@ export class SendDocumentCommand {
     await this.documentCommandService.createDocument(this.submission);
   }
 
-  // async TEST(documentId: string, email: string) {
+  /**
+   * Update the template document's submissionDocIds array in the backend
+   */
+  private async updateTemplateDocument() {
+    // update the list of submissionDocIds
+    const submissionDocIds = this.document.submissionDocIds;
+    submissionDocIds.push(this.submission.id);
 
-  //   //
+    // retrieve the current user
+    const user = await this.getCurrentUser();
 
-  //   // call createDocument for the new document
-  //   await this.documentCommandService.createDocument(submission);
+    // call graphQL to update the database
+    await this.documentCommandService.updateDocument({
+      id: this.document.id,
+      submissionDocIds,
+      lastUpdatedBy: user.id
+    });
+  }
 
-  //   // update the list of submissionDocIds
-  //   this.submissionDocIds.push(submission.id);
+  /**
+   * Send the invitation email to the recipient, with the link to the submission
+   */
+  private async sendEmail() {
+    const email = this.email;
+    const documentId = this.submission.id;
+    const sender = await this.getCurrentUser();
 
-  //   // call to updateDocument for current document
-  //   await this.documentCommandService.updateDocument({
-  //     id: this.documentId,
-  //     submissionDocIds: this.submissionDocIds,
-  //     lastUpdatedBy: this.currentUser.id
-  //   });
+    await this.emailService.sendInvitationEmail({ email, documentId, sender });
+  }
 
-  //   // if all good, then send the email
-  //   await this.emailService.sendInvitationEmail({
-  //     email,
-  //     documentId: submission.id,
-  //     sender: this.currentUser
-  //   });
-  // }
 }
