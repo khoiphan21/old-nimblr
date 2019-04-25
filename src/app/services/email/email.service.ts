@@ -44,7 +44,7 @@ export class EmailService {
       <body>
         <h1>Invitation to shared document</h1>
         <p>Click on this link to access document:
-          <a href='http://${domain}/document/${input.documentId}'>Shared Document</a>
+          <a href='http://${domain}/document/${input.documentId};email=${input.email}'>Shared Document</a>
         </p>
       </body>
     </html>`;
