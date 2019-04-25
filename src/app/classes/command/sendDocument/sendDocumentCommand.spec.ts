@@ -8,11 +8,12 @@ fdescribe('SendDocumentCommand', () => {
 
   beforeEach(() => {
     input = {
+      accountService: { getUser$: () => { } },
       blockCommandService: { duplicateBlocks: () => { } },
       blockQueryService: { getBlock$: () => { } },
       documentCommandService: { foo2: 'bar2' },
       documentQueryService: { getDocument$: () => { } },
-      documentFactoryService: { foo4: 'bar4' },
+      documentFactoryService: { createNewSubmission: () => { } },
       emailService: { foo5: 'bar5' }
     };
     command = new SendDocumentCommand(input);
@@ -22,6 +23,7 @@ fdescribe('SendDocumentCommand', () => {
 
     describe('storing given services', () => {
       [
+        'accountService',
         'blockCommandService',
         'blockQueryService',
         'documentCommandService',
@@ -42,25 +44,99 @@ fdescribe('SendDocumentCommand', () => {
     let email: string;
     let blockIds: Array<string>;
 
+    let getDocumentSpy: jasmine.Spy;
     let duplicateBlockSpy: jasmine.Spy;
+    let createSubmissionSpy: jasmine.Spy;
 
     beforeEach(async () => {
       documentId = '1234';
       email = 'test@email.com';
       blockIds = ['blockId1', 'blockId2'];
 
-      duplicateBlockSpy = spyOn<any>(command, 'duplicateBlocksFor');
+      // setup spies
+      // getDocument()
+      getDocumentSpy = spyOn<any>(command, 'getDocument');
+      getDocumentSpy.and.returnValue(Promise.resolve());
+      // duplicateBlock()
+      duplicateBlockSpy = spyOn<any>(command, 'duplicateBlocks');
       duplicateBlockSpy.and.returnValue(Promise.resolve(blockIds));
+      // createSubmission()
+      createSubmissionSpy = spyOn<any>(command, 'createSubmission');
+      createSubmissionSpy.and.returnValue(Promise.resolve());
 
       await command.execute(documentId, email);
     });
 
-    it('should call duplicateBlocksFor() with the right id', () => {
-      expect(duplicateBlockSpy).toHaveBeenCalledWith(documentId);
+    it('should store the email given', () => {
+      expect(command['email']).toEqual(email);
+    });
+
+    it('should call getDocument() with the id', () => {
+      expect(getDocumentSpy).toHaveBeenCalledWith(documentId);
+    });
+
+    it('should call duplicateBlocks() with the right id', () => {
+      expect(duplicateBlockSpy).toHaveBeenCalled();
+    });
+
+    it('should call to createSubmission()', () => {
+      expect(createSubmissionSpy).toHaveBeenCalled();
     });
   });
 
-  describe('duplicateBlocksFor()', () => {
+  describe('getDocument()', () => {
+    let documentId: string;
+    let mockDocument: any;
+
+    // spies
+    let docQuerySpy: jasmine.Spy;
+
+    beforeEach(async () => {
+      // Mock data
+      documentId = '1234';
+      mockDocument = { foo: 'bar' };
+      const document$ = new BehaviorSubject(mockDocument);
+
+      // Setup spies
+      docQuerySpy = spyOn(command['documentQueryService'], 'getDocument$');
+      docQuerySpy.and.returnValue(document$);
+    });
+
+    describe('happy pathway', () => {
+
+      beforeEach(async () => {
+        // Call the method
+        await command['getDocument'](documentId);
+      });
+
+      it('should call the spy with the right id', () => {
+        expect(docQuerySpy).toHaveBeenCalledWith(documentId);
+      });
+      it('should store the retrieved document', () => {
+        expect(command['document']).toEqual(mockDocument);
+      });
+
+    });
+
+    describe('error pathway', () => {
+      it('should reject with an error from the service', done => {
+        const error$ = new Subject();
+        const error = new Error('getDocument error');
+        docQuerySpy.and.returnValue(error$);
+
+        // now call the method
+        command['getDocument'](documentId).catch(err => {
+          expect(err.message).toEqual(error.message);
+          done();
+        });
+
+        // emit the error
+        error$.error(error);
+      });
+    });
+  });
+
+  describe('duplicateBlocks()', () => {
     let docId: any;
     let mockBlocks: Array<any>;
 
@@ -84,18 +160,23 @@ fdescribe('SendDocumentCommand', () => {
       duplicateBlockSpy.and.returnValue(Promise.resolve(mockBlocks));
 
       // call the method
-      await command['duplicateBlocksFor'](docId);
+      await command['duplicateBlocks']();
     });
 
     it('should call to getBlocks with the right id', () => {
-      expect(getBlockSpy).toHaveBeenCalledWith(docId);
+      expect(getBlockSpy).toHaveBeenCalled();
     });
     it('should call to duplicate the retrieved blocks', () => {
       expect(duplicateBlockSpy).toHaveBeenCalledWith(mockBlocks);
     });
+    it('should store the duplicated block ids', () => {
+      const expected = mockBlocks.map(block => block.id);
+      expect(command['duplicatedBlockIds']).toEqual(expected);
+    });
   });
 
   describe('getBlocks()', () => {
+    let mockDocument: any;
     let mockBlock: any;
     let mockBlockId1: string;
     let mockBlockId2: string;
@@ -103,7 +184,6 @@ fdescribe('SendDocumentCommand', () => {
 
     let blocks: any;
 
-    let firstDocSpy: jasmine.Spy;
     let currentBlockSpy: jasmine.Spy;
 
     beforeEach(async () => {
@@ -112,27 +192,22 @@ fdescribe('SendDocumentCommand', () => {
       mockBlockId1 = '1234';
       mockBlockId2 = '5678';
       mockDocId = 'docId';
+      mockDocument = {
+        blockIds: [mockBlockId1, mockBlockId2]
+      };
+      command['document'] = mockDocument;
 
       // setup spies
-      // getFirstDocument()
-      firstDocSpy = spyOn<any>(command, 'getFirstDocument');
-      firstDocSpy.and.returnValue(Promise.resolve({
-        blockIds: [mockBlockId1, mockBlockId2]
-      }));
       // getCurrentBlock()
       currentBlockSpy = spyOn<any>(command, 'getCurrentBlock');
       currentBlockSpy.and.returnValue(Promise.resolve(mockBlock));
 
       // now call the method
-      blocks = await command['getBlocks'](mockDocId);
+      blocks = await command['getBlocks']();
     });
 
     it('should return the array of blocks from the services', async () => {
       expect(blocks).toEqual([mockBlock, mockBlock]);
-    });
-
-    it('should call getFirstDocument with the right id', () => {
-      expect(firstDocSpy).toHaveBeenCalledWith(mockDocId);
     });
 
     it('should call getCurrentBlock for each id in document', () => {
@@ -140,62 +215,6 @@ fdescribe('SendDocumentCommand', () => {
       expect('first id: ' + calls[0].args[0]).toEqual('first id: ' + mockBlockId1);
       expect('second id: ' + calls[1].args[0]).toEqual('second id: ' + mockBlockId2);
     });
-  });
-
-  describe('getFirstDocument()', () => {
-    let documentId: string;
-    let mockDocument: any;
-    let document: any;
-
-    // spies
-    let docQuerySpy: jasmine.Spy;
-
-    beforeEach(async () => {
-      // Mock data
-      documentId = '1234';
-      mockDocument = { foo: 'bar' };
-      const document$ = new BehaviorSubject(mockDocument);
-
-      // Setup spies
-      // DocumentQueryService
-      docQuerySpy = spyOn(command['documentQueryService'], 'getDocument$');
-      docQuerySpy.and.returnValue(document$);
-
-    });
-
-    describe('happy pathway', () => {
-
-      beforeEach(async () => {
-        // Call the method
-        document = await command['getFirstDocument'](documentId);
-      });
-
-      it('should call the spy with the right id', () => {
-        expect(docQuerySpy).toHaveBeenCalledWith(documentId);
-      });
-      it('should resolve with the first document retrieved', async () => {
-        expect(document).toEqual(mockDocument);
-      });
-
-    });
-
-    describe('error pathway', () => {
-      it('should reject with an error from the service', done => {
-        const error$ = new Subject();
-        const error = new Error('getDocument error');
-        docQuerySpy.and.returnValue(error$);
-
-        // now call the method
-        command['getFirstDocument'](documentId).catch(err => {
-          expect(err.message).toEqual(error.message);
-          done();
-        });
-
-        // emit the error
-        error$.error(error);
-      });
-    });
-
   });
 
   describe('getCurrentBlock()', () => {
@@ -249,6 +268,47 @@ fdescribe('SendDocumentCommand', () => {
         // emit the error
         error$.error(error);
       });
+    });
+  });
+
+  describe('createSubmission()', () => {
+    const document: any = { title: 'test title' };
+    const duplicatedBlockIds = ['block-1234'];
+    const id = 'user-abcd';
+    const email = 'test@email.com';
+    const submission = { foo: 'bar' };
+
+    let accountSpy: jasmine.Spy;
+    let submissionSpy: jasmine.Spy;
+
+    beforeEach(async () => {
+      // setup mock properties
+      command['email'] = email;
+      command['document'] = document;
+      command['duplicatedBlockIds'] = duplicatedBlockIds;
+
+      accountSpy = spyOn(command['accountService'], 'getUser$');
+      accountSpy.and.returnValue(new BehaviorSubject({ id }));
+      // createNewSubmission()
+      submissionSpy = spyOn(command['documentFactoryService'], 'createNewSubmission');
+      submissionSpy.and.returnValue(submission);
+
+      // call the method
+      await command['createSubmission']();
+    });
+
+    it('should call docFactory with the right arguments', () => {
+      const expectedArg = {
+        ownerId: id,
+        recipientEmail: email,
+        blockIds: duplicatedBlockIds,
+        title: document.title
+      };
+      expect(submissionSpy).toHaveBeenCalledWith(expectedArg);
+    });
+
+    it('should store the document created by docFactory', () => {
+      expect(command['submission'] as any).toEqual(submission);
     });
   });
 });

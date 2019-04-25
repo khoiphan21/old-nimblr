@@ -7,8 +7,12 @@ import { Block, BlockId } from '../../block/block';
 import { DocumentQueryService } from '../../../services/document/query/document-query.service';
 import { take } from 'rxjs/operators';
 import { Document } from '../../document/document';
+import { AccountService } from '../../../services/account/account.service';
+import { SubmissionDocument } from '../../document/submissionDocument';
+import { User } from '../../user';
 
 export interface SendDocumentCommandInput {
+  accountService: AccountService;
   blockCommandService: BlockCommandService;
   blockQueryService: BlockQueryService;
   documentCommandService: DocumentCommandService;
@@ -19,6 +23,7 @@ export interface SendDocumentCommandInput {
 
 export class SendDocumentCommand {
 
+  private accountService: AccountService;
   private blockCommandService: BlockCommandService;
   private blockQueryService: BlockQueryService;
   private documentCommandService: DocumentCommandService;
@@ -26,7 +31,14 @@ export class SendDocumentCommand {
   private documentFactoryService: DocumentFactoryService;
   private emailService: EmailService;
 
+  // Properties for the execute() method
+  private email: string;
+  private document: Document;
+  private duplicatedBlockIds: Array<UUID>;
+  private submission: SubmissionDocument;
+
   constructor(input: SendDocumentCommandInput) {
+    this.accountService = input.accountService;
     this.blockCommandService = input.blockCommandService;
     this.blockQueryService = input.blockQueryService;
     this.documentCommandService = input.documentCommandService;
@@ -36,8 +48,17 @@ export class SendDocumentCommand {
   }
 
   async execute(documentId: string, email: string) {
-    // First duplicate all blocks
-    const duplicatedIds = await this.duplicateBlocksFor(documentId);
+    // store the email to be used by other methods
+    this.email = email;
+
+    // 1. Retrieve the stored document
+    await this.getDocument(documentId);
+
+    // 2. Duplicate all blocks in that document
+    await this.duplicateBlocks();
+
+    // 3. Create a submission document
+    await this.createSubmission();
 
     // Create a new SubmissionDocument, passing in the info + blocks
     // const submission = this.documentFactoryService.createNewSubmission({
@@ -58,18 +79,32 @@ export class SendDocumentCommand {
   }
 
   /**
-   * Duplicate all blocks for the given document.
+   * Retrieve the document object with the given id
    *
-   * Return the array of the ids of the duplicated blocks in the same order as
-   * the original document
+   * @param id the id of the document to be retrieved
+   */
+  private async getDocument(id: UUID) {
+    return new Promise((resolve, reject) => {
+      this.documentQueryService.getDocument$(id)
+        .pipe(take(1))
+        .subscribe(document => {
+          this.document = document;
+          resolve();
+        }, reject);
+    });
+  }
+
+  /**
+   * Duplicate all blocks for the given document. The duplicated block IDs
+   * will be stored in this.duplicatedBlockIds
    *
    * @param documentId the document to get blocks from
    */
-  private async duplicateBlocksFor(documentId: UUID): Promise<Array<UUID>> {
-    const blocks: Array<Block> = await this.getBlocks(documentId);
+  private async duplicateBlocks() {
+    const blocks: Array<Block> = await this.getBlocks();
     const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
 
-    return duplicatedBlocks.map(block => block.id);
+    this.duplicatedBlockIds = duplicatedBlocks.map(block => block.id);
   }
 
   /**
@@ -77,27 +112,12 @@ export class SendDocumentCommand {
    *
    * @param documentId the document to get the blocks from
    */
-  private async getBlocks(documentId: UUID): Promise<Array<Block>> {
-    const document: Document = await this.getFirstDocument(documentId);
-
+  private async getBlocks(): Promise<Array<Block>> {
     const blocks: Array<Block> = await Promise.all(
-      document.blockIds.map(id => this.getCurrentBlock(id))
+      this.document.blockIds.map(id => this.getCurrentBlock(id))
     );
 
     return blocks;
-  }
-
-  /**
-   * Retrieve the first document stored with the given id
-   *
-   * @param id the id of the document
-   */
-  private async getFirstDocument(id: UUID): Promise<Document> {
-    return new Promise((resolve, reject) => {
-      this.documentQueryService.getDocument$(id)
-        .pipe(take(1))
-        .subscribe(resolve, reject);
-    });
   }
 
   /**
@@ -108,6 +128,30 @@ export class SendDocumentCommand {
   private async getCurrentBlock(id: BlockId): Promise<Block> {
     return new Promise((resolve, reject) => {
       this.blockQueryService.getBlock$(id)
+        .pipe(take(1))
+        .subscribe(resolve, reject);
+    });
+  }
+
+  /**
+   * Create a new SubmissionDocument based on the original one. Store the
+   * created document in `this.submission`
+   */
+  private async createSubmission() {
+    const user = await this.getCurrentUser();
+    const blockIds = this.duplicatedBlockIds;
+
+    this.submission = this.documentFactoryService.createNewSubmission({
+      ownerId: user.id,
+      recipientEmail: this.email,
+      blockIds,
+      title: this.document.title
+    });
+  }
+
+  private async getCurrentUser(): Promise<User> {
+    return new Promise((resolve, reject) => {
+      this.accountService.getUser$()
         .pipe(take(1))
         .subscribe(resolve, reject);
     });
