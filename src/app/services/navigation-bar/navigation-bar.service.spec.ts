@@ -55,21 +55,16 @@ describe('NavigationBarService', () => {
   /* tslint:disable:no-string-literal */
   describe('getNavigationBar$', () => {
     let getAllSpy: jasmine.Spy;
-    let getOneSpy: jasmine.Spy;
-    let accountServiceSpy: jasmine.Spy;
 
     const documentId = uuidv4();
 
     beforeEach(() => {
       // setup spies
       getAllSpy = spyOn<any>(service, 'getAllUserDocuments');
-      getOneSpy = spyOn<any>(service, 'getForDocument');
-      accountServiceSpy = spyOn(service['accountService'], 'isUserReady');
-      accountServiceSpy.and.returnValue(new Promise(() => { }));
     });
 
     it('should have an observable of Navigation Tabs', () => {
-      const navigationBar$ = service.getNavigationBar$(documentId);
+      const navigationBar$ = service.getNavigationBar$();
       expect(navigationBar$ instanceof BehaviorSubject).toBe(true);
     });
 
@@ -79,40 +74,20 @@ describe('NavigationBarService', () => {
         done();
       });
     });
-
-    it('should call to get all documents if user is logged in', done => {
-      accountServiceSpy.and.returnValue(Promise.resolve());
-      service.getNavigationBar$();
-
-      setTimeout(() => {
-        expect(getAllSpy).toHaveBeenCalled();
-        done();
-      }, 5);
-    });
-
-    it('should call to get for the given document if not logged in', done => {
-      accountServiceSpy.and.returnValue(Promise.reject());
-      service.getNavigationBar$(documentId);
-
-      setTimeout(() => {
-        expect(getOneSpy).toHaveBeenCalledWith(documentId);
-        done();
-      }, 5);
-    });
-
   });
 
   describe('getNavigationBar$ helpers', () => {
     let document$: Subject<any>;
     const document = { foo: 'bar' };
-
+    let getUserDocumentsSpy: jasmine.Spy;
+    let getDocumentSpy: jasmine.Spy;
     beforeEach(() => {
       // Setup the navigation bar observable in the service
       service['navigationBar$'] = new BehaviorSubject([]);
       // setup mock data for testing
       document$ = new Subject();
-      spyOn(service['documentService'], 'getUserDocuments$').and.returnValue(document$);
-      spyOn(service['documentQueryService'], 'getDocument$').and.returnValue(document$);
+      getUserDocumentsSpy = spyOn(service['documentService'], 'getUserDocuments$').and.returnValue(document$);
+      getDocumentSpy = spyOn(service['documentQueryService'], 'getDocument$').and.returnValue(document$);
     });
 
     describe('getAllUserDocuments()', () => {

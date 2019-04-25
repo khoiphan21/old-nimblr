@@ -15,7 +15,7 @@ import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
 /* tslint:disable:no-string-literal */
-fdescribe('BlockQueryService', () => {
+describe('BlockQueryService', () => {
   let service: BlockQueryService;
   let id: string;
   let documentId: string;

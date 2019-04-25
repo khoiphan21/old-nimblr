@@ -35,15 +35,10 @@ export class NavigationBarService {
    *
    * @param documentId the document id to fall back to if user is not logged in
    */
-  getNavigationBar$(documentId?: string): Observable<Array<NavigationTabDocument>> {
+  getNavigationBar$(): Observable<Array<NavigationTabDocument>> {
     if (!this.navigationBar$) {
       this.navigationBar$ = new BehaviorSubject([]);
-
-      this.accountService.isUserReady().then(() => {
-        this.getAllUserDocuments();
-      }).catch(() => {
-        this.getForDocument(documentId);
-      });
+      this.getAllUserDocuments();
     }
     return this.navigationBar$;
   }
@@ -65,12 +60,12 @@ export class NavigationBarService {
     this.navigationBar$.next(navigationTabs);
   }
 
-  private async getForDocument(documentId: string) {
+  async getForDocument(documentId: string) {
     return new Promise((resolve, reject) => {
       this.documentQueryService.getDocument$(documentId).subscribe(document => {
         if (document === null) { return; }
         this.processDocuments([document]);
-        resolve();
+        resolve(document);
       }, error => {
         this.navigationBar$.error(error);
         reject();
