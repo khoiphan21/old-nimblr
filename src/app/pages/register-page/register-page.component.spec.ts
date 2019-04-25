@@ -14,7 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 const uuidv4 = require('uuid/v4');
 
 /* tslint:disable:no-string-literal */
-fdescribe('RegisterPageComponent', () => {
+describe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;

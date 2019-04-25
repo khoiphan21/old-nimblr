@@ -67,7 +67,8 @@ describe('DocumentContentComponent', () => {
         {
           provide: Router,
           useValue: {
-            url: '/document'
+            url: '/document',
+            navigate: () => { }
           }
         }
       ],
@@ -130,21 +131,70 @@ describe('DocumentContentComponent', () => {
 
     describe('[ERROR]', () => {
 
+      let routerSpy: jasmine.Spy;
+
+      beforeEach(() => {
+        routerSpy = spyOn(component['router'], 'navigate');
+      });
+
       it('should set isUserLoggedIn to false if not logged in', async () => {
         checkUserSpy.and.returnValue(Promise.reject());
         await component.ngOnInit();
         expect(component.isUserLoggedIn).toBe(false);
       });
 
-      it('should throw an error if failed to retrieve document data', done => {
-        const errorMessage = 'test';
-        retrieveDocumentSpy.and.throwError(errorMessage);
-        component.ngOnInit().catch(error => {
-          const message = `DocumentPage failed to load: ${errorMessage}`;
-          expect(error.message).toEqual(message);
-          done();
+      describe('when failed to retrieve document data', () => {
+
+        beforeEach(() => {
+          retrieveDocumentSpy.and.throwError('test');
+        });
+
+        describe('if user is not logged in', () => {
+          const email = 'test@email.com';
+          const document = uuidv4();
+
+          beforeEach(() => {
+            // setup mock data
+            setRouteParam([
+              ['id', document]
+            ]);
+
+            checkUserSpy.and.returnValue(Promise.reject());
+          });
+
+          function setRouteParam(params) {
+            // setup mock data
+            const mockRoute: any = {
+              paramMap: new BehaviorSubject(new Map(params))
+            };
+            component['route'] = mockRoute;
+          }
+
+          it('should reroute to "register" if there is no email param', async () => {
+            await component.ngOnInit();
+            expect(routerSpy).toHaveBeenCalledWith(['/register', { document }]);
+          });
+
+          it('should reroute to "register" with the route email param', async () => {
+            setRouteParam([
+              ['email', email],
+              ['id', document]
+            ]);
+
+            await component.ngOnInit();
+            expect(routerSpy).toHaveBeenCalledWith(['/register', { email, document }]);
+          });
+
+        });
+
+        describe('if user is logged in', () => {
+          it('should navigate to "dashboard"', async () => {
+            await component.ngOnInit();
+            expect(routerSpy).toHaveBeenCalledWith(['/dashboard']);
+          });
         });
       });
+
     });
   });
 

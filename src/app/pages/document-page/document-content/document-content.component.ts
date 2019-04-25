@@ -81,10 +81,20 @@ export class DocumentContentComponent implements OnInit {
       this.isUserLoggedIn = false;
     }
     try {
-      this.retrieveDocumentData();
+      await this.retrieveDocumentData();
     } catch (error) {
-      const message = `DocumentPage failed to load: ${error.message}`;
-      throw new Error(message);
+      if (this.isUserLoggedIn) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        const paramMap: ParamMap = await this.getParamMap();
+        const email = paramMap.get('email');
+        const document = paramMap.get('id');
+        if (email) {
+          this.router.navigate(['/register', { email, document }]);
+        } else {
+          this.router.navigate(['/register', { document }]);
+        }
+      }
     }
     // Initialize internal values
     this.docTitle = '';
@@ -131,6 +141,12 @@ export class DocumentContentComponent implements OnInit {
 
     });
 
+  }
+
+  private async getParamMap(): Promise<ParamMap> {
+    return new Promise((resolve, reject) => {
+      this.route.paramMap.pipe(take(1)).subscribe(resolve, reject);
+    });
   }
 
   private updateStoredProperties(document: Document) {
