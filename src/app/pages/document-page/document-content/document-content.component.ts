@@ -16,11 +16,13 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
-import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { EmailService } from 'src/app/services/email/email.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { CommandService } from 'src/app/services/command/command.service';
+import { CommandType } from '../../../classes/command/commandType';
+import { SendDocumentCommand } from '../../../classes/command/sendDocument/sendDocumentCommand';
 
 const uuidv4 = require('uuid/v4');
 
@@ -66,7 +68,8 @@ export class DocumentContentComponent implements OnInit {
     private accountService: AccountService,
     private route: ActivatedRoute,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private commandService: CommandService
   ) {
   }
 
@@ -343,48 +346,11 @@ export class DocumentContentComponent implements OnInit {
   }
 
   async sendDocument(email: string) {
-    // First duplicate all blocks
-    const blocks: Array<Block> = await Promise.all(
-      this.blockIds.map(id => this.getCurrentBlock(id))
-    );
-    const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
-    const duplicatedIds = duplicatedBlocks.map(block => block.id);
+    const command = this.commandService.getCommand(CommandType.SEND_DOCUMENT) as SendDocumentCommand;
 
-    // create a new SubmissionDocument, passing in the info + blocks
-    const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
-      ownerId: this.currentUser.id,
-      recipientEmail: email,
-      blockIds: duplicatedIds,
-      title: this.docTitle
-    });
+    const submissionId = await command.execute(this.documentId, email);
 
-    // call createDocument for the new document
-    await this.documentCommandService.createDocument(submission);
-
-    // update the list of submissionDocIds
-    this.submissionDocIds.push(submission.id);
-
-    // call to updateDocument for current document
-    await this.documentCommandService.updateDocument({
-      id: this.documentId,
-      submissionDocIds: this.submissionDocIds,
-      lastUpdatedBy: this.currentUser.id
-    });
-
-    // if all good, then send the email
-    await this.emailService.sendInvitationEmail({
-      email,
-      documentId: submission.id,
-      sender: this.currentUser
-    });
-  }
-
-  private async getCurrentBlock(id: BlockId): Promise<Block> {
-    return new Promise(resolve => {
-      this.blockQueryService.getBlock$(id).pipe(take(1)).subscribe(value => {
-        resolve(value);
-      });
-    });
+    this.submissionDocIds.push(submissionId);
   }
 
 }

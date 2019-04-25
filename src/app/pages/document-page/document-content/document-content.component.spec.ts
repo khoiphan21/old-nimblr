@@ -11,7 +11,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document/document';
-import { SharingStatus, BlockType, DocumentType, TextBlockType } from 'src/API';
+import { SharingStatus, BlockType, DocumentType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -19,9 +19,8 @@ import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
-import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
-import { InvitationEmailDetails } from 'src/app/services/email/email.service';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { CommandType } from '../../../classes/command/commandType';
 
 const uuidv4 = require('uuid/v4');
 
@@ -810,90 +809,34 @@ describe('DocumentContentComponent', () => {
   });
 
   describe('sendDocument()', () => {
-    let submission: SubmissionDocument;
-
-    let block$: BehaviorSubject<any>;
-    let querySpy: jasmine.Spy;
-    let duplicateSpy: jasmine.Spy;
-    let factorySpy: jasmine.Spy;
-    let createDocumentSpy: jasmine.Spy;
-    let updateDocumentSpy: jasmine.Spy;
-    let emailSpy: jasmine.Spy;
-
+    const documentId = 'doc-1234';
+    const submissionId = 'sub-1234';
     const email = 'test@email.com';
-    const id1 = uuidv4();
-    const id2 = uuidv4();
+    const mockCommand = {
+      execute: () => { }
+    };
+    let commandSpy: jasmine.Spy;
 
     beforeEach(async () => {
-      querySpy = spyOn(component['blockQueryService'], 'getBlock$');
-      block$ = new BehaviorSubject(null);
-      querySpy.and.returnValue(block$);
+      // mock component data
+      component['documentId'] = documentId;
+      component['submissionDocIds'] = [];
 
-      duplicateSpy = spyOn(component['blockCommandService'], 'duplicateBlocks');
-      duplicateSpy.and.returnValue([{ id: id1 }, { id: id2 }]);
-
-      factorySpy = spyOn(component['docFactoryService'], 'createNewSubmission');
-      factorySpy.and.callThrough();
-
-      createDocumentSpy = spyOn(component['documentCommandService'], 'createDocument');
-      createDocumentSpy.and.returnValue(Promise.resolve());
-
-      updateDocumentSpy = spyOn(component['documentCommandService'], 'updateDocument');
-      updateDocumentSpy.and.returnValue(Promise.resolve());
-
-      emailSpy = spyOn(component['emailService'], 'sendInvitationEmail');
-      emailSpy.and.returnValue(Promise.resolve());
-
-      component.docTitle = 'test';
-      component.blockIds = [id1, id2];
+      commandSpy = spyOn(component['commandService'], 'getCommand');
+      commandSpy.and.returnValue(mockCommand);
+      spyOn(mockCommand, 'execute').and.returnValue(Promise.resolve(submissionId));
 
       await component.sendDocument(email);
-      submission = factorySpy.calls.mostRecent().returnValue;
     });
 
-    it('should call blockQueryService with the ids from blockIds', () => {
-      expect(querySpy.calls.count()).toBe(2);
-      querySpy.calls.all().forEach(call => {
-        expect([id1, id2].includes(call.args[0])).toBe(true);
-      });
+    it('should call commandService with the right arg', () => {
+      expect(commandSpy).toHaveBeenCalledWith(CommandType.SEND_DOCUMENT);
     });
-
-    it('should call to duplicate the blocks with the ids from blockIds', () => {
-      expect(duplicateSpy).toHaveBeenCalled();
+    it('should call to execute the command with the right args', () => {
+      expect(mockCommand.execute).toHaveBeenCalledWith(documentId, email);
     });
-
-    it('should call factory with the right arguments', () => {
-      expect(factorySpy).toHaveBeenCalledWith({
-        ownerId: testUser.id,
-        recipientEmail: email,
-        blockIds: [id1, id2],
-        title: component.docTitle
-      });
-    });
-
-    it('should call command service with the document', () => {
-      expect(createDocumentSpy).toHaveBeenCalledWith(submission);
-    });
-
-    it('should update the submission doc IDs array', () => {
-      expect(component.submissionDocIds.includes(submission.id)).toBe(true);
-    });
-
-    it('should call to update document to backend', () => {
-      expect(updateDocumentSpy).toHaveBeenCalledWith({
-        id,
-        submissionDocIds: component.submissionDocIds,
-        lastUpdatedBy: testUser.id
-      });
-    });
-
-    it('should call EmailService with the right args', () => {
-      const expectedArgs: InvitationEmailDetails = {
-        email,
-        documentId: submission.id,
-        sender: testUser,
-      };
-      expect(emailSpy).toHaveBeenCalledWith(expectedArgs);
+    it('should update the array of submissionDocIds', () => {
+      expect(component.submissionDocIds).toEqual([submissionId]);
     });
   });
 
