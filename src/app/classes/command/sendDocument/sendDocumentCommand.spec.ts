@@ -11,7 +11,7 @@ fdescribe('SendDocumentCommand', () => {
       accountService: { getUser$: () => { } },
       blockCommandService: { duplicateBlocks: () => { } },
       blockQueryService: { getBlock$: () => { } },
-      documentCommandService: { foo2: 'bar2' },
+      documentCommandService: { createDocument: () => { } },
       documentQueryService: { getDocument$: () => { } },
       documentFactoryService: { createNewSubmission: () => { } },
       emailService: { foo5: 'bar5' }
@@ -47,6 +47,7 @@ fdescribe('SendDocumentCommand', () => {
     let getDocumentSpy: jasmine.Spy;
     let duplicateBlockSpy: jasmine.Spy;
     let createSubmissionSpy: jasmine.Spy;
+    let createDocumentSpy: jasmine.Spy;
 
     beforeEach(async () => {
       documentId = '1234';
@@ -63,6 +64,9 @@ fdescribe('SendDocumentCommand', () => {
       // createSubmission()
       createSubmissionSpy = spyOn<any>(command, 'createSubmission');
       createSubmissionSpy.and.returnValue(Promise.resolve());
+      // createDocumentInGraphQL()
+      createDocumentSpy = spyOn<any>(command, 'createDocumentInGraphQL');
+      createDocumentSpy.and.returnValue(Promise.resolve());
 
       await command.execute(documentId, email);
     });
@@ -81,6 +85,10 @@ fdescribe('SendDocumentCommand', () => {
 
     it('should call to createSubmission()', () => {
       expect(createSubmissionSpy).toHaveBeenCalled();
+    });
+
+    it('should call to createDocumentInGraphQL()', () => {
+      expect(createDocumentSpy).toHaveBeenCalled();
     });
   });
 
@@ -309,6 +317,36 @@ fdescribe('SendDocumentCommand', () => {
 
     it('should store the document created by docFactory', () => {
       expect(command['submission'] as any).toEqual(submission);
+    });
+  });
+
+  describe('createDocumentInGraphQL()', () => {
+    let spy: jasmine.Spy;
+    const mockSubmission: any = { foo: 'bar' };
+
+    beforeEach(() => {
+      // mock data
+      command['submission'] = mockSubmission;
+
+      spy = spyOn(command['documentCommandService'], 'createDocument');
+      spy.and.returnValue(Promise.resolve());
+
+    });
+
+    it('should call to create with the right arg', async () => {
+      await command['createDocumentInGraphQL']();
+      expect(spy).toHaveBeenCalledWith(mockSubmission);
+    });
+
+    it('should throw the error from backend', async () => {
+      const mockError = new Error('failed to create');
+      spy.and.returnValue(Promise.reject(mockError));
+      try {
+        await command['createDocumentInGraphQL']();
+        fail('error must occur');
+      } catch (error) {
+        expect(error).toEqual(mockError);
+      }
     });
   });
 });

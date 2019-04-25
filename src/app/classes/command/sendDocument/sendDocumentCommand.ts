@@ -60,14 +60,6 @@ export class SendDocumentCommand {
     // 3. Create a submission document
     await this.createSubmission();
 
-    // Create a new SubmissionDocument, passing in the info + blocks
-    // const submission = this.documentFactoryService.createNewSubmission({
-    //   ownerId: this.currentUser.id,
-    //   recipientEmail: email,
-    //   blockIds: duplicatedIds,
-    //   title: this.docTitle
-    // });
-
     // call createDocument for the new document
 
     // update the list of submissionDocIds
@@ -157,24 +149,13 @@ export class SendDocumentCommand {
     });
   }
 
+  private async createDocumentInGraphQL() {
+    await this.documentCommandService.createDocument(this.submission);
+  }
+
   // async TEST(documentId: string, email: string) {
 
   //   //
-
-  //   // First duplicate all blocks
-  //   const blocks: Array<Block> = await Promise.all(
-  //     this.blockIds.map(id => this.getCurrentBlock(id))
-  //   );
-  //   const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
-  //   const duplicatedIds = duplicatedBlocks.map(block => block.id);
-
-  //   // create a new SubmissionDocument, passing in the info + blocks
-  //   const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
-  //     ownerId: this.currentUser.id,
-  //     recipientEmail: email,
-  //     blockIds: duplicatedIds,
-  //     title: this.docTitle
-  //   });
 
   //   // call createDocument for the new document
   //   await this.documentCommandService.createDocument(submission);
