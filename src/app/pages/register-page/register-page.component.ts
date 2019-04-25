@@ -129,7 +129,12 @@ export class RegisterPageComponent implements OnInit {
     } else {
       await this.accountService.registerAppUser(this.newCognitoUser, this.uuid);
 
-      this.router.navigate([`/dashboard`]);
+      if (this.routeDocumentId) {
+        this.router.navigate([`/document/${this.routeDocumentId}`]);
+      } else {
+        this.router.navigate([`/dashboard`]);
+      }
+
     }
   }
 

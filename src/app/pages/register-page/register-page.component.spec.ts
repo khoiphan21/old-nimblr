@@ -18,6 +18,10 @@ fdescribe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
+
+  // spies
+  let registerAppUserSpy: jasmine.Spy;
+
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -41,7 +45,11 @@ fdescribe('RegisterPageComponent', () => {
     fixture = TestBed.createComponent(RegisterPageComponent);
     accountService = TestBed.get(AccountService);
     component = fixture.componentInstance;
-    spyOn(accountService, 'registerAppUser').and.returnValue(Promise.resolve());
+
+    // setup spies
+    registerAppUserSpy = spyOn(accountService, 'registerAppUser');
+    registerAppUserSpy.and.returnValue(Promise.resolve());
+
     fixture.detectChanges();
   });
 
@@ -174,48 +182,63 @@ fdescribe('RegisterPageComponent', () => {
 
   describe('createAccountInDatabase() - ', () => {
     let routerSpy: jasmine.Spy;
+    let getCognitoSpy: jasmine.Spy;
 
     beforeEach(() => {
+      // setup mock data
+      component.uuid = uuidv4();
+
+      // setup spies
       routerSpy = spyOn(component['router'], 'navigate');
+      // getCognitoUserDetails()
+      getCognitoSpy = spyOn(component, 'getCognitoUserDetails');
+      getCognitoSpy.and.returnValue(Promise.resolve());
     });
 
-    it('should call getCognitoUserDetails() if the current user detail is empty', () => {
-      spyOn(component, 'getCognitoUserDetails');
-      component.uuid = 'bla';
+    it('should call getCognitoUserDetails() if the current user detail is empty', async () => {
       component.newCognitoUser = {
         username: 'khoi-test',
         password: `Khoi1234`,
         attributes: null
       };
-      component.createAccountInDatabase();
-      expect(component.getCognitoUserDetails).toHaveBeenCalled();
+      await component.createAccountInDatabase();
+      expect(getCognitoSpy).toHaveBeenCalled();
     });
 
-    /* tslint:disable:no-string-literal */
-    it('should register the app user if the user details are available', done => {
-      spyOn(component, 'getCognitoUserDetails');
-      component.uuid = 'bla';
-      component.newCognitoUser = {
-        username: 'test@email.com',
-        password: `Password1234`,
-        attributes: {
-          email: `test@email.com`,
-          given_name: `test`,
-          family_name: `name`
-        }
-      };
-      component.createAccountInDatabase().then(() => {
-        expect(routerSpy.calls.count()).toBe(1);
+    describe('if user details are available', () => {
+      beforeEach(async () => {
+        component.newCognitoUser = {
+          username: 'test@email.com',
+          password: `Password1234`,
+          attributes: {
+            email: `test@email.com`,
+            given_name: `test`,
+            family_name: `name`
+          }
+        };
+        await component.createAccountInDatabase();
+      });
+
+      it('should not call getCognitoUserDetails()', () => {
         expect(component.getCognitoUserDetails).not.toHaveBeenCalled();
-        expect(accountService.registerAppUser).toHaveBeenCalled();
-        done();
-      }).catch(error => processTestError(
-        'unable to create account in database', error, done)
-      );
+      });
+      it('should call registerAppUser() with the right args', () => {
+        expect(registerAppUserSpy).toHaveBeenCalledWith(
+          component.newCognitoUser, component.uuid
+        );
+      });
+      it('should call router to route to dashboard', () => {
+        expect(routerSpy.calls.mostRecent().args[0]).toEqual(['/dashboard']);
+      });
+      it('should navigate to the documentId if available', async () => {
+        component.routeDocumentId = uuidv4();
+        await component.createAccountInDatabase();
+        expect(routerSpy.calls.mostRecent().args[0]).toEqual([`/document/${component.routeDocumentId}`]);
+      });
     });
 
     it('should stop creating an account into database when theres error in the process', done => {
-      spyOn(component, 'getCognitoUserDetails').and.callFake(() => {
+      getCognitoSpy.and.callFake(() => {
         throw new Error('Failed to get Cognito User');
       });
       component.uuid = 'bla';
@@ -231,8 +254,8 @@ fdescribe('RegisterPageComponent', () => {
         done();
       });
     });
-  });
 
+  });
 
   describe('verifyAccount(', () => {
     beforeEach(() => {
