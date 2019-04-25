@@ -38,6 +38,7 @@ import { BlockSectionContentComponent } from './pages/document-page/block-sectio
 import { SubmissionDocumentContentComponent } from './pages/document-page/submission-document-content/submission-document-content.component';
 import { SubmissionRecipientComponent } from './pages/document-page/template-document-content/submission-recipient/submission-recipient.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     BlockSectionContentComponent,
     SubmissionDocumentContentComponent,
     SubmissionRecipientComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
