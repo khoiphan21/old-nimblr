@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { AccountService, UnverifiedUser } from '../../services/account/account.service';
 import { CognitoSignUpUser } from '../../classes/user';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from 'aws-amplify';
 
 @Component({
@@ -12,6 +12,9 @@ import { Auth } from 'aws-amplify';
   styleUrls: ['./register-page.component.scss']
 })
 export class RegisterPageComponent implements OnInit {
+  // Params from route
+  routeDocumentId: string;
+
   registerForm: FormGroup;
   verificationForm: FormGroup;
   steps = 'one';
@@ -34,12 +37,27 @@ export class RegisterPageComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private accountService: AccountService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.checkUserVerification();
     this.buildForm();
+    this.checkRouteParams();
+  }
+
+  private checkRouteParams() {
+    this.route.paramMap.subscribe(params => {
+      const email = params.get('email');
+      this.routeDocumentId = params.get('document');
+
+      // now check to see if the email given is valid
+      if (typeof email === 'string') {
+        this.steps = 'two';
+        this.registerForm.get('email').setValue(email);
+      }
+    });
   }
 
   private checkUserVerification() {

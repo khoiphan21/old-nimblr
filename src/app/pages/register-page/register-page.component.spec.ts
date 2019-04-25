@@ -9,9 +9,12 @@ import { AccountServiceImpl } from '../../services/account/account-impl.service'
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { Auth } from 'aws-amplify';
 import { configureTestSuite } from 'ng-bullet';
+import { BehaviorSubject } from 'rxjs';
+
 const uuidv4 = require('uuid/v4');
 
-describe('RegisterPageComponent', () => {
+/* tslint:disable:no-string-literal */
+fdescribe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
@@ -32,7 +35,7 @@ describe('RegisterPageComponent', () => {
         }
       ]
     });
-});
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterPageComponent);
@@ -54,21 +57,74 @@ describe('RegisterPageComponent', () => {
     expect(component.passwordType).toBe('password');
   });
 
-  describe('ngOnInit() - check account verification', () => {
+  describe('ngOnInit()', () => {
+    let routeParamSpy: jasmine.Spy;
 
-    it(`should go straight to register step 3 (verification) if user's account is unverified`, () => {
-      const email = 'test@email.com';
-      const password = 'Password1234';
-      accountService.setUnverifiedUser(email, password);
-      component.ngOnInit();
-      expect(component.steps).toBe('three');
-      expect(component.newCognitoUser.username).toEqual(email);
-      expect(component.newCognitoUser.password).toEqual(password);
-      expect(component.newCognitoUser.attributes).toEqual(null);
+    beforeEach(() => {
+      routeParamSpy = spyOn<any>(component, 'checkRouteParams');
     });
 
-    it(`should go straight to register step 1 (fill in email) if user have not sign up yet`, () => {
-      expect(component.steps).toBe('one');
+    describe('check account verification', () => {
+      it(`should go straight to register step 3 (verification) if user's account is unverified`, () => {
+        const email = 'test@email.com';
+        const password = 'Password1234';
+        accountService.setUnverifiedUser(email, password);
+        component.ngOnInit();
+        expect(component.steps).toBe('three');
+        expect(component.newCognitoUser.username).toEqual(email);
+        expect(component.newCognitoUser.password).toEqual(password);
+        expect(component.newCognitoUser.attributes).toEqual(null);
+      });
+
+      it(`should go straight to register step 1 (fill in email) if user have not sign up yet`, () => {
+        expect(component.steps).toBe('one');
+      });
+    });
+
+    it('should call to check route params', () => {
+      component.ngOnInit();
+      expect(routeParamSpy).toHaveBeenCalled();
+    });
+
+  });
+
+  describe('checkRouteParams()', () => {
+    let mockRoute: any;
+    const mockEmail = 'test@email.com';
+    const mockDocId = uuidv4();
+
+    describe('when given email and docId', () => {
+      beforeEach(() => {
+        mockRoute = {
+          paramMap: new BehaviorSubject(new Map([
+            ['email', mockEmail],
+            ['document', mockDocId]
+          ]))
+        };
+        component['route'] = mockRoute;
+        component['checkRouteParams']();
+      });
+
+      it('should store the documentId if given', () => {
+        expect(component.routeDocumentId).toEqual(mockDocId);
+      });
+      it('should set the step to "two"', () => {
+        expect(component.steps).toEqual('two');
+      });
+      it('should set the registerForm email', () => {
+        expect(component.registerForm.get('email').value).toEqual(mockEmail);
+      });
+    });
+
+    describe('when no params are available', () => {
+      it('should NOT set the step to "two"', () => {
+        mockRoute = {
+          paramMap: new BehaviorSubject(new Map())
+        };
+        component['route'] = mockRoute;
+        component['checkRouteParams']();
+        expect(component.steps).toEqual('one');
+      });
     });
 
   });
@@ -291,53 +347,53 @@ describe('RegisterPageComponent', () => {
   });
 
   describe('validatePassword()', () => {
-      let formControlSpy: jasmine.Spy;
-      let callbackFn;
-      beforeEach(() => {
-        formControlSpy = spyOn(component.registerForm.controls['password'].valueChanges, 'subscribe');
-        component.validatePassword();
-        callbackFn = formControlSpy.calls.mostRecent().args[0];
-      });
+    let formControlSpy: jasmine.Spy;
+    let callbackFn;
+    beforeEach(() => {
+      formControlSpy = spyOn(component.registerForm.controls['password'].valueChanges, 'subscribe');
+      component.validatePassword();
+      callbackFn = formControlSpy.calls.mostRecent().args[0];
+    });
 
-      it('should set value to true if there is any lower case', () => {
-        callbackFn('test');
-        expect(component.hasLowerCase).toBe(true);
-      });
+    it('should set value to true if there is any lower case', () => {
+      callbackFn('test');
+      expect(component.hasLowerCase).toBe(true);
+    });
 
-      it('should set value to false if there is no lower case', () => {
-        callbackFn('TEST');
-        expect(component.hasLowerCase).toBe(false);
-      });
+    it('should set value to false if there is no lower case', () => {
+      callbackFn('TEST');
+      expect(component.hasLowerCase).toBe(false);
+    });
 
-      it('should set value to true if there is any upper case', () => {
-        callbackFn('Test');
-        expect(component.hasUpperCase).toBe(true);
-      });
+    it('should set value to true if there is any upper case', () => {
+      callbackFn('Test');
+      expect(component.hasUpperCase).toBe(true);
+    });
 
-      it('should set value to false if there is no upper case', () => {
-        callbackFn('test');
-        expect(component.hasUpperCase).toBe(false);
-      });
+    it('should set value to false if there is no upper case', () => {
+      callbackFn('test');
+      expect(component.hasUpperCase).toBe(false);
+    });
 
-      it('should set value to true if there is any number', () => {
-        callbackFn('test1');
-        expect(component.hasNumber).toBe(true);
-      });
+    it('should set value to true if there is any number', () => {
+      callbackFn('test1');
+      expect(component.hasNumber).toBe(true);
+    });
 
-      it('should set value to false if there is no number', () => {
-        callbackFn('test');
-        expect(component.hasNumber).toBe(false);
-      });
+    it('should set value to false if there is no number', () => {
+      callbackFn('test');
+      expect(component.hasNumber).toBe(false);
+    });
 
-      it('should set value to true if there is more than 8 characters', () => {
-        callbackFn('test1234');
-        expect(component.hasLength).toBe(true);
-      });
+    it('should set value to true if there is more than 8 characters', () => {
+      callbackFn('test1234');
+      expect(component.hasLength).toBe(true);
+    });
 
-      it('should set value to false if there is less than 8 characters', () => {
-        callbackFn('test14');
-        expect(component.hasLength).toBe(false);
-      });
+    it('should set value to false if there is less than 8 characters', () => {
+      callbackFn('test14');
+      expect(component.hasLength).toBe(false);
+    });
 
   });
 });
