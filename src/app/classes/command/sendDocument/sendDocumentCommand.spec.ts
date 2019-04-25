@@ -2,7 +2,7 @@ import { SendDocumentCommand } from './sendDocumentCommand';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 // tslint:disable:no-string-literal
-fdescribe('SendDocumentCommand', () => {
+describe('SendDocumentCommand', () => {
   let input: any;
   let command: SendDocumentCommand;
 
@@ -55,6 +55,30 @@ fdescribe('SendDocumentCommand', () => {
       ].forEach(property => {
         it(`should store the ${property}`, () => {
           expect(command[property]).toEqual(input[property]);
+        });
+      });
+    });
+
+    describe('null values', () => {
+      [
+        'accountService',
+        'blockCommandService',
+        'blockQueryService',
+        'documentCommandService',
+        'documentQueryService',
+        'documentFactoryService',
+        'emailService'
+      ].forEach(property => {
+        it(`should throw an error if the ${property} is null`, () => {
+          input[property] = null;
+          try {
+            command = new SendDocumentCommand(input);
+            fail('error must occur');
+          } catch (error) {
+            let message = `SendDocumentCommand failed to create: `;
+            message += `${property} must not be null`;
+            expect(error.message).toEqual(message);
+          }
         });
       });
     });

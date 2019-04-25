@@ -22,6 +22,7 @@ export interface SendDocumentCommandInput {
 }
 
 export class SendDocumentCommand {
+  private baseError = 'SendDocumentCommand failed to create: ';
 
   private accountService: AccountService;
   private blockCommandService: BlockCommandService;
@@ -45,6 +46,24 @@ export class SendDocumentCommand {
     this.documentQueryService = input.documentQueryService;
     this.documentFactoryService = input.documentFactoryService;
     this.emailService = input.emailService;
+
+    this.checkForNullService();
+  }
+
+  private checkForNullService() {
+    [
+      'accountService',
+      'blockCommandService',
+      'blockQueryService',
+      'documentCommandService',
+      'documentQueryService',
+      'documentFactoryService',
+      'emailService'
+    ].forEach(property => {
+      if (this[property] === null) {
+        throw new Error(this.baseError + `${property} must not be null`);
+      }
+    });
   }
 
   /**
