@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { NavigationBarService } from './navigation-bar.service';
 import { DocumentService } from '../document/document.service';
@@ -20,18 +20,24 @@ describe('NavigationBarService', () => {
   let service: NavigationBarService;
   let documentFactory: DocumentFactoryService;
   let blockFactory: BlockFactoryService;
+  let getDocumentSpy: jasmine.Spy;
+  let getBlocksSpy: jasmine.Spy;
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [ServicesModule, RouterTestingModule.withRoutes([])]
     });
   });
+
+  /* tslint:disable:no-string-literal */
   beforeEach(() => {
     accountService = TestBed.get(AccountService);
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);
     blockFactory = TestBed.get(BlockFactoryService);
     service = TestBed.get(NavigationBarService);
+    getDocumentSpy = spyOn(service['documentQueryService'], 'getDocument$');
+    getBlocksSpy = spyOn(service['blockQueryService'], 'getBlocksForDocument');
   });
 
   it('should be created', () => {
@@ -88,7 +94,6 @@ describe('NavigationBarService', () => {
     let document$: Subject<any>;
     const document = { foo: 'bar' };
     let getUserDocumentsSpy: jasmine.Spy;
-    let getDocumentSpy: jasmine.Spy;
     beforeEach(() => {
       // Setup the navigation bar observable in the service
       service['navigationBar$'] = new BehaviorSubject([]);
@@ -98,10 +103,7 @@ describe('NavigationBarService', () => {
         service['documentService'],
         'getUserDocuments$'
       ).and.returnValue(document$);
-      getDocumentSpy = spyOn(
-        service['documentQueryService'],
-        'getDocument$'
-      ).and.returnValue(document$);
+      getDocumentSpy.and.returnValue(document$);
     });
 
     describe('getAllUserDocuments()', () => {
@@ -158,6 +160,12 @@ describe('NavigationBarService', () => {
           done();
         });
         document$.next(document);
+      });
+
+      it('should do nothing if the document does not exist', () => {
+        getDocumentSpy.and.returnValue(new BehaviorSubject(null));
+        service.getForDocument('test123');
+        expect(processSpy).not.toHaveBeenCalled();
       });
 
       it('should emit any error given', done => {
@@ -221,11 +229,26 @@ describe('NavigationBarService', () => {
           done();
         });
     });
+
+
+    // TODO: @jeremy ts line 110
+    xit('should emit the right error',  done => {
+      service['documentStructure$'] = new BehaviorSubject<DocumentStructureTab[]>(null);
+      const errMessage = 'test';
+      getTabsSpy.and.callThrough();
+      service['getTabsForDocument'](documentId).catch(() => {
+        try {
+          service['documentStructure$'].getValue();
+        } catch (error) {
+          expect(error).toEqual(errMessage);
+          done();
+        }
+      });
+      service['documentStructure$'].error(errMessage);
+    });
   });
 
   describe('getTabsForDocument()', () => {
-    let getDocumentSpy: jasmine.Spy;
-    let getBlocksSpy: jasmine.Spy;
     let processDocumentStructureSpy: jasmine.Spy;
     let blocks = [];
     let headerBlock;
@@ -250,9 +273,7 @@ describe('NavigationBarService', () => {
       });
       blocks = [ textBlock, headerBlock, headerBlock2];
       // setup spies
-      getDocumentSpy = spyOn(service['documentQueryService'], 'getDocument$');
       getDocumentSpy.and.returnValue(new BehaviorSubject(null));
-      getBlocksSpy = spyOn(service['blockQueryService'], 'getBlocksForDocument');
       getBlocksSpy.and.returnValue(Promise.resolve(blocks));
       processDocumentStructureSpy = spyOn<any>(service, 'processDocumentStructure');
     });

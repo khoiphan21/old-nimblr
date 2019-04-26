@@ -11,7 +11,7 @@
                     <div class="input-label  mb-1">Email</div>
                     <input formControlName="email" type="text" required>
                     <div class="error" *ngIf="errorMessage === 'USER_NOT_FOUND'">
-                        <i class="fas fa-exclamation-circle"></i> Couldn't find an account with this email
+                        <i class="fas fa-exclamation-circle"></i> That Unamed email does not exist. Enter a different email or&nbsp;<span routerLink="/register">get a new one</span>
                     </div>
                 </div>
                 <div class="form-input mb-4">

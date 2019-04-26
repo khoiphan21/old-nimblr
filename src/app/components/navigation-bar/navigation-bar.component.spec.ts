@@ -234,10 +234,12 @@ describe('NavigationBarComponent', () => {
       expect(getStructureSpy).toHaveBeenCalledTimes(1);
     });
 
-    // TODO: fix this issue
-    xit('should call getStructure() twice', () => {
+    it('should call getStructure() twice', () => {
       const navigationEnd = new NavigationEnd(0, '', '/document');
-      spyOn(component['router'], 'events').and.returnValue(new BehaviorSubject(navigationEnd));
+      const mockRouter: any = {
+        events: new BehaviorSubject(navigationEnd)
+      };
+      component['router'] = mockRouter;
       component['setupDocumentStructure']();
       expect(getStructureSpy).toHaveBeenCalledTimes(2);
     });
