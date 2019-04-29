@@ -39,6 +39,7 @@ import { SubmissionDocumentContentComponent } from './pages/document-page/submis
 import { SubmissionRecipientComponent } from './pages/document-page/template-document-content/submission-recipient/submission-recipient.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
+import { DocumentOutlineTabComponent } from './components/navigation-bar/document-outline-tab/document-outline-tab.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
     SubmissionDocumentContentComponent,
     SubmissionRecipientComponent,
     PageNotFoundComponent,
+    DocumentOutlineTabComponent,
   ],
   imports: [
     BrowserModule,

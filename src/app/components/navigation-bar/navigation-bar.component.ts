@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
-import { NavigationTabDocument, DocumentStructureTab } from '../../classes/navigation-tab';
+import { NavigationTabDocument } from '../../classes/navigation-tab';
 import { slideLeftToRightAnimation, fadeInOutAnimation } from 'src/app/animation';
 import { User } from 'src/app/classes/user';
 import { AccountService } from 'src/app/services/account/account.service';
 import { DocumentType } from 'src/API';
 import { CreateDocumentInput, SharingStatus } from '../../../API';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { DocumentCommandService, UUID } from '../../services/document/command/document-command.service';
+import { DocumentCommandService } from '../../services/document/command/document-command.service';
 const uuidv4 = require('uuid/v4');
 
 @Component({
@@ -20,7 +20,7 @@ export class NavigationBarComponent implements OnInit {
   currentUser: User;
   initialName: string;
   isNavigationTabShown = false;
-  documentStructure: Array<DocumentStructureTab> = [];
+  documentStructure: Array<string> = [];
   navigationTabs: NavigationTabDocument[] = [];
 
   constructor(
@@ -96,10 +96,5 @@ export class NavigationBarComponent implements OnInit {
     };
     const document = await this.documentCommandService.createDocument(input);
     this.router.navigate([`/document/${document.id}`]);
-  }
-
-  scrollToSection(uuid: UUID) {
-    const element = document.getElementById(uuid);
-    element.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});
   }
 }

@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { DocumentService } from '../document/document.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Document } from '../../classes/document/document';
-import { NavigationTabDocument, DocumentStructureTab } from '../../classes/navigation-tab';
+import { NavigationTabDocument } from '../../classes/navigation-tab';
 import { DocumentQueryService } from '../document/query/document-query.service';
 import { AccountService } from '../account/account.service';
 import { UUID } from '../document/command/document-command.service';
 import { TextBlockType } from '../../../API';
 import { Block } from '../../classes/block/block';
-import { TextBlock } from '../../classes/block/textBlock';
 import { BlockQueryService } from '../block/query/block-query.service';
 
 @Injectable({
@@ -16,7 +15,7 @@ import { BlockQueryService } from '../block/query/block-query.service';
 })
 export class NavigationBarService {
   private navigationBar$: BehaviorSubject<Array<NavigationTabDocument>>;
-  private documentStructure$: BehaviorSubject<Array<DocumentStructureTab>>;
+  private documentStructure$: BehaviorSubject<Array<string>>;
   private navigationBarStatus$ = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -99,7 +98,7 @@ export class NavigationBarService {
    *
    * @param documentId the document id to fall back to if user is not logged in
    */
-  getDocumentStructure$(documentId: UUID): Observable<Array<DocumentStructureTab>> {
+  getDocumentStructure$(documentId: UUID): Observable<Array<string>> {
     if (!this.documentStructure$) {
       this.documentStructure$ = new BehaviorSubject([]);
       this.getTabsForDocument(documentId);
@@ -122,17 +121,14 @@ export class NavigationBarService {
     });
   }
 
-  private processDocumentStructure(blocks: Array<Block>): Array<DocumentStructureTab> {
-    const tabs: Array<DocumentStructureTab> = [];
+  private processDocumentStructure(blocks: Array<Block>): Array<string> {
+    const tabs: Array<string> = [];
     const headerBlocks = blocks.filter((block: any) => {
       return block.textBlockType === TextBlockType.HEADER;
     });
     for (const block of headerBlocks) {
-      const textBlock = block as TextBlock;
-      const id = textBlock.id;
-      const title = textBlock.value;
-      const tab = new DocumentStructureTab({id, title});
-      tabs.push(tab);
+      const id = block.id;
+      tabs.push(id);
     }
     return tabs;
   }

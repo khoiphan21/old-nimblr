@@ -10,7 +10,6 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { skip, take } from 'rxjs/operators';
 import { configureTestSuite } from 'ng-bullet';
 import { BlockFactoryService } from '../block/factory/block-factory.service';
-import { DocumentStructureTab } from 'src/app/classes/navigation-tab';
 
 const uuidv4 = require('uuid/v4');
 
@@ -233,7 +232,7 @@ describe('NavigationBarService', () => {
 
     // TODO: @jeremy ts line 110
     xit('should emit the right error',  done => {
-      service['documentStructure$'] = new BehaviorSubject<DocumentStructureTab[]>(null);
+      service['documentStructure$'] = new BehaviorSubject<string[]>(null);
       const errMessage = 'test';
       getTabsSpy.and.callThrough();
       service['getTabsForDocument'](documentId).catch(() => {
@@ -252,13 +251,11 @@ describe('NavigationBarService', () => {
     let processDocumentStructureSpy: jasmine.Spy;
     let blocks = [];
     let headerBlock;
-    let headerId;
     let headerBlock2;
-    let headerId2;
     const documentId = uuidv4();
     beforeEach(() => {
       // setup variables
-      service['documentStructure$'] = new BehaviorSubject<Array<DocumentStructureTab>>(null);
+      service['documentStructure$'] = new BehaviorSubject<Array<string>>(null);
       const textBlock = blockFactory.createNewTextBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
@@ -306,20 +303,11 @@ describe('NavigationBarService', () => {
       let processedDatas;
 
       beforeEach(() => {
-        headerId = headerBlock.id;
-        headerId2 = headerBlock2.id;
         processDocumentStructureSpy.and.callThrough();
         processedDatas = service['processDocumentStructure'](blocks);
       });
 
       it('should only extract HeaderBlocks from the blocks', () => {
-        expect(processedDatas.length).toBe(2);
-      });
-
-      it('should extract the right details from `block` object to `documentStructureTab`', () => {
-        const data = processedDatas.filter((block: any) => {
-          return block.id === headerId || block.id === headerId2;
-        });
         expect(processedDatas.length).toBe(2);
       });
     });

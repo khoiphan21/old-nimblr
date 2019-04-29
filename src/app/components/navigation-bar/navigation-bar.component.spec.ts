@@ -5,7 +5,7 @@ import { NavigationTabComponent } from './navigation-tab/navigation-tab.componen
 import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { NavigationTabDocument, DocumentStructureTab } from 'src/app/classes/navigation-tab';
+import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
 import { AccountService } from 'src/app/services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
@@ -258,8 +258,7 @@ describe('NavigationBarComponent', () => {
       });
 
       it('should update into the latest value when respond', () => {
-        const tab = new DocumentStructureTab({id: 'testId', title: 'testTitle'});
-        const structure = [tab];
+        const structure = ['test123'];
         getDocumentStructureSpy.and.returnValue(new BehaviorSubject(structure));
         component['getStructure']();
         expect(component.documentStructure).toEqual(structure);
@@ -267,16 +266,4 @@ describe('NavigationBarComponent', () => {
     });
   });
 
-  describe('scrollToSection()', () => {
-    let getElementSpy: jasmine.Spy;
-    beforeEach(() => {
-      const dummyElement = document.createElement('div');
-      getElementSpy = spyOn(document, 'getElementById').and.returnValue(dummyElement);
-    });
-    it('should call the getElementById() with the right arguement', () => {
-      const uuid = uuidv4();
-      component.scrollToSection(uuid);
-      expect(getElementSpy).toHaveBeenCalledWith(uuid);
-    });
-  });
 });
