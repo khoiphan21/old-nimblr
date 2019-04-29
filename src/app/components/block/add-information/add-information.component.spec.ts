@@ -1,17 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddInformationComponent } from './add-information.component';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('AddInformationComponent', () => {
   let component: AddInformationComponent;
   let fixture: ComponentFixture<AddInformationComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ AddInformationComponent ]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddInformationComponent);

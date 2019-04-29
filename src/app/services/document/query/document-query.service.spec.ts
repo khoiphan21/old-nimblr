@@ -9,6 +9,7 @@ import { DocumentFactoryService } from '../factory/document-factory.service';
 import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { onSpecificDocumentUpdate } from 'src/graphql/subscriptions';
 import { Document } from 'src/app/classes/document/document';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -19,8 +20,11 @@ describe('DocumentQueryService', () => {
   let backendResponse: Document;
   let id: UUID;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+
+  beforeEach(() => {
     service = TestBed.get(DocumentQueryService);
     factory = TestBed.get(DocumentFactoryService);
     // setup mock data

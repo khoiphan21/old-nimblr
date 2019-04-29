@@ -1,12 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 
 import { EmailService } from './email.service';
+import { configureTestSuite } from 'ng-bullet';
 
 // tslint:disable:no-string-literal
 describe('EmailService', () => {
   let service: EmailService;
-  beforeEach(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+
+  beforeEach(() => {
     service = TestBed.get(EmailService);
   });
 

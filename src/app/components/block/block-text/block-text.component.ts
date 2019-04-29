@@ -94,6 +94,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
           lastUpdatedBy: this.block.lastUpdatedBy,
           value: this.value,
           createdAt: this.block.createdAt,
+          textBlockType: this.block.textBlockType
         });
         this.blockCommandService.updateBlock(updatedBlock).then(() => {
           resolve(updatedBlock);
@@ -116,6 +117,14 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   createTextBlockOnEnter(event: Event) {
     this.createBlock.emit(BlockType.TEXT);
+    event.preventDefault();
+  }
+
+  onPaste(event: ClipboardEvent) {
+    const pastedData = event.clipboardData.getData('Text');
+    this.value += pastedData;
+    this.setCaretToEnd();
+    this.updateValue();
     event.preventDefault();
   }
 }

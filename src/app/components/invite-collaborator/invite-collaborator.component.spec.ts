@@ -2,12 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InviteCollaboratorComponent } from './invite-collaborator.component';
 import { ResponsiveModule } from 'ngx-responsive';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('InviteCollaboratorComponent', () => {
   let component: InviteCollaboratorComponent;
   let fixture: ComponentFixture<InviteCollaboratorComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ InviteCollaboratorComponent ],
       imports: [
@@ -15,7 +16,7 @@ describe('InviteCollaboratorComponent', () => {
       ]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InviteCollaboratorComponent);

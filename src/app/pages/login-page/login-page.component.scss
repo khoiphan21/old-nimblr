@@ -61,6 +61,10 @@ div.fluid-container {
                             font-size: 14px;
                             margin-right: 5px;
                         }
+                        span {
+                            color: $color-blue-2;
+                            cursor: pointer;
+                        }
                     }
                     .input-label {
                         font-size: 15px;

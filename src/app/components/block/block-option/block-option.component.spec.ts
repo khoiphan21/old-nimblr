@@ -3,34 +3,59 @@ import { BlockOptionComponent } from './block-option.component';
 import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
 import { CreateBlockEvent } from '../createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Block } from 'src/app/classes/block/block';
+import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
+import { BehaviorSubject } from 'rxjs';
+import { TextBlock } from '../../../classes/block/textBlock';
 
 const uuidv4 = require('uuid/v4');
 
-describe('BlockOptionComponent', () => {
+fdescribe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
   let fixture: ComponentFixture<BlockOptionComponent>;
+  let factory: BlockFactoryService;
   let toggleSpy: jasmine.Spy;
-
-  beforeEach(async(() => {
+  let getBlockSpy: jasmine.Spy;
+  let block: Block;
+  const documentId = uuidv4();
+  const lastUpdatedBy = uuidv4();
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
-      declarations: [BlockOptionComponent]
+      declarations: [BlockOptionComponent],
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ]
     })
       .compileComponents();
-  }));
+  });
 
+  /* tslint:disable:no-string-literal */
   beforeEach(() => {
+    factory = TestBed.get(BlockFactoryService);
     fixture = TestBed.createComponent(BlockOptionComponent);
     component = fixture.componentInstance;
-
-    // Set some default values
-    component.blockId = uuidv4();
-
+    block = factory.createNewTextBlock({documentId, lastUpdatedBy});
+    getBlockSpy = spyOn(component['blockQueryService'], 'getBlock$').and.returnValue(new BehaviorSubject(block));
     toggleSpy = spyOn<any>(component, 'toggleSelectedOptionsStatus');
+    component.blockId = block.id;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('ngOnInit()', () => {
+    it('should get a valid block if it is not empty', () => {
+      component.ngOnInit();
+      expect(component.block).toEqual(block);
+    });
+
+    it('should log the error when it failed to get block', () => {
+      getBlockSpy.and.returnValue(new BehaviorSubject(block).error('failed'));
+    });
   });
 
   describe('ngOnChanges() -', () => {
@@ -91,10 +116,13 @@ describe('BlockOptionComponent', () => {
       expect(component['toggleSelectedOptionsStatus']).toHaveBeenCalledWith(false);
     });
 
-    it('should emit the right value to parent', () => {
+    it('should emit the right value to parent', done => {
       component.switchBlockOptionsOff.subscribe((value) => {
         expect(value).toEqual(false);
+        done();
       });
+      component.isAddBlockContainerShown = true;
+      component.hideAddBlockContainer();
     });
   });
 
@@ -128,10 +156,14 @@ describe('BlockOptionComponent', () => {
       expect(component['toggleSelectedOptionsStatus']).toHaveBeenCalledWith(false);
     });
 
-    it('should emit the right value to parent', () => {
-      component.switchBlockOptionsOff.subscribe((value) => {
+    it('should emit the right value to parent', done => {
+      component.switchBlockOptionsOff.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(false);
+        done();
       });
+      // First set this to true, otherwise it will not run the code
+      component.isMenuSelectionContainerShown = true;
+      component.hideMenuSelectionContainer();
     });
   });
 
@@ -207,6 +239,52 @@ describe('BlockOptionComponent', () => {
         done();
       });
       component.deleteHandler();
+    });
+  });
+
+  describe('convertBlockInto()', () => {
+    let updateBlockUISpy: jasmine.Spy;
+    let updateBlockSpy: jasmine.Spy;
+    let hideMenuSpy: jasmine.Spy;
+    beforeEach(() => {
+      updateBlockUISpy = spyOn(component['blockQueryService'], 'updateBlockUI');
+      updateBlockSpy = spyOn(component['blockCommandService'], 'updateBlock').and.returnValue(Promise.resolve());
+      hideMenuSpy = spyOn(component, 'hideMenuSelectionContainer');
+      component.convertBlockInto(TextBlockType.HEADER);
+    });
+
+    it('should call hideMenuSelectionContainer()', () => {
+      expect(hideMenuSpy).toHaveBeenCalled();
+    });
+
+    describe('should call updateBlockUI() with the right argument', () => {
+      let argument: TextBlock;
+      beforeEach(() => {
+        argument = updateBlockUISpy.calls.mostRecent().args[0];
+      });
+
+      it('should have the right id', () => {
+        expect(argument.id).toEqual(block.id);
+      });
+
+      it('should have the right TextBlockType', () => {
+        expect(argument.textBlockType).toEqual(TextBlockType.HEADER);
+      });
+    });
+
+    describe('should call updateBlock() with the right argument', () => {
+      let argument: TextBlock;
+      beforeEach(() => {
+        argument = updateBlockSpy.calls.mostRecent().args[0];
+      });
+
+      it('should have the right id', () => {
+        expect(argument.id).toEqual(block.id);
+      });
+
+      it('should have the right TextBlockType', () => {
+        expect(argument.textBlockType).toEqual(TextBlockType.HEADER);
+      });
     });
   });
 

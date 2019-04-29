@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { deleteAppUser, adminDeleteCognitoUser, adminConfirmUser, TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -24,7 +25,7 @@ describe('(Integration) AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [AccountServiceImpl],
       imports: [
@@ -33,6 +34,9 @@ describe('(Integration) AccountImplService', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
   });
@@ -120,6 +124,7 @@ describe('(Integration) AccountImplService', () => {
     it('should login if the credentials are correct', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // should resolve
+        expect().nothing();
         done();
       }).catch(error => processTestError('failed to login', error, done));
     });
@@ -130,7 +135,10 @@ describe('(Integration) AccountImplService', () => {
 
       service.login(TEST_USERNAME, password).then(() =>
         processTestError(errorMessage, errorMessage, done)
-      ).catch(() => done());
+      ).catch(() => {
+        expect().nothing();
+        done();
+      });
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     it('should emit a new user object if successfully logged in', done => {
@@ -147,7 +155,7 @@ describe('(Integration) AccountImplService', () => {
 
   });
 
-  describe('Logout()', () => {
+  describe('logout()', () => {
     const user: User = {
       id: 'abc123',
       firstName: 'tester',
@@ -236,6 +244,7 @@ describe('(Integration) AccountImplService', () => {
         service.isUserReady().then(() => {
           fail('error must occur');
         }).catch(() => {
+          expect().nothing();
           done();
         });
       }).catch(error => processTestError('unable to sign out', error, done));

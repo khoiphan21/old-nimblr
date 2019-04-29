@@ -2,12 +2,16 @@ import { TestBed } from '@angular/core/testing';
 import { GraphQlCommandService } from './graph-ql-command.service';
 
 import { API, graphqlOperation } from 'aws-amplify';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('GraphQlCommandService - Unit Tests', () => {
   let service: GraphQlCommandService;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+
+  beforeEach(() => {
     service = TestBed.get(GraphQlCommandService);
   });
 

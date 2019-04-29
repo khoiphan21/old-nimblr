@@ -10,6 +10,8 @@ import { processTestError } from '../../../classes/test-helpers.spec';
 import { MockAPIDataFactory } from '../../graphQL/mockData';
 import { getBlock } from '../../../../graphql/queries';
 import { RouterTestingModule } from '@angular/router/testing';
+import { configureTestSuite } from 'ng-bullet';
+import { BlockType, TextBlockType } from '../../../../API';
 
 const uuidv4 = require('uuid/v4');
 
@@ -22,15 +24,19 @@ describe('BlockQueryService', () => {
   let querySpy: jasmine.Spy;
   let subscriptionSpy: jasmine.Spy;
   let backendSubject: Subject<any>;
+  let factory: BlockFactoryService;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])
       ]
     });
-    service = TestBed.get(BlockQueryService);
+  });
 
+  beforeEach(() => {
+    service = TestBed.get(BlockQueryService);
+    factory = TestBed.get(BlockFactoryService);
     // Setup testing data
     documentId = uuidv4();
     id = uuidv4();
@@ -186,8 +192,43 @@ describe('BlockQueryService', () => {
       }));
     });
 
+    it('should return a list of blocks', done => {
+      service.getBlocksForDocument(documentId).then(blocks => {
+        expect(blocks.length).toBe(2);
+        done();
+      }).catch(error => processTestError('ERROR in BlockQueryService', error, done));
+    });
+
+    it('should throw an error if graphQlService call fails', done => {
+      // Setup the 'list' spy to throw an error
+      const errorMessage = 'test error';
+      listSpy.and.returnValue(Promise.reject(errorMessage));
+      // now try to get blocks for a document
+      service.getBlocksForDocument(documentId).then(() => {
+        fail('error should have occurred'); done();
+      }).catch(error => {
+        expect(error).toEqual(errorMessage);
+        done();
+      });
+    });
+  });
+
+  describe('getBlocksObservablesForDocument()', () => {
+    let listSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      // Setup the 'list' spy
+      listSpy = spyOn(service['graphQlService'], 'list');
+      listSpy.and.returnValue(Promise.resolve({
+        items: [
+          MockAPIDataFactory.createBlock({ documentId }),
+          MockAPIDataFactory.createBlock({ documentId })
+        ]
+      }));
+    });
+
     it('should return observables with values for all blocks', done => {
-      service.getBlocksForDocument(documentId).then(observables => {
+      service.getBlocksObservablesForDocument(documentId).then(observables => {
         expect(observables.length).toBe(2);
 
         return Promise.all(observables.map(observable => {
@@ -209,14 +250,17 @@ describe('BlockQueryService', () => {
     }
 
     it('should update blockMaps', done => {
-      service.getBlocksForDocument(documentId).then(() => {
+      service.getBlocksObservablesForDocument(documentId).then(() => {
         const observables = [];
         Object.keys(service['blocksMap']).forEach(key => {
           observables.push(service['blocksMap'].get(key));
         });
         return Promise.all(observables.map(observable => {
           return awaitAndCheckObservable(observable);
-        })).then(() => done());
+        })).then(() => {
+          expect().nothing();
+          done();
+        });
       }).catch(error => processTestError('ERROR in BlockQueryService', error, done));
     });
 
@@ -225,7 +269,7 @@ describe('BlockQueryService', () => {
       const errorMessage = 'test error';
       listSpy.and.returnValue(Promise.reject(errorMessage));
       // now try to get blocks for a document
-      service.getBlocksForDocument(documentId).then(() => {
+      service.getBlocksObservablesForDocument(documentId).then(() => {
         fail('error should have occurred'); done();
       }).catch(error => {
         expect(error).toEqual(errorMessage);
@@ -273,10 +317,8 @@ describe('BlockQueryService', () => {
 
   describe('registerBlockCreatedByUI', () => {
     let block: Block;
-    let factory: BlockFactoryService;
 
     beforeEach(() => {
-      factory = TestBed.get(BlockFactoryService);
       block = factory.createAppBlock(mockBlock);
     });
 
@@ -294,10 +336,8 @@ describe('BlockQueryService', () => {
 
   describe('registerBlockDeletedByUI', () => {
     let block: Block;
-    let factory: BlockFactoryService;
 
     beforeEach(() => {
-      factory = TestBed.get(BlockFactoryService);
       block = factory.createAppBlock(mockBlock);
     });
     it('should remove the stored block from the map', () => {
@@ -305,6 +345,36 @@ describe('BlockQueryService', () => {
       service['blocksMap'].set(id, new BehaviorSubject(block));
       service.registerBlockDeletedByUI(id);
       expect(service['blocksMap'].has(id)).toBe(false);
+    });
+  });
+
+  describe('updateBlockUI()', () => {
+    let headerBlock;
+    let blockObservable: Observable<Block>;
+    let blockId;
+    const lastUpdatedBy = uuidv4();
+    beforeEach(() => {
+      headerBlock = factory.createNewHeaderBlock({documentId, lastUpdatedBy});
+      blockId = headerBlock.id;
+      const block = factory.createAppBlock({
+        id: blockId,
+        type: BlockType.TEXT,
+        documentId,
+        lastUpdatedBy,
+        value: '',
+        textBlockType: TextBlockType.TEXT
+      });
+      service['blocksMap'] = new Map();
+      service['blocksMap'].set(blockId, new BehaviorSubject(block));
+      blockObservable = service['blocksMap'].get(blockId);
+    });
+
+    it('should get the latest data of the updated block', done => {
+      blockObservable.pipe(skip(1)).subscribe((value) => {
+        expect(value).toEqual(headerBlock);
+        done();
+      });
+      service.updateBlockUI(headerBlock);
     });
   });
 

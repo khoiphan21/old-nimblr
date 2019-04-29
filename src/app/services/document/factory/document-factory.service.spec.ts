@@ -7,6 +7,7 @@ import { Document } from 'src/app/classes/document/document';
 import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { TemplateDocument } from 'src/app/classes/document/templateDocument';
 import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -14,8 +15,11 @@ describe('DocumentFactoryService', () => {
   let service: DocumentFactoryService;
   let input: any;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+
+  beforeEach(() => {
     service = TestBed.get(DocumentFactoryService);
     input = {
       id: uuidv4(),

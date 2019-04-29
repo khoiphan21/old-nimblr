@@ -56,7 +56,26 @@ export class BlockQueryService {
     }
   }
 
-  async getBlocksForDocument(id: string): Promise<Array<Observable<Block>>> {
+  async getBlocksForDocument(id: string): Promise<Array<Block>> {
+    return new Promise((resolve, reject) => {
+      const params = {
+        filter: {
+          documentId: { eq: id }
+        }
+      };
+
+      this.graphQlService.list({
+        query: listBlocks,
+        queryName: 'listBlocks',
+        params,
+        listAll: true
+      }).then(response => {
+        resolve(response.items);
+      }).catch(error => reject(error));
+    });
+  }
+
+  async getBlocksObservablesForDocument(id: string): Promise<Array<Observable<Block>>> {
     return new Promise((resolve, reject) => {
       const params = {
         filter: {
@@ -137,5 +156,19 @@ export class BlockQueryService {
 
   registerBlockDeletedByUI(blockId: string) {
     this.blocksMap.delete(blockId);
+  }
+
+  /**
+   * Update block's UI from conversion
+   *
+   * @param block the block
+   */
+  updateBlockUI(block: Block) {
+    const id = block.id;
+    let block$: Subject<Block>;
+    if (this.blocksMap.has(id)) {
+      block$ = this.blocksMap.get(id);
+      block$.next(block);
+    }
   }
 }

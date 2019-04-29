@@ -11,6 +11,7 @@ import { updateUser } from 'src/graphql/mutations';
 import { getUser } from 'src/graphql/queries';
 import { UserFactoryService } from '../user/user-factory.service';
 import { skip } from 'rxjs/operators';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -36,7 +37,7 @@ describe('AccountImplService', () => {
     await Auth.signOut();
   });
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [AccountServiceImpl],
       imports: [
@@ -44,6 +45,9 @@ describe('AccountImplService', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
   });
@@ -214,11 +218,6 @@ describe('AccountImplService', () => {
       spyGetAppUser.and.returnValue(Promise.resolve(mockUserData));
     });
 
-    it('should always return a promise', () => {
-      const data = service.login('', '');
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
     it('should call signIn api', async () => {
       await service.login('', '');
       expect(spyAuth.calls.count()).toBe(1);
@@ -271,6 +270,7 @@ describe('AccountImplService', () => {
 
     it('should resolve when signout successfully', async () => {
       await service.logout();
+      expect().nothing();
       // should be okay if control reaches here
     });
 
@@ -282,11 +282,12 @@ describe('AccountImplService', () => {
       expect(spy).toHaveBeenCalledWith(null);
     });
 
-    it('should reject with error emitted by signout if failed', () => {
+    it('should reject with error emitted by signout if failed', done => {
       const message = 'test err';
       signOutSpy.and.returnValue(Promise.reject(message));
       service.logout().catch(error => {
         expect(error).toBe(message);
+        done();
       });
     });
   });
@@ -365,14 +366,9 @@ describe('AccountImplService', () => {
       spyAPI = spyOn(API, 'graphql').and.returnValue(Promise.resolve(mockUser));
     });
 
-    it('should return promise', () => {
-      const data = service.update(mockUser);
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
     it('should call currentAuthenticatedUser first', async () => {
-      service.update(mockUser);
-      expect(spyCurrentAuthUser.calls.count()).toBe(1);
+      await service.update(mockUser);
+      expect(spyCurrentAuthUser).toHaveBeenCalled();
     });
 
     it('should call updateUserAttributes with the right args', async () => {

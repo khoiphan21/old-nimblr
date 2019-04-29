@@ -210,7 +210,8 @@ describe('BlockTextComponent', () => {
         documentId: component.block.documentId,
         lastUpdatedBy: component.block.lastUpdatedBy,
         value: component.value,
-        createdAt: component.block.createdAt
+        createdAt: component.block.createdAt,
+        textBlockType: component.block.textBlockType
       });
     });
 
@@ -282,4 +283,37 @@ describe('BlockTextComponent', () => {
     component.createTextBlockOnEnter(event);
   });
 
+  describe('onPaste()', () => {
+    let pasteEvent: any;
+    let setCaretSpy;
+    let updateValueSpy;
+    const value = 'test';
+    beforeEach(() => {
+      setCaretSpy = spyOn(component, 'setCaretToEnd');
+      updateValueSpy = spyOn(component, 'updateValue');
+      pasteEvent = {
+        preventDefault: () => {},
+        clipboardData: {
+          getData: () => value
+        }
+      };
+    });
+
+    it('should call updateValue()', () => {
+      component.onPaste(pasteEvent);
+      expect(updateValueSpy).toHaveBeenCalled();
+    });
+
+    it('should call setCaretToEnd()', () => {
+      component.onPaste(pasteEvent);
+      expect(setCaretSpy).toHaveBeenCalled();
+    });
+
+    it('should update the value to the lastest', () => {
+      const currentValue = 'data';
+      component.value = currentValue;
+      component.onPaste(pasteEvent);
+      expect(component.value).toEqual(currentValue + value);
+    });
+  });
 });

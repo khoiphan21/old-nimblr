@@ -3,18 +3,19 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TemplateDocumentContentComponent } from './template-document-content.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BlockType } from 'src/API';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('TemplateDocumentContentComponent', () => {
   let component: TemplateDocumentContentComponent;
   let fixture: ComponentFixture<TemplateDocumentContentComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ TemplateDocumentContentComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TemplateDocumentContentComponent);

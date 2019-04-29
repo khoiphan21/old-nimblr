@@ -3,13 +3,17 @@ import { TestBed } from '@angular/core/testing';
 import { API, graphqlOperation } from 'aws-amplify';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('GraphQLService', () => {
   let service: GraphQLService;
   let apiSpy: jasmine.Spy;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+
+  beforeEach(() => {
     service = TestBed.get(GraphQLService);
     // setup the spy
     apiSpy = spyOn(API, 'graphql');

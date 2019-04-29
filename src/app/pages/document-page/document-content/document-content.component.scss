@@ -18,8 +18,8 @@ section.content {
             width: 100%;
             padding-bottom: 15px;
             position: relative;
-            font-size: 2.2rem;
-            font-weight: normal;
+            font-size: 2.4rem;
+            font-weight: 500;
             letter-spacing: 1.5px;
             z-index: 1;
             .text-input {
@@ -67,11 +67,11 @@ section.content {
 @include media(lg) {
     section.content {
         height: 100%;
+        margin-top: 100px;
         div.title {
             font-size: 2.2rem;
             padding: 0 $desktop-document-horizontal-padding 20px $desktop-document-horizontal-padding;
             h1 {
-                border-bottom: 1px solid #97A0BF;
                 justify-content: center;
                 button {
                     position: absolute;

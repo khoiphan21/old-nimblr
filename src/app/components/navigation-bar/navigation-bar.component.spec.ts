@@ -5,27 +5,32 @@ import { NavigationTabComponent } from './navigation-tab/navigation-tab.componen
 import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
+import { NavigationTabDocument, DocumentStructureTab } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
 import { AccountService } from 'src/app/services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { ResponsiveModule } from 'ngx-responsive';
-import { DocumentType } from '../../../API';
+import { DocumentType, CreateDocumentInput, SharingStatus } from '../../../API';
+import { isUuid } from '../../classes/helpers';
+import { UUID } from '../../services/document/command/document-command.service';
+import { NavigationEnd, ActivatedRoute } from '@angular/router';
 
+const uuidv4 = require('uuid/v4');
 // tslint:disable:no-string-literal
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let userFactory: UserFactoryService;
-
+  let userId: UUID;
+  let routerSpy: jasmine.Spy;
+  const documentId = 'test123';
   // spies
   let getStatusSpy: jasmine.Spy;
   let getNavBarSpy: jasmine.Spy;
+  let navBar$: Subject<any>;
   let accountSpy: jasmine.Spy;
-
-  let navigationBar$: BehaviorSubject<any>;
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
@@ -42,6 +47,16 @@ describe('NavigationBarComponent', () => {
         {
           provide: AccountService,
           useClass: MockAccountService
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => documentId
+              }
+            }
+          }
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -52,21 +67,23 @@ describe('NavigationBarComponent', () => {
     fixture = TestBed.createComponent(NavigationBarComponent);
     userFactory = TestBed.get(UserFactoryService);
     component = fixture.componentInstance;
-
     // Setup spies
-    navigationBar$ = new BehaviorSubject([]);
+    routerSpy = spyOn(component['router'], 'navigate');
     getStatusSpy = spyOn(component['navigationBarService'], 'getNavigationBarStatus$');
     getStatusSpy.and.returnValue(new BehaviorSubject(true));
-
     getNavBarSpy = spyOn(component['navigationBarService'], 'getNavigationBar$');
-    getNavBarSpy.and.returnValue(navigationBar$);
-
+    navBar$ = new Subject();
+    getNavBarSpy.and.returnValue(navBar$);
     accountSpy = spyOn(component['accountService'], 'getUser$');
     accountSpy.and.returnValue(new BehaviorSubject(null));
 
     // Setup component
     component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
     component.navigationTabs = [];
+    userId = uuidv4();
+    spyOn(component['accountService'], 'isUserReady').and.returnValue(
+      Promise.resolve({ id: userId })
+    );
 
     // call to render
     fixture.detectChanges();
@@ -76,7 +93,45 @@ describe('NavigationBarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
+  describe('ngOnInit()', () => {
+    let navigationStatusSpy: jasmine.Spy;
+    let userSpy: jasmine.Spy;
+    let navigationBarSpy: jasmine.Spy;
+    let documentStrucutureSpy: jasmine.Spy;
+
+    beforeEach(async () => {
+      navigationStatusSpy = spyOn<any>(component, 'setupNavigationStatus');
+      userSpy = spyOn<any>(component, 'setupUser');
+      userSpy.and.returnValue(Promise.resolve());
+      navigationBarSpy = spyOn<any>(component, 'setupNavigationBar');
+      documentStrucutureSpy = spyOn<any>(component, 'setupDocumentStructure');
+      navigationBarSpy.and.returnValue(Promise.resolve());
+      await component.ngOnInit();
+    });
+
+    it('should call setupNavigationStatus()', async () => {
+      expect(navigationStatusSpy).toHaveBeenCalled();
+    });
+
+    it('should call setupUser()', async () => {
+      expect(userSpy).toHaveBeenCalled();
+    });
+
+    it('should call setupNavigationBar()', async () => {
+      expect(navigationBarSpy).toHaveBeenCalled();
+    });
+
+    it('should call setupDocumentStructure()', async () => {
+      expect(documentStrucutureSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('processInitialName() - should process user`s first name when there is value',  () => {
+    component['processInitialName']('John');
+    expect(component.initialName).toEqual('J');
+  });
+
+  describe('setupUser()', () => {
     let user;
 
     beforeEach(() => {
@@ -86,14 +141,15 @@ describe('NavigationBarComponent', () => {
     });
 
     it('should set the user to the returned value', () => {
-      component.ngOnInit();
+      component['setupUser']();
       expect(component.currentUser).toEqual(user);
     });
 
-    it('should process user`s first name when there is value', () => {
-      component.ngOnInit();
+    it('should call processInitialName()', () => {
+      component['setupUser']();
       expect(component['processInitialName']).toHaveBeenCalled();
     });
+
   });
 
   /* tslint:disable:no-string-literal */
@@ -111,16 +167,116 @@ describe('NavigationBarComponent', () => {
     expect(component.isNavigationTabShown).toEqual(expectedResult);
   });
 
-  it('should receive get the right value for the navigationTabs when the data comes in', () => {
-    const tab1 = new NavigationTabDocument({
-      id: 'tab1', title: 'nav tab 1', type: DocumentType.GENERIC, children: []
+  describe('setupNavigationBar()', () => {
+    it('should receive the right value for the navigationTabs when the data comes in', () => {
+      const tab1 = new NavigationTabDocument({
+        id: 'tab1', title: 'nav tab 1', type: DocumentType.GENERIC, children: []
+      });
+      const tab2 = new NavigationTabDocument({
+        id: 'tab2', title: 'nav tab 2', type: DocumentType.GENERIC, children: []
+      });
+      const expectedResult = [tab1, tab2];
+      getNavBarSpy.and.returnValue(new BehaviorSubject(expectedResult));
+      component['setupNavigationBar']();
+      expect(component.navigationTabs).toEqual(expectedResult);
     });
-    const tab2 = new NavigationTabDocument({
-      id: 'tab2', title: 'nav tab 2', type: DocumentType.GENERIC, children: []
+  });
+
+  describe('createNewDocument()', () => {
+    let commandService: jasmine.Spy;
+    const id = 'abcde';
+
+    beforeEach(() => {
+      commandService = spyOn(component['documentCommandService'], 'createDocument');
+      commandService.and.returnValue({ id });
     });
-    const expectedResult = [tab1, tab2];
-    getNavBarSpy.and.returnValue(new BehaviorSubject(expectedResult));
-    component.ngOnInit();
-    expect(component.navigationTabs).toEqual(expectedResult);
+
+    describe('calls to createDocument()', () => {
+      let args: CreateDocumentInput;
+      beforeEach(async () => {
+        await component.createNewDocument();
+        args = commandService.calls.mostRecent().args[0];
+      });
+      it('should call createDocument() from Document Service', async () => {
+        expect(commandService).toHaveBeenCalled();
+      });
+      it('should call with a uuid version', async () => {
+        expect(isUuid(args.version)).toBe(true);
+      });
+      it('should call with a GENERIC type', async () => {
+        expect(args.type).toBe(DocumentType.GENERIC);
+      });
+      it('should call with the right ownerId', async () => {
+        expect(args.ownerId).toBe(userId);
+      });
+      it('should call with the right lastUpdatedBy', async () => {
+        expect(args.lastUpdatedBy).toBe(userId);
+      });
+      it('should call with PRIVATE sharing status', async () => {
+        expect(args.sharingStatus).toBe(SharingStatus.PRIVATE);
+      });
+    });
+
+    it('should navigate to the right "document" page when done', async () => {
+      await component.createNewDocument();
+      expect(routerSpy).toHaveBeenCalledWith([`/document/abcde`]);
+    });
+  });
+
+  describe('setupDocumentStructure()', () => {
+    let getStructureSpy: jasmine.Spy;
+    beforeEach(() => {
+      getStructureSpy = spyOn<any>(component, 'getStructure');
+    });
+
+    it('should call getStructure() once', () => {
+      component['setupDocumentStructure']();
+      expect(getStructureSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call getStructure() twice', () => {
+      const navigationEnd = new NavigationEnd(0, '', '/document');
+      const mockRouter: any = {
+        events: new BehaviorSubject(navigationEnd)
+      };
+      component['router'] = mockRouter;
+      component['setupDocumentStructure']();
+      expect(getStructureSpy).toHaveBeenCalledTimes(2);
+    });
+
+    describe('getStructure()', () => {
+      let getDocumentStructureSpy: jasmine.Spy;
+      beforeEach(() => {
+        getStructureSpy.and.callThrough();
+        getDocumentStructureSpy = spyOn(component['navigationBarService'], 'getDocumentStructure$');
+      });
+
+      it('should call getDocumentStructure$() with the right argument', () => {
+        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(null));
+        component['getStructure']();
+        expect(getDocumentStructureSpy).toHaveBeenCalledWith(documentId);
+      });
+
+      it('should update into the latest value when respond', () => {
+        const tab = new DocumentStructureTab({id: 'testId', title: 'testTitle'});
+        const structure = [tab];
+        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(structure));
+        component['getStructure']();
+        expect(component.documentStructure).toEqual(structure);
+      });
+    });
+  });
+
+  describe('scrollToSection()', () => {
+    let getElementSpy: jasmine.Spy;
+    beforeEach(() => {
+      const dummyElement = document.createElement('div');
+      getElementSpy = spyOn(document, 'getElementById').and.returnValue(dummyElement);
+    });
+    it('should call the getElementById() with the right arguement', () => {
+      const uuid = uuidv4();
+      component.scrollToSection(uuid);
+      expect(getElementSpy).toHaveBeenCalledWith(uuid);
+    });
   });
 });

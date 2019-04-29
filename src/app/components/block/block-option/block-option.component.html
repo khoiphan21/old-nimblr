@@ -7,9 +7,9 @@
         <div class="add-basic-blocks  options-block" *ngIf="isAddBlockContainerShown">
             <div class="title basic">BASIC BLOCKS</div>
 
-            <div class="block-type" (click) ="addHeaderBlock()">
+            <div class="block-type" (click)="addHeaderBlock()">
                 <div class="block-image text">
-                    
+
                 </div>
                 <div class="block-text">
                     <div class="type">Header</div>
@@ -44,14 +44,41 @@
             <img src="./assets/icons/menu-drag.png" alt="menu icon">
         </div>
         <div class="blocker" *ngIf="isMenuSelectionContainerShown" (click)="hideMenuSelectionContainer()"></div>
-        <div class="menu-blocks  options-block" *ngIf="isMenuSelectionContainerShown">
+        <div class="menu-blocks options-block" *ngIf="isMenuSelectionContainerShown">
             <div class="menu-selection" (click)="deleteHandler()">
                 <div class="selection-image">
-                    <img class="delete-item" src="./assets/icons/delete-item.png" alt="">
+                    <i class="fas fa-trash"></i>
                 </div>
                 <div class="selection-text">
                     <div class="type">Delete</div>
                 </div>
+            </div>
+            <div class="menu-selection" (mouseover)="isConverterShown = true">
+                <div class="selection-image">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="selection-text">
+                    <div class="type">Turn Into</div>
+                </div>
+                <i class="fas fa-caret-right"></i>
+                <section class="convert-blocks menu-blocks options-block" *ngIf="isConverterShown">
+                    <div class="menu-selection" (click)="convertBlockInto('HEADER')">
+                        <div class="selection-image">
+                            <i class="fas fa-heading"></i>
+                        </div>
+                        <div class="selection-text">
+                            <div class="type">Header</div>
+                        </div>
+                    </div>
+                    <div class="menu-selection" (click)="convertBlockInto('TEXT')">
+                        <div class="selection-image">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div class="selection-text">
+                            <div class="type">Text</div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@
 $dropdown-height: 41px;
 @include media(lg) {
     .question-block {
+        margin: 7.5px 0;
         display: block;
         height: auto;
         width: 100%;
