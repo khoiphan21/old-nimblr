@@ -1,18 +1,5 @@
 <div class="content text-block" *ngIf="block">
-    <ul *ngIf="block.textBlockType === 'BULLET'">
-        <li>
-            <!-- When the user is logged in -->
-            <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'" class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id" ngDefaultControl [(ngModel)]="value"
-                (ngModelChange)="updateValue()" (paste)="onPaste($event)" (keydown.enter)="createTextBlockOnEnter($event)" (keydown.backspace)="onBackSpaceAndEmptyTextbox($event)"></div>
-
-            <!-- When the user is not logged in -->
-            <div class="text-input" [class.header]="block.textBlockType === 'HEADER'" *ngIf="!isUserLoggedIn">{{value}}</div>
-
-            <!-- Placeholder -->
-            <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Type something here...</div>
-        </li>
-    </ul>
-    <ng-container *ngIf="block.textBlockType !== 'BULLET'">
+    <ng-container>
         <!-- When the user is logged in -->
         <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'" class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id" ngDefaultControl [(ngModel)]="value"
             (ngModelChange)="updateValue()" (paste)="onPaste($event)" (keydown.enter)="createTextBlockOnEnter($event)" (keydown.backspace)="onBackSpaceAndEmptyTextbox($event)"></div>
