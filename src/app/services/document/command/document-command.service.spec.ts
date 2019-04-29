@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus, DeleteDocumentInput } from '../../../../API';
 import { createDocument } from 'src/graphql/mutations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../factory/document-factory.service';
@@ -362,6 +362,42 @@ describe('DocumentCommandService', () => {
           input: updatedInput, done,
           fullMessage: 'Invalid parameter: lastUpdatedBy must be an uuid'
         });
+      });
+    });
+
+  });
+
+  describe('deleteDocument()', () => {
+    let input: DeleteDocumentInput;
+
+    beforeEach(() => {
+      input = { id: 'testid' };
+      querySpy.and.returnValue(Promise.resolve({
+        data: { deleteDocument: null }
+      }));
+    });
+
+    it('should execute the document deletion query', done => {
+      service.deleteDocument(input).then(() => {
+        expect(querySpy.calls.count()).toBe(1);
+        done();
+      });
+    });
+
+    it('should execute the document deletion with expected input', done => {
+      const expectedInput = { input };
+      service.deleteDocument(input).then(() => {
+        expect(querySpy.calls.mostRecent().args[1]).toEqual(expectedInput);
+        done();
+      });
+    });
+
+    it('should throw expected error when query failed', done => {
+      const errMsg = 'test err';
+      querySpy.and.returnValue(Promise.reject(new Error(errMsg)));
+      service.deleteDocument(input).catch(err => {
+        expect(err.message).toEqual(errMsg);
+        done();
       });
     });
 

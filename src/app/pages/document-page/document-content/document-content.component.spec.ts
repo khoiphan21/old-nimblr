@@ -20,6 +20,7 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { UUID } from 'src/app/services/document/command/document-command.service';
 import { CommandType } from '../../../classes/command/commandType';
 
 const uuidv4 = require('uuid/v4');
@@ -837,6 +838,38 @@ describe('DocumentContentComponent', () => {
     });
     it('should update the array of submissionDocIds', () => {
       expect(component.submissionDocIds).toEqual([submissionId]);
+    });
+  });
+
+  describe('deleteThisDocument()', () => {
+    let spyDeleteDocument: jasmine.Spy;
+    const testId = 't123';
+
+    beforeEach(() => {
+      spyDeleteDocument = spyOn(component['documentCommandService'], 'deleteDocument');
+      component['documentId'] = testId;
+
+    });
+
+    it('should call the command service', async () => {
+      spyDeleteDocument.and.returnValue(Promise.resolve('test delete'))
+      await component.deleteThisDocument();
+      expect(spyDeleteDocument.calls.count()).toBe(1);
+    });
+
+    it('should call the command service with expected parameters', async () => {
+      spyDeleteDocument.and.returnValue(Promise.resolve('test delete'));
+      await component.deleteThisDocument();
+      expect(spyDeleteDocument).toHaveBeenCalledWith({ id: testId });
+    });
+
+    it('should throw expected error when query failed', done => {
+      spyDeleteDocument.and.returnValue(Promise.reject(new Error('del failed')));
+      component.deleteThisDocument().catch(err => {
+        expect(err.message.includes('Failed to delete document:')).toBeTruthy();
+        expect(err.message.includes('del failed')).toBeTruthy();
+        done();
+      });
     });
   });
 
