@@ -91,13 +91,6 @@ describe('(Integration) DocumentCommandService', () => {
       const creationResponse = await service.createDocument(input);
       expect(creationResponse).toBeTruthy();
 
-      // QUESTION: as far as i can see in previous integration tests, we implemented the 
-      // actual deletion function on graphql to test things. But after the deletion is done, 
-      // they call an be replaced by this function. My question is, would it be quicker and easier
-      // if we implemnet all these CRUD functions before writing any integration test or even before
-      // we actually need these functions. We know that we need a 'deletion' function anyways.
-      // So we dont have to waste time writing the implmentation in integration tests?
-
       // delete this document
       deleteInput = {
         id: testId
