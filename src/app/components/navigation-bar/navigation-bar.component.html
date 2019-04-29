@@ -12,9 +12,9 @@
             <div class="title">shared</div>
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section> -->
-        <section class="tabs document-outline" *ngIf="documentStructure">
+        <section class="tabs document-outline" *ngIf="blockIds">
             <div class="title">Document Outline</div>
-            <ng-container *ngFor="let id of documentStructure">
+            <ng-container *ngFor="let id of blockIds">
                 <app-document-outline-tab [id]="id"></app-document-outline-tab>
             </ng-container>
         </section>

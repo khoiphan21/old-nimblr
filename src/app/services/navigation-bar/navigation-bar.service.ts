@@ -91,45 +91,4 @@ export class NavigationBarService {
     }
     return navigationTabs;
   }
-
-
-  /**
-   * Return an observable for the document structures
-   *
-   * @param documentId the document id to fall back to if user is not logged in
-   */
-  getDocumentStructure$(documentId: UUID): Observable<Array<string>> {
-    if (!this.documentStructure$) {
-      this.documentStructure$ = new BehaviorSubject([]);
-      this.getTabsForDocument(documentId);
-    }
-    return this.documentStructure$;
-  }
-
-  private async getTabsForDocument(documentId: UUID) {
-    return new Promise((resolve, reject) => {
-      this.documentQueryService.getDocument$(documentId).subscribe(() => {
-        this.blockQueryService.getBlocksForDocument(documentId).then(blocks => {
-          const documentStructure = this.processDocumentStructure(blocks);
-          this.documentStructure$.next(documentStructure);
-          resolve();
-        });
-      }, error => {
-        this.documentStructure$.error(error);
-        reject();
-      });
-    });
-  }
-
-  private processDocumentStructure(blocks: Array<Block>): Array<string> {
-    const tabs: Array<string> = [];
-    const headerBlocks = blocks.filter((block: any) => {
-      return block.textBlockType === TextBlockType.HEADER;
-    });
-    for (const block of headerBlocks) {
-      const id = block.id;
-      tabs.push(id);
-    }
-    return tabs;
-  }
 }

@@ -8,6 +8,7 @@ import { DocumentType } from 'src/API';
 import { CreateDocumentInput, SharingStatus } from '../../../API';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { DocumentCommandService } from '../../services/document/command/document-command.service';
+import { DocumentQueryService } from '../../services/document/query/document-query.service';
 const uuidv4 = require('uuid/v4');
 
 @Component({
@@ -20,11 +21,12 @@ export class NavigationBarComponent implements OnInit {
   currentUser: User;
   initialName: string;
   isNavigationTabShown = false;
-  documentStructure: Array<string> = [];
+  blockIds: Array<string> = [];
   navigationTabs: NavigationTabDocument[] = [];
 
   constructor(
     private documentCommandService: DocumentCommandService,
+    private documentQueryService: DocumentQueryService,
     private navigationBarService: NavigationBarService,
     private accountService: AccountService,
     private router: Router,
@@ -80,8 +82,9 @@ export class NavigationBarComponent implements OnInit {
 
   private getStructure() {
     const documentId = this.route.snapshot.paramMap.get('id');
-    this.navigationBarService.getDocumentStructure$(documentId).subscribe((structure) => {
-      this.documentStructure = structure;
+    this.documentQueryService.getDocument$(documentId).subscribe(document => {
+      if (document === null) { return; }
+      this.blockIds = document.blockIds;
     });
   }
 

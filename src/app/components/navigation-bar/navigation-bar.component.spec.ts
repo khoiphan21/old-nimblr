@@ -244,25 +244,21 @@ describe('NavigationBarComponent', () => {
       expect(getStructureSpy).toHaveBeenCalledTimes(2);
     });
 
-    describe('getStructure()', () => {
-      let getDocumentStructureSpy: jasmine.Spy;
-      beforeEach(() => {
-        getStructureSpy.and.callThrough();
-        getDocumentStructureSpy = spyOn(component['navigationBarService'], 'getDocumentStructure$');
-      });
+  });
 
-      it('should call getDocumentStructure$() with the right argument', () => {
-        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(null));
-        component['getStructure']();
-        expect(getDocumentStructureSpy).toHaveBeenCalledWith(documentId);
-      });
+  describe('getStructure()', () => {
+    let getDocumentSpy: jasmine.Spy;
+    const blockIds = ['test123'];
+    const mockDocument = {
+      blockIds
+    };
+    beforeEach(() => {
+      getDocumentSpy = spyOn(component['documentQueryService'], 'getDocument$').and.returnValue(new BehaviorSubject(mockDocument));
+    });
 
-      it('should update into the latest value when respond', () => {
-        const structure = ['test123'];
-        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(structure));
-        component['getStructure']();
-        expect(component.documentStructure).toEqual(structure);
-      });
+    it('should update into the latest value when respond', async () => {
+      component['getStructure']();
+      expect(component.blockIds).toEqual(blockIds);
     });
   });
 

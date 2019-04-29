@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UUID } from '../../../services/document/command/document-command.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { TextBlock } from '../../../classes/block/textBlock';
+import { Subscription } from 'rxjs';
+import { TextBlockType } from 'src/API';
 
 @Component({
   selector: 'app-document-outline-tab',
@@ -10,16 +12,21 @@ import { TextBlock } from '../../../classes/block/textBlock';
 })
 export class DocumentOutlineTabComponent implements OnInit {
   @Input() id: UUID;
+  @Output() tabDestroyEvent = new EventEmitter<boolean>();
   title: string;
+  previousType: TextBlockType;
+  isHeader: boolean;
+  subscription: Subscription;
   constructor(
     private blockQueryService: BlockQueryService
   ) { }
 
   // TODO: @jeremy cover error test
   ngOnInit() {
-    this.blockQueryService.getBlock$(this.id).subscribe((block) => {
+    this.subscription = this.blockQueryService.getBlock$(this.id).subscribe((block) => {
       if (block !== null) {
         const textBlock = block as TextBlock;
+        this.isHeader = textBlock.textBlockType === TextBlockType.HEADER;
         this.title = textBlock.value;
       }
     }, error => {
@@ -32,5 +39,4 @@ export class DocumentOutlineTabComponent implements OnInit {
     const element = document.getElementById(uuid);
     element.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});
   }
-
 }
