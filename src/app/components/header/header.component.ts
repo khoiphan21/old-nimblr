@@ -58,5 +58,6 @@ export class HeaderComponent implements OnInit {
 
   deleteThisDocument() {
     this.deleteDocumentEvent.emit();
+    this.router.navigate(['/dashboard']);
   }
 }

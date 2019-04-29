@@ -93,6 +93,12 @@ describe('HeaderComponent', () => {
       component.deleteDocumentEvent.subscribe(() => done());
       component.deleteThisDocument();
     });
+
+    it('should trigger page redirection', () => {
+      const spyNavi = spyOn(component['router'], 'navigate');
+      component.deleteThisDocument();
+      expect(spyNavi.calls.count()).toBe(1);
+    });
   });
 
 });
