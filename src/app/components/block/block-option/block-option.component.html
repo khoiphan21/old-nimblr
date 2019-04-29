@@ -62,7 +62,7 @@
                 </div>
                 <i class="fas fa-caret-right"></i>
                 <section class="convert-blocks menu-blocks options-block" *ngIf="isConverterShown">
-                    <div class="menu-selection">
+                    <div class="menu-selection" (click)="convertBlockInto('HEADER')">
                         <div class="selection-image">
                             <i class="fas fa-heading"></i>
                         </div>
@@ -70,7 +70,7 @@
                             <div class="type">Header</div>
                         </div>
                     </div>
-                    <div class="menu-selection">
+                    <div class="menu-selection" (click)="convertBlockInto('TEXT')">
                         <div class="selection-image">
                             <i class="fas fa-font"></i>
                         </div>

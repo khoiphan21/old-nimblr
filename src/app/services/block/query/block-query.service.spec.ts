@@ -11,6 +11,7 @@ import { MockAPIDataFactory } from '../../graphQL/mockData';
 import { getBlock } from '../../../../graphql/queries';
 import { RouterTestingModule } from '@angular/router/testing';
 import { configureTestSuite } from 'ng-bullet';
+import { BlockType, TextBlockType } from '../../../../API';
 
 const uuidv4 = require('uuid/v4');
 
@@ -23,6 +24,7 @@ describe('BlockQueryService', () => {
   let querySpy: jasmine.Spy;
   let subscriptionSpy: jasmine.Spy;
   let backendSubject: Subject<any>;
+  let factory: BlockFactoryService;
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
@@ -34,7 +36,7 @@ describe('BlockQueryService', () => {
 
   beforeEach(() => {
     service = TestBed.get(BlockQueryService);
-
+    factory = TestBed.get(BlockFactoryService);
     // Setup testing data
     documentId = uuidv4();
     id = uuidv4();
@@ -315,10 +317,8 @@ describe('BlockQueryService', () => {
 
   describe('registerBlockCreatedByUI', () => {
     let block: Block;
-    let factory: BlockFactoryService;
 
     beforeEach(() => {
-      factory = TestBed.get(BlockFactoryService);
       block = factory.createAppBlock(mockBlock);
     });
 
@@ -336,10 +336,8 @@ describe('BlockQueryService', () => {
 
   describe('registerBlockDeletedByUI', () => {
     let block: Block;
-    let factory: BlockFactoryService;
 
     beforeEach(() => {
-      factory = TestBed.get(BlockFactoryService);
       block = factory.createAppBlock(mockBlock);
     });
     it('should remove the stored block from the map', () => {
@@ -347,6 +345,36 @@ describe('BlockQueryService', () => {
       service['blocksMap'].set(id, new BehaviorSubject(block));
       service.registerBlockDeletedByUI(id);
       expect(service['blocksMap'].has(id)).toBe(false);
+    });
+  });
+
+  describe('updateBlockUI()', () => {
+    let headerBlock;
+    let blockObservable: Observable<Block>;
+    let blockId;
+    const lastUpdatedBy = uuidv4();
+    beforeEach(() => {
+      headerBlock = factory.createNewHeaderBlock({documentId, lastUpdatedBy});
+      blockId = headerBlock.id;
+      const block = factory.createAppBlock({
+        id: blockId,
+        type: BlockType.TEXT,
+        documentId,
+        lastUpdatedBy,
+        value: '',
+        textBlockType: TextBlockType.TEXT
+      });
+      service['blocksMap'] = new Map();
+      service['blocksMap'].set(blockId, new BehaviorSubject(block));
+      blockObservable = service['blocksMap'].get(blockId);
+    });
+
+    it('should get the latest data of the updated block', done => {
+      blockObservable.pipe(skip(1)).subscribe((value) => {
+        expect(value).toEqual(headerBlock);
+        done();
+      });
+      service.updateBlockUI(headerBlock);
     });
   });
 
