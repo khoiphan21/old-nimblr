@@ -1,5 +1,11 @@
 @import '_variables';
 @import 'mixins';
+button {
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
 .outline-button-primary {
     height: 44px;
     border: 1px solid $color-grey-2;

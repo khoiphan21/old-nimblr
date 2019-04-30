@@ -71,7 +71,7 @@
                             <span>8 characters</span>
                         </div>
                     </section>
-                    <button class="filled-button-primary ml-auto mr-auto" (click)="registerAccountInAws()">GET STARTED</button>
+                    <button class="filled-button-primary ml-auto mr-auto" [disabled]="registerForm.invalid" (click)="registerAccountInAws()">GET STARTED</button>
                 </ng-container>
             </form>
             <form [formGroup]="verificationForm">
