@@ -316,4 +316,11 @@ describe('BlockTextComponent', () => {
       expect(component.value).toEqual(currentValue + value);
     });
   });
+
+  describe('fireKeyEvents', () => {
+    // TODO: @Bruno not impl
+    it('should trigger the ...', () => {
+
+    });
+  });
 });

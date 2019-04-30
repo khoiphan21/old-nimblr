@@ -1,17 +1,10 @@
-import {
-  Component,
-  OnChanges,
-  Input,
-  SimpleChanges,
-  Output,
-  EventEmitter,
-  OnInit
-} from '@angular/core';
+import { Component, OnChanges, Input, SimpleChanges, Output, EventEmitter, OnInit } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 import { BlockType } from 'src/API';
+import { EventDetector } from './event-detector';
 
 @Component({
   selector: 'app-block-text',
@@ -33,7 +26,8 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   constructor(
     private blockCommandService: BlockCommandService,
-    private factoryService: BlockFactoryService
+    private factoryService: BlockFactoryService,
+    private eventDetector: EventDetector
   ) { }
 
   ngOnInit() {
@@ -107,19 +101,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
     this.isPlaceholderShown = status;
   }
 
-  onBackSpaceAndEmptyTextbox(event: Event) {
-    if (this.value === '') {
-      this.deleteEvent.emit(this.block.id);
-      clearTimeout(this.timeout); // To prevent the last update call
-      event.preventDefault();
-    }
-  }
-
-  createTextBlockOnEnter(event: Event) {
-    this.createBlock.emit(BlockType.TEXT);
-    event.preventDefault();
-  }
-
   onPaste(event: ClipboardEvent) {
     const pastedData = event.clipboardData.getData('Text');
     this.value += pastedData;
@@ -127,4 +108,23 @@ export class BlockTextComponent implements OnInit, OnChanges {
     this.updateValue();
     event.preventDefault();
   }
+
+  fireKeyEvents(event: KeyboardEvent) {
+    // TODO: @Bruno not impl
+    this.eventDetector.detectEvent(event);
+  }
+
+  private onBackSpaceAndEmptyTextbox(event: Event) {
+    if (this.value === '') {
+      this.deleteEvent.emit(this.block.id);
+      clearTimeout(this.timeout); // To prevent the last update call
+      event.preventDefault();
+    }
+  }
+
+  private createTextBlockOnEnter(event: Event) {
+    this.createBlock.emit(BlockType.TEXT);
+    event.preventDefault();
+  }
+
 }
