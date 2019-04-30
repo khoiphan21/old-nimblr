@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { QuestionType } from 'src/API';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-question-option',
@@ -41,10 +42,14 @@ export class QuestionOptionComponent implements OnChanges {
         this.changeToSingleOptionType(previousType);
         break;
       case QuestionType.MULTIPLE_CHOICE:
-        this.clearAnswers();
+        if (previousType !== undefined) {
+          this.clearAnswers();
+        }
         break;
       case QuestionType.CHECKBOX:
-        this.clearAnswers();
+        if (previousType !== undefined) {
+          this.clearAnswers();
+        }
         break;
     }
     this.setupForm();
@@ -115,12 +120,14 @@ export class QuestionOptionComponent implements OnChanges {
     } else {
       this.answers.push(value);
     }
+    this.setupForm();
     this.emitQuestionValues();
   }
 
   switchAnswer(value: string) {
     this.clearAnswers();
     this.answers.push(value);
+    this.setupForm();
     this.emitQuestionValues();
   }
 
@@ -154,5 +161,11 @@ export class QuestionOptionComponent implements OnChanges {
       index++;
     }
     return this.options;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.options, event.previousIndex, event.currentIndex);
+    this.setupForm();
+    this.emitQuestionValues();
   }
 }

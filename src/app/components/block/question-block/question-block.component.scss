@@ -31,6 +31,9 @@ $dropdown-height: 41px;
                     color: $color-grey-3;
                     font-size: 20px;
                 }
+                &:focus {
+                    border-color: $color-blue-2;
+                }
             }
             .dropdown {
                 display: block;

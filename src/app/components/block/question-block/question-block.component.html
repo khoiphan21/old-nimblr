@@ -2,7 +2,7 @@
     <div class="row no-pad question-heading">
         <input [id]="questionBlock.id + '-question'" [name]="questionBlock.id" class="col" ngDefaultControl type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()">
         <div *ngIf="isPreviewMode === false" class="dropdown col-3">
-            <div class="type-dropdown" (click)="toggleOptions()" (clickOutside)="isQuestionOptionShown = false">
+            <div class="type-dropdown" (click)="toggleOptions()">
                 Question type
             </div>
             <section class="container options-block" *ngIf="isQuestionOptionShown === true">
