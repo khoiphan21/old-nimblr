@@ -1,20 +1,20 @@
 <div class="content text-block" *ngIf="block">
-    <!-- <ng-container>
-        <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'" class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id" ngDefaultControl [(ngModel)]="value"
-            (ngModelChange)="updateValue()" (paste)="onPaste($event)" (keydown.enter)="createTextBlockOnEnter($event)" (keydown.backspace)="onBackSpaceAndEmptyTextbox($event)"></div>
-        <div class="text-input" [class.header]="block.textBlockType === 'HEADER'" *ngIf="!isUserLoggedIn">{{value}}</div>
-        <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Type something here...</div>
-    </ng-container> -->
-
     <ng-container>
         <!-- When the user is logged in -->
-        <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'" class="text-input" *ngIf="isUserLoggedIn" contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id" ngDefaultControl [(ngModel)]="value"
-            (ngModelChange)="updateValue()" (paste)="onPaste($event)" (keydown)="fireKeyEvents($event)"></div>
+        <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'"
+            [class.bullet]="block.textBlockType === 'BULLET'" class="text-input" *ngIf="isUserLoggedIn"
+            contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id"
+            ngDefaultControl [(ngModel)]="value" (ngModelChange)="updateValue()" (paste)="onPaste($event)"
+            (keydown)="eventSelect($event)"></div>
 
         <!-- When the user is not logged in -->
-        <div class="text-input" [class.header]="block.textBlockType === 'HEADER'" *ngIf="!isUserLoggedIn">{{value}}</div>
+        <div class="text-input" [class.header]="block.textBlockType === 'HEADER'"
+            [class.bullet]="block.textBlockType === 'BULLET'" *ngIf="!isUserLoggedIn">{{value}}
+        </div>
 
         <!-- Placeholder -->
-        <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">Type something here...</div>
+        <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'"
+            [class.bullet]="block.textBlockType === 'BULLET'" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">
+            Type something here...</div>
     </ng-container>
 </div>
