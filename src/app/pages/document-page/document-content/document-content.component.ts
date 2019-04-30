@@ -220,10 +220,12 @@ export class DocumentContentComponent implements OnInit {
   }
 
   private createAndSelectTextBlock(textBlockType: TextBlockType, input) {
-    // TODO: @bruno tbt
+    // TODO: @bruno tbt tested, justadded one case createNewBulletBlock
     switch (textBlockType) {
       case TextBlockType.HEADER:
         return this.blockFactoryService.createNewHeaderBlock(input);
+      case TextBlockType.BULLET:
+        return this.blockFactoryService.createNewBulletBlock(input);
       default:
         return this.blockFactoryService.createNewTextBlock(input);
     }
