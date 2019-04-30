@@ -1,6 +1,10 @@
 @import '../../../_sass/interface';
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
+.edit-mode {
+    background: white !important;
+}
+
 $dropdown-height: 41px;
 @include media(lg) {
     .question-block {
@@ -24,6 +28,7 @@ $dropdown-height: 41px;
             [type=text] {
                 border: 0;
                 border-bottom: 1px solid #979797;
+                background: transparent;
                 padding-left: 0;
                 letter-spacing: 0.5px;
                 font-size: 20px;
@@ -64,7 +69,7 @@ $dropdown-height: 41px;
             }
         }
         &:hover {
-            border: 1px solid #CECECE !important;
+            background: #F7F8FF;
         }
     }
 }

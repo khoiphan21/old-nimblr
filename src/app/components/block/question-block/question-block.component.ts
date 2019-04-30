@@ -18,7 +18,7 @@ export class QuestionBlockComponent implements OnInit, OnChanges {
   @Input() focusBlockId: string;
 
   valueUpdated = true;
-  isPreviewMode = false;
+  isPreviewMode = true;
   isQuestionOptionShown = false;
   answers = [];
   options = [];
