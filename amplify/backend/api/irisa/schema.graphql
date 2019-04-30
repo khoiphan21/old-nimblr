@@ -78,6 +78,7 @@ enum QuestionType {
 enum TextBlockType{
   TEXT
   HEADER
+  BULLET
 }
 
 type Mutation {
