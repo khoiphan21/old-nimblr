@@ -14,7 +14,7 @@ import { Auth } from 'aws-amplify';
 export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
   verificationForm: FormGroup;
-  steps = 'two';
+  steps = 'one';
 
   // For password input
   passwordType = 'password';
@@ -57,11 +57,13 @@ export class RegisterPageComponent implements OnInit {
   }
 
   private buildForm() {
+    const emailPattern = '^.+@[^\.].*\.[a-z]{2,}$';
     this.registerForm = this.formBuilder.group({
-      email: this.formBuilder.control('', [Validators.required, Validators.email, Validators.minLength(6)]),
-      firstName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
-      lastName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
-      password: this.formBuilder.control('', [Validators.required, Validators.minLength(6)]),
+      email: this.formBuilder.control('', [Validators.required, Validators.email,
+         Validators.pattern(emailPattern), Validators.minLength(6)]),
+      firstName: this.formBuilder.control('', [Validators.required]),
+      lastName: this.formBuilder.control('', [Validators.required]),
+      password: this.formBuilder.control('', [Validators.required, Validators.minLength(8)]),
     });
     this.verificationForm = this.formBuilder.group({
       verificationCode: this.formBuilder.control('', [Validators.required, Validators.minLength(6)])

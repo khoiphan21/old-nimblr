@@ -16,7 +16,7 @@
                         <div class="input-label mb-1" style="text-transform: none;">This email will also be used as your username</div>
                         <input class="mb-4" formControlName="email" type="email" required>
                     </div>
-                    <button class="filled-button-primary ml-auto mr-auto" (click)="steps = 'two'">Continue</button>
+                    <button class="filled-button-primary ml-auto mr-auto" [disabled]="registerForm.controls.email.invalid" (click)="steps = 'two'">Continue</button>
                 </ng-container>
                 <ng-container *ngIf="steps === 'two'">
                     <!-- Step 2  -->
