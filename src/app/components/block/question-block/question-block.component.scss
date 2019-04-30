@@ -10,15 +10,17 @@ $dropdown-height: 41px;
         width: 100%;
         border: 1px solid #CECECE;
         border-radius: 3px;
-        padding: 30px;
+        padding: 15px;
         transition: 0.3s;
         .question-heading {
             height: 41px;
         }
+        $dropdown-height: 37.5px;
         .row {
             @include row-center;
             align-items: flex-start;
             justify-content: space-between;
+            position: relative;
             [type=text] {
                 border: 0;
                 border-bottom: 1px solid #979797;
@@ -30,36 +32,26 @@ $dropdown-height: 41px;
                     font-size: 20px;
                 }
             }
-            $dropdown-height: 41px;
             .dropdown {
                 display: block;
+                width: 140px;
                 height: $dropdown-height;
-                background-color: #F3F3F3;
+                background: $color-grey-1;
+                border-radius: 100px;
                 cursor: pointer;
                 padding: 0;
-                position: relative;
-                div.selected-option {
-                    position: relative;
+                position: absolute;
+                right: 0;
+                top: -($dropdown-height/2) - 15px;
+                .type-dropdown {
+                    color: white;
+                    @include row-center;
+                    width: 100%;
                     height: 100%;
-                    div {
-                        height: 100%;
-                        @include row-center;
-                        justify-content: flex-start;
-                        padding: 0 10px;
-                        span {
-                            font-size: 0.85rem;
-                            margin-left: 15px;
-                            font-weight: normal;
-                        }
-                    }
-                    i.fa-chevron-down {
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                        width: $dropdown-height;
-                        height: $dropdown-height;
-                        @include row-center;
-                    }
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 1.2px;
+                    font-weight: 500;
                 }
                 section.container.options-block {
                     position: absolute;

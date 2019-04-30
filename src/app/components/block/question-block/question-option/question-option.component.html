@@ -18,5 +18,5 @@
         </div>
     </form>
     <div class="form-input" *ngIf="currentType === 'SHORT_ANSWER' || currentType === 'PARAGRAPH'">
-        <input type="text" [(ngModel)]="answers[0]" placeholder="Type your answer here" [ngClass]="{'long-input': currentType === 'PARAGRAPH'}">
+        <input type="text" [(ngModel)]="answers[0]" (ngModelChange)="triggerUpdateValue()" placeholder="Type your answer here" [ngClass]="{'long-input': currentType === 'PARAGRAPH'}">
     </div>

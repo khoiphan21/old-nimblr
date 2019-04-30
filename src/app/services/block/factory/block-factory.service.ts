@@ -101,7 +101,6 @@ export class BlockFactoryService {
       value, updatedAt, createdAt, question, answers, questionType, options,
       textBlockType
     };
-
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
       'updatedAt'
     ].forEach(paramName =>
