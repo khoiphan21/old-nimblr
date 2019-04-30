@@ -22,7 +22,7 @@
         <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValueMobile($event)" style="width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
-        <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">
+        <div class="dropdown col-6" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
                 <div *ngSwitchCase="'SHORT_ANSWER'">
                     <i class="fas fa-grip-lines"></i><span>Short Answer</span>

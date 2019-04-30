@@ -17,7 +17,7 @@
                 <div class="form-input mb-4">
                     <div class="password-label">
                         <div class="input-label mb-1">Password</div>
-                        <div class="forgot-password">Forgot Password?</div>
+                        <div class="forgot-password" routerLink="/forgot-password">Forgot Password?</div>
                     </div>
                     <input formControlName="password" type="{{passwordType}}" required>
                     <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
