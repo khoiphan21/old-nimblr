@@ -21,6 +21,7 @@ export enum TextBlockType {
   TEXT = "TEXT",
   HEADER = "HEADER",
   BULLET = "BULLET",
+  ORDEREDLIST = "ORDEREDLIST",
 }
 
 

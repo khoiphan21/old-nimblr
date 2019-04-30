@@ -79,6 +79,7 @@ enum TextBlockType{
   TEXT
   HEADER
   BULLET
+  ORDEREDLIST
 }
 
 type Mutation {

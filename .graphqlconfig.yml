@@ -1,6 +1,6 @@
 projects:
   irisa:
-    schemaPath: src\app\components\block\block-text\src\graphql\schema.json
+    schemaPath: src\graphql\schema.json
     includes:
       - src\graphql\**\*.ts
     excludes:
