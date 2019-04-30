@@ -25,17 +25,12 @@
     }
 
     .placeholder.bullet {
-        color: rgb(153, 4, 4);
-        font-size: 22px;
-        font-weight: 500;
-        letter-spacing: normal;
-        line-height: 24px;
+        padding-left: 10px;
     }
     .text-input.bullet {
-        color: rgb(153, 4, 4);
-        font-size: 22px;
-        font-weight: 500;
-        letter-spacing: normal;
-        line-height: 24px;
+        padding-left: 10px;
+        display: list-item;          /* This has to be "list-item"                                               */
+        list-style-type: circle;       /* See https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type     */
+        list-style-position: inside;
     }
 }

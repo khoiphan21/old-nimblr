@@ -117,9 +117,9 @@ export class BlockTextComponent implements OnInit, OnChanges {
     event.preventDefault();
   }
 
-  eventSelect(event: KeyboardEvent) {
-    // TODO: @Bruno implmenting: createBulletPoint
 
+  // TODO: @bruno refactor this seciton; its messy
+  eventSelect(event: KeyboardEvent) {
     // Need to rename these functions **
     // the individual function will handle its own logic
     switch (event.key) {
@@ -133,7 +133,8 @@ export class BlockTextComponent implements OnInit, OnChanges {
         this.resetAwaitAction();
         break;
 
-      case '-': this.waitForNextKey(event);
+      case '-':
+        this.waitForNextKey(event);
         break;
 
       case ' ':
@@ -168,23 +169,23 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   private spacebarDetermineAction(event: KeyboardEvent) {
-    // TODO: @bruo not impl
-    // create only if, block is 
-    // "-"" + " "
+    // TODO: @bruo not tested; double action await detection
 
     if (this.awaitKeyAction.length === 1 && this.awaitKeyAction[0] === '-') {
       this.createBulletPoint();
+      event.preventDefault();
     } else { }
 
-    event.preventDefault();
   }
 
   private createBulletPoint() {
+    // TODO: @bruno not tested
     this.convertToBlockType(TextBlockType.BULLET);
     clearTimeout(this.timeout); // To prevent the last update call
   }
 
   private convertToBlockType(type: TextBlockType) {
+    // TODO: @bruno not tested
     const textBlock = this.block as TextBlock;
     const updatedBlock: Block = this.factoryService.createAppBlock({
       id: textBlock.id,
