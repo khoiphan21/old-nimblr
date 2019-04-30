@@ -5,7 +5,7 @@
                 <div *ngIf="documentType === 'GENERIC'" class="option" (click)="saveAsTemplate()">
                     <i class="fas fa-file"></i><span>Save as template</span>
                 </div>
-                <div class="option">
+                <div class="option" (click)="deleteDocument()">
                     <i class="fas fa-trash-alt"></i><span>Delete</span>
                 </div>
             </section>
@@ -36,7 +36,7 @@
             <div class="col-12 option">
                 <i class="fas fa-file"></i><span>Save as template</span>
             </div>
-            <div class="col-12 option">
+            <div class="col-12 option" (click)="deleteDocument()">
                 <i class="fas fa-trash-alt"></i><span>Delete</span>
             </div>
             <div class="col-12 option">
