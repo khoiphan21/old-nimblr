@@ -3,17 +3,20 @@ import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
-import { BlockType } from 'src/API';
-import { EventDetector } from './event-detector';
+import { BlockType, TextBlockType } from 'src/API';
+import { BlockQueryService } from 'src/app/services/block/query/block-query.service';
 
 @Component({
   selector: 'app-block-text',
   templateUrl: './block-text.component.html',
   styleUrls: ['./block-text.component.scss']
 })
+
 export class BlockTextComponent implements OnInit, OnChanges {
   isPlaceholderShown: boolean;
   value: string;
+  awaitKeyAction: Array<any>;
+
   private timeout: any;
 
   // To control whether it's editable or not
@@ -24,14 +27,19 @@ export class BlockTextComponent implements OnInit, OnChanges {
   @Output() deleteEvent = new EventEmitter<string>();
   @Output() createBlock = new EventEmitter<BlockType>();
 
+  // @Output() addBullet = new EventEmitter<BlockType>();
+  // @Output() convertToBullet = new EventEmitter<BlockType>();
+  // @Output() deleteBullet = new EventEmitter<BlockType>();
+
   constructor(
     private blockCommandService: BlockCommandService,
     private factoryService: BlockFactoryService,
-    private eventDetector: EventDetector
+    private blockQueryService: BlockQueryService,
   ) { }
 
   ngOnInit() {
     this.setValue(this.block.value);
+    this.awaitKeyAction = [];
   }
 
   private setValue(value: string) {
@@ -109,12 +117,37 @@ export class BlockTextComponent implements OnInit, OnChanges {
     event.preventDefault();
   }
 
-  fireKeyEvents(event: KeyboardEvent) {
-    // TODO: @Bruno not impl
-    this.eventDetector.detectEvent(event);
+  eventSelect(event: KeyboardEvent) {
+    // TODO: @Bruno implmenting: createBulletPoint
+
+    // Need to rename these functions **
+    // the individual function will handle its own logic
+    switch (event.key) {
+      case 'Backspace':
+        this.onBackSpaceAndEmptyTextbox(event);
+        this.resetAwaitAction();
+        break;
+
+      case 'Enter':
+        this.createTextBlockOnEnter(event);
+        this.resetAwaitAction();
+        break;
+
+      case '-': this.waitForNextKey(event);
+        break;
+
+      case ' ':
+        this.spacebarDetermineAction(event);
+        this.resetAwaitAction();
+        break;
+
+      default:
+        this.resetAwaitAction();
+        break;
+    }
   }
 
-  private onBackSpaceAndEmptyTextbox(event: Event) {
+  private onBackSpaceAndEmptyTextbox(event: KeyboardEvent) {
     if (this.value === '') {
       this.deleteEvent.emit(this.block.id);
       clearTimeout(this.timeout); // To prevent the last update call
@@ -122,9 +155,59 @@ export class BlockTextComponent implements OnInit, OnChanges {
     }
   }
 
-  private createTextBlockOnEnter(event: Event) {
+  private createTextBlockOnEnter(event: KeyboardEvent) {
     this.createBlock.emit(BlockType.TEXT);
     event.preventDefault();
+  }
+
+  private waitForNextKey(event: KeyboardEvent) {
+    // TODO:  @bruno not tested; awaitKeyAction new attribute
+    if (this.value === '') {
+      this.awaitKeyAction.push(event.key);
+    } else { }
+  }
+
+  private spacebarDetermineAction(event: KeyboardEvent) {
+    // TODO: @bruo not impl
+    // create only if, block is 
+    // "-"" + " "
+
+    if (this.awaitKeyAction.length === 1 && this.awaitKeyAction[0] === '-') {
+      this.createBulletPoint();
+    } else { }
+
+    event.preventDefault();
+  }
+
+  private createBulletPoint() {
+    this.convertToBlockType(TextBlockType.BULLET);
+    clearTimeout(this.timeout); // To prevent the last update call
+  }
+
+  private convertToBlockType(type: TextBlockType) {
+    const textBlock = this.block as TextBlock;
+    const updatedBlock: Block = this.factoryService.createAppBlock({
+      id: textBlock.id,
+      type: textBlock.type,
+      documentId: textBlock.documentId,
+      lastUpdatedBy: textBlock.lastUpdatedBy,
+      value: textBlock.value,
+      createdAt: textBlock.createdAt,
+      textBlockType: type
+    });
+
+    // update the UI
+    this.blockQueryService.updateBlockUI(updatedBlock);
+    // update the backend
+    return new Promise(resolve => {
+      this.blockCommandService.updateBlock(updatedBlock).then(() => {
+        resolve();
+      });
+    });
+  }
+
+  private resetAwaitAction() {
+    this.awaitKeyAction = [];
   }
 
 }
