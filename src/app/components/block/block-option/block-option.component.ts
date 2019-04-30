@@ -24,8 +24,12 @@ export class BlockOptionComponent implements OnChanges, OnInit {
   @Input() isChildDoc: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
+
   @Output() createBlock = new EventEmitter<CreateBlockEvent>();
   @Output() deleteEvent = new EventEmitter<string>();
+
+  // @Output() convertToBullet = new EventEmitter<BlockType>();
+  // @Output() deleteBullet = new EventEmitter<BlockType>();
 
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
@@ -50,7 +54,7 @@ export class BlockOptionComponent implements OnChanges, OnInit {
   ngOnInit() {
     this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
       if (block !== null) {
-          this.block = block;
+        this.block = block;
       }
     }, error => {
       const newError = new Error(`BlockOption failed to get block: ${error.message}`);
@@ -117,6 +121,17 @@ export class BlockOptionComponent implements OnChanges, OnInit {
     this.hideAddBlockContainer();
   }
 
+  addBulletBlock() {
+    // TODO: @bruo not impl
+    const input: CreateBlockEvent = {
+      type: BlockType.TEXT,
+      id: this.blockId,
+      textBlockType: TextBlockType.BULLET
+    };
+    this.createBlock.emit(input);
+    this.hideAddBlockContainer();
+  }
+
   deleteHandler() {
     this.toggleSelectedOptionsStatus(false);
     this.deleteEvent.emit(this.blockId);
@@ -143,5 +158,6 @@ export class BlockOptionComponent implements OnChanges, OnInit {
       });
     });
   }
+
 
 }
