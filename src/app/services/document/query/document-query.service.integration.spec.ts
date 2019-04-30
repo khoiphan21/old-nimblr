@@ -58,15 +58,6 @@ describe('(Integration) DocumentQueryService', () => {
       expect(retrievedDocument.title).toEqual(helper.getCreatedDocument().title);
 
       await helper.deleteDocument();
-
-      async function getFirstDocument(): Promise<any> {
-        return new Promise((resolve, reject) => {
-          service.getDocument$(helper.getCreatedDocument().id).subscribe(document => {
-            if (document === null) { return; }
-            resolve(document);
-          }, error => reject(error));
-        });
-      }
     });
 
     it('should subscribe to any changes from the backend', async done => {
@@ -92,6 +83,24 @@ describe('(Integration) DocumentQueryService', () => {
         });
       }
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
+
+    fdescribe('[RECIPIENT ACCESS]', () => {
+      it('should be able to access a document if the user is a recipient', async () => {
+        // set the document's ownerId to be different
+        input.ownerId = uuidv4();
+        // set the recipientEmail
+        input.recipientEmail = TEST_USERNAME;
+
+        const result = await helper.sendCreateDocument(input);
+        console.log(result);
+
+        const document = await getFirstDocument();
+        expect(document.id).toEqual(input.id);
+
+        await helper.deleteDocument();
+      }, environment.TIMEOUT_FOR_UPDATE_TEST);
+
+    });
 
     describe('[ANONYMOUS ACCESS]', () => {
 
@@ -134,15 +143,16 @@ describe('(Integration) DocumentQueryService', () => {
         done();
       }, 10000);
 
-      async function getFirstDocument(): Promise<any> {
-        return new Promise((resolve, reject) => {
-          service.getDocument$(helper.getCreatedDocument().id).subscribe(document => {
-            if (document === null) { return; }
-            resolve(document);
-          }, error => reject(error));
-        });
-      }
     });
+
+    async function getFirstDocument(): Promise<any> {
+      return new Promise((resolve, reject) => {
+        service.getDocument$(helper.getCreatedDocument().id).subscribe(document => {
+          if (document === null) { return; }
+          resolve(document);
+        }, error => reject(error));
+      });
+    }
 
   });
 

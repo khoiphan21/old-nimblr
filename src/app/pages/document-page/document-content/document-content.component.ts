@@ -163,9 +163,8 @@ export class DocumentContentComponent implements OnInit {
 
   private checkIsChildDocument() {
     const url = this.router.url;
-    const trimmedUrl = url.substring(0, url.length - 37);
-    const toBeValidateUrl = trimmedUrl.substr(-8, 8);
-    if (toBeValidateUrl === 'document') {
+    const parts = url.split('/');
+    if (parts.length === 3) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
