@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionOptionComponent } from './question-option.component';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormArray, FormControl } from '@angular/forms';
@@ -227,5 +227,35 @@ describe('QuestionOptionComponent', () => {
     component.addNewOption();
     const options = component.getOptionsValue();
     expect(options.length).toEqual(component.options.length);
+  });
+
+  describe('toggleAnswers()', () => {
+
+    it('should add the value into the array if it does not exist', () => {
+      component.answers = [];
+      component.toggleAnswers('answer 1');
+      expect(component.answers.length).toBe(1);
+    });
+
+    it('should remove the value into the array if it exist', () => {
+      component.answers = ['answer 1'];
+      component.toggleAnswers('answer 1');
+      expect(component.answers.length).toBe(0);
+    });
+  });
+
+  describe('switchAnswer()', () => {
+
+    it('should only have one answer at a time', () => {
+      component.answers = [];
+      component.switchAnswer('answer 1');
+      expect(component.answers.length).toBe(1);
+    });
+
+    it('should replace the existing value with the new one', () => {
+      component.answers = ['answer 1'];
+      component.switchAnswer('answer 2');
+      expect(component.answers[0]).toBe('answer 2');
+    });
   });
 });

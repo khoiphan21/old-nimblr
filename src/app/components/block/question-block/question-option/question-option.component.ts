@@ -108,6 +108,21 @@ export class QuestionOptionComponent implements OnChanges {
     }
   }
 
+  toggleAnswers(value: string) {
+    if (this.answers.includes(value)) {
+      const index = this.answers.indexOf(value);
+      this.answers.splice(index, 1);
+    } else {
+      this.answers.push(value);
+    }
+    this.emitQuestionValues();
+  }
+
+  switchAnswer(value: string) {
+    this.clearAnswers();
+    this.answers.push(value);
+    this.emitQuestionValues();
+  }
 
   async triggerUpdateValue() {
     return new Promise((resolve) => {

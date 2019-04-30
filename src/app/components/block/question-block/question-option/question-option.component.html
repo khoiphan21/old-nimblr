@@ -3,11 +3,11 @@
         <div formArrayName="options">
             <div *ngFor="let option of formGroup.get('options').controls; let i=index">
                 <div class="option checkbox" [formGroupName]="i" *ngSwitchCase="'CHECKBOX'">
-                    <input type="checkbox" id="{{i}}">
+                    <input type="checkbox" [checked]="answers.includes(options[i])" (click)="toggleAnswers(options[i])">
                     <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="option" placeholder="Option {{i + 1}}">
                 </div>
                 <div class="option checkbox" [formGroupName]="i" *ngSwitchCase="'MULTIPLE_CHOICE'">
-                    <input type="radio" name="selectedRadio" id={{i}}>
+                    <input type="radio" [checked]="answers.includes(options[i])" (click)="switchAnswer(options[i])">
                     <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="option" placeholder="Option {{i + 1}}">
                 </div>
             </div>
