@@ -114,7 +114,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
     event.preventDefault();
   }
 
-
   // TODO: @bruno refactor this seciton; its messy -> possibly into another file? / class?
   eventSelect(event: KeyboardEvent) {
     // Need to rename these functions **
@@ -164,7 +163,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   private textBlockBackspaceAction() {
-    // TODO: @bruno test
     switch (this.block.textBlockType) {
       case TextBlockType.BULLET:
         this.convertToBlockType(TextBlockType.TEXT);
@@ -177,7 +175,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   private createTextBlockOnEnter(event: KeyboardEvent) {
-    // TODO: @bruno test
     switch (this.block.textBlockType) {
       case TextBlockType.BULLET:
         this.createBlock.emit(
@@ -192,15 +189,12 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   private waitForNextKey(event: KeyboardEvent) {
-    // TODO:  @bruno not tested; awaitKeyAction new attribute
     if (this.value === '') {
       this.awaitKeyAction.push(event.key);
     } else { }
   }
 
   private spacebarDetermineAction(event: KeyboardEvent) {
-    // TODO: @bruo not tested; double action await detection
-
     if (this.awaitKeyAction.length === 1 && this.awaitKeyAction[0] === '-') {
       this.createBulletPoint();
       event.preventDefault();
@@ -209,13 +203,11 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   private createBulletPoint() {
-    // TODO: @bruno not tested
     this.convertToBlockType(TextBlockType.BULLET);
     clearTimeout(this.timeout); // To prevent the last update call
   }
 
   private convertToBlockType(type: TextBlockType) {
-    // TODO: @bruno not tested
     const textBlock = this.block as TextBlock;
     const updatedBlock: Block = this.factoryService.createAppBlock({
       id: textBlock.id,

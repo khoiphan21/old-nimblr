@@ -319,66 +319,122 @@ describe('BlockTextComponent', () => {
 
   describe('eventSelect', () => {
     // TODO: @Bruno not impl
+    let spyMethod: jasmine.Spy;
+    let spyReset: jasmine.Spy;
+    let mockEvent: any;
+
+    beforeEach(() => {
+      mockEvent = {
+        key: ''
+      }
+    });
 
     describe('Backspace', () => {
+      beforeEach(() => {
+        mockEvent.key = 'Backspace';
+        spyMethod = spyOn<any>(component, 'onBackSpaceAndEmptyTextbox');
+        spyReset = spyOn<any>(component, 'resetAwaitAction');
+      });
+
       it('should trigger onBackSpaceAndEmptyTextbox when Backspace is pressed', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyMethod.calls.count()).toBe(1);
       });
 
       // TODO: @bruno: copy and paste from prev code
 
       it('should trigger resetAwaitAction', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyReset.calls.count()).toBe(1);
       });
     });
 
     describe('Enter', () => {
+      beforeEach(() => {
+        mockEvent.key = 'Enter';
+        spyMethod = spyOn<any>(component, 'createTextBlockOnEnter');
+        spyReset = spyOn<any>(component, 'resetAwaitAction');
+      });
+
       it('should trigger createTextBlockOnEnter when Enter is pressed', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyMethod.calls.count()).toBe(1);
       });
 
       // TODO: @bruno: copy and paste from prev code
 
       it('should trigger resetAwaitAction', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyReset.calls.count()).toBe(1);
       });
     });
 
-    describe('-', () => {
+    fdescribe('-', () => {
+      beforeEach(() => {
+        mockEvent.key = '-';
+        spyMethod = spyOn<any>(component, 'waitForNextKey');
+        spyReset = spyOn<any>(component, 'resetAwaitAction');
+      });
+
       it('should trigger waitForNextKey when - is pressed', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyMethod.calls.count()).toBe(1);
       });
 
       it('should register action to array awaitKeyAction', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(component['awaitKeyAction'][0]).toEqual('-');
       });
 
       it('should fail to register action to array awaitKeyAction when textbox has value', () => {
-        fail();
+        component.value = 'test';
+        component.eventSelect(mockEvent);
+        expect(component['awaitKeyAction'].length).toBe(0);
       });
     });
 
-    describe('spacebar', () => {
+    fdescribe('spacebar', () => {
+      let spyCreateBulletPoint: jasmine.Spy;
+
+      beforeEach(() => {
+        mockEvent.key = ' ';
+        spyMethod = spyOn<any>(component, 'spacebarDetermineAction');
+        spyReset = spyOn<any>(component, 'resetAwaitAction');
+      });
+
       it('should trigger spacebarDetermineAction when spacebar is pressed', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyMethod.calls.count()).toBe(1);
       });
 
       it('should trigger createBulletPoint only when there - is registered in awaitKeyAction', () => {
-        fail();
+        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
+        component['awaitKeyAction'].push('-');
+        component.eventSelect(mockEvent);
+        expect(spyCreateBulletPoint.calls.count()).toBe(1);
       });
 
       it('should fail to trigger createBulletPoint when - is not registered', () => {
-        fail();
+        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
+        component.eventSelect(mockEvent);
+        expect(spyCreateBulletPoint.calls.count()).toBe(0);
       });
 
       it('should trigger resetAwaitAction', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyReset.calls.count()).toBe(1);
       });
     });
 
-    describe('Default no action', () => {
+    fdescribe('Default no action', () => {
+      beforeEach(() => {
+        mockEvent.key = 'random';
+        spyReset = spyOn<any>(component, 'resetAwaitAction');
+      });
+
       it('should resetAwaitAction when nothing is fulfilled', () => {
-        fail();
+        component.eventSelect(mockEvent);
+        expect(spyReset.calls.count()).toBe(1);
       });
     });
 
