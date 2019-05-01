@@ -12,7 +12,8 @@ $answer-margin-top: 25px;
         margin-right: 10px;
         opacity: 0;
     }
-    input[type=checkbox] {
+    input[type=checkbox],
+    input[type=radio] {
         -webkit-appearance: none;
         border: 2px solid $color-grey-3;
         background: white;
@@ -32,6 +33,9 @@ $answer-margin-top: 25px;
                 @include row-center;
             }
         }
+    }
+    input[type=radio] {
+        border-radius: 50px;
     }
     input[type=text] {
         width: 60%;
@@ -79,7 +83,8 @@ form.question-setup {
             color: $color-grey-3;
             opacity: 0;
         }
-        input[type=checkbox] {
+        input[type=checkbox],
+        input[type=radio] {
             -webkit-appearance: none;
             border: 2px solid $color-grey-3;
             background: white;
@@ -100,20 +105,21 @@ form.question-setup {
                 }
             }
         }
+        input[type=radio] {
+            border-radius: 50px;
+        }
         input[type=text] {
             width: 60%;
             border: 0;
             margin-left: 15px;
             color: $color-grey-1;
-            border: $color-grey-3 solid 1px;
-            border-radius: 3px;
             padding-left: 5px;
             background: transparent;
             &::placeholder {
                 color: $color-grey-3;
             }
             &:focus {
-                border-color: $color-blue-2;
+                border-bottom: 2px solid $color-blue-2 !important;
             }
         }
         i.fa-plus-circle {
@@ -153,7 +159,7 @@ form.question-setup {
         border-bottom: 1px solid #979797;
         background: transparent;
         &:focus {
-            border-color: $color-blue-2;
+            border-bottom: 2px solid $color-blue-2;
         }
     }
     input[type=text].long-input {
@@ -201,9 +207,11 @@ form.question-setup {
                 border: 0;
                 margin-left: 15px;
                 color: $color-grey-1;
-                border: $color-grey-3 solid 1px;
-                border-radius: 3px;
                 padding-left: 5px;
+                border-bottom: solid 1px transparent;
+                &:hover {
+                    border-bottom: $color-grey-3 solid 1px;
+                }
                 &::placeholder {
                     color: $color-grey-3;
                 }

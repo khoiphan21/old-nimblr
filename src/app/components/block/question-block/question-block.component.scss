@@ -37,7 +37,7 @@ $dropdown-height: 41px;
                     font-size: 20px;
                 }
                 &:focus {
-                    border-color: $color-blue-2;
+                    border-bottom: 2px solid $color-blue-2;
                 }
             }
             .dropdown {
@@ -45,6 +45,7 @@ $dropdown-height: 41px;
                 width: 140px;
                 height: $dropdown-height;
                 background: $color-grey-1;
+                box-shadow: 1px 1px 9px rgba(0, 0, 0, 0.25);
                 border-radius: 100px;
                 cursor: pointer;
                 padding: 0;
