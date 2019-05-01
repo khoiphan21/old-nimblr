@@ -263,24 +263,24 @@ describe('BlockTextComponent', () => {
         expect(value).toEqual(component.block.id);
         done();
       });
-      component.onBackSpaceAndEmptyTextbox(event);
+      component['onBackSpaceAndEmptyTextbox'](event);
     });
 
     it('should not emit if the value is not empty', () => {
       component.value = 'test';
       spyOn(component.deleteEvent, 'emit');
-      component.onBackSpaceAndEmptyTextbox(event);
+      component['onBackSpaceAndEmptyTextbox'](event);
       expect(component.deleteEvent.emit).not.toHaveBeenCalled();
     });
   });
 
-  it('createTextBlockOnEnter() - should emit the correct blockType', done => {
+  fit('createTextBlockOnEnter() - should emit the correct blockType', done => {
     const event = new KeyboardEvent('keydown', { key: 'Enter' });
     component.createBlock.subscribe(type => {
       expect(type).toEqual(BlockType.TEXT);
       done();
     });
-    component.createTextBlockOnEnter(event);
+    component['onBackSpaceAndEmptyTextbox'](event);
   });
 
   describe('onPaste()', () => {
@@ -292,7 +292,7 @@ describe('BlockTextComponent', () => {
       setCaretSpy = spyOn(component, 'setCaretToEnd');
       updateValueSpy = spyOn(component, 'updateValue');
       pasteEvent = {
-        preventDefault: () => {},
+        preventDefault: () => { },
         clipboardData: {
           getData: () => value
         }
@@ -317,10 +317,70 @@ describe('BlockTextComponent', () => {
     });
   });
 
-  describe('fireKeyEvents', () => {
+  describe('eventSelect', () => {
     // TODO: @Bruno not impl
-    it('should trigger the ...', () => {
 
+    describe('Backspace', () => {
+      it('should trigger onBackSpaceAndEmptyTextbox when Backspace is pressed', () => {
+        fail();
+      });
+
+      // TODO: @bruno: copy and paste from prev code
+
+      it('should trigger resetAwaitAction', () => {
+        fail();
+      });
     });
+
+    describe('Enter', () => {
+      it('should trigger createTextBlockOnEnter when Enter is pressed', () => {
+        fail();
+      });
+
+      // TODO: @bruno: copy and paste from prev code
+
+      it('should trigger resetAwaitAction', () => {
+        fail();
+      });
+    });
+
+    describe('-', () => {
+      it('should trigger waitForNextKey when - is pressed', () => {
+        fail();
+      });
+
+      it('should register action to array awaitKeyAction', () => {
+        fail();
+      });
+
+      it('should fail to register action to array awaitKeyAction when textbox has value', () => {
+        fail();
+      });
+    });
+
+    describe('spacebar', () => {
+      it('should trigger spacebarDetermineAction when spacebar is pressed', () => {
+        fail();
+      });
+
+      it('should trigger createBulletPoint only when there - is registered in awaitKeyAction', () => {
+        fail();
+      });
+
+      it('should fail to trigger createBulletPoint when - is not registered', () => {
+        fail();
+      });
+
+      it('should trigger resetAwaitAction', () => {
+        fail();
+      });
+    });
+
+    describe('Default no action', () => {
+      it('should resetAwaitAction when nothing is fulfilled', () => {
+        fail();
+      });
+    });
+
   });
 });

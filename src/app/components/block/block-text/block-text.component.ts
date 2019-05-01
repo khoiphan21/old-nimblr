@@ -119,7 +119,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
 
-  // TODO: @bruno refactor this seciton; its messy
+  // TODO: @bruno refactor this seciton; its messy -> possibly into another file? / class?
   eventSelect(event: KeyboardEvent) {
     // Need to rename these functions **
     // the individual function will handle its own logic

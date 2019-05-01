@@ -8,7 +8,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CreateBlockEvent } from './createBlockEvent';
+import { CreateBlockEvent, BlockTypeAndSubType } from './createBlockEvent';
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlockType } from '../../../API';
 
@@ -106,7 +106,7 @@ describe('BlockComponent', () => {
 
   describe('addBlock()', () => {
 
-    let mockBlockInfo: CreateBlockEvent;
+    let mockBlockInfo: BlockTypeAndSubType;
 
     beforeEach(() => {
       mockBlockInfo = {
@@ -121,7 +121,7 @@ describe('BlockComponent', () => {
         expect(value.type).toEqual(type);
         done();
       });
-      component.addBlock(mockBlockInfo.type);
+      component.addBlock(mockBlockInfo);
     });
     it('should emit the right id', done => {
       component.blockId = uuidv4();
@@ -129,7 +129,7 @@ describe('BlockComponent', () => {
         expect(value.id).toEqual(component.blockId);
         done();
       });
-      component.addBlock(mockBlockInfo.type);
+      component.addBlock(mockBlockInfo);
     });
   });
 
