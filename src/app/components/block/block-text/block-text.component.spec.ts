@@ -381,8 +381,10 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      it('should register action to array awaitKeyAction', () => {
+      fit('should register action to array awaitKeyAction', () => {
         component.eventSelect(mockEvent);
+        console.log(component['awaitKeyAction']);
+        console.log(component.value);
         expect(component['awaitKeyAction'][0]).toEqual('-');
       });
 

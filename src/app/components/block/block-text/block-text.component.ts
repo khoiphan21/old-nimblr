@@ -130,7 +130,10 @@ export class BlockTextComponent implements OnInit, OnChanges {
         break;
 
       case '-':
+        // TODO: @bruno why awaitKeyAction is not triggered
+        console.log(this.value);
         this.waitForNextKey(event);
+        console.log(this.awaitKeyAction);
         break;
 
       case ' ':
@@ -141,6 +144,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
       default:
         this.resetAwaitAction();
         break;
+
     }
   }
 
