@@ -5,8 +5,12 @@
             <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
         </ng-container>
         <ng-container *ngSwitchCase="'QUESTION'">
-            <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
-            <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>
+            <ng-container *responsive="{sizes:{min:576, max:2000}}">
+                <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
+            </ng-container>
+            <ng-container *responsive="{sizes:{min:0,max:575}}">
+                <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>
+            </ng-container>
         </ng-container>
     </div>
 </ng-container>

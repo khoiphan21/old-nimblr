@@ -11,6 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CreateBlockEvent } from './createBlockEvent';
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlockType } from '../../../API';
+import { ResponsiveModule } from 'ngx-responsive';
 
 const uuidv4 = require('uuid/v4');
 
@@ -38,7 +39,8 @@ describe('BlockComponent', () => {
       imports: [
         ReactiveFormsModule,
         FormsModule,
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule.withRoutes([]),
+        ResponsiveModule.forRoot()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

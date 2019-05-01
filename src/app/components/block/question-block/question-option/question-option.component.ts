@@ -101,7 +101,7 @@ export class QuestionOptionComponent implements OnChanges {
 
   setOptions() {
     const control = this.formGroup.controls.options as FormArray;
-    if (this.options) {
+    if (this.options.length > 0) {
       for (const option of this.options) {
         control.push(this.formBuilder.group({
           option
