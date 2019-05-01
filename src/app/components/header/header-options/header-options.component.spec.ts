@@ -35,23 +35,6 @@ describe('HeaderOptionsComponent', () => {
     component.hideOption();
   });
 
-  describe('saveAsTemplate()', () => {
-    it('should emit the saveAsTemplateEvent', done => {
-      component.saveAsTemplateEvent.pipe(take(1)).subscribe(value => {
-        expect().nothing();
-        done();
-      });
-      component.saveAsTemplate();
-    });
-    it('should emit the event for hiding to option', done => {
-      component.hideOptionEvent.subscribe((value) => {
-        expect(value).toEqual(false);
-        done();
-      });
-      component.saveAsTemplate();
-    });
-  });
-
   describe('deleteDocument()', () => {
     it('should emit deleteDocumentEvent fucntion', done => {
       component.deleteDocumentEvent.pipe(take(1)).subscribe(() => done());

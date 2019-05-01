@@ -53,13 +53,21 @@ div.row {
             top: 30px;
             right: 50px;
             .option {
+                width: 68px;
+                height: 68px;
+                border-radius: 50px;
                 @include column-center;
-                object {
-                    width: 35px;
-                    height: 35px;
+                img {
+                    max-width: 30px;
+                    max-height: 30px;
                 }
                 span {
                     margin: 0;
+                    margin-top: 5px;
+                    text-align: center;
+                }
+                &:hover {
+                    background: #F7F8FF;
                 }
             }
         }

@@ -12,7 +12,6 @@ export class HeaderOptionsComponent implements OnInit {
   @Input() documentType: DocumentType;
 
   @Output() hideOptionEvent = new EventEmitter<boolean>();
-  @Output() saveAsTemplateEvent = new EventEmitter<any>();
   @Output() deleteDocumentEvent = new EventEmitter<any>();
 
   constructor() { }
@@ -22,11 +21,6 @@ export class HeaderOptionsComponent implements OnInit {
 
   hideOption() {
     this.hideOptionEvent.emit(false);
-  }
-
-  saveAsTemplate() {
-    this.hideOptionEvent.emit(false);
-    this.saveAsTemplateEvent.emit();
   }
 
   deleteDocument() {
