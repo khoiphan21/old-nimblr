@@ -415,6 +415,21 @@ describe('DocumentContentComponent', () => {
       });
     }
 
+    describe('adding new BulletBlock', () => {
+      // TODO: @bruno impl this
+      beforeEach(async () => {
+        block = await component.addNewBlock(mockBlockInfo);
+      });
+
+      it('should call createNewBulletBlock when textBlockType is bullet', () => {
+        fail();
+      });
+
+      it('should catch error when creation failed', () => {
+        fail();
+      });
+    });
+
     describe('adding new TextBlock', () => {
 
       beforeEach(async () => {

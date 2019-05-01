@@ -8,6 +8,7 @@ import { BlockType, QuestionType, TextBlockType } from 'src/API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
 import { configureTestSuite } from 'ng-bullet';
+import { BulletBlock } from 'src/app/classes/block/textBox/bullet-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -18,7 +19,7 @@ describe('BlockFactoryService', () => {
   configureTestSuite(() => {
     TestBed.configureTestingModule({});
   });
-  
+
   beforeEach(() => {
     factory = TestBed.get(BlockFactoryService);
     input = {
@@ -72,6 +73,27 @@ describe('BlockFactoryService', () => {
 
     it('should have textBlockType of HEADER type', () => {
       expect(block.textBlockType).toEqual(TextBlockType.HEADER);
+    });
+  });
+
+  describe('createNewBulletBlock()', () => {
+    // TODO: @bruno not finished
+    let block: BulletBlock;
+
+    beforeEach(() => {
+      block = factory.createNewBulletBlock(input);
+    });
+
+    it('should inherit from Textbox ', () => {
+      expect(block instanceof TextBlock).toBeTruthy();
+    });
+
+    it('should create an object of type BulletBlock', () => {
+      expect(block instanceof BulletBlock).toBeTruthy();
+    });
+
+    it('should have textBlockType of BULLET type', () => {
+      expect(block.textBlockType).toEqual(TextBlockType.BULLET);
     });
   });
 
