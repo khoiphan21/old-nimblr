@@ -274,7 +274,7 @@ describe('BlockTextComponent', () => {
     });
   });
 
-  fit('createTextBlockOnEnter() - should emit the correct blockType', done => {
+  it('createTextBlockOnEnter() - should emit the correct blockType', done => {
     const event = new KeyboardEvent('keydown', { key: 'Enter' });
     component.createBlock.subscribe(type => {
       expect(type).toEqual(BlockType.TEXT);

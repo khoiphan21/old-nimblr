@@ -28,10 +28,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
   @Output() deleteEvent = new EventEmitter<string>();
   @Output() createBlock = new EventEmitter<BlockTypeAndSubType>();
 
-  // @Output() addBullet = new EventEmitter<BlockType>();
-  // @Output() convertToBullet = new EventEmitter<BlockType>();
-  // @Output() deleteBullet = new EventEmitter<BlockType>();
-
   constructor(
     private blockCommandService: BlockCommandService,
     private factoryService: BlockFactoryService,
@@ -151,9 +147,32 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   private onBackSpaceAndEmptyTextbox(event: KeyboardEvent) {
     if (this.value === '') {
-      this.deleteEvent.emit(this.block.id);
+      // TODO: @bruno 1. structure it well, 2. upon bulletpoint deletion, it would convert back to normal textblock
+      switch (this.block.type) {
+        case BlockType.TEXT:
+          this.textBlockBackspaceAction();
+          break;
+
+        default:
+          this.deleteEvent.emit(this.block.id);
+          break;
+      }
+
       clearTimeout(this.timeout); // To prevent the last update call
       event.preventDefault();
+    }
+  }
+
+  private textBlockBackspaceAction() {
+    // TODO: @bruno test
+    switch (this.block.textBlockType) {
+      case TextBlockType.BULLET:
+        this.convertToBlockType(TextBlockType.TEXT);
+        break;
+
+      default:
+        this.deleteEvent.emit(this.block.id);
+        break;
     }
   }
 

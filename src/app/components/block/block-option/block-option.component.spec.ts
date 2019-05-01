@@ -12,7 +12,7 @@ import { TextBlock } from '../../../classes/block/textBlock';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('BlockOptionComponent', () => {
+describe('BlockOptionComponent', () => {
   let component: BlockOptionComponent;
   let fixture: ComponentFixture<BlockOptionComponent>;
   let factory: BlockFactoryService;
