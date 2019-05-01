@@ -3,7 +3,7 @@ import { Block, BlockId } from '../../classes/block/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
 import { BlockType, TextBlockType } from 'src/API';
 import { VersionService } from 'src/app/services/version/version.service';
-import { CreateBlockEvent } from './createBlockEvent';
+import { CreateBlockEvent, BlockTypeAndSubType } from './createBlockEvent';
 import { UUID } from '../../services/document/command/document-command.service';
 import { TextBlock } from '../../classes/block/textBlock';
 
@@ -59,10 +59,11 @@ export class BlockComponent implements OnInit {
     }
   }
 
-  addBlock(type: BlockType) {
+  addBlock(type: BlockTypeAndSubType) {
     this.createBlock.emit({
       id: this.blockId,
-      type
+      type: type.type,
+      textBlockType: type.textBlockType,
     });
   }
 

@@ -5,6 +5,7 @@ import { BlockCommandService } from '../../../services/block/command/block-comma
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 import { BlockType, TextBlockType } from 'src/API';
 import { BlockQueryService } from 'src/app/services/block/query/block-query.service';
+import { BlockTypeAndSubType } from '../createBlockEvent';
 
 @Component({
   selector: 'app-block-text',
@@ -25,7 +26,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   @Input() focusBlockId: string;
 
   @Output() deleteEvent = new EventEmitter<string>();
-  @Output() createBlock = new EventEmitter<BlockType>();
+  @Output() createBlock = new EventEmitter<BlockTypeAndSubType>();
 
   // @Output() addBullet = new EventEmitter<BlockType>();
   // @Output() convertToBullet = new EventEmitter<BlockType>();
@@ -157,7 +158,17 @@ export class BlockTextComponent implements OnInit, OnChanges {
   }
 
   private createTextBlockOnEnter(event: KeyboardEvent) {
-    this.createBlock.emit(BlockType.TEXT);
+    // TODO: @bruno test
+    switch (this.block.textBlockType) {
+      case TextBlockType.BULLET:
+        this.createBlock.emit(
+          { type: BlockType.TEXT, textBlockType: TextBlockType.BULLET }
+        );
+        break;
+      default:
+        this.createBlock.emit({ type: BlockType.TEXT });
+        break;
+    }
     event.preventDefault();
   }
 
