@@ -5,11 +5,15 @@ import { AccountService, UnverifiedUser } from '../../services/account/account.s
 import { CognitoSignUpUser } from '../../classes/user';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
+import { fadeInOutAnimation } from '../../animation';
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.scss']
+  styleUrls: ['./register-page.component.scss'],
+  animations: [
+    fadeInOutAnimation
+  ]
 })
 export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup;
@@ -19,6 +23,7 @@ export class RegisterPageComponent implements OnInit {
   // For password input
   passwordType = 'password';
   password = '';
+  isPasswordFocused = false;
   hasUpperCase = false;
   hasLowerCase = false;
   hasNumber = false;
