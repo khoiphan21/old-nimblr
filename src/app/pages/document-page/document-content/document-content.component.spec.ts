@@ -11,7 +11,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
 import { Document } from 'src/app/classes/document/document';
-import { SharingStatus, BlockType, DocumentType } from 'src/API';
+import { SharingStatus, BlockType, DocumentType, TextBlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -415,18 +415,26 @@ describe('DocumentContentComponent', () => {
       });
     }
 
-    describe('adding new BulletBlock', () => {
-      // TODO: @bruno impl this
-      beforeEach(async () => {
+    fdescribe('adding new BulletBlock', () => {
+      // TODO: @bruno to be tested
+      beforeEach(() => {
+        mockBlockInfo = {
+          type: BlockType.TEXT,
+          textBlockType: TextBlockType.BULLET
+        };
+      });
+
+      fit('should call createNewBulletBlock when textBlockType is bullet', async () => {
+        const spyCreateNewBlock = spyOn<any>(component, 'createAndSelectTextBlock');
         block = await component.addNewBlock(mockBlockInfo);
+        expect(spyCreateNewBlock.calls.count()).toBe(1);
       });
 
-      it('should call createNewBulletBlock when textBlockType is bullet', () => {
-        fail();
-      });
-
-      it('should catch error when creation failed', () => {
-        fail();
+      fit('should catch error when creation failed', () => {
+        spyOn<any>(component, 'createAndSelectTextBlock').and.throwError('testerr');
+        component.addNewBlock(mockBlockInfo).catch(err => {
+          expect(err.message).toEqual('testerr');
+        });
       });
     });
 
