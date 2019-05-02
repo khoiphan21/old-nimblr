@@ -10,32 +10,36 @@ import { LoginHelper, TEST_USERNAME, TEST_PASSWORD } from '../../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('(Integration) DocumentQueryService', () => {
+describe('(Integration) DocumentQueryService', () => {
   let service: DocumentQueryService;
   let graphQlService: GraphQLService;
-  const input: CreateDocumentInput = {
-    id: uuidv4(),
-    version: uuidv4(),
-    ownerId: uuidv4(),
-    lastUpdatedBy: uuidv4(),
-    title: 'test title',
-    sharingStatus: SharingStatus.PRIVATE,
-    type: DocumentType.GENERIC
-  };
+  let input: CreateDocumentInput;
 
   TestBed.configureTestingModule({});
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    resetInput();
+
     const user = await LoginHelper.login();
     // store the id of the user to create relevant documents.
     // Only owners of the document can retrieve it for now.
     input.ownerId = user.idToken.payload.sub;
-  });
 
-  beforeEach(() => {
     service = TestBed.get(DocumentQueryService);
     graphQlService = TestBed.get(GraphQLService);
   });
+
+  function resetInput() {
+    input = {
+      id: uuidv4(),
+      version: uuidv4(),
+      ownerId: uuidv4(),
+      lastUpdatedBy: uuidv4(),
+      title: 'test title',
+      sharingStatus: SharingStatus.PRIVATE,
+      type: DocumentType.GENERIC
+    };
+  }
 
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -73,7 +77,6 @@ fdescribe('(Integration) DocumentQueryService', () => {
 
       function setupSubscriptionTest() {
         service.getDocument$(createdDocument.id).subscribe(notifiedDocument => {
-          console.log('notified document: ', notifiedDocument);
           if (notifiedDocument === null) { return; }
           // Check for notification
           if (notifiedDocument.title === title) {
@@ -108,11 +111,15 @@ fdescribe('(Integration) DocumentQueryService', () => {
 
         await helper.sendCreateDocument(input);
 
-        const document = await getFirstDocument();
-        expect(document.id).toEqual(input.id);
+        try {
+          await getFirstDocument();
+          fail('error must occur');
+        } catch {
+          expect().nothing();
+        }
 
         await helper.deleteDocument();
-      }, environment.TIMEOUT_FOR_UPDATE_TEST);
+      });
 
     });
 
