@@ -128,7 +128,6 @@ export class RegisterPageComponent implements OnInit {
       await this.getCognitoUserDetails();
     } else {
       await this.accountService.registerAppUser(this.newCognitoUser, this.uuid);
-
       if (this.routeDocumentId) {
         this.router.navigate([`/document/${this.routeDocumentId}`]);
       } else {

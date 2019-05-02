@@ -6,7 +6,6 @@ import { User, CognitoSignUpUser } from '../../classes/user';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { take } from 'rxjs/operators';
 import { UserFactoryService } from '../user/user-factory.service';
-import { Router } from '@angular/router';
 
 import { createUser, updateUser } from '../../../graphql/mutations';
 import { GraphQLService } from '../graphQL/graph-ql.service';
@@ -52,7 +51,9 @@ export class AccountServiceImpl implements AccountService {
       }
     };
     // query GraphQL to create a new user
-    return await this.graphQLService.query(createUser, userDetails);
+    await this.graphQLService.query(createUser, userDetails);
+
+    return await this.restoreSession();
   }
 
   async awsConfirmAccount(email: string, code: string): Promise<any> {

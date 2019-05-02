@@ -1,6 +1,27 @@
 // tslint:disable
 // this is an auto generated file. This will be overwritten
 
+export const getDocumentLambda = `query GetDocumentLambda($id: ID!) {
+  getDocumentLambda(id: $id) {
+    id
+    version
+    type
+    ownerId
+    lastUpdatedBy
+    sharingStatus
+    title
+    editorIds
+    viewerIds
+    blockIds
+    createdAt
+    updatedAt
+    submissionDocIds
+    recipientEmail
+    submittedAt
+    submissionStatus
+  }
+}
+`;
 export const getUser = `query GetUser($id: ID!) {
   getUser(id: $id) {
     id

@@ -10,7 +10,7 @@ import { LoginHelper, TEST_USERNAME, TEST_PASSWORD } from '../../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
-describe('(Integration) DocumentQueryService', () => {
+fdescribe('(Integration) DocumentQueryService', () => {
   let service: DocumentQueryService;
   let graphQlService: GraphQLService;
   const input: CreateDocumentInput = {
@@ -43,7 +43,6 @@ describe('(Integration) DocumentQueryService', () => {
 
   describe('getDocument$', () => {
     let helper: DocumentQueryTestHelper;
-    const title = 'title from getDocument$ subscription test';
 
     beforeEach(() => {
       helper = new DocumentQueryTestHelper(TestBed.get(GraphQLService));
@@ -61,6 +60,7 @@ describe('(Integration) DocumentQueryService', () => {
     });
 
     it('should subscribe to any changes from the backend', async done => {
+      const title = 'title from getDocument$ subscription test';
       const createdDocument = await helper.sendCreateDocument(input);
 
       setupSubscriptionTest();
@@ -73,6 +73,7 @@ describe('(Integration) DocumentQueryService', () => {
 
       function setupSubscriptionTest() {
         service.getDocument$(createdDocument.id).subscribe(notifiedDocument => {
+          console.log('notified document: ', notifiedDocument);
           if (notifiedDocument === null) { return; }
           // Check for notification
           if (notifiedDocument.title === title) {
@@ -84,15 +85,28 @@ describe('(Integration) DocumentQueryService', () => {
       }
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
-    fdescribe('[RECIPIENT ACCESS]', () => {
+    describe('[RECIPIENT ACCESS]', () => {
       it('should be able to access a document if the user is a recipient', async () => {
         // set the document's ownerId to be different
         input.ownerId = uuidv4();
         // set the recipientEmail
         input.recipientEmail = TEST_USERNAME;
 
-        const result = await helper.sendCreateDocument(input);
-        console.log(result);
+        await helper.sendCreateDocument(input);
+
+        const document = await getFirstDocument();
+        expect(document.id).toEqual(input.id);
+
+        await helper.deleteDocument();
+      }, environment.TIMEOUT_FOR_UPDATE_TEST);
+
+      it('should NOT be able to access if the user is not the recipient', async () => {
+        // set the document's ownerId to be different
+        input.ownerId = uuidv4();
+        // set the recipientEmail
+        input.recipientEmail = 'abcd@gmail.com';
+
+        await helper.sendCreateDocument(input);
 
         const document = await getFirstDocument();
         expect(document.id).toEqual(input.id);
@@ -119,7 +133,7 @@ describe('(Integration) DocumentQueryService', () => {
         await helper.deleteDocument();
       }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
-      it('should not be able to query a non-public document ', async done => {
+      it('should not be able to access a non-public document', async done => {
         await Auth.signIn(TEST_USERNAME, TEST_PASSWORD);
 
         if (input.sharingStatus) {

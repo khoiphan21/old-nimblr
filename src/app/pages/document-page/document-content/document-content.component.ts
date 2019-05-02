@@ -16,8 +16,6 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
-import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
-import { EmailService } from 'src/app/services/email/email.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 import { CommandService } from 'src/app/services/command/command.service';
@@ -59,12 +57,10 @@ export class DocumentContentComponent implements OnInit {
   constructor(
     private documentQueryService: DocumentQueryService,
     private documentCommandService: DocumentCommandService,
-    private docFactoryService: DocumentFactoryService,
     private blockCommandService: BlockCommandService,
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
     private versionService: VersionService,
-    private emailService: EmailService,
     private accountService: AccountService,
     private route: ActivatedRoute,
     private location: Location,

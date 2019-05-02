@@ -583,6 +583,32 @@ export type DeleteBlockMutation = {
   } | null,
 };
 
+export type GetDocumentLambdaQueryVariables = {
+  id: string,
+};
+
+export type GetDocumentLambdaQuery = {
+  getDocumentLambda:  {
+    __typename: "Document",
+    id: string,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
+    title: string | null,
+    editorIds: Array< string | null > | null,
+    viewerIds: Array< string | null > | null,
+    blockIds: Array< string | null > | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
+  } | null,
+};
+
 export type GetUserQueryVariables = {
   id: string,
 };
