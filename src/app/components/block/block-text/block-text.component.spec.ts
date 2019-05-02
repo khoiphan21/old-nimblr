@@ -318,10 +318,11 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      it('should emit the id if the value is empty', done => {
+      fit('should emit the id if the value is empty', done => {
         component.value = '';
-        component.deleteEvent.subscribe(value => {
-          expect(value).toEqual(component.block.id);
+        component.deleteEvent.subscribe(response => {
+          console.log('repsonse', response);
+          expect(response).toEqual(component.block.id);
           done();
         });
         component['onBackSpaceAndEmptyTextbox'](event);
@@ -403,14 +404,14 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      it('should trigger createBulletPoint only when there - is registered in awaitKeyAction', () => {
+      fit('should trigger createBulletPoint only when - is registered in awaitKeyAction', () => {
         spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
         component['awaitKeyAction'].push('-');
         component.eventSelect(mockEvent);
         expect(spyCreateBulletPoint.calls.count()).toBe(1);
       });
 
-      it('should fail to trigger createBulletPoint when - is not registered', () => {
+      fit('should fail to trigger createBulletPoint when - is not registered', () => {
         spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
         component.eventSelect(mockEvent);
         expect(spyCreateBulletPoint.calls.count()).toBe(0);
