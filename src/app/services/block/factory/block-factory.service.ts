@@ -52,7 +52,6 @@ export class BlockFactoryService {
   }
 
   createNewBulletBlock(input: CreateNewBlockInput): BulletBlock {
-    // TODO: @bruno not tested
     const newInput: CreateAppTextBlockInput = {
       id: uuidv4(),
       version: uuidv4(),

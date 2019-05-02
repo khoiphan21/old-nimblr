@@ -76,8 +76,8 @@ describe('BlockFactoryService', () => {
     });
   });
 
-  describe('createNewBulletBlock()', () => {
-    // TODO: @bruno not finished
+  fdescribe('createNewBulletBlock()', () => {
+    // TODO: @bruno not tested
     let block: BulletBlock;
 
     beforeEach(() => {

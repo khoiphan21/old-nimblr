@@ -246,43 +246,6 @@ describe('BlockTextComponent', () => {
     });
   });
 
-  describe('onBackSpaceAndEmptyTextbox()', () => {
-    const event = new KeyboardEvent('keydown', { key: 'Backspace' });
-
-    beforeEach(() => {
-      const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
-      component.block = factory.createNewTextBlock({
-        documentId: uuidv4(),
-        lastUpdatedBy: uuidv4()
-      });
-    });
-
-    it('should emit the id if the value is empty', done => {
-      component.value = '';
-      component.deleteEvent.subscribe(value => {
-        expect(value).toEqual(component.block.id);
-        done();
-      });
-      component['onBackSpaceAndEmptyTextbox'](event);
-    });
-
-    it('should not emit if the value is not empty', () => {
-      component.value = 'test';
-      spyOn(component.deleteEvent, 'emit');
-      component['onBackSpaceAndEmptyTextbox'](event);
-      expect(component.deleteEvent.emit).not.toHaveBeenCalled();
-    });
-  });
-
-  it('createTextBlockOnEnter() - should emit the correct blockType', done => {
-    const event = new KeyboardEvent('keydown', { key: 'Enter' });
-    component.createBlock.subscribe(type => {
-      expect(type).toEqual(BlockType.TEXT);
-      done();
-    });
-    component['onBackSpaceAndEmptyTextbox'](event);
-  });
-
   describe('onPaste()', () => {
     let pasteEvent: any;
     let setCaretSpy;
@@ -317,8 +280,8 @@ describe('BlockTextComponent', () => {
     });
   });
 
-  describe('eventSelect', () => {
-    // TODO: @Bruno not impl
+  fdescribe('eventSelect', () => {
+    // TODO: @Bruno to be tested
     let spyMethod: jasmine.Spy;
     let spyReset: jasmine.Spy;
     let mockEvent: any;
@@ -326,30 +289,53 @@ describe('BlockTextComponent', () => {
     beforeEach(() => {
       mockEvent = {
         key: ''
-      }
+      };
     });
 
-    describe('Backspace', () => {
+    fdescribe('Backspace', () => {
+      const event = new KeyboardEvent('keydown', { key: 'Backspace' });
+
       beforeEach(() => {
         mockEvent.key = 'Backspace';
         spyMethod = spyOn<any>(component, 'onBackSpaceAndEmptyTextbox');
         spyReset = spyOn<any>(component, 'resetAwaitAction');
-      });
 
-      it('should trigger onBackSpaceAndEmptyTextbox when Backspace is pressed', () => {
-        component.eventSelect(mockEvent);
-        expect(spyMethod.calls.count()).toBe(1);
+        const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
+        component.block = factory.createNewTextBlock({
+          documentId: uuidv4(),
+          lastUpdatedBy: uuidv4()
+        });
       });
-
-      // TODO: @bruno: copy and paste from prev code
 
       it('should trigger resetAwaitAction', () => {
         component.eventSelect(mockEvent);
         expect(spyReset.calls.count()).toBe(1);
       });
+
+      // TODO: @bruno check copy and paste
+      it('should trigger onBackSpaceAndEmptyTextbox when Backspace is pressed', () => {
+        component.eventSelect(mockEvent);
+        expect(spyMethod.calls.count()).toBe(1);
+      });
+
+      it('should emit the id if the value is empty', done => {
+        component.value = '';
+        component.deleteEvent.subscribe(value => {
+          expect(value).toEqual(component.block.id);
+          done();
+        });
+        component['onBackSpaceAndEmptyTextbox'](event);
+      });
+
+      it('should not emit if the value is not empty', () => {
+        component.value = 'test';
+        spyOn(component.deleteEvent, 'emit');
+        component['onBackSpaceAndEmptyTextbox'](event);
+        expect(component.deleteEvent.emit).not.toHaveBeenCalled();
+      });
     });
 
-    describe('Enter', () => {
+    fdescribe('Enter', () => {
       beforeEach(() => {
         mockEvent.key = 'Enter';
         spyMethod = spyOn<any>(component, 'createTextBlockOnEnter');
@@ -361,11 +347,19 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      // TODO: @bruno: copy and paste from prev code
-
       it('should trigger resetAwaitAction', () => {
         component.eventSelect(mockEvent);
         expect(spyReset.calls.count()).toBe(1);
+      });
+
+      // TODO: @bruno: check copy and paste
+      it('createTextBlockOnEnter() - should emit the correct blockType', done => {
+        const event = new KeyboardEvent('keydown', { key: 'Enter' });
+        component.createBlock.subscribe(type => {
+          expect(type).toEqual(BlockType.TEXT);
+          done();
+        });
+        component['onBackSpaceAndEmptyTextbox'](event);
       });
     });
 

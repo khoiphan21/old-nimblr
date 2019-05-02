@@ -424,13 +424,13 @@ describe('DocumentContentComponent', () => {
         };
       });
 
-      fit('should call createNewBulletBlock when textBlockType is bullet', async () => {
+      it('should call createNewBulletBlock when textBlockType is bullet', async () => {
         const spyCreateNewBlock = spyOn<any>(component, 'createAndSelectTextBlock');
         block = await component.addNewBlock(mockBlockInfo);
         expect(spyCreateNewBlock.calls.count()).toBe(1);
       });
 
-      fit('should catch error when creation failed', () => {
+      it('should catch error when creation failed', () => {
         spyOn<any>(component, 'createAndSelectTextBlock').and.throwError('testerr');
         component.addNewBlock(mockBlockInfo).catch(err => {
           expect(err.message).toEqual('testerr');
