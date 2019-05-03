@@ -1,8 +1,8 @@
 @import '../../_sass/interface';
 @import '../../_sass/variables';
 @import '../../_sass/base';
-$horizontal-padding: 40px;
-section.container.option-container {
+$horizontal-padding: 1.5rem;
+section.mobile.container.option-container {
     input[type=text] {
         width: 100%;
         font-size: 16px;
@@ -39,16 +39,63 @@ section.container.option-container {
     }
 }
 
-.recipient {
-    background: rgba(0, 0, 0, 0.719925);
-    border-radius: 17px;
-    width: fit-content;
-    padding: 5px 10px;
-    color: white;
-    margin-right: 10px;
-    margin-bottom: 15px;
-    i {
-        margin-left: 5px;
+.input-container {
+    width: 100%;
+    border-bottom: 1px solid #97A0BF;
+    padding: 15px $horizontal-padding 0 $horizontal-padding;
+    display: flex;
+    @include media(lg) {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    div.left-container {
+        width: 80%;
+        display: flex;
+        flex-wrap: wrap;
+        .recipient {
+            background: rgba(0, 0, 0, 0.719925);
+            border-radius: 17px;
+            width: fit-content;
+            padding: 5px 10px;
+            color: white;
+            margin-right: 10px;
+            margin-bottom: 15px;
+            i {
+                margin-left: 5px;
+            }
+        }
+        input[type=text] {
+            flex-grow: 1;
+            border: 0;
+            font-size: 12px;
+            margin-bottom: 15px;
+            padding: 5px 0;
+            &::placeholder {
+                color: $color-grey-3;
+                opacity: 0.8;
+            }
+        }
+        .hide-placeholder {
+            &::placeholder {
+                color: transparent !important;
+            }
+        }
+    }
+    .right-container {
+        width: 20%;
+        display: flex;
+        justify-content: flex-end;
+        button {
+            background-color: $color-blue-2;
+            height: 26.27px;
+            padding: 0 1.05rem;
+            font-size: 12px;
+            letter-spacing: 1.2px;
+            font-weight: 500;
+            &:disabled {
+                background: #E8E8E8;
+            }
+        }
     }
 }
 
@@ -83,49 +130,6 @@ section.container.option-container {
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 500;
-        }
-        .input-container {
-            width: 100%;
-            border-bottom: 1px solid #97A0BF;
-            padding: 15px $horizontal-padding 0 $horizontal-padding;
-            display: flex;
-            div.left-container {
-                width: 80%;
-                display: flex;
-                flex-wrap: wrap;
-                input[type=text] {
-                    flex-grow: 1;
-                    border: 0;
-                    font-size: 12px;
-                    margin-bottom: 15px;
-                    padding: 5px 0;
-                    &::placeholder {
-                        color: $color-grey-3;
-                        opacity: 0.8;
-                    }
-                }
-                .hide-placeholder {
-                    &::placeholder {
-                        color: transparent !important;
-                    }
-                }
-            }
-            .right-container {
-                width: 20%;
-                display: flex;
-                justify-content: flex-end;
-                button {
-                    background-color: $color-blue-2;
-                    height: 26.27px;
-                    padding: 0 1.05rem;
-                    font-size: 12px;
-                    letter-spacing: 1.2px;
-                    font-weight: 500;
-                    &:disabled {
-                        background: #E8E8E8;
-                    }
-                }
-            }
         }
         .invitees {
             @include row-center;

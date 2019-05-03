@@ -36,13 +36,24 @@
 </ng-container>
 <!-- mobile  -->
 <ng-container *responsive="{sizes:{min:0,max:575}}">
-    <section class="container option-container" *ngIf="isSendFormShown" [@slideBottomToTopAnimation]>
+    <section class="container mobile option-container" *ngIf="isSendFormShown" [@slideBottomToTopAnimation]>
         <div class="row no-pad header">
             <div class="col-2" (click)="hideContainer()">Done</div>
             <div class="col-5">Invite People</div>
             <div class="col-2">Invite</div>
         </div>
-        <input type="text" placeholder="Search a person or type an email address">
+        <div class="input-container">
+            <div class="left-container">
+                <div class="recipient" *ngFor="let recipient of recipientList; let i=index">
+                    {{recipient}}
+                    <i class="fas fa-times clickable" (click)="removeRecipientFromList(i)"></i>
+                </div>
+                <input id="recipient-input" [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address" [ngClass]="{'hide-placeholder': recipientList.length > 0}" (keydown.enter)="addRecipient()" (keydown.backspace)="deleteRecipient()">
+            </div>
+            <div class="right-container">
+                <button class="filled-button-primary" (click)="send()" [disabled]="!(recipientList.length > 0)">send</button>
+            </div>
+        </div>
         <div class="title">
             select a person
         </div>

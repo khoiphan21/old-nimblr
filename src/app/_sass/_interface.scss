@@ -117,7 +117,7 @@ input {
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.46);
-    z-index: 3;
+    z-index: 5;
     @include row-center;
 }
 
