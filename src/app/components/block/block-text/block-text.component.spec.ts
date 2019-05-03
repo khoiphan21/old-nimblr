@@ -390,8 +390,8 @@ describe('BlockTextComponent', () => {
       let spyCreateBulletPoint: jasmine.Spy;
 
       beforeEach(() => {
-        mockEvent.key = ' ';
-        spyMethod = spyOn<any>(component, 'spacebarDetermineAction');
+        mockEvent = new KeyboardEvent('keydown', { key: ' ' });
+        spyMethod = spyOn<any>(component, 'spacebarDetermineAction').and.callThrough();
         spyReset = spyOn<any>(component, 'resetAwaitAction');
       });
 
@@ -401,7 +401,7 @@ describe('BlockTextComponent', () => {
       });
 
       it('should trigger createBulletPoint only when - is registered in awaitKeyAction', () => {
-        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint').and.callThrough();
+        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
         component['awaitKeyAction'].push('-');
         component.eventSelect(mockEvent);
         expect(spyCreateBulletPoint.calls.count()).toBe(1);
