@@ -3,7 +3,7 @@ import { TextBlockType } from 'src/API';
 
 const uuid4 = require('uuid/v4');
 
-fdescribe('BulletBlock', () => {
+xdescribe('BulletBlock', () => {
   // TODO: @bruno to be tested
   let mockInput: any;
 
