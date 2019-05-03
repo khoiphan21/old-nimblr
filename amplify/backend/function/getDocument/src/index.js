@@ -68,16 +68,16 @@ exports.handler = async (event, context) => {
         if (err) {
           reject(err);
         } else {
-          resolve(data.Item)
+          resolve(data.Item);
         }
-      })
+      });
     });
   }
 
   async function checkAuthorisation(user, document) {
     if (document.sharingStatus === "PUBLIC" ||
       document.ownerId === user.id ||
-      document.recipientEmail === user.email
+      document.recipientEmail === user.username
     ) {
       return;
     } else {

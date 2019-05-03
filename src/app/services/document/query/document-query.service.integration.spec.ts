@@ -10,7 +10,7 @@ import { LoginHelper, TEST_USERNAME, TEST_PASSWORD } from '../../loginHelper';
 
 const uuidv4 = require('uuid/v4');
 
-fdescribe('(Integration) DocumentQueryService', () => {
+describe('(Integration) DocumentQueryService', () => {
   let service: DocumentQueryService;
   let graphQlService: GraphQLService;
   let input: CreateDocumentInput;
@@ -89,7 +89,7 @@ fdescribe('(Integration) DocumentQueryService', () => {
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     describe('[RECIPIENT ACCESS]', () => {
-      fit('should be able to access a document if the user is a recipient', async () => {
+      it('should be able to access a document if the user is a recipient', async () => {
         // set the document's ownerId to be different
         input.ownerId = uuidv4();
         // set the recipientEmail

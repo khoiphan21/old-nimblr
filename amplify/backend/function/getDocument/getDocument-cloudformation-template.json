@@ -60,7 +60,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "irisa-20190408211746-deployment",
-					"S3Key": "amplify-builds/getDocument-1556688411-latest-build.zip"
+					"S3Key": "amplify-builds/getDocument-1556867744-latest-build.zip"
 				}
 			}
 		},
@@ -118,6 +118,28 @@
 				"PolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
+						{
+							"Action": [
+								"dynamodb:BatchGetItem",
+								"dynamodb:DescribeTable",
+								"dynamodb:GetItem",
+								"dynamodb:ListTables",
+								"dynamodb:Query",
+								"dynamodb:Scan",
+								"dynamodb:DescribeReservedCapacity",
+								"dynamodb:DescribeReservedCapacityOfferings",
+								"dynamodb:ListTagsOfResource",
+								"dynamodb:DescribeTimeToLive",
+								"dynamodb:DescribeLimits",
+								"dynamodb:ListGlobalTables",
+								"dynamodb:DescribeGlobalTable",
+								"dynamodb:DescribeBackup",
+								"dynamodb:ListBackups",
+								"dynamodb:DescribeContinuousBackups"
+							],
+							"Effect": "Allow",
+							"Resource": "*"
+						},
 						{
 							"Effect": "Allow",
 							"Action": [
