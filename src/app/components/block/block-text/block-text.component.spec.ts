@@ -280,7 +280,7 @@ describe('BlockTextComponent', () => {
     });
   });
 
-  xdescribe('eventSelect', () => {
+  describe('eventSelect', () => {
     // TODO: @Bruno to be tested
     let spyMethod: jasmine.Spy;
     let spyReset: jasmine.Spy;
@@ -296,8 +296,8 @@ describe('BlockTextComponent', () => {
       const event = new KeyboardEvent('keydown', { key: 'Backspace' });
 
       beforeEach(() => {
-        mockEvent.key = 'Backspace';
-        spyMethod = spyOn<any>(component, 'onBackSpaceAndEmptyTextbox');
+        mockEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+        spyMethod = spyOn<any>(component, 'onBackSpaceAndEmptyTextbox').and.callThrough();
         spyReset = spyOn<any>(component, 'resetAwaitAction');
 
         const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
@@ -312,19 +312,14 @@ describe('BlockTextComponent', () => {
         expect(spyReset.calls.count()).toBe(1);
       });
 
-      // TODO: @bruno check copy and paste
       it('should trigger onBackSpaceAndEmptyTextbox when Backspace is pressed', () => {
         component.eventSelect(mockEvent);
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      fit('should emit the id only if the value is empty and is not a special block', done => {
+      it('should emit the id only if the value is empty and is not a special block', done => {
         component.value = '';
-        console.log("TCL: component.block.type", component.block.type)
-        console.log("TCL: component.block.textBlockType", component.block.textBlockType)
-        console.log("TCL: component.deleteEvent", component.deleteEvent)
         component.deleteEvent.subscribe(response => {
-          console.log('repsonse', response);
           expect(response).toEqual(component.block.id);
           done();
         });
@@ -339,10 +334,10 @@ describe('BlockTextComponent', () => {
       });
     });
 
-    xdescribe('Enter', () => {
+    describe('Enter', () => {
       beforeEach(() => {
-        mockEvent.key = 'Enter';
-        spyMethod = spyOn<any>(component, 'createTextBlockOnEnter');
+        mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        spyMethod = spyOn<any>(component, 'createTextBlockOnEnter').and.callThrough();
         spyReset = spyOn<any>(component, 'resetAwaitAction');
       });
 
@@ -356,21 +351,21 @@ describe('BlockTextComponent', () => {
         expect(spyReset.calls.count()).toBe(1);
       });
 
-      // TODO: @bruno: check copy and paste
-      it('createTextBlockOnEnter() - should emit the correct blockType', done => {
-        const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      it('should emit the correct blockType', done => {
+        mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         component.createBlock.subscribe(type => {
-          expect(type).toEqual(BlockType.TEXT);
+          expect(type).toEqual({ type: BlockType.TEXT });
           done();
         });
-        component['onBackSpaceAndEmptyTextbox'](event);
+
+        component['createTextBlockOnEnter'](mockEvent);
       });
     });
 
-    xdescribe('-', () => {
+    describe('-', () => {
       beforeEach(() => {
-        mockEvent.key = '-';
-        spyMethod = spyOn<any>(component, 'waitForNextKey');
+        mockEvent = new KeyboardEvent('keydown', { key: '-' });
+        spyMethod = spyOn<any>(component, 'waitForNextKey').and.callThrough();
         spyReset = spyOn<any>(component, 'resetAwaitAction');
       });
 
@@ -379,10 +374,8 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      xit('should register action to array awaitKeyAction', () => {
+      it('should register action to array awaitKeyAction', () => {
         component.eventSelect(mockEvent);
-        console.log(component['awaitKeyAction']);
-        console.log(component.value);
         expect(component['awaitKeyAction'][0]).toEqual('-');
       });
 
@@ -393,7 +386,7 @@ describe('BlockTextComponent', () => {
       });
     });
 
-    xdescribe('spacebar', () => {
+    describe('spacebar', () => {
       let spyCreateBulletPoint: jasmine.Spy;
 
       beforeEach(() => {
@@ -407,14 +400,14 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      xit('should trigger createBulletPoint only when - is registered in awaitKeyAction', () => {
-        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
+      it('should trigger createBulletPoint only when - is registered in awaitKeyAction', () => {
+        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint').and.callThrough();
         component['awaitKeyAction'].push('-');
         component.eventSelect(mockEvent);
         expect(spyCreateBulletPoint.calls.count()).toBe(1);
       });
 
-      xit('should fail to trigger createBulletPoint when - is not registered', () => {
+      it('should fail to trigger createBulletPoint when - is not registered', () => {
         spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
         component.eventSelect(mockEvent);
         expect(spyCreateBulletPoint.calls.count()).toBe(0);
@@ -426,7 +419,7 @@ describe('BlockTextComponent', () => {
       });
     });
 
-    xdescribe('Default no action', () => {
+    describe('Default no action', () => {
       beforeEach(() => {
         mockEvent.key = 'random';
         spyReset = spyOn<any>(component, 'resetAwaitAction');

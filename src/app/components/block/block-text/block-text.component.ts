@@ -133,7 +133,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
         // TODO: @bruno why awaitKeyAction is not triggered
         console.log(this.value);
         this.waitForNextKey(event);
-        console.log(this.awaitKeyAction);
+        console.log('array: ', this.awaitKeyAction);
         break;
 
       case ' ':

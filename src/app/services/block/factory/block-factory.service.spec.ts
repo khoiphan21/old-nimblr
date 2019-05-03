@@ -76,7 +76,7 @@ describe('BlockFactoryService', () => {
     });
   });
 
-  xdescribe('createNewBulletBlock()', () => {
+  fdescribe('createNewBulletBlock()', () => {
     // TODO: @bruno not tested
     let block: BulletBlock;
 
