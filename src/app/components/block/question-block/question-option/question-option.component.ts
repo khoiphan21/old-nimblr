@@ -64,7 +64,7 @@ export class QuestionOptionComponent implements OnChanges {
   }
 
   private clearOptions() {
-    this.options = null;
+    this.options = [];
   }
 
   private clearAnswers() {
