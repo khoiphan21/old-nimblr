@@ -3,6 +3,8 @@ import { DocumentPageComponent } from './document-page.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { configureTestSuite } from 'ng-bullet';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NavigationEnd } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 describe('DocumentPageComponent', () => {
   let component: DocumentPageComponent;
@@ -40,4 +42,14 @@ describe('DocumentPageComponent', () => {
     expect(navigatedPath).toEqual([`document/${uuid}`, uuid2]);
   });
 
+  it('should call localstorage when the navigation ends', () => {
+    spyOn(localStorage, 'setItem');
+    const navigationEnd = new NavigationEnd(0, '', '/document/test123');
+    const mockRouter: any = {
+      events: new BehaviorSubject(navigationEnd)
+    };
+    component['router'] = mockRouter;
+    component.ngOnInit();
+    expect(localStorage.setItem).toHaveBeenCalled();
+  });
 });

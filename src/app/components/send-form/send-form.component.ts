@@ -8,7 +8,8 @@ import { slideBottomToTopAnimation, fadeInOutAnimation } from 'src/app/animation
   animations: [fadeInOutAnimation, slideBottomToTopAnimation]
 })
 export class SendFormComponent implements OnInit {
-  recipientInput: string;
+  recipientInput = '';
+  recipientList: Array<string> = [];
 
   @Input() isSendFormShown: boolean;
 
@@ -34,4 +35,19 @@ export class SendFormComponent implements OnInit {
     this.recipientInput = '';
   }
 
+  addRecipient() {
+    this.recipientList.push(this.recipientInput);
+    this.clearInput();
+  }
+
+  deleteRecipient() {
+    if (this.recipientInput === '' && this.recipientList.length > 0) {
+      const index = this.recipientList.length - 1;
+      this.removeRecipientFromList(index);
+    }
+  }
+
+  removeRecipientFromList(index: number) {
+    this.recipientList.splice(index, 1);
+  }
 }

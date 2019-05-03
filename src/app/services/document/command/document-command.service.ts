@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CreateDocumentInput, UpdateDocumentInput } from '../../../../API';
+import { CreateDocumentInput, UpdateDocumentInput, DeleteDocumentInput } from '../../../../API';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { createDocument, updateDocument } from '../../../../graphql/mutations';
+import { createDocument, updateDocument, deleteDocument } from '../../../../graphql/mutations';
 import { isUuid } from 'src/app/classes/helpers';
 import { VersionService } from '../../version/version.service';
 
@@ -49,24 +49,26 @@ export class DocumentCommandService {
       title = null;
     }
 
-    const response: any = await this.graphQlService.query(createDocument, { input: {
-      id,
-      version,
-      type,
-      ownerId,
-      lastUpdatedBy,
-      sharingStatus,
-      title,
-      editorIds,
-      viewerIds,
-      blockIds,
-      createdAt,
-      updatedAt,
-      submissionDocIds,
-      recipientEmail,
-      submittedAt,
-      submissionStatus,
-    } });
+    const response: any = await this.graphQlService.query(createDocument, {
+      input: {
+        id,
+        version,
+        type,
+        ownerId,
+        lastUpdatedBy,
+        sharingStatus,
+        title,
+        editorIds,
+        viewerIds,
+        blockIds,
+        createdAt,
+        updatedAt,
+        submissionDocIds,
+        recipientEmail,
+        submittedAt,
+        submissionStatus,
+      }
+    });
 
     return response.data.createDocument;
   }
@@ -143,5 +145,14 @@ export class DocumentCommandService {
       // 'version', 'ownerId', 'lastUpdatedBy'
     ];
     this.checkIfUuid(input, shouldBeUuids);
+  }
+
+  async deleteDocument(input: DeleteDocumentInput): Promise<any> {
+    try {
+      const response: any = await this.graphQlService.query(deleteDocument, { input });
+      return response.data.deleteDocument;
+    } catch (error) {
+      throw error;
+    }
   }
 }

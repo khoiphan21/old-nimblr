@@ -2,6 +2,7 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 section.content {
+    width: 100vw;
     height: 100%;
     background: white;
     div.title {
@@ -21,7 +22,6 @@ section.content {
             font-size: 2.4rem;
             font-weight: 500;
             letter-spacing: 1.5px;
-            z-index: 1;
             .text-input {
                 width: 100%;
                 border: 0;
@@ -46,6 +46,7 @@ section.content {
                 padding: 0 1rem;
                 font-weight: normal;
                 @include row-center;
+                z-index: 2;
                 i.fa-paper-plane {
                     font-size: 20px;
                     margin-right: 10px;
@@ -66,6 +67,7 @@ section.content {
 
 @include media(lg) {
     section.content {
+        width: 100%;
         height: 100%;
         margin-top: 100px;
         div.title {
@@ -73,6 +75,7 @@ section.content {
             padding: 0 $desktop-document-horizontal-padding 20px $desktop-document-horizontal-padding;
             h1 {
                 justify-content: center;
+                z-index: 1;
                 button {
                     position: absolute;
                     top: 5px;

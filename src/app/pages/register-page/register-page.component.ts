@@ -5,11 +5,15 @@ import { AccountService, UnverifiedUser } from '../../services/account/account.s
 import { CognitoSignUpUser } from '../../classes/user';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from 'aws-amplify';
+import { fadeInOutAnimation } from '../../animation';
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.scss']
+  styleUrls: ['./register-page.component.scss'],
+  animations: [
+    fadeInOutAnimation
+  ]
 })
 export class RegisterPageComponent implements OnInit {
   // Params from route
@@ -22,6 +26,7 @@ export class RegisterPageComponent implements OnInit {
   // For password input
   passwordType = 'password';
   password = '';
+  isPasswordFocused = false;
   hasUpperCase = false;
   hasLowerCase = false;
   hasNumber = false;
@@ -75,11 +80,13 @@ export class RegisterPageComponent implements OnInit {
   }
 
   private buildForm() {
+    const emailPattern = '^.+@[^\.].*\.[a-z]{2,}$';
     this.registerForm = this.formBuilder.group({
-      email: this.formBuilder.control('', [Validators.required, Validators.email, Validators.minLength(6)]),
-      firstName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
-      lastName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
-      password: this.formBuilder.control('', [Validators.required, Validators.minLength(6)]),
+      email: this.formBuilder.control('', [Validators.required, Validators.email,
+         Validators.pattern(emailPattern), Validators.minLength(6)]),
+      firstName: this.formBuilder.control('', [Validators.required]),
+      lastName: this.formBuilder.control('', [Validators.required]),
+      password: this.formBuilder.control('', [Validators.required, Validators.minLength(8)]),
     });
     this.verificationForm = this.formBuilder.group({
       verificationCode: this.formBuilder.control('', [Validators.required, Validators.minLength(6)])

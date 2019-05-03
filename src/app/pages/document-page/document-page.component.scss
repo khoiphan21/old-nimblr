@@ -38,6 +38,7 @@ div.fluid-container {
                 width: -moz-calc(100vw - #{$navigation-width});
                 width: calc(100vw - #{$navigation-width});
                 height: 100%;
+                padding-bottom: 100px;
                 overflow: auto;
             }
         }

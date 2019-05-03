@@ -1,0 +1,20 @@
+@import '../../../_sass/interface';
+@import '../../../_sass/variables';
+@import '../../../_sass/base';
+.document-tab {
+    padding: 0 25px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $color-grey-2;
+    height: 27px;
+    @include row-center;
+    justify-content: flex-start;
+}
+
+.document-tab {
+    font-weight: normal;
+    cursor: pointer;
+    &:hover {
+        background: transparentize($color: #000000, $amount: 0.95)
+    }
+}

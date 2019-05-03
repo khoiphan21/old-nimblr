@@ -6,7 +6,11 @@ import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType, } from 'src/API';
+import {
+  BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,
+  DeleteDocumentInput,
+} from 'src/API';
+
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -172,7 +176,6 @@ export class DocumentContentComponent implements OnInit {
     this.blockQueryService.subscribeToUpdate(this.documentId);
   }
 
-
   /**
    * Create a new block and add it to the list of blocks in the document
    *
@@ -231,7 +234,6 @@ export class DocumentContentComponent implements OnInit {
   }
 
   private createAndSelectTextBlock(textBlockType: TextBlockType, input) {
-    // TODO: @bruno tbt
     switch (textBlockType) {
       case TextBlockType.HEADER:
         return this.blockFactoryService.createNewHeaderBlock(input);
@@ -362,6 +364,18 @@ export class DocumentContentComponent implements OnInit {
     const submissionId = await command.execute(this.documentId, email);
 
     this.submissionDocIds.push(submissionId);
+  }
+
+  async deleteThisDocument() {
+    try {
+      // send query to delete document
+      const input: DeleteDocumentInput = { id: this.documentId };
+      return await this.documentCommandService.deleteDocument(input);
+
+    } catch (error) {
+      throw new Error('Failed to delete document: ' + error.message);
+
+    };
   }
 
 }

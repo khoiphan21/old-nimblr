@@ -79,7 +79,11 @@ export class QuestionBlock extends BlockImpl implements Block {
     const newAnswers = [];
 
     for (const answer of answers) {
-      if (options.includes(answer)) {
+      if (options.length > 0) {
+        if (options.includes(answer)) {
+          newAnswers.push(answer);
+        }
+      } else {
         newAnswers.push(answer);
       }
     }

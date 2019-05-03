@@ -1,36 +1,36 @@
 <div class="fluid-container">
-    <div class="row">
-        <section class="col-3 login-background desktop"></section>
-        <section class="col-lg-7 login-container">
+    <div class="row no-gutters">
+        <section class="col login-container">
             <section class="heading">
-                <h1>Log in</h1>
+                <h1>Sign in to Unamed</h1>
                 <h3>Enter your details below</h3>
             </section>
             <form [formGroup]="loginForm">
                 <div class="form-input mb-4">
-                    <div class="input-label  mb-1">Email</div>
-                    <input formControlName="email" type="text" required>
+                    <div class="input-label">Email</div>
+                    <input formControlName="email" placeholder="Your email address" type="text" required>
                     <div class="error" *ngIf="errorMessage === 'USER_NOT_FOUND'">
-                        <i class="fas fa-exclamation-circle"></i> Couldn't find an account with this email
+                        <i class="fas fa-exclamation-circle"></i> That Unamed email does not exist. Enter a different email or&nbsp;<span routerLink="/register">get a new one</span>
                     </div>
                 </div>
                 <div class="form-input mb-4">
                     <div class="password-label">
-                        <div class="input-label mb-1">Password</div>
-                        <div class="forgot-password">Forgot Password?</div>
+                        <div class="input-label">Password</div>
+                        <div class="forgot-password" routerLink="/forgot-password">Forgot Password?</div>
                     </div>
-                    <input formControlName="password" type="{{passwordType}}" required>
+                    <input formControlName="password" placeholder="Enter your password" type="{{passwordType}}" required>
                     <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                     <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
                     <div class="error" *ngIf="errorMessage === 'INCORRECT_PASSWORD'">
                         <i class="fas fa-exclamation-circle"></i> Incorrect password
                     </div>
                 </div>
-                <!-- <button class="filled-button-primary ml-auto mr-auto" [disabled]="loginForm.invalid" (click)="signIn()">Sign in</button> -->
-                <button class="filled-button-primary ml-auto mr-auto" (click)="signIn()">Sign in</button>
+                <button class="filled-button-primary ml-auto mr-auto" [disabled]="loginForm.invalid" (click)="signIn()">Sign in</button>
             </form>
-            <button class="outline-button-primary mobile" routerLink="/register">Get Started</button>
-            <div class="sign-up desktop">Don't have an account? <span routerLink="/register">Get Started</span></div>
+            <hr>
+            <div class="sign-up">Don't have an account?
+                <button class="outline-button-primary" routerLink="/register">Get Started</button>
+            </div>
         </section>
     </div>
 </div>

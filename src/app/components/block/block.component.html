@@ -1,12 +1,16 @@
 <ng-container *ngIf="block" [ngSwitch]=block.type>
-    <div class="block" [ngClass]="{'child-document': isChildDoc, 'header-block': blockStyle === 'HEADER'}">
+    <div class="block" [ngClass]="{'child-document': isChildDoc, 'header-block': blockStyle === 'HEADER', 'question-block': block.type === 'QUESTION'}">
         <ng-content></ng-content>
         <ng-container *ngSwitchCase="'TEXT'">
             <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
         </ng-container>
         <ng-container *ngSwitchCase="'QUESTION'">
-            <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
-            <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block>
+            <ng-container *responsive="{sizes:{min:576, max:2000}}">
+                <app-question-block [questionBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-question-block>
+            </ng-container>
+            <ng-container *responsive="{sizes:{min:0,max:575}}">
+                <!-- <app-mobile-question-block [questionBlock]="block" class="mobile"></app-mobile-question-block> -->
+            </ng-container>
         </ng-container>
     </div>
 </ng-container>

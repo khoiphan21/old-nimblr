@@ -1,17 +1,6 @@
 @import '../../../_sass/interface';
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
-.drag-placeholder {
-    width: 100%;
-    height: 5px;
-    padding: 0 $desktop-document-horizontal-padding;
-    .placeholder-underline {
-        width: 100%;
-        height: 100%;
-        background: transparentize($color: $color-blue-2, $amount: 0.8)
-    }
-}
-
 .child-document {
     padding: 0 $desktop-child-document-horizontal-padding;
 }

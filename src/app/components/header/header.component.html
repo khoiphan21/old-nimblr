@@ -5,26 +5,26 @@
     </section>
     <section class="document-tab" *ngIf="currentUrl === 'document'">
         <ng-container *responsive="{sizes:{min:576, max:2000}}">
-            <div class="option clickable" (click)="isSharingShown = !isSharingShown">
-                <object data="./assets/icons/share.svg" type="image/svg+xml">
-                    <i class="fas fa-share-alt"></i>
-                </object>
+            <div class="option clickable" *ngIf="documentType === 'GENERIC'" (click)="saveAsTemplate()">
+                <img src="./assets/icons/template-save.svg">
+                <span>Save as template</span>
+            </div>
+            <div class="option clickable mt-1" (click)="isSharingShown = !isSharingShown">
+                <img src="./assets/icons/share.svg">
                 <span>Share</span>
             </div>
-            <div class="option clickable mt-4" (click)="isOptionShown = !isOptionShown">
-                <i class="fas fa-ellipsis-h"></i>
+            <div class="option clickable mt-1" (click)="isOptionShown = !isOptionShown">
+                <img src="./assets/icons/horizontal-option.svg">
                 <span>Options</span>
             </div>
         </ng-container>
         <ng-container *responsive="{sizes:{min:0,max:575}}">
             <span (click)="isSharingShown = !isSharingShown"> 
-                <object data="./assets/icons/share.svg" type="image/svg+xml">
-                    <i class="fas fa-share-alt"></i>
-                </object>
+                <img src="./assets/icons/share.svg">
             </span>
             <i class="fas fa-ellipsis-h clickable pr-4" (click)="isOptionShown = !isOptionShown"></i>
         </ng-container>
         <app-header-sharing [sharingStatus]="sharingStatus" [isSharingShown]="isSharingShown" (showInviteEvent)="showInvite()" (hideSharingEvent)="isSharingShown = $event" (changeSharingStatus)="changeSharingStatus($event)"></app-header-sharing>
-        <app-header-options [documentType]="documentType" [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event" (saveAsTemplateEvent)="saveAsTemplate()"></app-header-options>
+        <app-header-options [documentType]="documentType" [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event" (deleteDocumentEvent)="deleteThisDocument()"></app-header-options>
     </section>
 </div>

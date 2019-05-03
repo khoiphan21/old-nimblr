@@ -157,4 +157,18 @@ export class BlockQueryService {
   registerBlockDeletedByUI(blockId: string) {
     this.blocksMap.delete(blockId);
   }
+
+  /**
+   * Update block's UI from conversion
+   *
+   * @param block the block
+   */
+  updateBlockUI(block: Block) {
+    const id = block.id;
+    let block$: Subject<Block>;
+    if (this.blocksMap.has(id)) {
+      block$ = this.blocksMap.get(id);
+      block$.next(block);
+    }
+  }
 }

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { DocumentCommandService } from './document-command.service';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus } from '../../../../API';
+import { CreateDocumentInput, DocumentType, UpdateDocumentInput, SharingStatus, DeleteDocumentInput } from '../../../../API';
 import { deleteDocument } from '../../../../graphql/mutations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { configureTestSuite } from 'ng-bullet';
@@ -76,6 +76,29 @@ describe('(Integration) DocumentCommandService', () => {
 
       // Delete it
       await graphQlService.query(deleteDocument, { input: { id: createdDocument.id } });
+    });
+
+  });
+
+  describe('deleteDocument', () => {
+    let deleteInput: DeleteDocumentInput;
+
+    it('should delete a specific document', async () => {
+      const testId = 'test123';
+
+      // create a document with these parameters
+      input.id = testId;
+      const creationResponse = await service.createDocument(input);
+      expect(creationResponse).toBeTruthy();
+
+      // delete this document
+      deleteInput = {
+        id: testId
+      };
+      const deletionResponse = await service.deleteDocument(deleteInput);
+
+      // check whether document exist
+      expect(deletionResponse).toBeTruthy();
     });
 
   });

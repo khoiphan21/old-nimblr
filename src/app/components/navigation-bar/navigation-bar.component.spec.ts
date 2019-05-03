@@ -5,7 +5,7 @@ import { NavigationTabComponent } from './navigation-tab/navigation-tab.componen
 import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { NavigationTabDocument, DocumentStructureTab } from 'src/app/classes/navigation-tab';
+import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
 import { AccountService } from 'src/app/services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
@@ -234,47 +234,32 @@ describe('NavigationBarComponent', () => {
       expect(getStructureSpy).toHaveBeenCalledTimes(1);
     });
 
-    // TODO: fix this issue
-    xit('should call getStructure() twice', () => {
+    it('should call getStructure() twice', () => {
       const navigationEnd = new NavigationEnd(0, '', '/document');
-      spyOn(component['router'], 'events').and.returnValue(new BehaviorSubject(navigationEnd));
+      const mockRouter: any = {
+        events: new BehaviorSubject(navigationEnd)
+      };
+      component['router'] = mockRouter;
       component['setupDocumentStructure']();
       expect(getStructureSpy).toHaveBeenCalledTimes(2);
     });
 
-    describe('getStructure()', () => {
-      let getDocumentStructureSpy: jasmine.Spy;
-      beforeEach(() => {
-        getStructureSpy.and.callThrough();
-        getDocumentStructureSpy = spyOn(component['navigationBarService'], 'getDocumentStructure$');
-      });
-
-      it('should call getDocumentStructure$() with the right argument', () => {
-        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(null));
-        component['getStructure']();
-        expect(getDocumentStructureSpy).toHaveBeenCalledWith(documentId);
-      });
-
-      it('should update into the latest value when respond', () => {
-        const tab = new DocumentStructureTab({id: 'testId', title: 'testTitle'});
-        const structure = [tab];
-        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(structure));
-        component['getStructure']();
-        expect(component.documentStructure).toEqual(structure);
-      });
-    });
   });
 
-  describe('scrollToSection()', () => {
-    let getElementSpy: jasmine.Spy;
+  describe('getStructure()', () => {
+    let getDocumentSpy: jasmine.Spy;
+    const blockIds = ['test123'];
+    const mockDocument = {
+      blockIds
+    };
     beforeEach(() => {
-      const dummyElement = document.createElement('div');
-      getElementSpy = spyOn(document, 'getElementById').and.returnValue(dummyElement);
+      getDocumentSpy = spyOn(component['documentQueryService'], 'getDocument$').and.returnValue(new BehaviorSubject(mockDocument));
     });
-    it('should call the getElementById() with the right arguement', () => {
-      const uuid = uuidv4();
-      component.scrollToSection(uuid);
-      expect(getElementSpy).toHaveBeenCalledWith(uuid);
+
+    it('should update into the latest value when respond', async () => {
+      component['getStructure']();
+      expect(component.blockIds).toEqual(blockIds);
     });
   });
+
 });

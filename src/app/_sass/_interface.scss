@@ -1,5 +1,11 @@
 @import '_variables';
 @import 'mixins';
+button {
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
 .outline-button-primary {
     height: 44px;
     border: 1px solid $color-grey-2;
@@ -111,7 +117,7 @@ input {
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.46);
-    z-index: 3;
+    z-index: 5;
     @include row-center;
 }
 
@@ -228,5 +234,16 @@ section.mobile.container.option-container {
                 text-align: left;
             }
         }
+    }
+}
+
+.drag-placeholder {
+    width: 100%;
+    height: 5px;
+    padding: 0 $desktop-document-horizontal-padding;
+    .placeholder-underline {
+        width: 100%;
+        height: 100%;
+        background: transparentize($color: $color-blue-2, $amount: 0.8)
     }
 }

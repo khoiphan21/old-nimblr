@@ -10,7 +10,7 @@ projects:
         codeGenTarget: typescript
         generatedFileName: src\API.ts
         docsFilePath: src\graphql
-        graphQLApiId: d3mylzyfxjdgxgwrmyy3gt4gzu
+        graphQLApiId: m3gag7yt5jb4lexvpkqvi2geem
       endpoints:
         prod: >-
-          https://gk2nhz6wtbavhn5eu7qkz6heaa.appsync-api.ap-southeast-2.amazonaws.com/graphql
+          https://rh5yxxybwzbidpsktwvvqllxta.appsync-api.ap-southeast-2.amazonaws.com/graphql
