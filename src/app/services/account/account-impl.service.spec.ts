@@ -105,14 +105,17 @@ describe('AccountImplService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('registerAppUser', () => {
+    let testUser: CognitoSignUpUser;
+
     let spyAuth: jasmine.Spy;
     let spyQuery: jasmine.Spy;
-    let testUser: CognitoSignUpUser;
+    let sessionSpy: jasmine.Spy;
 
     beforeEach(() => {
       spyAuth = spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
       spyQuery = spyOn(service['graphQLService'], 'query');
       spyQuery.and.returnValue(Promise.resolve());
+      sessionSpy = spyOn<any>(service, 'restoreSession');
 
       const testAttr = {
         email: 'test',
@@ -159,10 +162,15 @@ describe('AccountImplService', () => {
       const errMsg = 'testing';
       spyQuery.and.returnValue(Promise.reject(new Error(errMsg)));
 
-      const r = service.registerAppUser(testUser, '').catch(err => {
+      service.registerAppUser(testUser, '').catch(err => {
         expect(err.message).toEqual(errMsg);
         done();
       });
+    });
+
+    it('should call to restoreSession()', async () => {
+      await service.registerAppUser(testUser, 'id');
+      expect(sessionSpy).toHaveBeenCalled();
     });
 
   });

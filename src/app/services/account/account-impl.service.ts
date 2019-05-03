@@ -51,9 +51,11 @@ export class AccountServiceImpl implements AccountService {
       }
     };
     // query GraphQL to create a new user
-    await this.graphQLService.query(createUser, userDetails);
+    const createdUser = await this.graphQLService.query(createUser, userDetails);
 
-    return await this.restoreSession();
+    await this.restoreSession();
+
+    return createdUser;
   }
 
   async awsConfirmAccount(email: string, code: string): Promise<any> {
