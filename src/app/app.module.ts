@@ -40,6 +40,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { DocumentOutlineTabComponent } from './components/navigation-bar/document-outline-tab/document-outline-tab.component';
 import { ClickOutsideModule } from 'ng-click-outside';
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { ClickOutsideModule } from 'ng-click-outside';
     BrowserAnimationsModule,
     ContenteditableModule,
     ResponsiveModule.forRoot(),
-    DragDropModule
+    DragDropModule,
+    TooltipModule
   ],
 
   bootstrap: [AppComponent]

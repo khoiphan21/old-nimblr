@@ -1,6 +1,6 @@
 <section class="block-option desktop" *ngIf="showBlock" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]>
     <div class="add-button-container">
-        <div class="add-button" (click)="showAddBlockContainer()">
+        <div class="add-button" (click)="showAddBlockContainer()" tooltip="&nbsp;Add new block&nbsp;" placement="top" hide-delay="0">
             <img src="./assets/icons/block-add.svg" alt="plus icon">
         </div>
         <div class="blocker" *ngIf="isAddBlockContainerShown" (click)="hideAddBlockContainer()"></div>
@@ -39,7 +39,7 @@
 
     </div>
     <div class="menu-drag-container">
-        <div class="menu-drag" (click)="showMenuSelectionContainer()">
+        <div class="menu-drag" (click)="showMenuSelectionContainer()" tooltip="&nbsp;Drag to move <br> Click to open menu&nbsp;" placement="right" hide-delay="0">
             <img src="./assets/icons/block-option.svg" alt="menu icon">
         </div>
         <div class="blocker" *ngIf="isMenuSelectionContainerShown" (click)="hideMenuSelectionContainer()"></div>

@@ -3,11 +3,12 @@
         <div formArrayName="options">
             <div cdkDropList (cdkDropListDropped)="drop($event)">
                 <div *ngFor="let option of formGroup.get('options').controls; let i=index" cdkDrag class="option checkbox" [formGroupName]="i">
-                    <img class="clickable" cdkDragHandle src="./assets/icons/block-option.svg" alt="menu icon" [ngStyle]="{'opacity': isMobilePreview === false ? 0 : 1}">
+                    <img class="clickable" cdkDragHandle src="./assets/icons/block-option.svg" alt="menu icon" tooltip="&nbsp; Drag to reorder &nbsp;" placement="top" hide-delay="0">
+                    <!-- <img class="clickable" cdkDragHandle src="./assets/icons/block-option.svg" alt="menu icon" [ngStyle]="{'opacity': isMobilePreview === false ? 1 : 0}"> -->
                     <input type="checkbox" [disabled]="options[i] === null" [checked]="answers.includes(options[i])" (click)="toggleAnswers(options[i])" *ngSwitchCase="'CHECKBOX'">
                     <input type="radio" [disabled]="options[i] === null" [checked]="answers.includes(options[i])" (click)="switchAnswer(options[i])" *ngSwitchCase="'MULTIPLE_CHOICE'">
                     <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="option" placeholder="Option {{i + 1}}">
-                    <i class="fas fa-times clickable" (click)="deleteOption(i)" *ngIf="options.length > 1 && isMobilePreview"></i>
+                    <i class="fas fa-times clickable" (click)="deleteOption(i)" *ngIf="options.length > 1 && !isMobilePreview" tooltip="&nbsp; Remove &nbsp;" placement="top" hide-delay="0"></i>
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>
                 </div>
             </div>
