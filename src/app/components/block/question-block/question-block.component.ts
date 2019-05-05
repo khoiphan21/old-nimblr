@@ -90,7 +90,7 @@ export class QuestionBlockComponent implements OnInit, OnChanges {
         documentId: this.questionBlock.documentId,
         lastUpdatedBy: this.questionBlock.lastUpdatedBy,
         createdAt: this.questionBlock.createdAt,
-        question: 'deleted',
+        question: this.question,
         answers: event.answers,
         questionType: this.currentType,
         options: event.options

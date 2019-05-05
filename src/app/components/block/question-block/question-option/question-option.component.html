@@ -2,7 +2,7 @@
     <form class="question-setup" [formGroup]="formGroup" *ngIf="formGroup && (currentType === 'CHECKBOX' || currentType === 'MULTIPLE_CHOICE')">
         <div formArrayName="options">
             <div cdkDropList (cdkDropListDropped)="drop($event)">
-                <div *ngFor="let option of formGroup.get('options').controls; let i=index" cdkDrag [cdkDragDisabled]="!(options.length > 1)" class="option checkbox" [formGroupName]="i">
+                <div *ngFor="let option of formGroup.get('options').controls; let i=index" cdkDrag class="option checkbox" [formGroupName]="i">
                     <img class="clickable" cdkDragHandle src="./assets/icons/block-option.svg" alt="menu icon">
                     <input type="checkbox" [disabled]="options[i] === null" [checked]="answers.includes(options[i])" (click)="toggleAnswers(options[i])" *ngSwitchCase="'CHECKBOX'">
                     <input type="radio" [disabled]="options[i] === null" [checked]="answers.includes(options[i])" (click)="switchAnswer(options[i])" *ngSwitchCase="'MULTIPLE_CHOICE'">
