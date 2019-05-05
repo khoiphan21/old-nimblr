@@ -45,6 +45,16 @@ describe('TemplateDocumentContentComponent', () => {
     component.deleteBlock(blockId);
   });
 
+  describe('showInvite()', () => {
+    it('should emit the event value as true', done => {
+      component.showInviteEvent.subscribe(value => {
+        expect(value).toBe(true);
+        done();
+      });
+      component.showInvite();
+    });
+  });
+
   it('should emit the new position', done => {
     const newBlocksPosition = ['id2', 'id1'];
     component.updateDocumentEvent.subscribe(value => {

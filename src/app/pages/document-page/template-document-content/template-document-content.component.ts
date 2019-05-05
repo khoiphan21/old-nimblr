@@ -19,6 +19,7 @@ export class TemplateDocumentContentComponent implements OnInit {
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
   @Output() navigateToChildEvent = new EventEmitter<UUID>();
+  @Output() showInviteEvent = new EventEmitter<boolean>();
   @Output() updateDocumentEvent = new EventEmitter<Array<string>>();
 
   currentTab = 'template';
@@ -34,6 +35,10 @@ export class TemplateDocumentContentComponent implements OnInit {
 
   deleteBlock(blockId: string) {
     this.deleteBlockEvent.emit(blockId);
+  }
+
+  showInvite() {
+    this.showInviteEvent.emit(true);
   }
 
   navigateToChild(id: UUID) {

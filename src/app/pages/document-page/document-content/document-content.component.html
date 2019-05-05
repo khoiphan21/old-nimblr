@@ -19,7 +19,7 @@
         </div>
 
         <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
-            (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
+            (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (showInviteEvent)="showSendForm()" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
 
 
         <app-block-section-content *ngIf="documentType === 'GENERIC'" [isChildDoc]="isChildDoc" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"
