@@ -47,6 +47,12 @@ $dropdown-height: 41px;
                 top: $dropdown-height;
             }
         }
+        .lock {
+            position: absolute;
+            bottom: 0;
+            right: -35px;
+            cursor: pointer;
+        }
     }
 }
 

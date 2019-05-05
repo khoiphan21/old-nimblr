@@ -14,6 +14,7 @@ export class QuestionOptionComponent implements OnChanges {
   @Input() options: Array<string>;
   @Input() currentType: QuestionType;
   @Input() isPreviewMode: boolean;
+  @Input() isMobilePreview = false;
   @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
   private timeout: any;

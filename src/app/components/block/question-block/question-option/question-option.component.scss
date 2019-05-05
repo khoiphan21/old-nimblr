@@ -19,24 +19,15 @@ form.question-setup {
         &:nth-child(1) {
             margin-top: 0;
         }
-        &:hover {
-            img,
-            i.fa-times {
-                opacity: 1;
-            }
-        }
         img {
             width: 14px;
             height: 19px;
             margin-right: 10px;
-            opacity: 0;
-            cursor: grab;
         }
         i.fa-times {
             font-size: 20px;
             margin-left: auto;
             color: $color-grey-3;
-            opacity: 0;
         }
         input[type=checkbox],
         input[type=radio] {
@@ -65,6 +56,9 @@ form.question-setup {
             border-radius: 50px;
         }
         input[type=text] {
+            width: 70%;
+            border: 0;
+            margin-left: 15px;
             &:focus {
                 border-bottom: 2px solid $color-blue-2 !important;
             }
@@ -110,6 +104,18 @@ form.question-setup {
             margin-top: $answer-margin-top;
             font-size: 0.85rem;
             color: $color-grey-1;
+            &:hover {
+                img,
+                i.fa-times {
+                    opacity: 1;
+                }
+            }
+            img {
+                opacity: 0;
+            }
+            i.fa-times {
+                opacity: 0;
+            }
             input[type=checkbox] {
                 -webkit-appearance: none;
                 border: 2px solid $color-grey-3;
