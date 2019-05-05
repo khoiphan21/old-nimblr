@@ -79,30 +79,6 @@ describe('QuestionBlockComponent', () => {
 
     describe('when focusBlockId is defined', () => {
 
-      describe('if focusBlockId has the block id', () => {
-        beforeEach(() => {
-          component.ngOnChanges({
-            focusBlockId: new SimpleChange(null, block.id + '1234', false)
-          });
-        });
-
-        it('should call changeDetector', () => {
-          expect(changeDetectorSpy).toHaveBeenCalled();
-        });
-
-        it('should focus on the element', () => {
-          const element = document.getElementById(block.id + '-question');
-          expect(document.activeElement === element).toBe(true);
-        });
-
-        it('should set isPreviewMode to false', done => {
-          setTimeout(() => {
-            expect(component.isPreviewMode).toBe(false);
-            done();
-          }, 5);
-        });
-      });
-
       it('should not do anything if focusBlockId does not have the block id', () => {
         component.ngOnChanges({
           focusBlockId: new SimpleChange(null, 'asdf', false)

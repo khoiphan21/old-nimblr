@@ -3,11 +3,11 @@
         <div formArrayName="options">
             <div cdkDropList (cdkDropListDropped)="drop($event)">
                 <div *ngFor="let option of formGroup.get('options').controls; let i=index" cdkDrag class="option checkbox" [formGroupName]="i">
-                    <img class="clickable" cdkDragHandle src="./assets/icons/block-option.svg" alt="menu icon">
+                    <img class="clickable" cdkDragHandle src="./assets/icons/block-option.svg" alt="menu icon" [ngStyle]="{'opacity': isMobilePreview === false ? 0 : 1}">
                     <input type="checkbox" [disabled]="options[i] === null" [checked]="answers.includes(options[i])" (click)="toggleAnswers(options[i])" *ngSwitchCase="'CHECKBOX'">
                     <input type="radio" [disabled]="options[i] === null" [checked]="answers.includes(options[i])" (click)="switchAnswer(options[i])" *ngSwitchCase="'MULTIPLE_CHOICE'">
                     <input type="text" [ngClass]="{'borderless': isPreviewMode === true}" formControlName="option" placeholder="Option {{i + 1}}">
-                    <i class="fas fa-times clickable" (click)="deleteOption(i)"></i>
+                    <i class="fas fa-times clickable" (click)="deleteOption(i)" *ngIf="options.length > 1 && isMobilePreview"></i>
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>
                 </div>
             </div>
@@ -17,6 +17,8 @@
             </div>
         </div>
     </form>
-    <div class="form-input" *ngIf="currentType === 'SHORT_ANSWER' || currentType === 'PARAGRAPH'">
-        <input type="text" [(ngModel)]="answers[0]" (ngModelChange)="triggerUpdateValue()" placeholder="Type your answer here" [ngClass]="{'long-input': currentType === 'PARAGRAPH'}">
+    <div class="content text-block" *ngIf="currentType === 'SHORT_ANSWER' || currentType === 'PARAGRAPH'">
+        <div class="text-input" contenteditable="true" ngDefaultControl [(ngModel)]="answers[0]" (ngModelChange)="triggerUpdateValue()"></div>
+        <div class="placeholder" *ngIf="answers[0] === '' || answers[0] === undefined">Type your response here</div>
     </div>
+</div>

@@ -12,11 +12,12 @@
         background: #F3F3F3;
         color: #898989;
         font-size: 12px;
+        border-radius: 5px;
+        @include column-center;
+        background: $color-light-blue;
         span {
+            font-size: 16px;
             margin-left: 15px;
-        }
-        &:hover {
-            background: $color-light-blue;
         }
     }
 }
@@ -24,8 +25,10 @@
 @include media(lg) {
     .add-information {
         padding: 7.5px $desktop-document-horizontal-padding;
-        section.clickable {
-            background: white;
+    }
+    section.clickable {
+        &:hover {
+            background: darken($color: $color-light-blue, $amount: 2) !important;
         }
     }
 }

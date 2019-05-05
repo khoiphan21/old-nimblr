@@ -2,55 +2,6 @@
 @import '../../../../_sass/variables';
 @import '../../../../_sass/base';
 $answer-margin-top: 25px;
-.cdk-drag-preview {
-    i.fa-times {
-        opacity: 0;
-    }
-    img {
-        width: 14px;
-        height: 19px;
-        margin-right: 10px;
-        opacity: 0;
-    }
-    input[type=checkbox],
-    input[type=radio] {
-        -webkit-appearance: none;
-        border: 2px solid $color-grey-3;
-        background: white;
-        border-radius: 3px;
-        width: 20px;
-        height: 20px;
-        position: relative;
-        &:checked {
-            background-color: $color-grey-3;
-            color: white;
-            &::after {
-                width: 100%;
-                height: 100%;
-                content: '\2713';
-                font-size: 14px;
-                position: absolute;
-                @include row-center;
-            }
-        }
-    }
-    input[type=radio] {
-        border-radius: 50px;
-    }
-    input[type=text] {
-        width: 60%;
-        border: 0;
-        margin-left: 15px;
-        color: $color-grey-1;
-        border: $color-grey-3 solid 1px;
-        border-radius: 3px;
-        padding-left: 5px;
-        &::placeholder {
-            color: $color-grey-3;
-        }
-    }
-}
-
 form.question-setup {
     width: 100%;
     .option {
@@ -65,23 +16,18 @@ form.question-setup {
             height: 50px;
             background: black;
         }
-        &:hover {
-            img,
-            i.fa-times {
-                opacity: 1;
-            }
+        &:nth-child(1) {
+            margin-top: 0;
         }
         img {
             width: 14px;
             height: 19px;
             margin-right: 10px;
-            opacity: 0;
         }
         i.fa-times {
             font-size: 20px;
             margin-left: auto;
             color: $color-grey-3;
-            opacity: 0;
         }
         input[type=checkbox],
         input[type=radio] {
@@ -92,6 +38,7 @@ form.question-setup {
             width: 20px;
             height: 20px;
             position: relative;
+            cursor: auto;
             &:checked {
                 background-color: $color-grey-3;
                 color: white;
@@ -109,15 +56,9 @@ form.question-setup {
             border-radius: 50px;
         }
         input[type=text] {
-            width: 60%;
+            width: 70%;
             border: 0;
             margin-left: 15px;
-            color: $color-grey-1;
-            padding-left: 5px;
-            background: transparent;
-            &::placeholder {
-                color: $color-grey-3;
-            }
             &:focus {
                 border-bottom: 2px solid $color-blue-2 !important;
             }
@@ -134,39 +75,22 @@ form.question-setup {
             margin-bottom: 0px;
         }
     }
-    .form-input {
-        width: 100%;
-        height: auto;
-        margin-top: $answer-margin-top;
-        input[type=text] {
-            width: 100%;
-            border: 0;
-            border-bottom: 1px solid #979797;
-        }
-        input[type=text].long-input {
-            width: 100%;
-        }
-    }
 }
 
-.form-input {
+.content.text-block {
+    z-index: 1;
     width: 100%;
-    height: auto;
-    margin-top: $answer-margin-top;
-    input[type=text] {
-        width: 60%;
-        border: 0;
-        border-bottom: 1px solid #979797;
-        background: transparent;
-        &:focus {
-            border-bottom: 2px solid $color-blue-2;
-        }
-    }
-    input[type=text].long-input {
+    min-height: 60px;
+    .text-input {
         width: 100%;
+        padding: 7.5px 0;
+        cursor: text;
     }
-    &::placeholder {
-        color: $color-grey-3;
+    .placeholder {
+        height: 100%;
+        padding-top: 7.5px;
+        z-index: -1;
+        align-items: flex-start;
     }
 }
 
@@ -180,6 +104,18 @@ form.question-setup {
             margin-top: $answer-margin-top;
             font-size: 0.85rem;
             color: $color-grey-1;
+            &:hover {
+                img,
+                i.fa-times {
+                    opacity: 1;
+                }
+            }
+            img {
+                opacity: 0;
+            }
+            i.fa-times {
+                opacity: 0;
+            }
             input[type=checkbox] {
                 -webkit-appearance: none;
                 border: 2px solid $color-grey-3;
@@ -239,6 +175,55 @@ form.question-setup {
             input[type=text].long-input {
                 width: 70%;
             }
+        }
+    }
+}
+
+.cdk-drag-preview {
+    i.fa-times {
+        opacity: 0;
+    }
+    img {
+        width: 14px;
+        height: 19px;
+        margin-right: 10px;
+        opacity: 0;
+    }
+    input[type=checkbox],
+    input[type=radio] {
+        -webkit-appearance: none;
+        border: 2px solid $color-grey-3;
+        background: white;
+        border-radius: 3px;
+        width: 20px;
+        height: 20px;
+        position: relative;
+        &:checked {
+            background-color: $color-grey-3;
+            color: white;
+            &::after {
+                width: 100%;
+                height: 100%;
+                content: '\2713';
+                font-size: 14px;
+                position: absolute;
+                @include row-center;
+            }
+        }
+    }
+    input[type=radio] {
+        border-radius: 50px;
+    }
+    input[type=text] {
+        width: 60%;
+        border: 0;
+        margin-left: 15px;
+        color: $color-grey-1;
+        border: $color-grey-3 solid 1px;
+        border-radius: 3px;
+        padding-left: 5px;
+        &::placeholder {
+            color: $color-grey-3;
         }
     }
 }

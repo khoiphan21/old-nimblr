@@ -6,15 +6,6 @@
         <div class="blocker" *ngIf="isAddBlockContainerShown" (click)="hideAddBlockContainer()"></div>
         <div class="add-basic-blocks  options-block" *ngIf="isAddBlockContainerShown">
             <div class="title basic">BASIC BLOCKS</div>
-
-            <div class="block-type" (click)="addHeaderBlock()">
-                <img src="./assets/icons/block-new-header.svg">
-                <div class="block-text">
-                    <div class="type">Header</div>
-                    <div class="description">Is a Header</div>
-                </div>
-            </div>
-
             <div class="block-type" (click)="addTextBlock()">
                 <img src="./assets/icons/block-new-text.svg">
                 <div class="block-text">
@@ -22,13 +13,26 @@
                     <div class="description">Just plain text</div>
                 </div>
             </div>
-
-            <div class="title form">FORM BLOCKS</div>
+            <div class="block-type" (click)="addHeaderBlock()">
+                <img src="./assets/icons/block-new-header.svg">
+                <div class="block-text">
+                    <div class="type">Header</div>
+                    <div class="description">A large Header</div>
+                </div>
+            </div>
+            <div class="block-type" (click)="addHeaderBlock()">
+                <img src="./assets/icons/block-new-bullet.svg">
+                <div class="block-text">
+                    <div class="type">Bullet List</div>
+                    <div class="description">Create a bulleted list</div>
+                </div>
+            </div>
+            <div class="title form">COLLABORATIVE BLOCKS</div>
             <div class="block-type" (click)="addQuestionBlock()">
                 <img src="./assets/icons/block-new-question.svg">
                 <div class="block-text">
-                    <div class="type">Question block</div>
-                    <div class="description">Question and input fields</div>
+                    <div class="type">Input block</div>
+                    <div class="description">An editable field for recipients</div>
                 </div>
             </div>
         </div>

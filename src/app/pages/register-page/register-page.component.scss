@@ -71,13 +71,13 @@ div.fluid-container {
                     }
                     .password-toggle {
                         position: absolute;
-                        top: 12.5%;
+                        top: 30%;
                         font-size: 1.5rem;
                         color: $color-grey-1;
                         right: 1.25rem;
                         cursor: pointer;
                         @include media(lg) {
-                            top: 40.5%
+                            top: 30.5%
                         }
                     }
                 }
@@ -118,12 +118,11 @@ div.fluid-container {
                     button.filled-button-primary {
                         width: fit-content;
                         font-size: 12px;
-                        margin-top: 25px;
                     }
                 }
             }
             hr {
-                margin: auto 0;
+                margin: 40px 0;
                 width: 100%;
                 border: 1px solid $color-grey-3;
             }

@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-input">
                         <div class="input-label">Password</div>
-                        <input class="mb-2" formControlName="password" (keydown)="validatePassword()" type="{{passwordType}}" required (focus)="isPasswordFocused = true" (blur)="isPasswordFocused = false">
+                        <input class="mb-4" formControlName="password" (keydown)="validatePassword()" type="{{passwordType}}" required (focus)="isPasswordFocused = true" (blur)="isPasswordFocused = false">
                         <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                         <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
                         <section class="password-validation mb-4" *ngIf="isPasswordFocused" [@fadeInOutAnimation]>

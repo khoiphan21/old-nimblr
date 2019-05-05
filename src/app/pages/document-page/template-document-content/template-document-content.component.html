@@ -14,6 +14,12 @@
         <tr>
             <td class="title">recipients</td>
         </tr>
+        <div class="add-recipeints" *ngIf="!(submissionDocIds.length > 0)" (click)="showInvite()">
+            <section class="clickable">
+                <h3>Start adding recipients</h3>
+                <span>Click to add recipients</span>
+            </section>
+        </div>
         <ng-container *ngFor="let id of submissionDocIds">
             <app-submission-recipient [documentId]="id" (navigateToEvent)="navigateToChild($event)"></app-submission-recipient>
         </ng-container>

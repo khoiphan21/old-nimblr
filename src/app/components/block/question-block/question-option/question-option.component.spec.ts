@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionOptionComponent } from './question-option.component';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormArray } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { QuestionType } from 'src/API';
 import { configureTestSuite } from 'ng-bullet';
@@ -25,7 +25,7 @@ describe('QuestionOptionComponent', () => {
     component = fixture.componentInstance;
     component.currentType = QuestionType.PARAGRAPH;
     component.answers = [''];
-    component.options = null;
+    component.options = [];
     component.formGroup = new FormGroup({
       options: new FormArray([])
     });
@@ -46,7 +46,7 @@ describe('QuestionOptionComponent', () => {
   /* tslint:disable:no-string-literal */
   it('should clear all the options in the list', () => {
     component['clearOptions']();
-    expect(component.options).toEqual(null);
+    expect(component.options.length).toBe(0);
   });
 
   /* tslint:disable:no-string-literal */
