@@ -19,6 +19,9 @@
             </div>
         </ng-container>
         <ng-container *responsive="{sizes:{min:0,max:575}}">
+            <div class="option clickable" *ngIf="documentType === 'GENERIC'" (click)="saveAsTemplate()">
+                <img src="./assets/icons/template-save.svg">
+            </div>
             <span (click)="isSharingShown = !isSharingShown"> 
                 <img src="./assets/icons/share.svg">
             </span>
