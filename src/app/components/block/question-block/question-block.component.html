@@ -1,29 +1,21 @@
-<section class="question-block" (click)="isPreviewMode = false" (clickOutside)="isPreviewMode = true" (clickOutside)="isQuestionOptionShown = false" [ngClass]="{'borderless': isPreviewMode === true, 'edit-mode': isPreviewMode === false}">
-    <div class="row no-pad question-heading">
-        <input [id]="questionBlock.id + '-question'" [name]="questionBlock.id" class="col" ngDefaultControl type="text" [ngClass]="{'borderless': isPreviewMode === true}" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()">
-        <div *ngIf="isPreviewMode === false" class="dropdown col-3">
-            <div class="type-dropdown" (click)="toggleOptions()">
-                Question type
-            </div>
-            <section class="container options-block" *ngIf="isQuestionOptionShown === true">
-                <section class="document-options">
-                    <div class="option" (click)="selectType('SHORT_ANSWER', $event)">
-                        <i class="fas fa-grip-lines"></i><span>Short Answer</span>
-                    </div>
-                    <div class="option" (click)="selectType('PARAGRAPH', $event)">
-                        <i class="fas fa-bars"></i><span>Paragraph</span>
-                    </div>
-                </section>
-                <section class="document-options">
-                    <div class="option" (click)="selectType('CHECKBOX', $event)">
-                        <i class="fas fa-check-square"></i><span>Checkbox</span>
-                    </div>
-                    <div class="option" (click)="selectType('MULTIPLE_CHOICE', $event)">
-                        <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
-                    </div>
-                </section>
-            </section>
+<section class="question-block" (click)="isPreviewMode = false" (clickOutside)="isPreviewMode = true" (clickOutside)="isQuestionOptionShown = false" [ngClass]="{'edit-mode': isPreviewMode === false}">
+    <div *ngIf="isPreviewMode === false" class="dropdown col-3">
+        <div class="type-dropdown" (click)="toggleOptions()">
+            Response type
         </div>
+        <section class="container options-block" *ngIf="isQuestionOptionShown === true">
+            <section class="document-options">
+                <div class="option" (click)="selectType('SHORT_ANSWER', $event)">
+                    <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
+                </div>
+                <div class="option" (click)="selectType('CHECKBOX', $event)">
+                    <i class="fas fa-check-square"></i><span>Checkbox</span>
+                </div>
+                <div class="option" (click)="selectType('MULTIPLE_CHOICE', $event)">
+                    <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
+                </div>
+            </section>
+        </section>
     </div>
     <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style="width: 100%;"></app-question-option>
 </section>
