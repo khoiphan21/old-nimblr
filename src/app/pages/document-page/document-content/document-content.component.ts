@@ -363,8 +363,7 @@ export class DocumentContentComponent implements OnInit {
 
     } catch (error) {
       throw new Error('Failed to delete document: ' + error.message);
-
-    };
+    }
   }
 
 }

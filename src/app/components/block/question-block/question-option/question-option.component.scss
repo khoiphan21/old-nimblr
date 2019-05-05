@@ -64,6 +64,11 @@ form.question-setup {
         input[type=radio] {
             border-radius: 50px;
         }
+        input[type=text] {
+            &:focus {
+                border-bottom: 2px solid $color-blue-2 !important;
+            }
+        }
         i.fa-plus-circle {
             margin-left: 24px;
             font-size: 20px;

@@ -9,7 +9,8 @@
                 <img src="./assets/icons/template-save.svg">
                 <span>Save as template</span>
             </div>
-            <div class="option clickable mt-1" (click)="isSharingShown = !isSharingShown">
+            <!-- <div class="option clickable mt-1" (click)="isSharingShown = !isSharingShown"> -->
+            <div class="option clickable mt-1" (click)="showInvite()">
                 <img src="./assets/icons/share.svg">
                 <span>Share</span>
             </div>
@@ -22,12 +23,13 @@
             <div class="option clickable" *ngIf="documentType === 'GENERIC'" (click)="saveAsTemplate()">
                 <img src="./assets/icons/template-save.svg">
             </div>
-            <span (click)="isSharingShown = !isSharingShown"> 
+            <!-- <span (click)="isSharingShown = !isSharingShown">  -->
+            <span (click)="showInvite()"> 
                 <img src="./assets/icons/share.svg">
             </span>
             <i class="fas fa-ellipsis-h clickable pr-4" (click)="isOptionShown = !isOptionShown"></i>
         </ng-container>
-        <app-header-sharing [sharingStatus]="sharingStatus" [isSharingShown]="isSharingShown" (showInviteEvent)="showInvite()" (hideSharingEvent)="isSharingShown = $event" (changeSharingStatus)="changeSharingStatus($event)"></app-header-sharing>
+        <!-- <app-header-sharing [sharingStatus]="sharingStatus" [isSharingShown]="isSharingShown" (showInviteEvent)="showInvite()" (hideSharingEvent)="isSharingShown = $event" (changeSharingStatus)="changeSharingStatus($event)"></app-header-sharing> -->
         <app-header-options [documentType]="documentType" [isOptionShown]="isOptionShown" (hideOptionEvent)="isOptionShown = $event" (deleteDocumentEvent)="deleteThisDocument()"></app-header-options>
     </section>
 </div>
