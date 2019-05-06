@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavigationBarComponent } from './navigation-bar.component';
 import { NavigationTabComponent } from './navigation-tab/navigation-tab.component';
 import { ServicesModule } from 'src/app/modules/services.module';
-import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
@@ -92,9 +91,6 @@ describe('NavigationBarComponent', () => {
     spyOn(component['accountService'], 'isUserReady').and.returnValue(
       Promise.resolve({ id: userId })
     );
-
-    // call to render
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -134,6 +130,17 @@ describe('NavigationBarComponent', () => {
     });
   });
 
+  describe('setupNavigationStatus()', () => {
+    it('should change the status', () => {
+      component.isNavigationTabShown = false;
+
+      getStatusSpy.and.returnValue(new BehaviorSubject(true));
+
+      component['setupNavigationStatus']();
+      expect(component.isNavigationTabShown).toBe(true);
+    });
+  });
+
   it('processInitialName() - should process user`s first name when there is value', () => {
     component['processInitialName']('John');
     expect(component.initialName).toEqual('J');
@@ -165,14 +172,6 @@ describe('NavigationBarComponent', () => {
     const firstName = 'Judy';
     component['processInitialName'](firstName);
     expect(component.initialName).toBe(firstName.charAt(0));
-  });
-
-  it('should receive get the right value for the navigation bar status', () => {
-    const expectedResult = false;
-    getStatusSpy.and.returnValue(new BehaviorSubject(expectedResult));
-    getNavBarSpy.and.returnValue(new Subject());
-    component.ngOnInit();
-    expect(component.isNavigationTabShown).toEqual(expectedResult);
   });
 
   describe('setupNavigationBar()', () => {
