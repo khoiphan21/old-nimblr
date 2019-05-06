@@ -59,8 +59,8 @@
 				"Runtime": "nodejs8.10",
 				"Timeout": "25",
 				"Code": {
-					"S3Bucket": "irisa-20190408211746-deployment",
-					"S3Key": "amplify-builds/getDocument-1556880165-latest-build.zip"
+					"S3Bucket": "irisa-20190416180837-deployment",
+					"S3Key": "amplify-builds/getDocument-1557104163-latest-build.zip"
 				}
 			}
 		},
