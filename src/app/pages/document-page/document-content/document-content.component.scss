@@ -57,7 +57,7 @@ section.content {
 }
 
 .child-document {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
@@ -98,8 +98,9 @@ section.content {
     .child-document {
         background: rgba(0, 0, 0, 0.46);
         z-index: 3;
-        padding: 10vh 10vw;
+        padding: 0 10vw 10vh 10vw;
         section.content {
+            padding-top: 10vh;
             padding-bottom: 10vh;
         }
     }

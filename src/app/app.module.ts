@@ -5,7 +5,6 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './modules/app-routing.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ContenteditableModule } from '@ng-stack/contenteditable';
-import { ClickOutsideModule } from 'ng4-click-outside';
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -40,6 +39,8 @@ import { SubmissionRecipientComponent } from './pages/document-page/template-doc
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { DocumentOutlineTabComponent } from './components/navigation-bar/document-outline-tab/document-outline-tab.component';
+import { ClickOutsideModule } from 'ng-click-outside';
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 @NgModule({
   declarations: [
@@ -77,16 +78,17 @@ import { DocumentOutlineTabComponent } from './components/navigation-bar/documen
   ],
   imports: [
     BrowserModule,
+    ClickOutsideModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MDBBootstrapModule.forRoot(),
     ServicesModule,
-    ClickOutsideModule,
     BrowserAnimationsModule,
     ContenteditableModule,
     ResponsiveModule.forRoot(),
-    DragDropModule
+    DragDropModule,
+    TooltipModule
   ],
 
   bootstrap: [AppComponent]

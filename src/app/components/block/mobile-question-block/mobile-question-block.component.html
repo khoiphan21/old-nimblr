@@ -1,6 +1,6 @@
 <!-- mobile version -->
 <section class="mobile question-block" (click)="isPreviewMode = false" *ngIf="isPreviewMode">
-    <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="previewOptions" [answers]="previewAnswers" style="width: 100%;"></app-question-option>
+    <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isMobilePreview]=true [isPreviewMode]="isPreviewMode" [options]="previewOptions" [answers]="previewAnswers" style="width: 100%;"></app-question-option>
 </section>
 <section class="mobile edit-question" [@slideBottomToTopAnimationDOM]="isPreviewMode">
     <div class="row no-pad header">
@@ -8,7 +8,7 @@
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isMobilePreview]=true [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style="width: 100%;"></app-question-option>
+        <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style="width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-6" (clickOutside)="isQuestionOptionShown = false">

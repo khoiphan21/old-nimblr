@@ -14,7 +14,7 @@ export class SendFormComponent implements OnInit {
   @Input() isSendFormShown: boolean;
 
   @Output() hideSendFormEvent = new EventEmitter<boolean>();
-  @Output() sendEmailEvent = new EventEmitter<string>();
+  @Output() sendEmailEvent = new EventEmitter<Array<string>>();
 
   constructor() { }
 
@@ -26,9 +26,13 @@ export class SendFormComponent implements OnInit {
   }
 
   send() {
-    this.sendEmailEvent.emit(this.recipientInput);
+    this.sendEmailEvent.emit(this.recipientList);
     this.hideContainer();
-    this.clearInput();
+    this.clearList();
+  }
+
+  clearList() {
+    this.recipientList = [];
   }
 
   clearInput() {

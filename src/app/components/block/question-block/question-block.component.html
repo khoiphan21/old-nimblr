@@ -18,6 +18,6 @@
         </section>
     </div>
     <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style="width: 100%;"></app-question-option>
-    <img class="lock" src="./assets/icons/lock.svg">
-    <!-- <img class="lock" src="./assets/icons/unlock.svg"> -->
+    <!-- <img class="lock" src="./assets/icons/lock.svg" tooltip="&nbsp;Restrict recipients<br> from editing this block&nbsp;" placement="right" hide-delay="0"> -->
+    <img class="lock" src="./assets/icons/unlock.svg" tooltip="&nbsp;Allow recipients<br> to edit this block&nbsp;" placement="right" hide-delay="0">
 </section>

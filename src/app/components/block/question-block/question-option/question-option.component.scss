@@ -1,6 +1,10 @@
 @import '../../../../_sass/interface';
 @import '../../../../_sass/variables';
 @import '../../../../_sass/base';
+.tips {
+    background: red !important;
+}
+
 $answer-margin-top: 25px;
 form.question-setup {
     width: 100%;
