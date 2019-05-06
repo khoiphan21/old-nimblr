@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, UpdateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput, TextBlockType } from '../../../../API';
+import { CreateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateQuestionBlockInput, UpdateQuestionBlockInput, DeleteBlockInput } from '../../../../API';
 import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock, deleteBlock } from '../../../../graphql/mutations';
 import { VersionService } from '../../version/version.service';
 
@@ -217,7 +217,8 @@ export class BlockCommandService {
       question,
       answers,
       questionType,
-      options
+      options,
+      textBlockType
     } = input;
 
     const response = await this.createBlock({
@@ -230,7 +231,8 @@ export class BlockCommandService {
       question,
       answers,
       questionType,
-      options
+      options,
+      textBlockType
     });
 
     switch (type) {
