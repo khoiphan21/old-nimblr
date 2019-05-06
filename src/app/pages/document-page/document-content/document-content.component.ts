@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from 'src/app/classes/document/document';
 import { User } from 'src/app/classes/user';
 import { Observable } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
@@ -347,12 +347,12 @@ export class DocumentContentComponent implements OnInit {
     await this.documentCommandService.updateDocument(input);
   }
 
-  async sendDocument(email: string) {
-    const command = this.commandService.getCommand(CommandType.SEND_DOCUMENT) as SendDocumentCommand;
-
-    const submissionId = await command.execute(this.documentId, email);
-
-    this.submissionDocIds.push(submissionId);
+  async sendDocument(emails: Array<string>) {
+    for (const email of emails) {
+      const command = this.commandService.getCommand(CommandType.SEND_DOCUMENT) as SendDocumentCommand;
+      const submissionId = await command.execute(this.documentId, email);
+      this.submissionDocIds.push(submissionId);
+    }
   }
 
   async deleteThisDocument() {

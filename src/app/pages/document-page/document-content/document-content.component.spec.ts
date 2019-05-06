@@ -827,7 +827,7 @@ describe('DocumentContentComponent', () => {
       commandSpy.and.returnValue(mockCommand);
       spyOn(mockCommand, 'execute').and.returnValue(Promise.resolve(submissionId));
 
-      await component.sendDocument(email);
+      await component.sendDocument([email]);
     });
 
     it('should call commandService with the right arg', () => {
