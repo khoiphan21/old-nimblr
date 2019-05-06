@@ -33,7 +33,7 @@ export class EmailService {
     // The subject line for the email.
     const subject = 'Nimblr Invitation Link';
 
-    const domain = 'localhost:4200';
+    const domain = environment.DOMAIN;
 
     const link = `http://${domain}/document/${input.documentId};email=${input.email}`;
 
