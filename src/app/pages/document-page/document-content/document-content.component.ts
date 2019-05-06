@@ -237,6 +237,8 @@ export class DocumentContentComponent implements OnInit {
     switch (textBlockType) {
       case TextBlockType.HEADER:
         return this.blockFactoryService.createNewHeaderBlock(input);
+      case TextBlockType.BULLET:
+        return this.blockFactoryService.createNewBulletBlock(input);
       default:
         return this.blockFactoryService.createNewTextBlock(input);
     }

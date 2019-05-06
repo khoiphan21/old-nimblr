@@ -23,4 +23,16 @@
         letter-spacing: normal;
         line-height: 24px;
     }
+
+    .placeholder.bullet {
+        padding-left: 10px;
+    }
+    .text-input.bullet {
+        // TODO: Fix this css its not standard
+        padding-left: 10px;
+        text-indent: -20px;
+        display: list-item;
+        list-style-type: circle;
+        list-style-position: inside;
+    }
 }

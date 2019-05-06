@@ -95,7 +95,6 @@ export class EmailService {
           reject(err);
         } else {
           resolve(data);
-          console.log('Email sent! Message ID: ', data.MessageId);
         }
       });
     });

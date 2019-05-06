@@ -235,6 +235,27 @@ describe('BlockOptionComponent', () => {
       });
 
     });
+
+    describe('addBulletBlock()', () => {
+      it('should emit a CreateBlockInfo event', done => {
+        const expectedInfo: CreateBlockEvent = {
+          type: BlockType.TEXT,
+          id: component.blockId,
+          textBlockType: TextBlockType.BULLET,
+        };
+        component.createBlock.pipe(take(1)).subscribe(value => {
+          expect(value).toEqual(expectedInfo);
+          done();
+        });
+        component.addBulletBlock();
+      });
+
+      it('should call to hide the container', () => {
+        component.addBulletBlock();
+        expect(hideSpy).toHaveBeenCalled();
+      });
+
+    });
   });
 
   describe('deleteHandler()', () => {

@@ -27,6 +27,17 @@
                     <div class="description">Create a bulleted list</div>
                 </div>
             </div>
+
+            <div class="block-type" (click)="addBulletBlock()">
+                <div class="block-image text">
+                    <!-- <img class="text" src="./assets/icons/text-block.png" alt=""> -->
+                </div>
+                <div class="block-text">
+                    <div class="type">Bullet Point</div>
+                    <div class="description">Your key points</div>
+                </div>
+            </div>
+
             <div class="title form">COLLABORATIVE BLOCKS</div>
             <div class="block-type" (click)="addQuestionBlock()">
                 <img src="./assets/icons/block-new-question.svg">
@@ -71,6 +82,15 @@
                         </div>
                         <div class="selection-text">
                             <div class="type">Text</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-selection" (click)="convertBlockInto('BULLET')">
+                        <div class="selection-image">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div class="selection-text">
+                            <div class="type">Bullet Point</div>
                         </div>
                     </div>
                 </section>

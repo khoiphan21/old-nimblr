@@ -6,3 +6,8 @@ export interface CreateBlockEvent {
   id?: BlockId;
   textBlockType?: TextBlockType;
 }
+
+export interface BlockTypeAndSubType {
+  type: BlockType;
+  textBlockType?: TextBlockType;
+}

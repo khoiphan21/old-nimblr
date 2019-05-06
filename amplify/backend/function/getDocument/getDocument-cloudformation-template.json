@@ -60,7 +60,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "irisa-20190416180837-deployment",
-					"S3Key": "amplify-builds/getDocument-1557106779-latest-build.zip"
+					"S3Key": "amplify-builds/getDocument-1557116224-latest-build.zip"
 				}
 			}
 		},

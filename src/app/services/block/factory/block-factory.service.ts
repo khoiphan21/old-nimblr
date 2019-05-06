@@ -6,6 +6,7 @@ import { BlockType, QuestionType, TextBlockType } from '../../../../API';
 import { QuestionBlock } from 'src/app/classes/block/question-block';
 import { UUID } from '../../document/command/document-command.service';
 import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
+import { BulletBlock } from 'src/app/classes/block/textBox/bullet-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -48,6 +49,21 @@ export class BlockFactoryService {
     };
 
     return new HeaderBlock(newInput);
+  }
+
+  createNewBulletBlock(input: CreateNewBlockInput): BulletBlock {
+    const newInput: CreateAppTextBlockInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      value: '',
+      textBlockType: TextBlockType.BULLET,
+    };
+
+    return new BulletBlock(newInput);
   }
 
   /**
