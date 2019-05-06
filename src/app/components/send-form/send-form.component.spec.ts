@@ -40,9 +40,9 @@ describe('SendFormComponent', () => {
 
   describe('send()', () => {
     it('should emit the input', done => {
-      component.recipientInput = 'abcd';
+      component.recipientList = ['abcd'];
       component.sendEmailEvent.subscribe(value => {
-        expect(value).toEqual(component.recipientInput);
+        expect(value).toEqual(component.recipientList);
         done();
       });
       component.send();
@@ -53,9 +53,9 @@ describe('SendFormComponent', () => {
       expect(component.hideContainer).toHaveBeenCalled();
     });
     it('should call to clear the input', () => {
-      spyOn(component, 'clearInput');
+      spyOn(component, 'clearList');
       component.send();
-      expect(component.clearInput).toHaveBeenCalled();
+      expect(component.clearList).toHaveBeenCalled();
     });
   });
 
