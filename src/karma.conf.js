@@ -20,7 +20,7 @@ module.exports = function (config) {
       reports: ['html', 'lcovonly', 'text-summary'],
       fixWebpackSourcePaths: true
     },
-    reportSlowerThan: 500,
+    reportSlowerThan: 100,
     reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
