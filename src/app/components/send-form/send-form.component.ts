@@ -8,12 +8,13 @@ import { slideBottomToTopAnimation, fadeInOutAnimation } from 'src/app/animation
   animations: [fadeInOutAnimation, slideBottomToTopAnimation]
 })
 export class SendFormComponent implements OnInit {
-  recipientInput: string;
+  recipientInput = '';
+  recipientList: Array<string> = [];
 
   @Input() isSendFormShown: boolean;
 
   @Output() hideSendFormEvent = new EventEmitter<boolean>();
-  @Output() sendEmailEvent = new EventEmitter<string>();
+  @Output() sendEmailEvent = new EventEmitter<Array<string>>();
 
   constructor() { }
 
@@ -25,13 +26,32 @@ export class SendFormComponent implements OnInit {
   }
 
   send() {
-    this.sendEmailEvent.emit(this.recipientInput);
+    this.sendEmailEvent.emit(this.recipientList);
     this.hideContainer();
-    this.clearInput();
+    this.clearList();
+  }
+
+  clearList() {
+    this.recipientList = [];
   }
 
   clearInput() {
     this.recipientInput = '';
   }
 
+  addRecipient() {
+    this.recipientList.push(this.recipientInput);
+    this.clearInput();
+  }
+
+  deleteRecipient() {
+    if (this.recipientInput === '' && this.recipientList.length > 0) {
+      const index = this.recipientList.length - 1;
+      this.removeRecipientFromList(index);
+    }
+  }
+
+  removeRecipientFromList(index: number) {
+    this.recipientList.splice(index, 1);
+  }
 }

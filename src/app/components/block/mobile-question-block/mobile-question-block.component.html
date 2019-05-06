@@ -1,34 +1,23 @@
 <!-- mobile version -->
 <section class="mobile question-block" (click)="isPreviewMode = false" *ngIf="isPreviewMode">
-    <div class="question" *ngIf="question">
-        {{question}}
-    </div>
-    <div class="question" style="color: #A9A9A9" *ngIf="!question">
-        Untitled
-    </div>
-    <app-question-option [isPreviewMode]="isPreviewMode" [currentType]="currentType" [options]="previewOptions" [answers]="previewAnswers" style=" width: 100%;"></app-question-option>
+    <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isMobilePreview]=true [isPreviewMode]="isPreviewMode" [options]="previewOptions" [answers]="previewAnswers" style="width: 100%;"></app-question-option>
 </section>
 <section class="mobile edit-question" [@slideBottomToTopAnimationDOM]="isPreviewMode">
     <div class="row no-pad header">
-        <div class="col-2" (click)="isPreviewMode = true"><i class="fas fa-times"></i></div>
-        <div class="col-2"><i class="fas fa-check"></i></div>
-    </div>
-    <div class="row no-pad question">
-        <label>question</label>
-        <input type="text" placeholder="Type your question here" [(ngModel)]="question" (ngModelChange)="triggerUpdateValue()">
+        <div class="col-2" style="text-align: left" (click)="isPreviewMode = true"><i class="fas fa-times"></i></div>
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValueMobile($event)" style="width: 100%;"></app-question-option>
+        <app-question-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateQuestionValue($event)" style="width: 100%;"></app-question-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
-        <div class="dropdown col-5" (clickOutside)="isQuestionOptionShown = false">
+        <div class="dropdown col-6" (clickOutside)="isQuestionOptionShown = false">
             <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
                 <div *ngSwitchCase="'SHORT_ANSWER'">
-                    <i class="fas fa-grip-lines"></i><span>Short Answer</span>
+                    <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
                 </div>
                 <div *ngSwitchCase="'PARAGRAPH'">
-                    <i class="fas fa-bars"></i><span>Paragraph</span>
+                    <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
                 </div>
                 <div *ngSwitchCase="'CHECKBOX'">
                     <i class="fas fa-check-square"></i><span>Checkbox</span>
@@ -40,17 +29,12 @@
             </div>
             <section class="container options-block" *ngIf="isQuestionOptionShown === true">
                 <div class="title">
-                    QUESTION TYPES
+                    Response TYPES
                 </div>
                 <section class="document-options">
                     <div class="option" (click)="selectType('SHORT_ANSWER')">
-                        <i class="fas fa-grip-lines"></i><span>Short Answer</span>
+                        <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
                     </div>
-                    <div class="option" (click)="selectType('PARAGRAPH')">
-                        <i class="fas fa-bars"></i><span>Paragraph</span>
-                    </div>
-                </section>
-                <section class="document-options">
                     <div class="option" (click)="selectType('CHECKBOX')">
                         <i class="fas fa-check-square"></i><span>Checkbox</span>
                     </div>

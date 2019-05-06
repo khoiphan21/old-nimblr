@@ -105,14 +105,17 @@ describe('AccountImplService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('registerAppUser', () => {
+    let testUser: CognitoSignUpUser;
+
     let spyAuth: jasmine.Spy;
     let spyQuery: jasmine.Spy;
-    let testUser: CognitoSignUpUser;
+    let sessionSpy: jasmine.Spy;
 
     beforeEach(() => {
       spyAuth = spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
       spyQuery = spyOn(service['graphQLService'], 'query');
       spyQuery.and.returnValue(Promise.resolve());
+      sessionSpy = spyOn<any>(service, 'restoreSession');
 
       const testAttr = {
         email: 'test',
@@ -127,22 +130,15 @@ describe('AccountImplService', () => {
       };
     });
 
-    it('should always return a promise', () => {
-      const data = service.registerAppUser(testUser, '');
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
-    it('should send user details correctly to aws', done => {
+    it('should send user details correctly to aws', async () => {
       const testId = 'testID';
-      service.registerAppUser(testUser, testId).then(() => {
-        const userInput = spyQuery.calls.mostRecent().args[1].input;
-        expect(userInput.id).toEqual(testId);
-        expect(userInput.username).toEqual(testUser.username);
-        expect(userInput.email).toEqual(testUser.attributes.email);
-        expect(userInput.firstName).toEqual(testUser.attributes.given_name);
-        expect(userInput.lastName).toEqual(testUser.attributes.family_name);
-        done();
-      });
+      await service.registerAppUser(testUser, testId);
+      const userInput = spyQuery.calls.mostRecent().args[1].input;
+      expect(userInput.id).toEqual(testId);
+      expect(userInput.username).toEqual(testUser.username);
+      expect(userInput.email).toEqual(testUser.attributes.email);
+      expect(userInput.firstName).toEqual(testUser.attributes.given_name);
+      expect(userInput.lastName).toEqual(testUser.attributes.family_name);
     });
 
     it('should return api error message when singIn failed', done => {
@@ -159,10 +155,15 @@ describe('AccountImplService', () => {
       const errMsg = 'testing';
       spyQuery.and.returnValue(Promise.reject(new Error(errMsg)));
 
-      const r = service.registerAppUser(testUser, '').catch(err => {
+      service.registerAppUser(testUser, '').catch(err => {
         expect(err.message).toEqual(errMsg);
         done();
       });
+    });
+
+    it('should call to restoreSession()', async () => {
+      await service.registerAppUser(testUser, 'id');
+      expect(sessionSpy).toHaveBeenCalled();
     });
 
   });

@@ -44,19 +44,13 @@ export class QuestionBlockComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-
-
-    // NOTE: call this AFTER setting all values first due to the call to
-    // detectChanges()
     if (changes.focusBlockId) {
       const focus = changes.focusBlockId;
       if (!focus.currentValue) { return; }
       if (focus.currentValue.includes(this.questionBlock.id)) {
-        // NOTE: THIS COULD AFFECT CODE IN OTHER LIFECYCLE HOOKS
         this.changeDetector.detectChanges();
         document.getElementById(this.questionBlock.id + '-question').focus();
         setTimeout(() => {
-          // Show the question options
           // NOTE: still don't know why wrapping in timeout works.
           // TODO: IMPROVE THIS
           this.isPreviewMode = false;

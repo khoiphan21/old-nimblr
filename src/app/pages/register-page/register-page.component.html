@@ -1,79 +1,81 @@
 <div class="fluid-container">
-    <div class="row">
-        <section class="col-3 register-background desktop"></section>
-        <section class="col-lg-7 register-container">
+    <div class="row no-gutters">
+        <section class="col register-container">
             <section class="heading">
-                <h1 *ngIf="steps === 'one'">Enter your work <br class="mobile"> email to get started</h1>
-                <h3 *ngIf="steps === 'one'">It’s as simple as that.</h3>
-                <h1 *ngIf="steps === 'two'">Welcome to Irisa!</h1>
+                <h1 *ngIf="steps === 'one'">Unamed is a platform for all your ... needs</h1>
+                <h3 *ngIf="steps === 'one'">Try it now for free</h3>
+                <h1 *ngIf="steps === 'two'">Welcome to Unamed</h1>
                 <h3 *ngIf="steps === 'two'">We just need a few more details before you get started</h3>
                 <h1 *ngIf="steps === 'three'">Please check your email inbox and enter the verification code</h1>
             </section>
             <form [formGroup]="registerForm">
                 <ng-container *ngIf="steps === 'one'">
                     <!-- Step 1  -->
-                    <div class="form-input">
-                        <div class="input-label mb-1" style="text-transform: none;">This email will also be used as your username</div>
-                        <input class="mb-4" formControlName="email" type="email" required>
+                    <div class="form-input step-one">
+                        <input type="email" class="mb-4 mb-lg-0" formControlName="email" placeholder="Your email address" required>
+                        <button class="filled-button-primary" [disabled]="registerForm.controls.email.invalid" (click)="steps = 'two'">Get Started</button>
                     </div>
-                    <button class="filled-button-primary ml-auto mr-auto" (click)="steps = 'two'">Continue</button>
                 </ng-container>
                 <ng-container *ngIf="steps === 'two'">
                     <!-- Step 2  -->
                     <div class="form-input mobile locked">
-                        <div class="input-label mb-1">Email</div>
+                        <div class="input-label">Email</div>
                         <input class="mb-4" formControlName="email" type="email" required>
                     </div>
                     <div class="form-input mobile">
-                        <div class="input-label mb-1">First Name</div>
+                        <div class="input-label">First Name</div>
                         <input class="mb-4" formControlName="firstName" type="text" required>
                     </div>
                     <div class="form-input  mobile">
-                        <div class="input-label  mb-1">Last Name</div>
+                        <div class="input-label">Last Name</div>
                         <input class="mb-4" formControlName="lastName" type="text" required>
                     </div>
                     <div class="row no-pad desktop">
                         <div class="form-input locked">
-                            <div class="input-label mb-1">Email</div>
+                            <div class="input-label">Email</div>
                             <input class="mb-4" formControlName="email" type="email" required>
                         </div>
                         <div class="form-input col-6 pl-0 ">
-                            <div class="input-label mb-1">First Name</div>
+                            <div class="input-label">First Name</div>
                             <input class="mb-4" formControlName="firstName" type="text" required>
                         </div>
                         <div class="form-input col-6 pr-0">
-                            <div class="input-label  mb-1">Last Name</div>
+                            <div class="input-label">Last Name</div>
                             <input class="mb-4" formControlName="lastName" type="text" required>
                         </div>
                     </div>
                     <div class="form-input">
-                        <div class="input-label mb-1">Password</div>
-                        <input class="mb-2" formControlName="password" (keydown)="validatePassword()" type="{{passwordType}}" required>
+                        <div class="input-label">Password</div>
+                        <input class="mb-4" formControlName="password" (keydown)="validatePassword()" type="{{passwordType}}" required (focus)="isPasswordFocused = true" (blur)="isPasswordFocused = false">
                         <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                         <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
+                        <section class="password-validation mb-4" *ngIf="isPasswordFocused" [@fadeInOutAnimation]>
+                            <div>Your password must have at least</div>
+                            <div class="validator">
+                                <input type="checkbox" [checked]="hasUpperCase">
+                                <span>One uppercase character</span>
+                            </div>
+                            <div class="validator">
+                                <input type="checkbox" [checked]="hasLowerCase">
+                                <span>One lowercase character</span>
+                            </div>
+                            <div class="validator">
+                                <input type="checkbox" [checked]="hasNumber">
+                                <span>One number</span>
+                            </div>
+                            <div class="validator">
+                                <input type="checkbox" [checked]="hasLength">
+                                <span>8 characters</span>
+                            </div>
+                        </section>
                     </div>
-                    <section class="password-validation mb-4">
-                        <div>Your password must have at least</div>
-                        <div class="validator">
-                            <input type="checkbox" [checked]="hasUpperCase">
-                            <span>One uppercase character</span>
-                        </div>
-                        <div class="validator">
-                            <input type="checkbox" [checked]="hasLowerCase">
-                            <span>One lowercase character</span>
-                        </div>
-                        <div class="validator">
-                            <input type="checkbox" [checked]="hasNumber">
-                            <span>One number</span>
-                        </div>
-                        <div class="validator">
-                            <input type="checkbox" [checked]="hasLength">
-                            <span>8 characters</span>
-                        </div>
-                    </section>
-                    <button class="filled-button-primary ml-auto mr-auto" (click)="registerAccountInAws()">GET STARTED</button>
+                    <button class="filled-button-primary ml-auto mr-auto" [disabled]="registerForm.invalid" (click)="registerAccountInAws()">COMPLETE SIGN UP</button>
                 </ng-container>
             </form>
+            <hr *ngIf="steps === 'one'">
+            <div class="sign-in" *ngIf="steps === 'one'">Already have an account?
+                <button class="outline-button-primary" routerLink="/login">Sign in</button>
+            </div>
             <form [formGroup]="verificationForm">
                 <ng-container *ngIf="steps === 'three'">
                     <div class="form-input">
@@ -83,8 +85,6 @@
                     <button class="filled-button-primary ml-auto mr-auto" [disabled]="verificationForm.invalid" (click)="verifyAccount()">Verify Code</button>
                 </ng-container>
             </form>
-            <button class="outline-button-primary mobile" routerLink="/login">Sign in</button>
-            <div class="sign-in desktop">Already have an account? <span routerLink="/login">Sign in</span></div>
         </section>
     </div>
 </div>

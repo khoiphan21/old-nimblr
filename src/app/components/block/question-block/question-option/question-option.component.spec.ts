@@ -1,10 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionOptionComponent } from './question-option.component';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormArray } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { QuestionType } from 'src/API';
 import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
 describe('QuestionOptionComponent', () => {
   let component: QuestionOptionComponent;
@@ -25,7 +26,7 @@ describe('QuestionOptionComponent', () => {
     component = fixture.componentInstance;
     component.currentType = QuestionType.PARAGRAPH;
     component.answers = [''];
-    component.options = null;
+    component.options = [];
     component.formGroup = new FormGroup({
       options: new FormArray([])
     });
@@ -46,7 +47,7 @@ describe('QuestionOptionComponent', () => {
   /* tslint:disable:no-string-literal */
   it('should clear all the options in the list', () => {
     component['clearOptions']();
-    expect(component.options).toEqual(null);
+    expect(component.options.length).toBe(0);
   });
 
   /* tslint:disable:no-string-literal */
@@ -135,19 +136,15 @@ describe('QuestionOptionComponent', () => {
 
   describe('triggerUpdateValue', () => {
 
-    it('should have call `emitQuestionValues()`', async () => {
-      await component.triggerUpdateValue();
+    it('should have called `emitQuestionValues()`', async () => {
+      await component.triggerUpdateValue(0);
       expect(emitValueSpy).toHaveBeenCalled();
     });
 
-    it('should not call block command service again for consecutive updates', done => {
-      component.triggerUpdateValue();
-      setTimeout(() => {
-        component.triggerUpdateValue().then(() => {
-          expect(emitValueSpy).toHaveBeenCalledTimes(1);
-          done();
-        });
-      }, 100);
+    it('should not call block command service again for consecutive updates', async () => {
+      component.triggerUpdateValue(100);
+      await component.triggerUpdateValue(0);
+      expect(emitValueSpy).toHaveBeenCalledTimes(1);
     });
 
   });
@@ -183,18 +180,18 @@ describe('QuestionOptionComponent', () => {
   });
 
   describe('emitQuestionValues()', () => {
-    it('should only emit `answers` for PARAGRAPH type', done => {
+    it('should emit `answers` for PARAGRAPH type', done => {
       component.currentType = QuestionType.PARAGRAPH;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
       component.emitQuestionValues();
     });
 
-    it('should only emit `answers` for SHORT_ANSWER type', done => {
+    it('should emit `answers` for SHORT_ANSWER type', done => {
       component.currentType = QuestionType.SHORT_ANSWER;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
@@ -203,7 +200,7 @@ describe('QuestionOptionComponent', () => {
 
     it('should emit `answers` and `options` for MULTIPLE_CHOICE type', done => {
       component.currentType = QuestionType.MULTIPLE_CHOICE;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
@@ -211,9 +208,9 @@ describe('QuestionOptionComponent', () => {
       component.emitQuestionValues();
     });
 
-    it('should  emit `answers` and `options` for CHECKBOX type', done => {
+    it('should emit `answers` and `options` for CHECKBOX type', done => {
       component.currentType = QuestionType.CHECKBOX;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
@@ -227,5 +224,35 @@ describe('QuestionOptionComponent', () => {
     component.addNewOption();
     const options = component.getOptionsValue();
     expect(options.length).toEqual(component.options.length);
+  });
+
+  describe('toggleAnswers()', () => {
+
+    it('should add the value into the array if it does not exist', () => {
+      component.answers = [];
+      component.toggleAnswers('answer 1');
+      expect(component.answers.length).toBe(1);
+    });
+
+    it('should remove the value into the array if it exist', () => {
+      component.answers = ['answer 1'];
+      component.toggleAnswers('answer 1');
+      expect(component.answers.length).toBe(0);
+    });
+  });
+
+  describe('switchAnswer()', () => {
+
+    it('should only have one answer at a time', () => {
+      component.answers = [];
+      component.switchAnswer('answer 1');
+      expect(component.answers.length).toBe(1);
+    });
+
+    it('should replace the existing value with the new one', () => {
+      component.answers = ['answer 1'];
+      component.switchAnswer('answer 2');
+      expect(component.answers[0]).toBe('answer 2');
+    });
   });
 });

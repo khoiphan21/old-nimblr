@@ -40,9 +40,9 @@ describe('SendFormComponent', () => {
 
   describe('send()', () => {
     it('should emit the input', done => {
-      component.recipientInput = 'abcd';
+      component.recipientList = ['abcd'];
       component.sendEmailEvent.subscribe(value => {
-        expect(value).toEqual(component.recipientInput);
+        expect(value).toEqual(component.recipientList);
         done();
       });
       component.send();
@@ -53,9 +53,9 @@ describe('SendFormComponent', () => {
       expect(component.hideContainer).toHaveBeenCalled();
     });
     it('should call to clear the input', () => {
-      spyOn(component, 'clearInput');
+      spyOn(component, 'clearList');
       component.send();
-      expect(component.clearInput).toHaveBeenCalled();
+      expect(component.clearList).toHaveBeenCalled();
     });
   });
 
@@ -65,6 +65,47 @@ describe('SendFormComponent', () => {
       component.clearInput();
       expect(component.recipientInput).toEqual('');
     });
+  });
+
+  it('should add the selected recipient into the list', () => {
+    const recipient = 'test@gmail.com';
+    component.recipientInput = recipient;
+    component.addRecipient();
+    expect(component.recipientList[0]).toBe(recipient);
+  });
+
+  describe('deleteRecipient()', () => {
+    let removeRecipientSpy: jasmine.Spy;
+    beforeEach(() => {
+      removeRecipientSpy = spyOn(component, 'removeRecipientFromList');
+    });
+
+    it('should not call removeRecipientFromList() if the string is not empty', () => {
+      component.recipientList = ['test'];
+      component.recipientInput = 'test';
+      component.deleteRecipient();
+      expect(removeRecipientSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not call removeRecipientFromList() if the recipientList is empty', () => {
+      component.recipientList = [];
+      component.recipientInput = '';
+      component.deleteRecipient();
+      expect(removeRecipientSpy).not.toHaveBeenCalled();
+    });
+
+    it('should remove the last recipient in the list', () => {
+      component.recipientList = ['test'];
+      component.recipientInput = '';
+      component.deleteRecipient();
+      expect(removeRecipientSpy).toHaveBeenCalledWith(0);
+    });
+  });
+
+  it('removeRecipientFromList() - should remove the right recipient in the list', () => {
+    component.recipientList = ['test 1', 'test 2'];
+    component.removeRecipientFromList(0);
+    expect(component.recipientList[0]).toEqual('test 2');
   });
 
 });

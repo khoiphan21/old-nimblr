@@ -83,6 +83,7 @@ section.mobile.navigation-bar {
     section.tabs {
         margin-top: 33px;
         .title {
+            margin-bottom: 5px;
             padding: 0 25px;
             color: #97A0BF;
             font-size: 12px;
@@ -107,8 +108,7 @@ section.mobile.navigation-bar {
             padding-top: 10px;
             padding-bottom: 10px;
         }
-        .document-title,
-        .document-tab {
+        .document-title {
             padding: 0 25px;
             font-size: 13px;
             font-weight: 500;
@@ -116,13 +116,6 @@ section.mobile.navigation-bar {
             height: 27px;
             @include row-center;
             justify-content: flex-start;
-        }
-        .document-tab {
-            font-weight: normal;
-            cursor: pointer;
-            &:hover {
-                background: transparentize($color: #000000, $amount: 0.95)
-            }
         }
     }
 }

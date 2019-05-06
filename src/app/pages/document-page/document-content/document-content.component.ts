@@ -6,7 +6,11 @@ import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType, } from 'src/API';
+import {
+  BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,
+  DeleteDocumentInput,
+} from 'src/API';
+
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -16,8 +20,6 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
-import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
-import { EmailService } from 'src/app/services/email/email.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 import { CommandService } from 'src/app/services/command/command.service';
@@ -59,12 +61,10 @@ export class DocumentContentComponent implements OnInit {
   constructor(
     private documentQueryService: DocumentQueryService,
     private documentCommandService: DocumentCommandService,
-    private docFactoryService: DocumentFactoryService,
     private blockCommandService: BlockCommandService,
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
     private versionService: VersionService,
-    private emailService: EmailService,
     private accountService: AccountService,
     private route: ActivatedRoute,
     private location: Location,
@@ -81,10 +81,20 @@ export class DocumentContentComponent implements OnInit {
       this.isUserLoggedIn = false;
     }
     try {
-      this.retrieveDocumentData();
+      await this.retrieveDocumentData();
     } catch (error) {
-      const message = `DocumentPage failed to load: ${error.message}`;
-      throw new Error(message);
+      if (this.isUserLoggedIn) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        const paramMap: ParamMap = await this.getParamMap();
+        const email = paramMap.get('email');
+        const document = paramMap.get('id');
+        if (email) {
+          this.router.navigate(['/register', { email, document }]);
+        } else {
+          this.router.navigate(['/register', { document }]);
+        }
+      }
     }
     // Initialize internal values
     this.docTitle = '';
@@ -133,6 +143,12 @@ export class DocumentContentComponent implements OnInit {
 
   }
 
+  private async getParamMap(): Promise<ParamMap> {
+    return new Promise((resolve, reject) => {
+      this.route.paramMap.pipe(take(1)).subscribe(resolve, reject);
+    });
+  }
+
   private updateStoredProperties(document: Document) {
     // Update the values to be used in rendering
     this.documentId = document.id;
@@ -147,9 +163,8 @@ export class DocumentContentComponent implements OnInit {
 
   private checkIsChildDocument() {
     const url = this.router.url;
-    const trimmedUrl = url.substring(0, url.length - 37);
-    const toBeValidateUrl = trimmedUrl.substr(-8, 8);
-    if (toBeValidateUrl === 'document') {
+    const parts = url.split('/');
+    if (parts.length === 3) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
@@ -160,7 +175,6 @@ export class DocumentContentComponent implements OnInit {
     // The return result can be ignored (maybe)
     this.blockQueryService.subscribeToUpdate(this.documentId);
   }
-
 
   /**
    * Create a new block and add it to the list of blocks in the document
@@ -346,12 +360,23 @@ export class DocumentContentComponent implements OnInit {
     await this.documentCommandService.updateDocument(input);
   }
 
-  async sendDocument(email: string) {
-    const command = this.commandService.getCommand(CommandType.SEND_DOCUMENT) as SendDocumentCommand;
+  async sendDocument(emails: Array<string>) {
+    for (const email of emails) {
+      const command = this.commandService.getCommand(CommandType.SEND_DOCUMENT) as SendDocumentCommand;
+      const submissionId = await command.execute(this.documentId, email);
+      this.submissionDocIds.push(submissionId);
+    }
+  }
 
-    const submissionId = await command.execute(this.documentId, email);
+  async deleteThisDocument() {
+    try {
+      // send query to delete document
+      const input: DeleteDocumentInput = { id: this.documentId };
+      return await this.documentCommandService.deleteDocument(input);
 
-    this.submissionDocIds.push(submissionId);
+    } catch (error) {
+      throw new Error('Failed to delete document: ' + error.message);
+    }
   }
 
 }

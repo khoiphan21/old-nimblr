@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockOptionComponent } from './block-option.component';
 import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { configureTestSuite } from 'ng-bullet';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Block } from 'src/app/classes/block/block';
 import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { TextBlock } from '../../../classes/block/textBlock';
 
 const uuidv4 = require('uuid/v4');
@@ -53,8 +53,13 @@ describe('BlockOptionComponent', () => {
       expect(component.block).toEqual(block);
     });
 
-    it('should log the error when it failed to get block', () => {
-      getBlockSpy.and.returnValue(new BehaviorSubject(block).error('failed'));
+    it('should catch the error', () => {
+      const subject = new Subject();
+      getBlockSpy.and.returnValue(subject);
+      spyOn(console, 'error');
+      component.ngOnInit();
+      subject.error('test');
+      expect(console.error).toHaveBeenCalled();
     });
   });
 

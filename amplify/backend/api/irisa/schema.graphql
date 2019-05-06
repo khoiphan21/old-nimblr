@@ -82,12 +82,15 @@ enum TextBlockType{
   ORDEREDLIST
 }
 
+type Query {
+  getDocumentLambda(id: ID!): Document
+}
+
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block
   updateTextBlock(input: UpdateTextBlockInput!): Block
   createQuestionBlock(input: CreateQuestionBlockInput!): Block
   updateQuestionBlock(input: UpdateQuestionBlockInput!): Block
-
 }
 
 type Subscription {

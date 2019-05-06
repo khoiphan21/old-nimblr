@@ -1,6 +1,9 @@
+<app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown" (hideSendFormEvent)="isSendFormShown = false" (sendEmailEvent)="sendDocument($event)"></app-send-form>
+<app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown" (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
 <section class="child-overlay" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]=true (click)="backToParent()">
     <section class="content" *ngIf="isDocumentReady" (click)="$event.stopPropagation()">
-        <app-header [docTitle]="docTitle" [documentType]="documentType" [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" style="width:100%" (saveAsTemplateEvent)="saveAsTemplate()"></app-header>
+        <app-header [documentType]="documentType" [sharingStatus]="currentSharingStatus" (showInviteEvent)="showSendForm()" *ngIf="isUserLoggedIn" (deleteDocumentEvent)="deleteThisDocument()"></app-header>
+        <!-- <app-header [documentType]="documentType" [sharingStatus]="currentSharingStatus" (showInviteEvent)="showInviteCollaborator()" (sharingChange)="changeSharingStatus($event)" *ngIf="isUserLoggedIn" (saveAsTemplateEvent)="saveAsTemplate()" (deleteDocumentEvent)="deleteThisDocument()"></app-header> -->
 
         <div class="title mt-5 mt-lg-4" [ngClass]="{'child-document-padding': isChildDoc}">
             <h1>
@@ -10,13 +13,13 @@
                 <!-- When the user is anonymous -->
                 <div class="text-input" *ngIf="!isUserLoggedIn">{{docTitle}}</div>
                 <!-- Shown only when there's some content -->
-                <button *ngIf="documentType === 'TEMPLATE'" class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND
-          FORM</button>
+                <!-- <button *ngIf="documentType === 'TEMPLATE'" class="filled-button-primary" (click)="showSendForm()"><i class="fas fa-paper-plane"></i>SEND
+                FORM</button> -->
             </h1>
         </div>
 
         <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
-            (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
+            (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (showInviteEvent)="showSendForm()" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
 
 
         <app-block-section-content *ngIf="documentType === 'GENERIC'" [isChildDoc]="isChildDoc" [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"
@@ -28,7 +31,5 @@
     </section>
 </section>
 
-<app-send-form (click)="$event.stopPropagation()" [isSendFormShown]="isSendFormShown" (hideSendFormEvent)="isSendFormShown = false" (sendEmailEvent)="sendDocument($event)"></app-send-form>
-<app-invite-collaborator (click)="$event.stopPropagation()" [isInviteCollaboratorShown]="isInviteCollaboratorShown" (hideInviteCollaborateEvent)="isInviteCollaboratorShown = false"></app-invite-collaborator>
 <!-- <app-document-login></app-document-login> -->
 <!-- <app-request-access></app-request-access> -->

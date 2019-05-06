@@ -3,13 +3,13 @@ import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 
 import { DocumentQueryService } from './document-query.service';
 import { take, skip } from 'rxjs/operators';
-import { getDocument } from 'src/graphql/queries';
 import { UUID } from '../command/document-command.service';
 import { DocumentFactoryService } from '../factory/document-factory.service';
 import { DocumentImpl } from 'src/app/classes/document/document-impl';
 import { onSpecificDocumentUpdate } from 'src/graphql/subscriptions';
 import { Document } from 'src/app/classes/document/document';
 import { configureTestSuite } from 'ng-bullet';
+import { getDocumentLambda } from '../../../../graphql/queries';
 
 const uuidv4 = require('uuid/v4');
 
@@ -95,7 +95,7 @@ describe('DocumentQueryService', () => {
           service.getDocument$(id);
         });
         it('should call with the right GraphQL query type', () => {
-          expect(querySpy.calls.mostRecent().args[0]).toEqual(getDocument);
+          expect(querySpy.calls.mostRecent().args[0]).toEqual(getDocumentLambda);
         });
         it('should call with the right argument', () => {
           expect(querySpy.calls.mostRecent().args[1]).toEqual({ id });
@@ -107,7 +107,7 @@ describe('DocumentQueryService', () => {
         beforeEach(() => {
           // setup querySpy to return the document
           querySpy.and.returnValue(Promise.resolve({
-            data: { getDocument: backendResponse }
+            data: { getDocumentLambda: backendResponse }
           }));
         });
 
@@ -128,7 +128,7 @@ describe('DocumentQueryService', () => {
         it('should emit an error if the data is null', done => {
           // setup querySpy to return a null value for document data
           querySpy.and.returnValue(Promise.resolve({
-            data: { getDocument: null }
+            data: { getDocumentLambda: null }
           }));
           service.getDocument$(id).subscribe(() => { }, error => {
             const expectedMessage = `Document with id ${id} does not exist`;

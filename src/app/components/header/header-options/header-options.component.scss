@@ -41,10 +41,12 @@ section.mobile.container.option-container {
                 border-bottom: 1px solid #DDD;
                 .option {
                     font-size: 0.75rem;
+                    display: flex;
+                    align-items: center;
                     cursor: pointer !important;
-                    // span {
-                    //     margin-left: 5px;
-                    // }
+                    img {
+                        width: 15px;
+                    }
                 }
             }
             .document-details {

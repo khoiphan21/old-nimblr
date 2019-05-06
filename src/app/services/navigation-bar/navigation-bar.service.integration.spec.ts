@@ -50,7 +50,7 @@ describe('(Integration) NavigationBarService', () => {
           const navigationSubscription = service.getNavigationBar$();
 
           // now check if the navigation tabs count are corrent
-          navigationSubscription.pipe(skip(1)).pipe(take(1)).subscribe((navigationTabs) => {
+          navigationSubscription.pipe(take(1)).subscribe((navigationTabs) => {
             navigationTabCount = navigationTabs.length;
             expect(navigationTabCount).toBe(documentCount);
             done();
@@ -70,7 +70,7 @@ describe('(Integration) NavigationBarService', () => {
           lastUpdatedBy: user.id,
           sharingStatus: SharingStatus.PRIVATE
         };
-        service.getNavigationBar$().pipe(skip(2)).pipe(take(2)).subscribe(navigationTabs => {
+        service.getNavigationBar$().pipe(skip(1)).pipe(take(2)).subscribe(navigationTabs => {
           navigationTabCount = navigationTabs.length;
           if (originalCount === undefined) {
             originalCount = navigationTabCount;

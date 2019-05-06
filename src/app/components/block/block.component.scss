@@ -9,11 +9,18 @@ div.block {
     margin-top: 20px;
 }
 
+.question-block {
+    margin-top: 20px;
+}
+
 @include media(lg) {
     .block.child-document {
         padding: 0 $desktop-child-document-horizontal-padding;
     }
     div.block {
         padding: 0 $desktop-document-horizontal-padding;
+    }
+    div.block.question-block {
+        padding: 0 $desktop-document-horizontal-padding + 2.5%;
     }
 }

@@ -8,61 +8,82 @@ div.fluid-container {
         section.register-container {
             min-height: 100vh;
             @include column-center;
-            align-items: flex-start;
             justify-content: flex-start;
-            padding: 125px 10% 75px 10%;
+            padding: 40px 10%;
+            padding-top: 125px;
+            @include media(lg) {
+                padding: 0 20%;
+                justify-content: center;
+            }
             section.heading {
-                margin-bottom: 2rem;
                 h1 {
-                    font-size: 31px;
-                    color: $color-blue-1;
-                    font-weight: normal;
+                    font-size: 30px;
+                    font-weight: 500;
                     letter-spacing: 0.1rem;
+                    text-align: center;
                     height: fit-content;
+                    margin-bottom: 15px;
                 }
                 h3 {
-                    font-size: 19px;
-                    color: $color-grey-1;
-                    font-weight: normal;
+                    font-size: 22px;
+                    font-weight: 300;
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+                @include media(lg) {
+                    h1 {
+                        font-size: 1.5rem;
+                    }
+                    h3 {
+                        font-size: 1.15rem;
+                    }
                 }
             }
             form {
                 width: 100%;
                 @include column-center;
                 align-items: flex-start;
+                .row {
+                    width: 100%;
+                }
                 input[type=email],
                 [type=text],
                 [type=password] {
                     width: 100%;
-                    border: 1px solid $color-grey-5;
-                    border-radius: 5px;
                     height: 47px;
+                    border-radius: 25px;
                     padding: 0 1rem;
-                }
-                .row {
-                    width: 100%;
-                }
-                ng-container {
-                    width: 100%;
+                    border: 1px solid $color-grey-5;
+                    font-size: 14px;
+                    &::placeholder {
+                        color: $color-grey-3;
+                    }
                 }
                 .form-input {
                     width: 100%;
                     position: relative;
                     flex-direction: column;
                     .input-label {
-                        font-size: 15px;
+                        font-size: 10px;
                         text-transform: uppercase;
                         font-weight: normal;
-                        margin-left: 5px;
+                        margin-left: 15px;
                     }
                     .password-toggle {
                         position: absolute;
-                        top: 35%;
+                        top: 30%;
                         font-size: 1.5rem;
                         color: $color-grey-1;
                         right: 1.25rem;
                         cursor: pointer;
+                        @include media(lg) {
+                            top: 30.5%
+                        }
                     }
+                }
+                button.filled-button-primary {
+                    width: 100%;
+                    font-size: 12px;
                 }
                 .form-input.locked {
                     pointer-events: none;
@@ -71,8 +92,72 @@ div.fluid-container {
                         border-color: transparent;
                     }
                 }
-                button {
-                    font-size: 16px;
+                @include media(lg) {
+                    width: 500px;
+                    input[type=email],
+                    [type=text],
+                    [type=password] {
+                        width: 100%;
+                    }
+                    .form-input.step-one {
+                        @include row-center;
+                        input {
+                            width: 433px;
+                        }
+                        button {
+                            width: fit-content;
+                            margin-left: 25px;
+                            margin-top: 0;
+                        }
+                    }
+                    .form-input {
+                        .password-toggle {
+                            right: 1.25rem;
+                        }
+                    }
+                    button.filled-button-primary {
+                        width: fit-content;
+                        font-size: 12px;
+                    }
+                }
+            }
+            hr {
+                margin: 40px 0;
+                width: 100%;
+                border: 1px solid $color-grey-3;
+            }
+            div.sign-in {
+                width: 100%;
+                @include column-center;
+                font-size: 22px;
+                button.outline-button-primary {
+                    margin-top: 20px;
+                    width: 100%;
+                    font-weight: normal;
+                    font-size: 15px;
+                    padding: 0 1.5rem;
+                    border: 2px solid $color-blue-2;
+                    color: $color-blue-2;
+                }
+            }
+            @include media(lg) {
+                hr {
+                    display: none;
+                }
+                div.sign-in {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    @include row-center;
+                    font-size: 15px;
+                    justify-content: flex-end;
+                    button.outline-button-primary {
+                        width: fit-content;
+                        height: 35px;
+                        margin: 0 0 0 20px;
+                        padding: 0 2rem;
+                        font-size: 12px;
+                    }
                 }
             }
             section.password-validation {
@@ -109,107 +194,16 @@ div.fluid-container {
                         }
                     }
                 }
-            }
-            button.outline-button-primary {
-                font-weight: normal;
-                position: absolute;
-                top: 25px;
-                right: 10%;
-                height: 40px;
-                font-size: 15px;
-            }
-        }
-    }
-}
-
-@include media(lg) {
-    div.fluid-container {
-        height: 100vh;
-        font-family: $font-roboto;
-        div.row {
-            section.register-background {
-                height: 100vh;
-                background: transparentize($color: $color-blue-2, $amount: 0.7);
-            }
-            section.register-container {
-                height: 100vh;
-                @include column-center;
-                align-items: flex-start;
-                padding: 0 10%;
-                section.heading {
-                    margin-bottom: 2rem;
-                    h1 {
-                        font-size: 1.5rem;
-                        color: $color-blue-1;
-                        font-weight: normal;
-                        letter-spacing: 0.1rem;
-                    }
-                    h3 {
-                        font-size: 1.15rem;
-                        color: $color-grey-1;
-                        font-weight: normal;
-                    }
-                }
-                form {
-                    width: 100%;
-                    @include column-center;
-                    align-items: flex-start;
-                    input[type=email],
-                    [type=text],
-                    [type=password] {
-                        width: 100%;
-                        border: 1px solid $color-grey-5;
-                        border-radius: 5px;
-                        height: 47px;
-                        padding: 0 1rem;
-                    }
-                    .row {
-                        width: 100%;
-                    }
-                    ng-container {
-                        width: 100%;
-                    }
-                    .form-input {
-                        width: 100%;
-                        position: relative;
-                        flex-direction: row;
-                        .input-label {
-                            font-size: 0.65rem;
-                            text-transform: uppercase;
-                        }
-                        .password-toggle {
-                            position: absolute;
-                            top: 35%;
-                            font-size: 1.5rem;
-                            color: $color-grey-1;
-                            right: 1.25rem;
-                            cursor: pointer;
-                        }
-                    }
-                }
-                div.sign-in {
-                    font-size: 0.85rem;
+                @include media(lg) {
                     position: absolute;
-                    bottom: 2rem;
-                    left: 0;
-                    width: 100%;
-                    justify-content: center;
-                    span {
-                        margin-left: 10px;
-                        color: $color-blue-2;
-                        cursor: pointer;
-                    }
+                    width: fit-content;
+                    top: 0;
+                    left: 105%;
+                    background: #FFFFFF;
+                    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.14);
+                    padding: 20px;
+                    border-radius: 5px;
                 }
-            }
-        }
-    }
-}
-
-@include media(xl) {
-    div.fluid-container {
-        div.row {
-            section.register-container {
-                padding: 0 15%;
             }
         }
     }

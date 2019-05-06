@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { QuestionType } from 'src/API';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-question-option',
@@ -13,6 +14,7 @@ export class QuestionOptionComponent implements OnChanges {
   @Input() options: Array<string>;
   @Input() currentType: QuestionType;
   @Input() isPreviewMode: boolean;
+  @Input() isMobilePreview = false;
   @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
   private timeout: any;
@@ -41,10 +43,14 @@ export class QuestionOptionComponent implements OnChanges {
         this.changeToSingleOptionType(previousType);
         break;
       case QuestionType.MULTIPLE_CHOICE:
-        this.clearAnswers();
+        if (previousType !== undefined) {
+          this.clearAnswers();
+        }
         break;
       case QuestionType.CHECKBOX:
-        this.clearAnswers();
+        if (previousType !== undefined) {
+          this.clearAnswers();
+        }
         break;
     }
     this.setupForm();
@@ -59,7 +65,7 @@ export class QuestionOptionComponent implements OnChanges {
   }
 
   private clearOptions() {
-    this.options = null;
+    this.options = [];
   }
 
   private clearAnswers() {
@@ -96,7 +102,7 @@ export class QuestionOptionComponent implements OnChanges {
 
   setOptions() {
     const control = this.formGroup.controls.options as FormArray;
-    if (this.options) {
+    if (this.options.length > 0) {
       for (const option of this.options) {
         control.push(this.formBuilder.group({
           option
@@ -108,14 +114,31 @@ export class QuestionOptionComponent implements OnChanges {
     }
   }
 
+  toggleAnswers(value: string) {
+    if (this.answers.includes(value)) {
+      const index = this.answers.indexOf(value);
+      this.answers.splice(index, 1);
+    } else {
+      this.answers.push(value);
+    }
+    this.setupForm();
+    this.emitQuestionValues();
+  }
 
-  async triggerUpdateValue() {
+  switchAnswer(value: string) {
+    this.clearAnswers();
+    this.answers.push(value);
+    this.setupForm();
+    this.emitQuestionValues();
+  }
+
+  async triggerUpdateValue(waitTime = 500) {
     return new Promise((resolve) => {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.emitQuestionValues();
         resolve();
-      }, 500);
+      }, waitTime);
     });
   }
 
@@ -139,5 +162,11 @@ export class QuestionOptionComponent implements OnChanges {
       index++;
     }
     return this.options;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.options, event.previousIndex, event.currentIndex);
+    this.setupForm();
+    this.emitQuestionValues();
   }
 }

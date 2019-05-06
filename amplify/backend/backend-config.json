@@ -13,5 +13,13 @@
 				"securityType": "AMAZON_COGNITO_USER_POOLS"
 			}
 		}
+	},
+	"function": {
+		"getDocument": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"dependsOn": []
+		}
 	}
 }

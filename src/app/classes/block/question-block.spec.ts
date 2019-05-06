@@ -159,13 +159,6 @@ describe('QuestionBlock -', () => {
         expect(questionBlock.answers.length).toBe(1);
         expect(questionBlock.answers[0]).toEqual('this is the answer 2');
       });
-      it('should remove all answers if options is empty', () => {
-        input.questionType = QuestionType.CHECKBOX;
-        input.answers = ['this is the answer 2', 'EXTRA'];
-        input.options = [];
-        const questionBlock = new QuestionBlock(input);
-        expect(questionBlock.answers.length).toBe(0);
-      });
 
       describe('(null or empty)', () => {
         it('should set answers to empty array if null or undefined', () => {

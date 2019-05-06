@@ -2,19 +2,16 @@
     <section class="blocker" (click)="hideOption()" *ngIf="isOptionShown" [@fadeInOutAnimation]>
         <section class="container options-block popup" (click)="$event.stopPropagation()">
             <section class="document-options">
-                <div *ngIf="documentType === 'GENERIC'" class="option" (click)="saveAsTemplate()">
-                    <i class="fas fa-file"></i><span>Save as template</span>
-                </div>
-                <div class="option">
-                    <i class="fas fa-trash-alt"></i><span>Delete</span>
+                <div class="option" (click)="deleteDocument()">
+                    <img src="./assets/icons/block-delete.svg"><span>Delete</span>
                 </div>
             </section>
             <section class="document-options">
                 <div class="option">
-                    <i class="fas fa-share-square"></i><span>Export as PDF</span>
+                    <img src="./assets/icons/pdf-export.svg"><span>Export as PDF</span>
                 </div>
                 <div class="option">
-                    <i class="fas fa-history"></i><span>View document history</span>
+                    <img src="./assets/icons/document-history.svg"><span>View document history</span>
                 </div>
             </section>
             <section class="document-details">
@@ -33,10 +30,7 @@
             <div class="col-3" (click)="hideOption()">Done</div>
         </div>
         <section class="row no-pad document-options">
-            <div class="col-12 option">
-                <i class="fas fa-file"></i><span>Save as template</span>
-            </div>
-            <div class="col-12 option">
+            <div class="col-12 option" (click)="deleteDocument()">
                 <i class="fas fa-trash-alt"></i><span>Delete</span>
             </div>
             <div class="col-12 option">

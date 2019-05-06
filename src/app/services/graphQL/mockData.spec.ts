@@ -5,7 +5,6 @@ import { BlockType } from '../../../API';
 const uuidv4 = require('uuid/v4');
 
 describe('MockAPIDataFactory', () => {
-  const queryName = 'testQueryName';
 
   describe('createBlock()', () => {
     it('should return data with the right queryName', () => {

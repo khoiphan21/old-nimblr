@@ -3,9 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavigationBarComponent } from './navigation-bar.component';
 import { NavigationTabComponent } from './navigation-tab/navigation-tab.component';
 import { ServicesModule } from 'src/app/modules/services.module';
-import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { NavigationTabDocument, DocumentStructureTab } from 'src/app/classes/navigation-tab';
+import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
 import { AccountService } from 'src/app/services/account/account.service';
 import { MockAccountService } from 'src/app/services/account/account-impl.service.spec';
@@ -15,9 +14,10 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentType, CreateDocumentInput, SharingStatus } from '../../../API';
 import { isUuid } from '../../classes/helpers';
 import { UUID } from '../../services/document/command/document-command.service';
-import { NavigationEnd, ActivatedRoute } from '@angular/router';
+import { NavigationEnd, ActivatedRoute, Router } from '@angular/router';
 
 const uuidv4 = require('uuid/v4');
+
 // tslint:disable:no-string-literal
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
@@ -40,7 +40,6 @@ describe('NavigationBarComponent', () => {
       ],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([]),
         ResponsiveModule.forRoot()
       ],
       providers: [
@@ -57,6 +56,13 @@ describe('NavigationBarComponent', () => {
               }
             }
           }
+        },
+        {
+          provide: Router,
+          useValue: {
+            events: new Subject(),
+            navigate: () => { }
+          }
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -67,6 +73,7 @@ describe('NavigationBarComponent', () => {
     fixture = TestBed.createComponent(NavigationBarComponent);
     userFactory = TestBed.get(UserFactoryService);
     component = fixture.componentInstance;
+
     // Setup spies
     routerSpy = spyOn(component['router'], 'navigate');
     getStatusSpy = spyOn(component['navigationBarService'], 'getNavigationBarStatus$');
@@ -84,9 +91,6 @@ describe('NavigationBarComponent', () => {
     spyOn(component['accountService'], 'isUserReady').and.returnValue(
       Promise.resolve({ id: userId })
     );
-
-    // call to render
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -126,7 +130,18 @@ describe('NavigationBarComponent', () => {
     });
   });
 
-  it('processInitialName() - should process user`s first name when there is value',  () => {
+  describe('setupNavigationStatus()', () => {
+    it('should change the status', () => {
+      component.isNavigationTabShown = false;
+
+      getStatusSpy.and.returnValue(new BehaviorSubject(true));
+
+      component['setupNavigationStatus']();
+      expect(component.isNavigationTabShown).toBe(true);
+    });
+  });
+
+  it('processInitialName() - should process user`s first name when there is value', () => {
     component['processInitialName']('John');
     expect(component.initialName).toEqual('J');
   });
@@ -157,14 +172,6 @@ describe('NavigationBarComponent', () => {
     const firstName = 'Judy';
     component['processInitialName'](firstName);
     expect(component.initialName).toBe(firstName.charAt(0));
-  });
-
-  it('should receive get the right value for the navigation bar status', () => {
-    const expectedResult = false;
-    getStatusSpy.and.returnValue(new BehaviorSubject(expectedResult));
-    getNavBarSpy.and.returnValue(new Subject());
-    component.ngOnInit();
-    expect(component.isNavigationTabShown).toEqual(expectedResult);
   });
 
   describe('setupNavigationBar()', () => {
@@ -227,6 +234,10 @@ describe('NavigationBarComponent', () => {
     let getStructureSpy: jasmine.Spy;
     beforeEach(() => {
       getStructureSpy = spyOn<any>(component, 'getStructure');
+      const mockRouter: any = {
+        events: new Subject()
+      };
+      component['router'] = mockRouter;
     });
 
     it('should call getStructure() once', () => {
@@ -244,39 +255,22 @@ describe('NavigationBarComponent', () => {
       expect(getStructureSpy).toHaveBeenCalledTimes(2);
     });
 
-    describe('getStructure()', () => {
-      let getDocumentStructureSpy: jasmine.Spy;
-      beforeEach(() => {
-        getStructureSpy.and.callThrough();
-        getDocumentStructureSpy = spyOn(component['navigationBarService'], 'getDocumentStructure$');
-      });
-
-      it('should call getDocumentStructure$() with the right argument', () => {
-        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(null));
-        component['getStructure']();
-        expect(getDocumentStructureSpy).toHaveBeenCalledWith(documentId);
-      });
-
-      it('should update into the latest value when respond', () => {
-        const tab = new DocumentStructureTab({id: 'testId', title: 'testTitle'});
-        const structure = [tab];
-        getDocumentStructureSpy.and.returnValue(new BehaviorSubject(structure));
-        component['getStructure']();
-        expect(component.documentStructure).toEqual(structure);
-      });
-    });
   });
 
-  describe('scrollToSection()', () => {
-    let getElementSpy: jasmine.Spy;
+  describe('getStructure()', () => {
+    let getDocumentSpy: jasmine.Spy;
+    const blockIds = ['test123'];
+    const mockDocument = {
+      blockIds
+    };
     beforeEach(() => {
-      const dummyElement = document.createElement('div');
-      getElementSpy = spyOn(document, 'getElementById').and.returnValue(dummyElement);
+      getDocumentSpy = spyOn(component['documentQueryService'], 'getDocument$').and.returnValue(new BehaviorSubject(mockDocument));
     });
-    it('should call the getElementById() with the right arguement', () => {
-      const uuid = uuidv4();
-      component.scrollToSection(uuid);
-      expect(getElementSpy).toHaveBeenCalledWith(uuid);
+
+    it('should update into the latest value when respond', async () => {
+      component['getStructure']();
+      expect(component.blockIds).toEqual(blockIds);
     });
   });
+
 });

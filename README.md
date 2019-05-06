@@ -2,6 +2,14 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.3.
 
+## Setting up
+
+Run `npm install` to install all required dependencies.
+
+Run `amplify configure` if you have not configured an AWS Profile in your local environment
+
+Run `amplify init` and select the existing `dev` environment, as well as an AWS Profile (normally just 'default')
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
