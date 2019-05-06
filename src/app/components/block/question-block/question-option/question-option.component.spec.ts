@@ -5,8 +5,9 @@ import { ReactiveFormsModule, FormsModule, FormGroup, FormArray } from '@angular
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { QuestionType } from 'src/API';
 import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
-describe('QuestionOptionComponent', () => {
+fdescribe('QuestionOptionComponent', () => {
   let component: QuestionOptionComponent;
   let fixture: ComponentFixture<QuestionOptionComponent>;
   let emitValueSpy: jasmine.Spy;
@@ -135,19 +136,15 @@ describe('QuestionOptionComponent', () => {
 
   describe('triggerUpdateValue', () => {
 
-    it('should have call `emitQuestionValues()`', async () => {
-      await component.triggerUpdateValue();
+    it('should have called `emitQuestionValues()`', async () => {
+      await component.triggerUpdateValue(0);
       expect(emitValueSpy).toHaveBeenCalled();
     });
 
-    it('should not call block command service again for consecutive updates', done => {
-      component.triggerUpdateValue();
-      setTimeout(() => {
-        component.triggerUpdateValue().then(() => {
-          expect(emitValueSpy).toHaveBeenCalledTimes(1);
-          done();
-        });
-      }, 100);
+    it('should not call block command service again for consecutive updates', async () => {
+      component.triggerUpdateValue(100);
+      await component.triggerUpdateValue(0);
+      expect(emitValueSpy).toHaveBeenCalledTimes(1);
     });
 
   });
@@ -183,18 +180,18 @@ describe('QuestionOptionComponent', () => {
   });
 
   describe('emitQuestionValues()', () => {
-    it('should only emit `answers` for PARAGRAPH type', done => {
+    it('should emit `answers` for PARAGRAPH type', done => {
       component.currentType = QuestionType.PARAGRAPH;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
       component.emitQuestionValues();
     });
 
-    it('should only emit `answers` for SHORT_ANSWER type', done => {
+    it('should emit `answers` for SHORT_ANSWER type', done => {
       component.currentType = QuestionType.SHORT_ANSWER;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
@@ -203,7 +200,7 @@ describe('QuestionOptionComponent', () => {
 
     it('should emit `answers` and `options` for MULTIPLE_CHOICE type', done => {
       component.currentType = QuestionType.MULTIPLE_CHOICE;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
@@ -211,9 +208,9 @@ describe('QuestionOptionComponent', () => {
       component.emitQuestionValues();
     });
 
-    it('should  emit `answers` and `options` for CHECKBOX type', done => {
+    it('should emit `answers` and `options` for CHECKBOX type', done => {
       component.currentType = QuestionType.CHECKBOX;
-      component.valueToBeSaved.subscribe((data) => {
+      component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
