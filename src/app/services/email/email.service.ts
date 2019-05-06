@@ -31,7 +31,7 @@ export class EmailService {
     const recipient = input.email;
 
     // The subject line for the email.
-    const subject = 'Irisa Invitation Link';
+    const subject = 'Nimblr Invitation Link';
 
     const domain = 'localhost:4200';
 
