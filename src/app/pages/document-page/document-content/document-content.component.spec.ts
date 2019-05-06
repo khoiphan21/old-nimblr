@@ -479,10 +479,11 @@ describe('DocumentContentComponent', () => {
         expect(spyCreateNewBlock.calls.count()).toBe(1);
       });
 
-      it('should catch error when creation failed', () => {
+      it('should catch error when creation failed', done => {
         spyOn<any>(component, 'createAndSelectTextBlock').and.throwError('testerr');
         component.addNewBlock(mockBlockInfo).catch(err => {
           expect(err.message.includes('testerr')).toBeTruthy();
+          done();
         });
       });
     });

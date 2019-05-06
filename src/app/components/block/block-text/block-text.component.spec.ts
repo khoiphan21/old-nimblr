@@ -3,12 +3,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockTextComponent } from './block-text.component';
 import { FormsModule } from '@angular/forms';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { BlockType, TextBlockType } from 'src/API';
+import { BlockType } from 'src/API';
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { configureTestSuite } from 'ng-bullet';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { SimpleChange } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
+import { TextBlockType } from '../../../../API';
 
 const uuidv4 = require('uuid/v4');
 
@@ -26,6 +27,7 @@ describe('BlockTextComponent', () => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
+
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [BlockTextComponent],
@@ -298,7 +300,7 @@ describe('BlockTextComponent', () => {
       beforeEach(() => {
         mockEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
         spyMethod = spyOn<any>(component, 'onBackSpaceAndEmptyTextbox').and.callThrough();
-        spyReset = spyOn<any>(component, 'resetAwaitAction');
+        spyReset = spyOn<any>(component, 'resetAwaitAction').and.callThrough();
 
         const factory: BlockFactoryService = TestBed.get(BlockFactoryService);
         component.block = factory.createNewTextBlock({
@@ -312,26 +314,42 @@ describe('BlockTextComponent', () => {
         expect(spyReset.calls.count()).toBe(1);
       });
 
-      it('should trigger onBackSpaceAndEmptyTextbox when Backspace is pressed', () => {
+      it('should trigger onBackSpaceAndEmptyTextbox', () => {
         component.eventSelect(mockEvent);
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      it('should emit the id only if the value is empty and is not a special block', done => {
-        component.value = '';
-        component.deleteEvent.subscribe(response => {
-          expect(response).toEqual(component.block.id);
-          done();
+      describe('when TextBlockType === TEXT', () => {
+        it('should emit the id only if the value is empty and is not a special block', done => {
+          component.value = '';
+          component.deleteEvent.subscribe(response => {
+            expect(response).toEqual(component.block.id);
+            done();
+          });
+          component['onBackSpaceAndEmptyTextbox'](event);
         });
-        component['onBackSpaceAndEmptyTextbox'](event);
+
+        it('should not emit if the value is not empty', () => {
+          component.value = 'test';
+          spyOn(component.deleteEvent, 'emit');
+          component['onBackSpaceAndEmptyTextbox'](event);
+          expect(component.deleteEvent.emit).not.toHaveBeenCalled();
+        });
       });
 
-      it('should not emit if the value is not empty', () => {
-        component.value = 'test';
-        spyOn(component.deleteEvent, 'emit');
-        component['onBackSpaceAndEmptyTextbox'](event);
-        expect(component.deleteEvent.emit).not.toHaveBeenCalled();
+      describe('when TextBlockType === BULLET', () => {
+        it('should call convertToBlockType with the right arg', () => {
+          const mockBlock: any = {
+            textBlockType: TextBlockType.BULLET
+          };
+          component['block'] = mockBlock;
+          component.value = '';
+          const spy = spyOn<any>(component, 'convertToBlockType');
+          component['onBackSpaceAndEmptyTextbox'](event);
+          expect(spy).toHaveBeenCalledWith(TextBlockType.TEXT);
+        });
       });
+
     });
 
     describe('Enter', () => {
@@ -351,14 +369,36 @@ describe('BlockTextComponent', () => {
         expect(spyReset.calls.count()).toBe(1);
       });
 
-      it('should emit the correct blockType', done => {
-        mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        component.createBlock.subscribe(type => {
-          expect(type).toEqual({ type: BlockType.TEXT });
-          done();
-        });
+      describe('when TEXT', () => {
+        it('should emit the correct blockType', done => {
+          mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+          component.createBlock.subscribe(type => {
+            expect(type).toEqual({ type: BlockType.TEXT });
+            done();
+          });
 
-        component['createTextBlockOnEnter'](mockEvent);
+          component['createTextBlockOnEnter'](mockEvent);
+        });
+      });
+
+      describe('when BULLET', () => {
+        it('should emit the right BlockType and TextBlockType', done => {
+          mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+          const mockBlock: any = {
+            textBlockType: TextBlockType.BULLET
+          };
+          component['block'] = mockBlock;
+
+          component.createBlock.subscribe(type => {
+            expect(type).toEqual({
+              type: BlockType.TEXT,
+              textBlockType: TextBlockType.BULLET
+            });
+            done();
+          });
+
+          component['createTextBlockOnEnter'](mockEvent);
+        });
       });
     });
 
@@ -387,12 +427,13 @@ describe('BlockTextComponent', () => {
     });
 
     describe('spacebar', () => {
-      let spyCreateBulletPoint: jasmine.Spy;
+      let spyConvertToBlockType: jasmine.Spy;
 
       beforeEach(() => {
         mockEvent = new KeyboardEvent('keydown', { key: ' ' });
         spyMethod = spyOn<any>(component, 'spacebarDetermineAction').and.callThrough();
         spyReset = spyOn<any>(component, 'resetAwaitAction');
+        spyConvertToBlockType = spyOn<any>(component, 'convertToBlockType');
       });
 
       it('should trigger spacebarDetermineAction when spacebar is pressed', () => {
@@ -400,17 +441,15 @@ describe('BlockTextComponent', () => {
         expect(spyMethod.calls.count()).toBe(1);
       });
 
-      it('should trigger createBulletPoint only when - is registered in awaitKeyAction', () => {
-        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
+      it('should trigger convertToBlockType only when "-" is registered in awaitKeyAction', () => {
         component['awaitKeyAction'].push('-');
         component.eventSelect(mockEvent);
-        expect(spyCreateBulletPoint.calls.count()).toBe(1);
+        expect(spyConvertToBlockType.calls.count()).toBe(1);
       });
 
-      it('should fail to trigger createBulletPoint when - is not registered', () => {
-        spyCreateBulletPoint = spyOn<any>(component, 'createBulletPoint');
+      it('should fail to trigger convertToBlockType when - is not registered', () => {
         component.eventSelect(mockEvent);
-        expect(spyCreateBulletPoint.calls.count()).toBe(0);
+        expect(spyConvertToBlockType.calls.count()).toBe(0);
       });
 
       it('should trigger resetAwaitAction', () => {

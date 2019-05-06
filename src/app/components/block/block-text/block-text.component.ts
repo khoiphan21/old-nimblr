@@ -130,10 +130,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
         break;
 
       case '-':
-        // TODO: @bruno why awaitKeyAction is not triggered
-        console.log(this.value);
         this.waitForNextKey(event);
-        console.log('array: ', this.awaitKeyAction);
         break;
 
       case ' ':
@@ -150,10 +147,9 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   private onBackSpaceAndEmptyTextbox(event: KeyboardEvent) {
     if (this.value === '') {
-      // TODO: @bruno 1. structure it well, 2. upon bulletpoint deletion, it would convert back to normal textblock
-      switch (this.block.type) {
-        case BlockType.TEXT:
-          this.textBlockBackspaceAction();
+      switch (this.block.textBlockType) {
+        case TextBlockType.BULLET:
+          this.convertToBlockType(TextBlockType.TEXT);
           break;
 
         default:
@@ -163,18 +159,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
       clearTimeout(this.timeout); // To prevent the last update call
       event.preventDefault();
-    }
-  }
-
-  private textBlockBackspaceAction() {
-    switch (this.block.textBlockType) {
-      case TextBlockType.BULLET:
-        this.convertToBlockType(TextBlockType.TEXT);
-        break;
-
-      default:
-        this.deleteEvent.emit(this.block.id);
-        break;
     }
   }
 
@@ -211,7 +195,8 @@ export class BlockTextComponent implements OnInit, OnChanges {
     clearTimeout(this.timeout); // To prevent the last update call
   }
 
-  private convertToBlockType(type: TextBlockType) {
+  private async convertToBlockType(type: TextBlockType) {
+    // TODO @khoiphan21 convert this to Command Pattern
     const textBlock = this.block as TextBlock;
     const updatedBlock: Block = this.factoryService.createAppBlock({
       id: textBlock.id,
@@ -226,11 +211,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
     // update the UI
     this.blockQueryService.updateBlockUI(updatedBlock);
     // update the backend
-    return new Promise(resolve => {
-      this.blockCommandService.updateBlock(updatedBlock).then(() => {
-        resolve();
-      });
-    });
+    return this.blockCommandService.updateBlock(updatedBlock);
   }
 
   private resetAwaitAction() {
