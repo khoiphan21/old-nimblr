@@ -15,7 +15,7 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { DocumentType, CreateDocumentInput, SharingStatus } from '../../../API';
 import { isUuid } from '../../classes/helpers';
 import { UUID } from '../../services/document/command/document-command.service';
-import { NavigationEnd, ActivatedRoute } from '@angular/router';
+import { NavigationEnd, ActivatedRoute, Router } from '@angular/router';
 
 const uuidv4 = require('uuid/v4');
 
@@ -41,7 +41,6 @@ describe('NavigationBarComponent', () => {
       ],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([]),
         ResponsiveModule.forRoot()
       ],
       providers: [
@@ -58,6 +57,13 @@ describe('NavigationBarComponent', () => {
               }
             }
           }
+        },
+        {
+          provide: Router,
+          useValue: {
+            events: new Subject(),
+            navigate: () => { }
+          }
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -68,6 +74,7 @@ describe('NavigationBarComponent', () => {
     fixture = TestBed.createComponent(NavigationBarComponent);
     userFactory = TestBed.get(UserFactoryService);
     component = fixture.componentInstance;
+
     // Setup spies
     routerSpy = spyOn(component['router'], 'navigate');
     getStatusSpy = spyOn(component['navigationBarService'], 'getNavigationBarStatus$');
@@ -127,7 +134,7 @@ describe('NavigationBarComponent', () => {
     });
   });
 
-  it('processInitialName() - should process user`s first name when there is value',  () => {
+  it('processInitialName() - should process user`s first name when there is value', () => {
     component['processInitialName']('John');
     expect(component.initialName).toEqual('J');
   });
@@ -228,6 +235,10 @@ describe('NavigationBarComponent', () => {
     let getStructureSpy: jasmine.Spy;
     beforeEach(() => {
       getStructureSpy = spyOn<any>(component, 'getStructure');
+      const mockRouter: any = {
+        events: new Subject()
+      };
+      component['router'] = mockRouter;
     });
 
     it('should call getStructure() once', () => {
