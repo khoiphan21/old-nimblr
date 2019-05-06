@@ -110,11 +110,11 @@ export const getBlock = `query GetBlock($id: ID!) {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -133,11 +133,11 @@ export const listBlocks = `query ListBlocks(
       createdAt
       updatedAt
       value
-      question
-      answers
-      questionType
-      options
       textBlockType
+      answers
+      inputType
+      options
+      isLocked
     }
     nextToken
   }

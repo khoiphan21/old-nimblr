@@ -56,11 +56,12 @@ type Block @model {
   updatedAt: String
   # Attributes from TextBlock
   value: String
-  question: String
-  answers: [String]
-  questionType: QuestionType
-  options: [String]
   textBlockType: TextBlockType
+  # Attributes from InputBlock
+  answers: [String]
+  inputType: InputType
+  options: [String]
+  isLocked: Boolean
 }
 
 enum BlockType {
@@ -68,9 +69,8 @@ enum BlockType {
   QUESTION
 }
 
-enum QuestionType {
-  PARAGRAPH
-  SHORT_ANSWER
+enum InputType {
+  TEXT
   MULTIPLE_CHOICE
   CHECKBOX
 }
@@ -89,8 +89,8 @@ type Query {
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block
   updateTextBlock(input: UpdateTextBlockInput!): Block
-  createQuestionBlock(input: CreateQuestionBlockInput!): Block
-  updateQuestionBlock(input: UpdateQuestionBlockInput!): Block
+  createInputBlock(input: CreateInputBlockInput!): Block
+  updateInputBlock(input: UpdateInputBlockInput!): Block
 }
 
 type Subscription {
@@ -101,8 +101,8 @@ type Subscription {
         "createTextBlock"
         "updateTextBlock"
         "deleteBlock"
-        "createQuestionBlock"
-        "updateQuestionBlock"
+        "createInputBlock"
+        "updateInputBlock"
       ]
     )
   onSpecificDocumentUpdate(id: ID!): Document
@@ -130,32 +130,32 @@ input UpdateTextBlockInput {
   textBlockType: TextBlockType
 }
 
-input CreateQuestionBlockInput {
+input CreateInputBlockInput {
   id: ID
   version: String!
   type: BlockType!
   documentId: String!
   lastUpdatedBy: String!
-  question: String
   answers: [String]
-  questionType: QuestionType
+  inputType: InputType
   options: [String]
+  isLocked: Boolean
 }
 
-input UpdateQuestionBlockInput {
+input UpdateInputBlockInput {
   id: ID!
   version: String!
   type: BlockType
   documentId: String
   lastUpdatedBy: String!
-  question: String
   updatedAt: String
   answers: [String]
-  questionType: QuestionType
+  inputType: InputType
   options: [String]
+  isLocked: Boolean
 }
 
-input UpdateQuestionBlockAnswerInput {
+input UpdateInputBlockAnswerInput {
   id: ID!
   version: String!
   type: BlockType

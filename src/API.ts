@@ -25,9 +25,8 @@ export enum TextBlockType {
 }
 
 
-export enum QuestionType {
-  PARAGRAPH = "PARAGRAPH",
-  SHORT_ANSWER = "SHORT_ANSWER",
+export enum InputType {
+  TEXT = "TEXT",
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
   CHECKBOX = "CHECKBOX",
 }
@@ -44,29 +43,29 @@ export type UpdateTextBlockInput = {
   textBlockType?: TextBlockType | null,
 };
 
-export type CreateQuestionBlockInput = {
+export type CreateInputBlockInput = {
   id?: string | null,
   version: string,
   type: BlockType,
   documentId: string,
   lastUpdatedBy: string,
-  question?: string | null,
   answers?: Array< string | null > | null,
-  questionType?: QuestionType | null,
+  inputType?: InputType | null,
   options?: Array< string | null > | null,
+  isLocked?: boolean | null,
 };
 
-export type UpdateQuestionBlockInput = {
+export type UpdateInputBlockInput = {
   id: string,
   version: string,
   type?: BlockType | null,
   documentId?: string | null,
   lastUpdatedBy: string,
-  question?: string | null,
   updatedAt?: string | null,
   answers?: Array< string | null > | null,
-  questionType?: QuestionType | null,
+  inputType?: InputType | null,
   options?: Array< string | null > | null,
+  isLocked?: boolean | null,
 };
 
 export type CreateUserInput = {
@@ -162,11 +161,11 @@ export type CreateBlockInput = {
   createdAt?: string | null,
   updatedAt?: string | null,
   value?: string | null,
-  question?: string | null,
-  answers?: Array< string | null > | null,
-  questionType?: QuestionType | null,
-  options?: Array< string | null > | null,
   textBlockType?: TextBlockType | null,
+  answers?: Array< string | null > | null,
+  inputType?: InputType | null,
+  options?: Array< string | null > | null,
+  isLocked?: boolean | null,
 };
 
 export type UpdateBlockInput = {
@@ -178,11 +177,11 @@ export type UpdateBlockInput = {
   createdAt?: string | null,
   updatedAt?: string | null,
   value?: string | null,
-  question?: string | null,
-  answers?: Array< string | null > | null,
-  questionType?: QuestionType | null,
-  options?: Array< string | null > | null,
   textBlockType?: TextBlockType | null,
+  answers?: Array< string | null > | null,
+  inputType?: InputType | null,
+  options?: Array< string | null > | null,
+  isLocked?: boolean | null,
 };
 
 export type DeleteBlockInput = {
@@ -273,11 +272,11 @@ export type ModelBlockFilterInput = {
   createdAt?: ModelStringFilterInput | null,
   updatedAt?: ModelStringFilterInput | null,
   value?: ModelStringFilterInput | null,
-  question?: ModelStringFilterInput | null,
-  answers?: ModelStringFilterInput | null,
-  questionType?: ModelQuestionTypeFilterInput | null,
-  options?: ModelStringFilterInput | null,
   textBlockType?: ModelTextBlockTypeFilterInput | null,
+  answers?: ModelStringFilterInput | null,
+  inputType?: ModelInputTypeFilterInput | null,
+  options?: ModelStringFilterInput | null,
+  isLocked?: ModelBooleanFilterInput | null,
   and?: Array< ModelBlockFilterInput | null > | null,
   or?: Array< ModelBlockFilterInput | null > | null,
   not?: ModelBlockFilterInput | null,
@@ -288,14 +287,19 @@ export type ModelBlockTypeFilterInput = {
   ne?: BlockType | null,
 };
 
-export type ModelQuestionTypeFilterInput = {
-  eq?: QuestionType | null,
-  ne?: QuestionType | null,
-};
-
 export type ModelTextBlockTypeFilterInput = {
   eq?: TextBlockType | null,
   ne?: TextBlockType | null,
+};
+
+export type ModelInputTypeFilterInput = {
+  eq?: InputType | null,
+  ne?: InputType | null,
+};
+
+export type ModelBooleanFilterInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
 };
 
 export type CreateTextBlockMutationVariables = {
@@ -313,11 +317,11 @@ export type CreateTextBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -336,20 +340,20 @@ export type UpdateTextBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
-export type CreateQuestionBlockMutationVariables = {
-  input: CreateQuestionBlockInput,
+export type CreateInputBlockMutationVariables = {
+  input: CreateInputBlockInput,
 };
 
-export type CreateQuestionBlockMutation = {
-  createQuestionBlock:  {
+export type CreateInputBlockMutation = {
+  createInputBlock:  {
     __typename: "Block",
     id: string,
     version: string | null,
@@ -359,20 +363,20 @@ export type CreateQuestionBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
-export type UpdateQuestionBlockMutationVariables = {
-  input: UpdateQuestionBlockInput,
+export type UpdateInputBlockMutationVariables = {
+  input: UpdateInputBlockInput,
 };
 
-export type UpdateQuestionBlockMutation = {
-  updateQuestionBlock:  {
+export type UpdateInputBlockMutation = {
+  updateInputBlock:  {
     __typename: "Block",
     id: string,
     version: string | null,
@@ -382,11 +386,11 @@ export type UpdateQuestionBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -531,11 +535,11 @@ export type CreateBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -554,11 +558,11 @@ export type UpdateBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -577,11 +581,11 @@ export type DeleteBlockMutation = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -722,11 +726,11 @@ export type GetBlockQuery = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -749,11 +753,11 @@ export type ListBlocksQuery = {
       createdAt: string | null,
       updatedAt: string | null,
       value: string | null,
-      question: string | null,
-      answers: Array< string | null > | null,
-      questionType: QuestionType | null,
-      options: Array< string | null > | null,
       textBlockType: TextBlockType | null,
+      answers: Array< string | null > | null,
+      inputType: InputType | null,
+      options: Array< string | null > | null,
+      isLocked: boolean | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -774,11 +778,11 @@ export type OnUpdateBlockInDocumentSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -921,11 +925,11 @@ export type OnCreateBlockSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -940,11 +944,11 @@ export type OnUpdateBlockSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
 
@@ -959,10 +963,10 @@ export type OnDeleteBlockSubscription = {
     createdAt: string | null,
     updatedAt: string | null,
     value: string | null,
-    question: string | null,
-    answers: Array< string | null > | null,
-    questionType: QuestionType | null,
-    options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+    answers: Array< string | null > | null,
+    inputType: InputType | null,
+    options: Array< string | null > | null,
+    isLocked: boolean | null,
   } | null,
 };
