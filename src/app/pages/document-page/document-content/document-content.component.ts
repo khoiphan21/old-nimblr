@@ -81,6 +81,7 @@ export class DocumentContentComponent implements OnInit {
       this.isUserLoggedIn = false;
     }
     try {
+      this.checkIsChildDocument();
       await this.retrieveDocumentData();
     } catch (error) {
       if (this.isUserLoggedIn) {
@@ -124,7 +125,6 @@ export class DocumentContentComponent implements OnInit {
       // subscribe to and process the document from the observable
       this.document$.subscribe((document: Document) => {
         if (document === null) { return; }
-        this.checkIsChildDocument();
 
         if (!this.versionService.isRegistered(document.version)) {
           this.updateStoredProperties(document);

@@ -98,6 +98,7 @@ describe('DocumentContentComponent', () => {
       checkUserSpy = spyOn(component, 'checkUser');
       retrieveDocumentSpy = spyOn<any>(component, 'retrieveDocumentData');
       checkUserSpy.and.returnValue(Promise.resolve(testUser));
+      spyOn<any>(component, 'checkIsChildDocument');
     });
 
     it('should call to check the user', () => {
