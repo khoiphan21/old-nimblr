@@ -20,8 +20,6 @@ export enum BlockType {
 export enum TextBlockType {
   TEXT = "TEXT",
   HEADER = "HEADER",
-  BULLET = "BULLET",
-  ORDEREDLIST = "ORDEREDLIST",
 }
 
 
@@ -582,6 +580,32 @@ export type DeleteBlockMutation = {
     questionType: QuestionType | null,
     options: Array< string | null > | null,
     textBlockType: TextBlockType | null,
+  } | null,
+};
+
+export type GetDocumentLambdaQueryVariables = {
+  id: string,
+};
+
+export type GetDocumentLambdaQuery = {
+  getDocumentLambda:  {
+    __typename: "Document",
+    id: string,
+    version: string | null,
+    type: DocumentType | null,
+    ownerId: string | null,
+    lastUpdatedBy: string | null,
+    sharingStatus: SharingStatus | null,
+    title: string | null,
+    editorIds: Array< string | null > | null,
+    viewerIds: Array< string | null > | null,
+    blockIds: Array< string | null > | null,
+    createdAt: string | null,
+    updatedAt: string | null,
+    submissionDocIds: Array< string | null > | null,
+    recipientEmail: string | null,
+    submittedAt: string | null,
+    submissionStatus: SubmissionStatus | null,
   } | null,
 };
 
