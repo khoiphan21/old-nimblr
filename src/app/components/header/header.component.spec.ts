@@ -9,6 +9,7 @@ import { configureTestSuite } from 'ng-bullet';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharingStatus } from 'src/API';
 import { ResponsiveModule } from 'ngx-responsive';
+import { take } from 'rxjs/operators';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -53,7 +54,7 @@ describe('HeaderComponent', () => {
 
   describe('showInvite()', () => {
     it('should emit the event value as true', done => {
-      component.showInviteEvent.subscribe(value => {
+      component.showInviteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toBe(true);
         done();
       });
@@ -75,7 +76,7 @@ describe('HeaderComponent', () => {
 
   describe('changeSharingStatus()', () => {
     it('should emit the new status', done => {
-      component.sharingChange.subscribe(status => {
+      component.sharingChange.pipe(take(1)).subscribe(status => {
         expect(status).toEqual(SharingStatus.PUBLIC);
         done();
       });
@@ -85,7 +86,7 @@ describe('HeaderComponent', () => {
 
   describe('saveAsTemplate()', () => {
     it('should emit the event', done => {
-      component.saveAsTemplateEvent.subscribe(() => {
+      component.saveAsTemplateEvent.pipe(take(1)).subscribe(() => {
         expect().nothing();
         done();
       });
@@ -94,15 +95,23 @@ describe('HeaderComponent', () => {
   });
 
   describe('deleteThisDocument()', () => {
+    let navigationSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      navigationSpy = spyOn(component['router'], 'navigate');
+    });
+
     it('should emit deleteDocumentEvent', done => {
-      component.deleteDocumentEvent.subscribe(() => done());
+      component.deleteDocumentEvent.pipe(take(1)).subscribe(() => {
+        expect().nothing();
+        done();
+      });
       component.deleteThisDocument();
     });
 
     it('should trigger page redirection', () => {
-      const spyNavi = spyOn(component['router'], 'navigate');
       component.deleteThisDocument();
-      expect(spyNavi.calls.count()).toBe(1);
+      expect(navigationSpy.calls.count()).toBe(1);
     });
   });
 

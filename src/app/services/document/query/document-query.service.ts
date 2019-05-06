@@ -35,8 +35,8 @@ export class DocumentQueryService {
     if (!this.subscriptionMap.has(id)) {
       this.subscribeToUpdate(id);
     }
-    this.graphQlService.query(getDocumentLambda, { id }).then(response => {
 
+    this.graphQlService.query(getDocumentLambda, { id }).then(response => {
       try {
         const document: Document = this.parseDocument(response, id);
         document$.next(document);
@@ -44,9 +44,9 @@ export class DocumentQueryService {
         document$.error(error);
       }
 
-    }).catch(error =>
-      document$.error(Error(`[DocumentQueryService] Unable to send query: ${error.message}`))
-    );
+    }).catch(error => {
+      document$.error(Error(`[DocumentQueryService] Unable to send query: ${error.message}`));
+    });
 
     return document$;
   }

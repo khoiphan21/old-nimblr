@@ -37,12 +37,18 @@ describe('HeaderOptionsComponent', () => {
 
   describe('deleteDocument()', () => {
     it('should emit deleteDocumentEvent fucntion', done => {
-      component.deleteDocumentEvent.pipe(take(1)).subscribe(() => done());
+      component.deleteDocumentEvent.pipe(take(1)).subscribe(() => {
+        done();
+        expect().nothing();
+      });
       component.deleteDocument();
     });
 
     it('should emit the event to hide option', done => {
-      component.hideOptionEvent.pipe(take(1)).subscribe(() => done());
+      component.hideOptionEvent.pipe(take(1)).subscribe(() => {
+        done();
+        expect().nothing();
+      });
       component.deleteDocument();
     });
   });

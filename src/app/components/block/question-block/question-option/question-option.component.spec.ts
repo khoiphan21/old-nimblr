@@ -7,7 +7,7 @@ import { QuestionType } from 'src/API';
 import { configureTestSuite } from 'ng-bullet';
 import { take } from 'rxjs/operators';
 
-fdescribe('QuestionOptionComponent', () => {
+describe('QuestionOptionComponent', () => {
   let component: QuestionOptionComponent;
   let fixture: ComponentFixture<QuestionOptionComponent>;
   let emitValueSpy: jasmine.Spy;

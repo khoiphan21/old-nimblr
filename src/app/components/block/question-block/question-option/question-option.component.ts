@@ -132,13 +132,13 @@ export class QuestionOptionComponent implements OnChanges {
     this.emitQuestionValues();
   }
 
-  async triggerUpdateValue() {
+  async triggerUpdateValue(waitTime = 500) {
     return new Promise((resolve) => {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.emitQuestionValues();
         resolve();
-      }, 500);
+      }, waitTime);
     });
   }
 
