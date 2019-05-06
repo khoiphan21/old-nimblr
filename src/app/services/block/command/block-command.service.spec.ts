@@ -673,7 +673,8 @@ describe('BlockCommandService', () => {
         question: block.question,
         answers: block.answers,
         questionType: block.questionType,
-        options: block.options
+        options: block.options,
+        textBlockType: block.textBlockType
       };
       expect(createSpy).toHaveBeenCalledWith(arg);
     }
