@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Document } from 'src/app/classes/document/document';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { getDocument } from '../../../../graphql/queries';
+import { getDocumentLambda } from '../../../../graphql/queries';
 import { DocumentFactoryService } from '../factory/document-factory.service';
 import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
 
@@ -35,7 +35,7 @@ export class DocumentQueryService {
     if (!this.subscriptionMap.has(id)) {
       this.subscribeToUpdate(id);
     }
-    this.graphQlService.query(getDocument, { id }).then(response => {
+    this.graphQlService.query(getDocumentLambda, { id }).then(response => {
 
       try {
         const document: Document = this.parseDocument(response, id);
@@ -52,7 +52,7 @@ export class DocumentQueryService {
   }
 
   /**
-   * Parse the raw response from getDocument query
+   * Parse the raw response from getDocumentLambda query
    *
    * @param response the raw response from the backend
    * @param id The id of the document, for error message formatting
@@ -61,7 +61,7 @@ export class DocumentQueryService {
     let data: any;
 
     try {
-      data = response.data.getDocument;
+      data = response.data.getDocumentLambda;
     } catch (error) {
       throw new Error(`Unable to parse response: ${error.message}`);
     }

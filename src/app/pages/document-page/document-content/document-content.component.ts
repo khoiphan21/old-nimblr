@@ -20,8 +20,6 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
 import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
-import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
-import { EmailService } from 'src/app/services/email/email.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 import { CommandService } from 'src/app/services/command/command.service';
@@ -63,12 +61,10 @@ export class DocumentContentComponent implements OnInit {
   constructor(
     private documentQueryService: DocumentQueryService,
     private documentCommandService: DocumentCommandService,
-    private docFactoryService: DocumentFactoryService,
     private blockCommandService: BlockCommandService,
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
     private versionService: VersionService,
-    private emailService: EmailService,
     private accountService: AccountService,
     private route: ActivatedRoute,
     private location: Location,
@@ -85,10 +81,20 @@ export class DocumentContentComponent implements OnInit {
       this.isUserLoggedIn = false;
     }
     try {
-      this.retrieveDocumentData();
+      await this.retrieveDocumentData();
     } catch (error) {
-      const message = `DocumentPage failed to load: ${error.message}`;
-      throw new Error(message);
+      if (this.isUserLoggedIn) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        const paramMap: ParamMap = await this.getParamMap();
+        const email = paramMap.get('email');
+        const document = paramMap.get('id');
+        if (email) {
+          this.router.navigate(['/register', { email, document }]);
+        } else {
+          this.router.navigate(['/register', { document }]);
+        }
+      }
     }
     // Initialize internal values
     this.docTitle = '';
@@ -137,6 +143,12 @@ export class DocumentContentComponent implements OnInit {
 
   }
 
+  private async getParamMap(): Promise<ParamMap> {
+    return new Promise((resolve, reject) => {
+      this.route.paramMap.pipe(take(1)).subscribe(resolve, reject);
+    });
+  }
+
   private updateStoredProperties(document: Document) {
     // Update the values to be used in rendering
     this.documentId = document.id;
@@ -151,9 +163,8 @@ export class DocumentContentComponent implements OnInit {
 
   private checkIsChildDocument() {
     const url = this.router.url;
-    const trimmedUrl = url.substring(0, url.length - 37);
-    const toBeValidateUrl = trimmedUrl.substr(-8, 8);
-    if (toBeValidateUrl === 'document') {
+    const parts = url.split('/');
+    if (parts.length === 3) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;

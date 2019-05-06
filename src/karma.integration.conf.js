@@ -26,7 +26,7 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
-    browserDisconnectTimeout: 5000,
+    browserDisconnectTimeout: 15000,
     browserDisconnectTolerance: 3,
     browserNoActivityTimeout: 20000,
     flags: [

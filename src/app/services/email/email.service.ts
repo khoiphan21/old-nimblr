@@ -34,8 +34,11 @@ export class EmailService {
     const subject = 'Irisa Invitation Link';
 
     const domain = 'localhost:4200';
+
+    const link = `http://${domain}/document/${input.documentId};email=${input.email}`;
+
     // The email body for recipients with non-HTML email clients.
-    const bodyText = `Invitation to shared document: http://${domain}/document/${input.documentId}`;
+    const bodyText = `Invitation to shared document: ${link}`;
 
     // The HTML body of the email.
     const bodyHTML = `
@@ -44,7 +47,7 @@ export class EmailService {
       <body>
         <h1>Invitation to shared document</h1>
         <p>Click on this link to access document:
-          <a href='http://${domain}/document/${input.documentId}'>Shared Document</a>
+          <a href='${link}'>Shared Document</a>
         </p>
       </body>
     </html>`;

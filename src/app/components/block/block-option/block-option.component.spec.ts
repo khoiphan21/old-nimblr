@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlockOptionComponent } from './block-option.component';
 import { BlockType, TextBlockType } from 'src/API';
 import { take } from 'rxjs/operators';
