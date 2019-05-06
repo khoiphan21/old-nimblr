@@ -18,6 +18,7 @@ import { UUID } from '../../services/document/command/document-command.service';
 import { NavigationEnd, ActivatedRoute } from '@angular/router';
 
 const uuidv4 = require('uuid/v4');
+
 // tslint:disable:no-string-literal
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;

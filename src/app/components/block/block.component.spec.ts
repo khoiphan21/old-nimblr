@@ -5,12 +5,11 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { BlockType } from 'src/API';
+import { BlockType, TextBlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CreateBlockEvent } from './createBlockEvent';
 import { configureTestSuite } from 'ng-bullet';
-import { TextBlockType } from '../../../API';
 import { ResponsiveModule } from 'ngx-responsive';
 
 const uuidv4 = require('uuid/v4');
@@ -148,16 +147,25 @@ describe('BlockComponent', () => {
   });
 
   describe('styleBlock()', () => {
+    let mockBlock: any;
+
+    beforeEach(() => {
+      mockBlock = {
+        type: BlockType.TEXT,
+        textBlockType: TextBlockType.TEXT
+      };
+    });
 
     it('should not set the style if it is TEXT type', () => {
-      component.block = blockFactoryService.createAppBlock(rawData);
+      component.block = mockBlock;
+      component.blockStyle = undefined;
       component['styleBlock']();
       expect(component.blockStyle).toEqual(undefined);
     });
 
     it('should set the style if it is HEADER type', () => {
-      rawData.textBlockType = TextBlockType.HEADER;
-      component.block = blockFactoryService.createAppBlock(rawData);
+      mockBlock.textBlockType = TextBlockType.HEADER;
+      component.block = mockBlock;
       component['styleBlock']();
       expect(component.blockStyle).toEqual(BlockStyle.HEADER);
     });

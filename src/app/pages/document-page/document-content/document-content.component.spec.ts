@@ -20,7 +20,6 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
-import { UUID } from 'src/app/services/document/command/document-command.service';
 import { CommandType } from '../../../classes/command/commandType';
 
 const uuidv4 = require('uuid/v4');
@@ -902,7 +901,7 @@ describe('DocumentContentComponent', () => {
     });
 
     it('should call the command service', async () => {
-      spyDeleteDocument.and.returnValue(Promise.resolve('test delete'))
+      spyDeleteDocument.and.returnValue(Promise.resolve('test delete'));
       await component.deleteThisDocument();
       expect(spyDeleteDocument.calls.count()).toBe(1);
     });
