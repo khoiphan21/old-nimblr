@@ -49,7 +49,7 @@ describe('RegisterPageComponent', () => {
     // setup spies
     registerAppUserSpy = spyOn(accountService, 'registerAppUser');
     registerAppUserSpy.and.returnValue(Promise.resolve());
-
+    component['buildForm']();
     fixture.detectChanges();
   });
 
@@ -73,11 +73,11 @@ describe('RegisterPageComponent', () => {
     });
 
     describe('check account verification', () => {
-      it(`should go straight to register step 3 (verification) if user's account is unverified`, () => {
+      it(`should go straight to register step 3 (verification) if user's account is unverified`, async () => {
         const email = 'test@email.com';
         const password = 'Password1234';
         accountService.setUnverifiedUser(email, password);
-        component.ngOnInit();
+        await component.ngOnInit();
         expect(component.steps).toBe('three');
         expect(component.newCognitoUser.username).toEqual(email);
         expect(component.newCognitoUser.password).toEqual(password);
@@ -89,8 +89,8 @@ describe('RegisterPageComponent', () => {
       });
     });
 
-    it('should call to check route params', () => {
-      component.ngOnInit();
+    it('should call to check route params', async () => {
+      await component.ngOnInit();
       expect(routeParamSpy).toHaveBeenCalled();
     });
 
