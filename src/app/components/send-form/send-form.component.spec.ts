@@ -5,7 +5,7 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { FormsModule } from '@angular/forms';
 import { configureTestSuite } from 'ng-bullet';
 
-describe('SendFormComponent', () => {
+fdescribe('SendFormComponent', () => {
   let component: SendFormComponent;
   let fixture: ComponentFixture<SendFormComponent>;
 
@@ -70,7 +70,7 @@ describe('SendFormComponent', () => {
   it('should add the selected recipient into the list', () => {
     const recipient = 'test@gmail.com';
     component.recipientInput = recipient;
-    component.addRecipient();
+    component['addRecipient']();
     expect(component.recipientList[0]).toBe(recipient);
   });
 
@@ -83,21 +83,21 @@ describe('SendFormComponent', () => {
     it('should not call removeRecipientFromList() if the string is not empty', () => {
       component.recipientList = ['test'];
       component.recipientInput = 'test';
-      component.deleteRecipient();
+      component['deleteRecipient']();
       expect(removeRecipientSpy).not.toHaveBeenCalled();
     });
 
     it('should not call removeRecipientFromList() if the recipientList is empty', () => {
       component.recipientList = [];
       component.recipientInput = '';
-      component.deleteRecipient();
+      component['deleteRecipient']();
       expect(removeRecipientSpy).not.toHaveBeenCalled();
     });
 
     it('should remove the last recipient in the list', () => {
       component.recipientList = ['test'];
       component.recipientInput = '';
-      component.deleteRecipient();
+      component['deleteRecipient']();
       expect(removeRecipientSpy).toHaveBeenCalledWith(0);
     });
   });
