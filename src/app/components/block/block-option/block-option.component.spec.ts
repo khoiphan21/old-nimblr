@@ -200,17 +200,17 @@ describe('BlockOptionComponent', () => {
       });
     });
 
-    describe('addQuestionBlock()', () => {
+    describe('addInputBlock()', () => {
       it('should emit a CreateBlockInfo event', done => {
         component.createBlock.pipe(take(1)).subscribe(value => {
-          expect(value.type).toEqual(BlockType.QUESTION);
+          expect(value.type).toEqual(BlockType.INPUT);
           done();
         });
-        component.addQuestionBlock();
+        component.addInputBlock();
       });
 
       it('should call to hide the container', () => {
-        component.addQuestionBlock();
+        component.addInputBlock();
         expect(hideSpy).toHaveBeenCalled();
       });
     });

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType, CreateQuestionBlockInput, TextBlockType } from 'src/API';
+import { BlockType, InputType, CreateInputBlockInput, TextBlockType } from 'src/API';
 import { CreateTextBlockInput } from '../../../../API';
 import { deleteBlock } from '../../../../graphql/mutations';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
@@ -68,37 +68,34 @@ describe('(Integration) BlockCommandService', () => {
       expect(response.data.deleteBlock.id).toEqual(textInput.id);
     });
 
-    it('QuestionBlock - should update a block in the database', async () => {
-      const questionInput = {
+    it('InputBlock - should update a block in the database', async () => {
+      const inputInput = {
         id: uuidv4(),
         version: uuidv4(),
-        type: BlockType.QUESTION,
+        type: BlockType.INPUT,
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
-        question: 'QuestionBlock test',
         answers: [],
-        questionType: QuestionType.PARAGRAPH,
+        inputType: InputType.TEXT,
         options: null
       };
 
-      await service.createBlock(questionInput);
+      await service.createBlock(inputInput);
 
       // Update the block with new details
-      questionInput.question = 'This is an updated question';
-      questionInput.questionType = QuestionType.CHECKBOX;
-      questionInput.options = ['option 1'];
-      response = await service.updateBlock(questionInput);
+      inputInput.inputType = InputType.CHECKBOX;
+      inputInput.options = ['option 1'];
+      response = await service.updateBlock(inputInput);
 
       // Check that the response is correct
-      const updatedBlock = response.data.updateQuestionBlock;
+      const updatedBlock = response.data.updateInputBlock;
       const id = updatedBlock.id;
-      expect(updatedBlock.question).toEqual(questionInput.question);
-      expect(updatedBlock.questionType).toEqual(questionInput.questionType);
-      expect(updatedBlock.options).toEqual(questionInput.options);
+      expect(updatedBlock.inputType).toEqual(inputInput.inputType);
+      expect(updatedBlock.options).toEqual(inputInput.options);
 
       // Now delete the block
       response = await graphQlService.query(deleteBlock, { input: { id } });
-      expect(response.data.deleteBlock.id).toEqual(questionInput.id);
+      expect(response.data.deleteBlock.id).toEqual(inputInput.id);
     });
   });
 
@@ -134,39 +131,37 @@ describe('(Integration) BlockCommandService', () => {
       expect(response.data.deleteBlock.id).toEqual(textInput.id);
     });
 
-    it('QuestionBlock - should create a block in the database', async () => {
-      const questionInput: CreateQuestionBlockInput = {
+    it('InputBlock - should create a block in the database', async () => {
+      const inputInput: CreateInputBlockInput = {
         id: uuidv4(),
         version: uuidv4(),
-        type: BlockType.QUESTION,
+        type: BlockType.INPUT,
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
-        question: 'QuestionBlock test',
         answers: [],
-        questionType: QuestionType.PARAGRAPH,
+        inputType: InputType.TEXT,
         options: null
       };
       // Create a block
-      response = await service.createBlock(questionInput);
+      response = await service.createBlock(inputInput);
 
       // Now check the properties
-      const id = response.data.createQuestionBlock.id;
-      const createdBlock: any = response.data.createQuestionBlock;
+      const id = response.data.createInputBlock.id;
+      const createdBlock: any = response.data.createInputBlock;
       // Check the created block here
-      expect(createdBlock.id).toEqual(questionInput.id);
-      expect(createdBlock.version).toEqual(questionInput.version);
-      expect(createdBlock.type).toEqual(questionInput.type);
-      expect(createdBlock.documentId).toEqual(questionInput.documentId);
-      expect(createdBlock.lastUpdatedBy).toEqual(questionInput.lastUpdatedBy);
-      expect(createdBlock.question).toEqual(questionInput.question);
-      expect(createdBlock.answers).toEqual(questionInput.answers);
-      expect(createdBlock.questionType).toEqual(questionInput.questionType);
-      expect(createdBlock.options).toEqual(questionInput.options);
+      expect(createdBlock.id).toEqual(inputInput.id);
+      expect(createdBlock.version).toEqual(inputInput.version);
+      expect(createdBlock.type).toEqual(inputInput.type);
+      expect(createdBlock.documentId).toEqual(inputInput.documentId);
+      expect(createdBlock.lastUpdatedBy).toEqual(inputInput.lastUpdatedBy);
+      expect(createdBlock.answers).toEqual(inputInput.answers);
+      expect(createdBlock.inputType).toEqual(inputInput.inputType);
+      expect(createdBlock.options).toEqual(inputInput.options);
 
       // Now delete the block
       response = await graphQlService.query(deleteBlock, { input: { id } });
 
-      expect(response.data.deleteBlock.id).toEqual(questionInput.id);
+      expect(response.data.deleteBlock.id).toEqual(inputInput.id);
     });
   });
 
@@ -180,8 +175,8 @@ describe('(Integration) BlockCommandService', () => {
       await runTestFor(block);
     });
 
-    it('(QuestionBlock) should create a duplicate with all the right properties', async () => {
-      const block = blockFactory.createNewQuestionBlock({
+    it('(InputBlock) should create a duplicate with all the right properties', async () => {
+      const block = blockFactory.createNewInputBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       });

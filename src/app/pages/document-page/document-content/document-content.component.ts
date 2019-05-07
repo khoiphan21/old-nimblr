@@ -198,8 +198,8 @@ export class DocumentContentComponent implements OnInit {
         case BlockType.TEXT:
           block = this.createAndSelectTextBlock(event.textBlockType, input);
           break;
-        case BlockType.QUESTION:
-          block = this.blockFactoryService.createNewQuestionBlock(input);
+        case BlockType.INPUT:
+          block = this.blockFactoryService.createNewInputBlock(input);
           break;
         default:
           throw Error(`BlockType "${event.type}" is not supported`);

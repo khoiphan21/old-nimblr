@@ -6,7 +6,7 @@
 }
 
 $answer-margin-top: 25px;
-form.question-setup {
+form.input-setup {
     width: 100%;
     .option {
         width: 100%;
@@ -99,7 +99,7 @@ form.question-setup {
 }
 
 @include media(lg) {
-    form.question-setup {
+    form.input-setup {
         width: 100%;
         .option {
             width: 100%;

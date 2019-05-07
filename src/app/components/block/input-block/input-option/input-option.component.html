@@ -1,5 +1,5 @@
 <div class="row no-pad" *ngIf="currentType" [ngSwitch]=currentType>
-    <form class="question-setup" [formGroup]="formGroup" *ngIf="formGroup && (currentType === 'CHECKBOX' || currentType === 'MULTIPLE_CHOICE')">
+    <form class="input-setup" [formGroup]="formGroup" *ngIf="formGroup && (currentType === 'CHECKBOX' || currentType === 'MULTIPLE_CHOICE')">
         <div formArrayName="options">
             <div cdkDropList (cdkDropListDropped)="drop($event)">
                 <div *ngFor="let option of formGroup.get('options').controls; let i=index" cdkDrag class="option checkbox" [formGroupName]="i">
@@ -18,7 +18,7 @@
             </div>
         </div>
     </form>
-    <div class="content text-block" *ngIf="currentType === 'SHORT_ANSWER' || currentType === 'PARAGRAPH'">
+    <div class="content text-block" *ngIf="currentType === 'TEXT' || currentType === 'PARAGRAPH'">
         <div class="text-input" contenteditable="true" ngDefaultControl [(ngModel)]="answers[0]" (ngModelChange)="triggerUpdateValue()"></div>
         <div class="placeholder" *ngIf="answers[0] === '' || answers[0] === undefined">Type your response here</div>
     </div>

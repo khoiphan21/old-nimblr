@@ -1,8 +1,8 @@
-import { BlockType, QuestionType } from 'src/API';
-import { QuestionBlock } from './question-block';
+import { BlockType, InputType } from 'src/API';
+import { InputBlock } from './input-block';
 const uuidv4 = require('uuid/v4');
 
-describe('QuestionBlock -', () => {
+describe('InputBlock -', () => {
   let input: any;
 
   // This is called first so that Object.keys(input) can be used later
@@ -12,15 +12,14 @@ describe('QuestionBlock -', () => {
   function resetInput() {
     input = {
       id: uuidv4(),
-      type: BlockType.QUESTION, // only needed for test automation
+      type: BlockType.INPUT, // only needed for test automation
       version: uuidv4(),
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      question: 'Is this a test value?',
       answers: [],
-      questionType: QuestionType.SHORT_ANSWER,
+      inputType: InputType.TEXT,
       options: []
     };
   }
@@ -50,10 +49,10 @@ describe('QuestionBlock -', () => {
     function runValidationTest(newInput, message) {
       try {
         /* tslint:disable:no-unused-expression */
-        new QuestionBlock(newInput);
+        new InputBlock(newInput);
         fail('error must be thrown');
       } catch (error) {
-        const base = 'QuestionBlock failed to create: ';
+        const base = 'InputBlock failed to create: ';
         expect(error.message).toBe(base + message);
       }
     }
@@ -74,10 +73,10 @@ describe('QuestionBlock -', () => {
       });
     });
 
-    it('should throw error if question type is not supported', () => {
+    it('should throw error if input type is not supported', () => {
       const input2 = input as any;
-      input2.questionType = 'abcd';
-      runValidationTest(input, 'QuestionType not supported');
+      input2.inputType = 'abcd';
+      runValidationTest(input, 'InputType not supported');
     });
 
     describe(' - Validating options and answers', () => {
@@ -101,10 +100,10 @@ describe('QuestionBlock -', () => {
   });
 
   describe('Storing Values', () => {
-    let block: QuestionBlock;
+    let block: InputBlock;
 
     beforeEach(() => {
-      block = new QuestionBlock(input);
+      block = new InputBlock(input);
     });
 
     Object.keys(input).forEach(property => {
@@ -113,86 +112,72 @@ describe('QuestionBlock -', () => {
       });
     });
 
-    it('should set the right value for `question`', () => {
-      input.question = 'This is a question';
-      input.answers = ['answer'];
-      const questionBlock = new QuestionBlock(input);
-      expect(questionBlock.question).toEqual('This is a question');
-    });
-
-    it('should set the value of `question` to empty string if null', () => {
-      input.question = null;
-      input.answers = ['answer'];
-      const questionBlock = new QuestionBlock(input);
-      expect(questionBlock.question).toEqual('');
-    });
-
-    it('should set the right value for `questionType`', () => {
-      input.questionType = QuestionType.PARAGRAPH;
-      const questionBlock = new QuestionBlock(input);
-      expect(questionBlock.questionType).toEqual(QuestionType.PARAGRAPH);
+    it('should set the right value for `inputType`', () => {
+      input.inputType = InputType.TEXT;
+      const inputBlock = new InputBlock(input);
+      expect(inputBlock.inputType).toEqual(InputType.TEXT);
     });
 
     it('should set the right value for `options`', () => {
-      input.questionType = QuestionType.CHECKBOX;
+      input.inputType = InputType.CHECKBOX;
       input.answers = ['this is the answer 1'];
       input.options = ['this is the answer 1', 'this is the answer 2'];
-      const questionBlock = new QuestionBlock(input);
-      expect(questionBlock.options[0]).toEqual('this is the answer 1');
-      expect(questionBlock.options[1]).toEqual('this is the answer 2');
+      const inputBlock = new InputBlock(input);
+      expect(inputBlock.options[0]).toEqual('this is the answer 1');
+      expect(inputBlock.options[1]).toEqual('this is the answer 2');
     });
 
     it('should set the right value for `answers` ', () => {
-      input.questionType = QuestionType.CHECKBOX;
+      input.inputType = InputType.CHECKBOX;
       input.answers = ['this is the answer 2'];
       input.options = ['this is the answer 2'];
-      const block = new QuestionBlock(input);
+      const block = new InputBlock(input);
       expect(block.answers[0]).toEqual('this is the answer 2');
     });
 
     describe('handling "answers" and "options" arrays', () => {
       it('should remove any answers that are not in options', () => {
-        input.questionType = QuestionType.CHECKBOX;
+        input.inputType = InputType.CHECKBOX;
         input.answers = ['this is the answer 2', 'EXTRA'];
         input.options = ['this is the answer 2'];
-        const questionBlock = new QuestionBlock(input);
-        expect(questionBlock.answers.length).toBe(1);
-        expect(questionBlock.answers[0]).toEqual('this is the answer 2');
+        const inputBlock = new InputBlock(input);
+        expect(inputBlock.answers.length).toBe(1);
+        expect(inputBlock.answers[0]).toEqual('this is the answer 2');
       });
 
       describe('(null or empty)', () => {
         it('should set answers to empty array if null or undefined', () => {
-          input.questionType = QuestionType.CHECKBOX;
+          input.inputType = InputType.CHECKBOX;
           input.answers = null;
           input.options = [];
-          let questionBlock = new QuestionBlock(input);
-          expect(questionBlock.options.length).toBe(0);
+          let inputBlock = new InputBlock(input);
+          expect(inputBlock.options.length).toBe(0);
           input.answers = undefined;
-          questionBlock = new QuestionBlock(input);
-          expect(questionBlock.options.length).toBe(0);
+          inputBlock = new InputBlock(input);
+          expect(inputBlock.options.length).toBe(0);
         });
         it('should set options to empty array if null or undefined', () => {
-          input.questionType = QuestionType.CHECKBOX;
+          input.inputType = InputType.CHECKBOX;
           input.answers = [];
           input.options = null;
-          let questionBlock = new QuestionBlock(input);
-          expect(questionBlock.options.length).toBe(0);
+          let inputBlock = new InputBlock(input);
+          expect(inputBlock.options.length).toBe(0);
           input.options = undefined;
-          questionBlock = new QuestionBlock(input);
-          expect(questionBlock.options.length).toBe(0);
+          inputBlock = new InputBlock(input);
+          expect(inputBlock.options.length).toBe(0);
         });
         it('should change both options and answers to empty array', () => {
-          input.questionType = QuestionType.CHECKBOX;
+          input.inputType = InputType.CHECKBOX;
           input.answers = null;
           input.options = null;
-          let questionBlock = new QuestionBlock(input);
-          expect(questionBlock.options.length).toBe(0);
-          expect(questionBlock.answers.length).toBe(0);
+          let inputBlock = new InputBlock(input);
+          expect(inputBlock.options.length).toBe(0);
+          expect(inputBlock.answers.length).toBe(0);
           input.answer = undefined;
           input.options = undefined;
-          questionBlock = new QuestionBlock(input);
-          expect(questionBlock.options.length).toBe(0);
-          expect(questionBlock.answers.length).toBe(0);
+          inputBlock = new InputBlock(input);
+          expect(inputBlock.options.length).toBe(0);
+          expect(inputBlock.answers.length).toBe(0);
         });
       });
     });
@@ -203,14 +188,14 @@ describe('QuestionBlock -', () => {
     it('should not have mutable answers', () => {
       input.answers = ['answer1'];
       input.options = ['answer1', 'answer2'];
-      const block = new QuestionBlock(input);
+      const block = new InputBlock(input);
       block.answers.push('answer2');
       expect(block.answers.length).toEqual(1);
     });
     it('should not have mutable options', () => {
       input.answers = ['answer1'];
       input.options = ['answer1'];
-      const block = new QuestionBlock(input);
+      const block = new InputBlock(input);
       block.options.push('answer2');
       expect(block.options.length).toEqual(1);
     });

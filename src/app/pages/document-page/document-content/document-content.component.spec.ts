@@ -15,7 +15,7 @@ import { SharingStatus, BlockType, DocumentType, TextBlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
-import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { InputBlock } from 'src/app/classes/block/input-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
@@ -521,16 +521,16 @@ describe('DocumentContentComponent', () => {
 
     });
 
-    describe('adding new QuestionBlock', () => {
+    describe('adding new InputBlock', () => {
 
       beforeEach(async () => {
-        mockBlockInfo.type = BlockType.QUESTION;
+        mockBlockInfo.type = BlockType.INPUT;
         block = await component.addNewBlock(mockBlockInfo);
       });
 
       describe('[HAPPY PATH]', () => {
-        it('should resolve a QuestionBlock if successful', () => {
-          expect(block instanceof QuestionBlock).toBe(true);
+        it('should resolve a InputBlock if successful', () => {
+          expect(block instanceof InputBlock).toBe(true);
           // No need to check for any other values, as they are checked in the
           // TextBlock class and the factory already
         });
@@ -540,7 +540,7 @@ describe('DocumentContentComponent', () => {
       describe('[ERROR PATHS]', () => {
         it('should throw the error from factory', async () => {
           const error = Error('test');
-          spyOn(component['blockFactoryService'], 'createNewQuestionBlock')
+          spyOn(component['blockFactoryService'], 'createNewInputBlock')
             .and.throwError(error.message);
           try {
             await component.addNewBlock(mockBlockInfo);

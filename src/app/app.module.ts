@@ -18,13 +18,12 @@ import { BlockComponent } from './components/block/block.component';
 import { BlockOptionComponent } from './components/block/block-option/block-option.component';
 import { BlockTextComponent } from './components/block/block-text/block-text.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
-import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
+import { InputBlockComponent } from './components/block/input-block/input-block.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
 import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
 import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
 import { AddInformationComponent } from './components/block/add-information/add-information.component';
-import { MobileQuestionBlockComponent } from './components/block/mobile-question-block/mobile-question-block.component';
-import { QuestionOptionComponent } from './components/block/question-block/question-option/question-option.component';
+import { MobileInputBlockComponent } from './components/block/mobile-input-block/mobile-input-block.component';
 import { HeaderSharingComponent } from './components/header/header-sharing/header-sharing.component';
 import { SendFormComponent } from './components/send-form/send-form.component';
 import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
@@ -41,6 +40,7 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { DocumentOutlineTabComponent } from './components/navigation-bar/document-outline-tab/document-outline-tab.component';
 import { ClickOutsideModule } from 'ng-click-outside';
 import { TooltipModule } from 'ng2-tooltip-directive';
+import { InputOptionComponent } from './components/block/input-block/input-option/input-option.component';
 
 @NgModule({
   declarations: [
@@ -56,13 +56,13 @@ import { TooltipModule } from 'ng2-tooltip-directive';
     BlockOptionComponent,
     BlockTextComponent,
     DocumentOptionsComponent,
-    QuestionBlockComponent,
+    InputBlockComponent,
     NavigationTabComponent,
     HeaderOptionsComponent,
     ForgetPasswordPageComponent,
     AddInformationComponent,
-    MobileQuestionBlockComponent,
-    QuestionOptionComponent,
+    MobileInputBlockComponent,
+    InputOptionComponent,
     HeaderSharingComponent,
     SendFormComponent,
     InviteCollaboratorComponent,

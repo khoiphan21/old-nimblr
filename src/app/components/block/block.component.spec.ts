@@ -116,8 +116,8 @@ describe('BlockComponent', () => {
     });
 
     it('should emit the right type', done => {
-      const type = BlockType.QUESTION;
-      mockBlockInfo.type = BlockType.QUESTION;
+      const type = BlockType.INPUT;
+      mockBlockInfo.type = BlockType.INPUT;
       component.createBlock.subscribe((value: CreateBlockEvent) => {
         expect(value.type).toEqual(type);
         done();

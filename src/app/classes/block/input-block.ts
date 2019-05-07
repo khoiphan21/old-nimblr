@@ -1,8 +1,8 @@
 import { Block, BlockImpl } from './block';
 import { UUID, ISOTimeString } from '../../services/document/command/document-command.service';
-import { BlockType, QuestionType } from '../../../API';
+import { BlockType, InputType } from '../../../API';
 
-const BASE_ERROR_MESSAGE = 'QuestionBlock failed to create: ';
+const BASE_ERROR_MESSAGE = 'InputBlock failed to create: ';
 
 interface OptionsAnswers {
   newOptions: Array<string>;
@@ -10,11 +10,11 @@ interface OptionsAnswers {
 }
 
 /**
- * A type of block to store data for a question and its answers.
+ * A type of block to store data for a input and its answers.
  *
  * All properties of this class are immutable, including arrays.
  */
-export class QuestionBlock extends BlockImpl implements Block {
+export class InputBlock extends BlockImpl implements Block {
   readonly id: UUID;
   readonly version: UUID;
   readonly type: BlockType;
@@ -22,10 +22,9 @@ export class QuestionBlock extends BlockImpl implements Block {
   readonly lastUpdatedBy: UUID;
   readonly createdAt: ISOTimeString;
   readonly updatedAt: ISOTimeString;
-  // Question Block specific
-  readonly question: string;
+  // Input Block specific
   private immutableAnswers: Array<string>;
-  readonly questionType: QuestionType;
+  readonly inputType: InputType;
   private immutableOptions?: Array<string>;
 
   constructor({
@@ -35,14 +34,13 @@ export class QuestionBlock extends BlockImpl implements Block {
     lastUpdatedBy,
     createdAt,
     updatedAt,
-    question,
     answers,
-    questionType,
+    inputType,
     options
   }) {
     super({
       id,
-      type: BlockType.QUESTION,
+      type: BlockType.INPUT,
       version,
       documentId,
       lastUpdatedBy,
@@ -50,21 +48,20 @@ export class QuestionBlock extends BlockImpl implements Block {
       createdAt,
     });
     // Parameter validation
-    this.checkQuestionType(questionType);
+    this.checkinputType(inputType);
     const { newAnswers, newOptions } = this.processOptionsAndAnswers(
       { options, answers }
     );
 
     // Storing values
-    this.question = question === null ? '' : question;
     this.immutableAnswers = newAnswers;
-    this.questionType = questionType;
+    this.inputType = inputType;
     this.immutableOptions = newOptions;
   }
 
-  private checkQuestionType(questionType: any) {
-    if (!Object.values(QuestionType).includes(questionType)) {
-      throw new Error(BASE_ERROR_MESSAGE + 'QuestionType not supported');
+  private checkinputType(inputType: any) {
+    if (!Object.values(InputType).includes(inputType)) {
+      throw new Error(BASE_ERROR_MESSAGE + 'InputType not supported');
     }
   }
 
@@ -103,14 +100,14 @@ export class QuestionBlock extends BlockImpl implements Block {
   }
 
   /**
-   * Retrieve a **copy** of the list of answers in this question block
+   * Retrieve a **copy** of the list of answers in this input block
    */
   get answers(): Array<string> {
     return this.immutableAnswers.map(value => value);
   }
 
   /**
-   * Retrieve a **copy** of the list of options in this question block
+   * Retrieve a **copy** of the list of options in this input block
    */
   get options(): Array<string> {
     return this.immutableOptions.map(value => value);

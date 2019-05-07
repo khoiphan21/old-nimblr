@@ -1,18 +1,18 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import { QuestionType } from 'src/API';
+import { InputType } from 'src/API';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
-  selector: 'app-question-option',
-  templateUrl: './question-option.component.html',
-  styleUrls: ['./question-option.component.scss']
+  selector: 'app-input-option',
+  templateUrl: './input-option.component.html',
+  styleUrls: ['./input-option.component.scss']
 })
-export class QuestionOptionComponent implements OnChanges {
+export class InputOptionComponent implements OnChanges {
   @Input() valueUpdated: boolean;
   @Input() answers: Array<string>;
   @Input() options: Array<string>;
-  @Input() currentType: QuestionType;
+  @Input() currentType: InputType;
   @Input() isPreviewMode: boolean;
   @Input() isMobilePreview = false;
   @Output() valueToBeSaved = new EventEmitter<object>();
@@ -26,39 +26,36 @@ export class QuestionOptionComponent implements OnChanges {
     const type = changes.currentType;
     const valueUpdated = changes.valueUpdated;
     if (type) {
-      this.manageQuestionTypeChange(type.previousValue, type.currentValue);
+      this.manageinputTypeChange(type.previousValue, type.currentValue);
     }
     if (valueUpdated && valueUpdated.currentValue === false) {
-      this.emitQuestionValues();
+      this.emitInputValues();
     }
     this.setupForm();
   }
 
-  manageQuestionTypeChange(previousType: QuestionType, currentType: QuestionType) {
+  manageinputTypeChange(previousType: InputType, currentType: InputType) {
     switch (currentType) {
-      case QuestionType.PARAGRAPH:
+      case InputType.TEXT:
         this.changeToSingleOptionType(previousType);
         break;
-      case QuestionType.SHORT_ANSWER:
-        this.changeToSingleOptionType(previousType);
-        break;
-      case QuestionType.MULTIPLE_CHOICE:
+      case InputType.MULTIPLE_CHOICE:
         if (previousType !== undefined) {
           this.clearAnswers();
         }
         break;
-      case QuestionType.CHECKBOX:
+      case InputType.CHECKBOX:
         if (previousType !== undefined) {
           this.clearAnswers();
         }
         break;
     }
     this.setupForm();
-    this.emitQuestionValues();
+    this.emitInputValues();
   }
 
-  changeToSingleOptionType(previousType: QuestionType) {
-    if (previousType === QuestionType.MULTIPLE_CHOICE || previousType === QuestionType.CHECKBOX) {
+  changeToSingleOptionType(previousType: InputType) {
+    if (previousType === InputType.MULTIPLE_CHOICE || previousType === InputType.CHECKBOX) {
       this.clearOptions();
       this.clearAnswers();
     }
@@ -90,14 +87,14 @@ export class QuestionOptionComponent implements OnChanges {
       })
     );
     this.options.push('');
-    this.emitQuestionValues();
+    this.emitInputValues();
   }
 
   deleteOption(index) {
     const control = this.formGroup.controls.options as FormArray;
     control.removeAt(index);
     this.options.splice(index);
-    this.emitQuestionValues();
+    this.emitInputValues();
   }
 
   setOptions() {
@@ -122,31 +119,31 @@ export class QuestionOptionComponent implements OnChanges {
       this.answers.push(value);
     }
     this.setupForm();
-    this.emitQuestionValues();
+    this.emitInputValues();
   }
 
   switchAnswer(value: string) {
     this.clearAnswers();
     this.answers.push(value);
     this.setupForm();
-    this.emitQuestionValues();
+    this.emitInputValues();
   }
 
   async triggerUpdateValue(waitTime = 500) {
     return new Promise((resolve) => {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
-        this.emitQuestionValues();
+        this.emitInputValues();
         resolve();
       }, waitTime);
     });
   }
 
   /* tslint:disable:no-string-literal */
-  emitQuestionValues() {
+  emitInputValues() {
     const value = {};
     value['answers'] = this.answers;
-    if (this.currentType === QuestionType.MULTIPLE_CHOICE || this.currentType === QuestionType.CHECKBOX) {
+    if (this.currentType === InputType.MULTIPLE_CHOICE || this.currentType === InputType.CHECKBOX) {
       value['options'] = this.getOptionsValue();
     }
     this.valueToBeSaved.emit(value);
@@ -167,6 +164,6 @@ export class QuestionOptionComponent implements OnChanges {
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.options, event.previousIndex, event.currentIndex);
     this.setupForm();
-    this.emitQuestionValues();
+    this.emitInputValues();
   }
 }

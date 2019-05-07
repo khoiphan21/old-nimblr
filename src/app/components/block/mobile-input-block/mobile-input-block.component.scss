@@ -2,21 +2,21 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 $dropdown-height: 41px;
-.question-block {
+.input-block {
     display: none;
 }
 
-section.mobile.question-block {
+section.mobile.input-block {
     width: 100%;
     flex-direction: column;
     margin-bottom: 25px;
-    .question {
+    .input {
         font-size: 19px;
         font-weight: 400;
     }
 }
 
-section.mobile.edit-question {
+section.mobile.edit-input {
     width: 100vw;
     height: 100vh;
     background: white;
@@ -50,7 +50,7 @@ section.mobile.edit-question {
         margin-bottom: 10px;
         font-size: 13px;
     }
-    div.question {
+    div.input {
         padding: 0 15px;
         flex-direction: column;
         input[type=text] {
@@ -126,7 +126,7 @@ section.mobile.edit-question {
     }
 }
 
-.hide-question-block {
+.hide-input-block {
     animation: slide-bottom-up 2s linear forwards
 }
 

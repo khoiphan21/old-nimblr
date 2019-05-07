@@ -66,7 +66,7 @@ type Block @model {
 
 enum BlockType {
   TEXT
-  QUESTION
+  INPUT
 }
 
 enum InputType {

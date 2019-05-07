@@ -28,7 +28,7 @@ describe('TemplateDocumentContentComponent', () => {
   });
 
   it('andNewBlock() - should emit the right value', done => {
-    const type = BlockType.QUESTION;
+    const type = BlockType.INPUT;
     component.addNewBlockEvent.subscribe(value => {
       expect(value.type).toEqual(type);
       done();

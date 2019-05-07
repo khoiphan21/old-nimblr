@@ -9,7 +9,7 @@ div.block {
     margin-top: 20px;
 }
 
-.question-block {
+.input-block {
     margin-top: 20px;
 }
 
@@ -20,7 +20,7 @@ div.block {
     div.block {
         padding: 0 $desktop-document-horizontal-padding;
     }
-    div.block.question-block {
+    div.block.input-block {
         padding: 0 $desktop-document-horizontal-padding + 2.5%;
     }
 }

@@ -1,37 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QuestionBlockComponent } from './question-block.component';
+import { InputBlockComponent } from './input-block.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { configureTestSuite } from 'ng-bullet';
-import { QuestionType, BlockType } from 'src/API';
+import { InputType, BlockType } from 'src/API';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { InputBlock } from 'src/app/classes/block/input-block';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
-import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { RouterTestingModule } from '@angular/router/testing';
 const uuidv4 = require('uuid/v4');
 
-describe('QuestionBlockComponent', () => {
-  let component: QuestionBlockComponent;
-  let fixture: ComponentFixture<QuestionBlockComponent>;
+describe('InputBlockComponent', () => {
+  let component: InputBlockComponent;
+  let fixture: ComponentFixture<InputBlockComponent>;
   let blockFactoryService: BlockFactoryService;
   const rawData = {
     id: uuidv4(),
-    type: BlockType.QUESTION,
+    type: BlockType.INPUT,
     version: uuidv4(),
     documentId: uuidv4(),
     lastUpdatedBy: uuidv4(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    question: 'Is this a test value?',
     answers: [''],
-    questionType: QuestionType.PARAGRAPH,
+    inputType: InputType.TEXT,
   };
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
-        QuestionBlockComponent,
+        InputBlockComponent,
       ],
       imports: [
         FormsModule,
@@ -45,10 +43,10 @@ describe('QuestionBlockComponent', () => {
   beforeEach(() => {
     blockFactoryService = TestBed.get(BlockFactoryService);
     const block = blockFactoryService.createAppBlock(rawData);
-    fixture = TestBed.createComponent(QuestionBlockComponent);
+    fixture = TestBed.createComponent(InputBlockComponent);
     component = fixture.componentInstance;
     spyOn(component, 'toggleOptions').and.callThrough();
-    component.questionBlock = block as QuestionBlock;
+    component.inputBlock = block as InputBlock;
     component.ngOnChanges({});
     fixture.detectChanges();
   });
@@ -59,17 +57,17 @@ describe('QuestionBlockComponent', () => {
 
   /* tslint:disable:no-string-literal */
   describe('ngOnChanges()', () => {
-    let block: QuestionBlock;
+    let block: InputBlock;
     let changeDetectorSpy: jasmine.Spy;
 
     beforeEach(() => {
-      block = blockFactoryService.createNewQuestionBlock({
+      block = blockFactoryService.createNewInputBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       });
-      fixture = TestBed.createComponent(QuestionBlockComponent);
+      fixture = TestBed.createComponent(InputBlockComponent);
       component = fixture.componentInstance;
-      component.questionBlock = block;
+      component.inputBlock = block;
       fixture.detectChanges();
 
       // Setup spies
@@ -84,7 +82,7 @@ describe('QuestionBlockComponent', () => {
           focusBlockId: new SimpleChange(null, 'asdf', false)
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
-        const element = document.getElementById(block.id + '-question');
+        const element = document.getElementById(block.id + '-input');
         expect(document.activeElement === element).toBe(false);
       });
 
@@ -93,7 +91,7 @@ describe('QuestionBlockComponent', () => {
           focusBlockId: new SimpleChange(null, null, false)
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
-        const element = document.getElementById(block.id + '-question');
+        const element = document.getElementById(block.id + '-input');
         expect(document.activeElement === element).toBe(false);
       });
 
@@ -102,7 +100,7 @@ describe('QuestionBlockComponent', () => {
           focusBlockId: new SimpleChange(null, undefined, false)
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
-        const element = document.getElementById(block.id + '-question');
+        const element = document.getElementById(block.id + '-input');
         expect(document.activeElement === element).toBe(false);
       });
     });
@@ -114,58 +112,58 @@ describe('QuestionBlockComponent', () => {
           focusBlockId: undefined
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
-        let element = document.getElementById(block.id + '-question');
+        let element = document.getElementById(block.id + '-input');
         expect(document.activeElement === element).toBe(false);
         // null case
         component.ngOnChanges({
           focusBlockId: null
         });
         expect(changeDetectorSpy).not.toHaveBeenCalled();
-        element = document.getElementById(block.id + '-question');
+        element = document.getElementById(block.id + '-input');
         expect(document.activeElement === element).toBe(false);
       });
     });
 
-    describe('when questionBlock is defined', () => {
-      it('should call setQuestionValues()', () => {
-        spyOn<any>(component, 'setQuestionValues');
+    describe('when inputBlock is defined', () => {
+      it('should call setInputValues()', () => {
+        spyOn<any>(component, 'setInputValues');
         // undefined case
         component.ngOnChanges({
-          questionBlock: new SimpleChange(null, block, true)
+          inputBlock: new SimpleChange(null, block, true)
         });
-        expect(component['setQuestionValues']).toHaveBeenCalled();
+        expect(component['setInputValues']).toHaveBeenCalled();
       });
     });
   });
 
   describe('toggleOptions()', () => {
-    it('should toggle isQuestionOptionShown() from false to true', () => {
+    it('should toggle isInputOptionShown() from false to true', () => {
       component.toggleOptions();
-      expect(component.isQuestionOptionShown).toBe(true);
+      expect(component.isInputOptionShown).toBe(true);
     });
 
-    it('should toggle isQuestionOptionShown() from true to false', () => {
-      component.isQuestionOptionShown = true;
+    it('should toggle isInputOptionShown() from true to false', () => {
+      component.isInputOptionShown = true;
       component.toggleOptions();
-      expect(component.isQuestionOptionShown).toBe(false);
+      expect(component.isInputOptionShown).toBe(false);
     });
   });
 
   describe('selectType()', () => {
     const event = new Event('click');
     it('should change the `currentType` to the right value', () => {
-      component.selectType(QuestionType.MULTIPLE_CHOICE, event);
+      component.selectType(InputType.MULTIPLE_CHOICE, event);
       expect(component.currentType).toBe('MULTIPLE_CHOICE');
     });
 
     it('should toggle the option', () => {
-      component.selectType(QuestionType.MULTIPLE_CHOICE, event);
+      component.selectType(InputType.MULTIPLE_CHOICE, event);
       expect(component.toggleOptions).toHaveBeenCalled();
     });
   });
 
   /* tslint:disable:no-string-literal */
-  describe('updateQuestionValue', () => {
+  describe('updateInputValue', () => {
     let blockCommandSpy: jasmine.Spy;
     const emittedValue = {
       answers: [],
@@ -175,31 +173,25 @@ describe('QuestionBlockComponent', () => {
       spyOn(component['blockFactoryService'], 'createAppBlock').and.callThrough();
       blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
       blockCommandSpy.and.returnValues(Promise.resolve());
-      component.currentType = QuestionType.PARAGRAPH;
+      component.currentType = InputType.TEXT;
     });
 
     it('should call `createAppBlock` with the right argument', async () => {
-      await component.updateQuestionValue(emittedValue);
+      await component.updateInputValue(emittedValue);
       expect(component['blockFactoryService'].createAppBlock).toHaveBeenCalledWith({
-        id: component.questionBlock.id,
-        type: component.questionBlock.type,
-        documentId: component.questionBlock.documentId,
-        createdAt: component.questionBlock.createdAt,
-        lastUpdatedBy: component.questionBlock.lastUpdatedBy,
-        question: component.questionBlock.question,
+        id: component.inputBlock.id,
+        type: component.inputBlock.type,
+        documentId: component.inputBlock.documentId,
+        createdAt: component.inputBlock.createdAt,
+        lastUpdatedBy: component.inputBlock.lastUpdatedBy,
         answers: [],
-        questionType: component.questionBlock.questionType,
+        inputType: component.inputBlock.inputType,
         options: undefined
       });
     });
 
-    it('should resolve with the updated block', async () => {
-      const updatedBlock: QuestionBlock = await component.updateQuestionValue(emittedValue) as QuestionBlock;
-      expect(updatedBlock.question).toEqual(component.questionBlock.question);
-    });
-
     it('should call block command service with the right argument', async () => {
-      const updatedBlock = await component.updateQuestionValue(emittedValue);
+      const updatedBlock = await component.updateInputValue(emittedValue);
       expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
     });
   });

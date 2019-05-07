@@ -103,9 +103,9 @@ export class BlockOptionComponent implements OnChanges, OnInit {
     this.hideAddBlockContainer();
   }
 
-  addQuestionBlock() {
+  addInputBlock() {
     const input: CreateBlockEvent = {
-      type: BlockType.QUESTION,
+      type: BlockType.INPUT,
     };
     this.createBlock.emit(input);
     this.hideAddBlockContainer();

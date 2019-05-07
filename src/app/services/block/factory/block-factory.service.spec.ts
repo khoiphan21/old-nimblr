@@ -4,8 +4,8 @@ import { BlockFactoryService, CreateNewBlockInput } from './block-factory.servic
 import { Block } from '../../../classes/block/block';
 import { TextBlock } from '../../../classes/block/textBlock';
 import { isUuid } from '../../../classes/helpers';
-import { BlockType, QuestionType, TextBlockType } from 'src/API';
-import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { BlockType, InputType, TextBlockType } from 'src/API';
+import { InputBlock } from 'src/app/classes/block/input-block';
 import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
 import { configureTestSuite } from 'ng-bullet';
 import { BulletBlock } from 'src/app/classes/block/textBox/bullet-block';
@@ -97,27 +97,24 @@ describe('BlockFactoryService', () => {
     });
   });
 
-  describe('createNewQuestionBlock()', () => {
-    let block: QuestionBlock;
+  describe('createNewInputBlock()', () => {
+    let block: InputBlock;
 
     beforeEach(() => {
-      block = factory.createNewQuestionBlock(input);
+      block = factory.createNewInputBlock(input);
     });
 
     describe('initial values', () => {
-      it('should have the initial question of empty string', () => {
-        expect(block.question).toEqual('');
-      });
-      it('should have the initial questionType of SHORT_ANSWER', () => {
-        expect(block.questionType).toEqual(QuestionType.SHORT_ANSWER);
+      it('should have the initial inputType of TEXT', () => {
+        expect(block.inputType).toEqual(InputType.TEXT);
       });
     });
 
-    it('should create an object of type QuestionBlock', () => {
-      expect(block instanceof QuestionBlock).toBe(true);
+    it('should create an object of type InputBlock', () => {
+      expect(block instanceof InputBlock).toBe(true);
     });
     it('should have the right type', () => {
-      expect(block.type).toBe(BlockType.QUESTION);
+      expect(block.type).toBe(BlockType.INPUT);
     });
 
     it('should store the document ID', () => {
@@ -265,41 +262,36 @@ describe('BlockFactoryService', () => {
     });
   });
 
-  describe('Create app QuestionBlock with all parameters specified', () => {
+  describe('Create app InputBlock with all parameters specified', () => {
     let rawData;
     let block: Block;
     beforeEach(() => {
       rawData = {
         id: uuidv4(),
-        type: BlockType.QUESTION,
+        type: BlockType.INPUT,
         version: uuidv4(),
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        question: 'Is this a test value?',
+        input: 'Is this a test value?',
         answers: [''],
-        questionType: QuestionType.PARAGRAPH,
+        inputType: InputType.TEXT,
       };
       block = factory.createAppBlock(rawData);
     });
 
-    it('should create a question block', () => {
-      expect(block instanceof QuestionBlock).toBe(true);
+    it('should create a input block', () => {
+      expect(block instanceof InputBlock).toBe(true);
     });
 
     it('should have the right type', () => {
       expect(block.type).toEqual(rawData.type);
     });
 
-    it('should have the right value for question', () => {
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.question).toEqual(rawData.question);
-    });
-
-    it('should have the right question type', () => {
-      const questionBlock: QuestionBlock = block as QuestionBlock;
-      expect(questionBlock.questionType).toEqual(rawData.questionType);
+    it('should have the right input type', () => {
+      const inputBlock: InputBlock = block as InputBlock;
+      expect(inputBlock.inputType).toEqual(rawData.inputType);
     });
   });
 
@@ -336,30 +328,27 @@ describe('BlockFactoryService', () => {
     });
   });
 
-  describe('createAppBlock() - QuestionBlock with minimal parameters', () => {
+  describe('createAppBlock() - InputBlock with minimal parameters', () => {
     let rawData;
-    let block: QuestionBlock;
+    let block: InputBlock;
 
     beforeEach(() => {
       rawData = {
-        type: BlockType.QUESTION,
+        type: BlockType.INPUT,
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       };
-      block = factory.createAppBlock(rawData) as QuestionBlock;
+      block = factory.createAppBlock(rawData) as InputBlock;
     });
 
-    it('should create a QuestionBlock', () => {
-      expect(block instanceof QuestionBlock).toBe(true);
-    });
-    it('should set question to an empty string', () => {
-      expect(block.question).toEqual('');
+    it('should create a InputBlock', () => {
+      expect(block instanceof InputBlock).toBe(true);
     });
     it('should set answers to an empty array', () => {
       expect(block.answers).toEqual([]);
     });
-    it('should set questionType to SHORT_ANSWER', () => {
-      expect(block.questionType).toEqual(QuestionType.SHORT_ANSWER);
+    it('should set inputType to TEXT', () => {
+      expect(block.inputType).toEqual(InputType.TEXT);
     });
     it('should set the options to an empty array', () => {
       expect(block.options).toEqual([]);

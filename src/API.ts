@@ -13,7 +13,7 @@ export type CreateTextBlockInput = {
 
 export enum BlockType {
   TEXT = "TEXT",
-  QUESTION = "QUESTION",
+  INPUT = "INPUT",
 }
 
 

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QuestionOptionComponent } from './question-option.component';
+import { InputOptionComponent } from './input-option.component';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormArray } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
-import { QuestionType } from 'src/API';
+import { InputType } from 'src/API';
 import { configureTestSuite } from 'ng-bullet';
 import { take } from 'rxjs/operators';
 
-describe('QuestionOptionComponent', () => {
-  let component: QuestionOptionComponent;
-  let fixture: ComponentFixture<QuestionOptionComponent>;
+describe('InputOptionComponent', () => {
+  let component: InputOptionComponent;
+  let fixture: ComponentFixture<InputOptionComponent>;
   let emitValueSpy: jasmine.Spy;
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
-      declarations: [ QuestionOptionComponent ],
+      declarations: [ InputOptionComponent ],
       imports: [ReactiveFormsModule, FormsModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -22,15 +22,15 @@ describe('QuestionOptionComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(QuestionOptionComponent);
+    fixture = TestBed.createComponent(InputOptionComponent);
     component = fixture.componentInstance;
-    component.currentType = QuestionType.PARAGRAPH;
+    component.currentType = InputType.TEXT;
     component.answers = [''];
     component.options = [];
     component.formGroup = new FormGroup({
       options: new FormArray([])
     });
-    emitValueSpy = spyOn(component, 'emitQuestionValues').and.callThrough();
+    emitValueSpy = spyOn(component, 'emitInputValues').and.callThrough();
     fixture.detectChanges();
   });
 
@@ -66,9 +66,9 @@ describe('QuestionOptionComponent', () => {
       clearOptionsSpy = spyOn<any>(component, 'clearOptions');
     });
 
-    it('should setup the form if the QuestionType has changed', () => {
+    it('should setup the form if the InputType has changed', () => {
       component.ngOnChanges({
-        currentType: new SimpleChange(null, QuestionType.MULTIPLE_CHOICE, true)
+        currentType: new SimpleChange(null, InputType.MULTIPLE_CHOICE, true)
       });
       expect(formSpy).toHaveBeenCalled();
     });
@@ -80,24 +80,24 @@ describe('QuestionOptionComponent', () => {
       expect(emitValueSpy).toHaveBeenCalled();
     });
 
-    describe('manageQuestionTypeChange()', () => {
+    describe('manageinputTypeChange()', () => {
       it('should emit all the corresponding values if the function is called', () => {
-        component.manageQuestionTypeChange(QuestionType.MULTIPLE_CHOICE, QuestionType.SHORT_ANSWER);
+        component.manageinputTypeChange(InputType.MULTIPLE_CHOICE, InputType.TEXT);
         expect(formSpy).toHaveBeenCalled();
         expect(emitValueSpy).toHaveBeenCalled();
       });
 
-      it('should clear both options and answers if it is from `MULTIPLE_CHOICE` or `CHECKBOX` to `SHORT_ANSWER`', () => {
+      it('should clear both options and answers if it is from `MULTIPLE_CHOICE` or `CHECKBOX` to `TEXT`', () => {
         component.ngOnChanges({
-          currentType: new SimpleChange(QuestionType.MULTIPLE_CHOICE, QuestionType.SHORT_ANSWER, false)
+          currentType: new SimpleChange(InputType.MULTIPLE_CHOICE, InputType.TEXT, false)
         });
         expect(clearAnswersSpy).toHaveBeenCalled();
         expect(clearOptionsSpy).toHaveBeenCalled();
       });
 
-      it('should clear both options and answers if it is from `MULTIPLE_CHOICE` or `CHECKBOX` to `PARAGRAPH`', () => {
+      it('should clear both options and answers if it is from `MULTIPLE_CHOICE` or `CHECKBOX` to `TEXT`', () => {
         component.ngOnChanges({
-          currentType: new SimpleChange(QuestionType.CHECKBOX, QuestionType.PARAGRAPH, false)
+          currentType: new SimpleChange(InputType.CHECKBOX, InputType.TEXT, false)
         });
         expect(clearAnswersSpy).toHaveBeenCalled();
         expect(clearOptionsSpy).toHaveBeenCalled();
@@ -105,14 +105,14 @@ describe('QuestionOptionComponent', () => {
 
       it('should clear both answers if it is changing to `MULTIPLE_CHOICE`', () => {
         component.ngOnChanges({
-          currentType: new SimpleChange(QuestionType.PARAGRAPH, QuestionType.MULTIPLE_CHOICE, false)
+          currentType: new SimpleChange(InputType.TEXT, InputType.MULTIPLE_CHOICE, false)
         });
         expect(clearAnswersSpy).toHaveBeenCalled();
       });
 
       it('should clear both answers if it is changing to `CHECKBOX`', () => {
         component.ngOnChanges({
-          currentType: new SimpleChange(QuestionType.PARAGRAPH, QuestionType.CHECKBOX, false)
+          currentType: new SimpleChange(InputType.TEXT, InputType.CHECKBOX, false)
         });
         expect(clearAnswersSpy).toHaveBeenCalled();
       });
@@ -120,13 +120,13 @@ describe('QuestionOptionComponent', () => {
 
     describe('changeToSingleOptionType()', () => {
       it('should clear the options and answers if its `MULTIPLE_CHOICE` or `CHECKBOX`', () => {
-        component.changeToSingleOptionType(QuestionType.MULTIPLE_CHOICE);
+        component.changeToSingleOptionType(InputType.MULTIPLE_CHOICE);
         expect(clearAnswersSpy).toHaveBeenCalled();
         expect(clearOptionsSpy).toHaveBeenCalled();
       });
 
       it('should not clear the options and answers if its not `MULTIPLE_CHOICE` or `CHECKBOX`', () => {
-        component.changeToSingleOptionType(QuestionType.PARAGRAPH);
+        component.changeToSingleOptionType(InputType.TEXT);
         expect(clearAnswersSpy).not.toHaveBeenCalled();
         expect(clearOptionsSpy).not.toHaveBeenCalled();
       });
@@ -136,7 +136,7 @@ describe('QuestionOptionComponent', () => {
 
   describe('triggerUpdateValue', () => {
 
-    it('should have called `emitQuestionValues()`', async () => {
+    it('should have called `emitInputValues()`', async () => {
       await component.triggerUpdateValue(0);
       expect(emitValueSpy).toHaveBeenCalled();
     });
@@ -179,43 +179,43 @@ describe('QuestionOptionComponent', () => {
     expect(newOptionCount).toBe(optionCount - 1);
   });
 
-  describe('emitQuestionValues()', () => {
-    it('should emit `answers` for PARAGRAPH type', done => {
-      component.currentType = QuestionType.PARAGRAPH;
+  describe('emitInputValues()', () => {
+    it('should emit `answers` for TEXT type', done => {
+      component.currentType = InputType.TEXT;
       component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitInputValues();
     });
 
-    it('should emit `answers` for SHORT_ANSWER type', done => {
-      component.currentType = QuestionType.SHORT_ANSWER;
+    it('should emit `answers` for TEXT type', done => {
+      component.currentType = InputType.TEXT;
       component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitInputValues();
     });
 
     it('should emit `answers` and `options` for MULTIPLE_CHOICE type', done => {
-      component.currentType = QuestionType.MULTIPLE_CHOICE;
+      component.currentType = InputType.MULTIPLE_CHOICE;
       component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitInputValues();
     });
 
     it('should emit `answers` and `options` for CHECKBOX type', done => {
-      component.currentType = QuestionType.CHECKBOX;
+      component.currentType = InputType.CHECKBOX;
       component.valueToBeSaved.pipe(take(1)).subscribe((data) => {
         expect(data.hasOwnProperty('answers')).toBe(true);
         expect(data.hasOwnProperty('options')).toBe(true);
         done();
       });
-      component.emitQuestionValues();
+      component.emitInputValues();
     });
   });
 

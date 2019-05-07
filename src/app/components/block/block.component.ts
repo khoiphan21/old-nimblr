@@ -9,7 +9,7 @@ import { TextBlock } from '../../classes/block/textBlock';
 
 export enum BlockStyle {
   HEADER = 'HEADER',
-  QUESTION = 'QUESTION'
+  INPUT = 'INPUT'
 }
 @Component({
   selector: 'app-block',

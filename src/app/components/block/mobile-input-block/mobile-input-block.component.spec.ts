@@ -1,36 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MobileQuestionBlockComponent } from './mobile-question-block.component';
-import { QuestionOptionComponent } from '../question-block/question-option/question-option.component';
+import { MobileInputBlockComponent } from './mobile-input-block.component';
+import { InputOptionComponent } from '../input-block/input-option/input-option.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { configureTestSuite } from 'ng-bullet';
-import { QuestionType, BlockType } from 'src/API';
+import { InputType, BlockType } from 'src/API';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { InputBlock } from 'src/app/classes/block/input-block';
 import { RouterTestingModule } from '@angular/router/testing';
 const uuidv4 = require('uuid/v4');
-describe('MobileQuestionBlockComponent', () => {
-  let component: MobileQuestionBlockComponent;
-  let fixture: ComponentFixture<MobileQuestionBlockComponent>;
+describe('MobileInputBlockComponent', () => {
+  let component: MobileInputBlockComponent;
+  let fixture: ComponentFixture<MobileInputBlockComponent>;
   let blockFactoryService: BlockFactoryService;
   const rawData = {
     id: uuidv4(),
-    type: BlockType.QUESTION,
+    type: BlockType.INPUT,
     version: uuidv4(),
     documentId: uuidv4(),
     lastUpdatedBy: uuidv4(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    question: 'Is this a test value?',
     answers: [''],
-    questionType: QuestionType.PARAGRAPH,
+    inputType: InputType.TEXT,
   };
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
-        MobileQuestionBlockComponent,
-        QuestionOptionComponent
+        MobileInputBlockComponent,
+        InputOptionComponent
       ],
       imports: [
         FormsModule,
@@ -44,10 +43,10 @@ describe('MobileQuestionBlockComponent', () => {
   beforeEach(() => {
     blockFactoryService = TestBed.get(BlockFactoryService);
     const block = blockFactoryService.createAppBlock(rawData);
-    fixture = TestBed.createComponent(MobileQuestionBlockComponent);
+    fixture = TestBed.createComponent(MobileInputBlockComponent);
     component = fixture.componentInstance;
     spyOn(component, 'toggleOptions').and.callThrough();
-    component.questionBlock = block as QuestionBlock;
+    component.inputBlock = block as InputBlock;
     component.ngOnChanges();
     fixture.detectChanges();
   });
@@ -58,35 +57,35 @@ describe('MobileQuestionBlockComponent', () => {
 
   describe('selectType()', () => {
     it('should change the `currentType` to the right value', () => {
-      component.selectType(QuestionType.MULTIPLE_CHOICE);
-      expect(component.currentType).toBe(QuestionType.MULTIPLE_CHOICE);
+      component.selectType(InputType.MULTIPLE_CHOICE);
+      expect(component.currentType).toBe(InputType.MULTIPLE_CHOICE);
     });
 
     it('should toggle the option', () => {
-      component.selectType(QuestionType.MULTIPLE_CHOICE);
+      component.selectType(InputType.MULTIPLE_CHOICE);
       expect(component.toggleOptions).toHaveBeenCalled();
     });
   });
 
   /* tslint:disable:no-string-literal */
-  describe('updateQuestionValueMobile', () => {
+  describe('updateInputValueMobile', () => {
     let parentMethodSpy: jasmine.Spy;
     const emittedValue = {
       answers: [],
     };
     beforeEach(() => {
-      parentMethodSpy = spyOn(component, 'updateQuestionValue');
+      parentMethodSpy = spyOn(component, 'updateInputValue');
       parentMethodSpy.and.returnValue(Promise.resolve());
     });
 
     it('should update the preview answers and options', async () => {
-      await component.updateQuestionValueMobile(emittedValue);
+      await component.updateInputValueMobile(emittedValue);
       expect(component.previewAnswers).toEqual(emittedValue.answers);
       expect(component.previewOptions).toBe(undefined);
     });
 
     it('should call the parent method with the right argument', async () => {
-      await component.updateQuestionValueMobile(emittedValue);
+      await component.updateInputValueMobile(emittedValue);
       expect(parentMethodSpy).toHaveBeenCalledWith(emittedValue);
     });
   });

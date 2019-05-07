@@ -10,7 +10,7 @@ import { Location } from '@angular/common';
 })
 export class NavigationTabComponent implements OnInit {
   isCurrentDocument = false;
-  isQuestionOptionShown = false;
+  isInputOptionShown = false;
   @Input() navigationTab: NavigationTabDocument;
 
   constructor(
