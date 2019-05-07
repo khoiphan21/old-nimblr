@@ -19,14 +19,25 @@ export class LoginPageComponent implements OnInit {
   loginForm: FormGroup;
   passwordType = 'password';
   errorMessage = LoginError.NONE;
+
+  // control flags
+  isReady = false;
+  signingIn = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private accountService: AccountService,
     private router: Router
   ) { }
 
-  ngOnInit() {
-    this.buildForm();
+  async ngOnInit() {
+    try {
+      await this.accountService.isUserReady();
+      this.router.navigate(['/document']);
+    } catch {
+      this.buildForm();
+      this.isReady = true;
+    }
   }
 
   buildForm() {
@@ -45,6 +56,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   signIn(): Promise<any> {
+    this.signingIn = true;
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
     return this.accountService.login(email, password).then((data) => {
@@ -55,8 +67,9 @@ export class LoginPageComponent implements OnInit {
         this.router.navigate(['dashboard']);
       }
     }).catch(error => {
+      this.signingIn = false;
       this.handleLoginError(error);
-      return Promise.reject(  );
+      return Promise.reject();
     });
   }
 

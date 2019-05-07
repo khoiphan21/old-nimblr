@@ -14,7 +14,11 @@ export class PageNotFoundComponent implements OnInit {
 
   ngOnInit() {
     const documentId = localStorage.getItem('lastVisited');
-    this.router.navigate([`/document`, documentId]);
+    if (documentId) {
+      this.router.navigate([`/document`, documentId]);
+    } else {
+      this.router.navigate([`/dashboard`]);
+    }
   }
 
 }

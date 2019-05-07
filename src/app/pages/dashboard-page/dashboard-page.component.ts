@@ -26,6 +26,15 @@ export class DashboardPageComponent implements OnInit {
 
   // TODO: handle error
   async ngOnInit() {
+    try {
+      await this.accountService.isUserReady();
+      await this.getDocuments();
+    } catch (error) {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  async getDocuments() {
     return new Promise((resolve, reject) => {
       this.documentService.getUserDocuments$().subscribe(documents => {
         this.userDocuments = documents;
