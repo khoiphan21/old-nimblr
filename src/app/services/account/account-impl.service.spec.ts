@@ -27,6 +27,7 @@ export class MockAccountService {
   }
   setUnverifiedUser(_, __) { }
   getUnverifiedUser() { }
+  async doesUserExist() { return true; }
 }
 
 describe('AccountImplService', () => {

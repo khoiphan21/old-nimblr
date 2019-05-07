@@ -122,7 +122,7 @@ describe('BlockOptionComponent', () => {
     });
 
     it('should emit the right value to parent', done => {
-      component.switchBlockOptionsOff.subscribe((value) => {
+      component.switchBlockOptionsOff.pipe(take(1)).subscribe((value) => {
         expect(value).toEqual(false);
         done();
       });

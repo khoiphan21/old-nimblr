@@ -18,7 +18,6 @@ import { DocumentCommandService, UUID } from '../../../services/document/command
 import { BlockId, Block } from 'src/app/classes/block/block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
-import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';

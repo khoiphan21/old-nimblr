@@ -91,6 +91,7 @@ describe('DocumentContentComponent', () => {
   /* tslint:disable:no-string-literal */
   describe('ngOnInit()', () => {
     let checkUserSpy: jasmine.Spy;
+    let handleSpy: jasmine.Spy;
     let retrieveDocumentSpy: jasmine.Spy;
 
     beforeEach(() => {
@@ -99,7 +100,7 @@ describe('DocumentContentComponent', () => {
       retrieveDocumentSpy = spyOn<any>(component, 'retrieveDocumentData');
       checkUserSpy.and.returnValue(Promise.resolve(testUser));
       spyOn<any>(component, 'checkIsChildDocument');
-      spyOn<any>(component, 'handleRouting');
+      handleSpy = spyOn<any>(component, 'handleRouting');
     });
 
     it('should call to check the user', () => {
@@ -152,39 +153,23 @@ describe('DocumentContentComponent', () => {
         });
 
         describe('if user is not logged in', () => {
-          const email = 'test@email.com';
-          const document = uuidv4();
 
-          beforeEach(() => {
-            // setup mock data
-            setRouteParam([
-              ['id', document]
-            ]);
-
+          it('should call handleRouting with the right arg', async () => {
             checkUserSpy.and.returnValue(Promise.reject());
-          });
+            const email = 'testEmail';
+            const document = 'testId';
 
-          function setRouteParam(params) {
-            // setup mock data
-            const mockRoute: any = {
-              paramMap: new BehaviorSubject(new Map(params))
-            };
-            component['route'] = mockRoute;
-          }
-
-          it('should reroute to "register" if there is no email param', async () => {
-            await component.ngOnInit();
-            expect(routerSpy).toHaveBeenCalledWith(['/register', { document }]);
-          });
-
-          it('should reroute to "register" with the route email param', async () => {
-            setRouteParam([
-              ['email', email],
-              ['id', document]
-            ]);
+            spyOn<any>(component, 'getParamMap').and.returnValue(
+              Promise.resolve(new Map([
+                ['email', email],
+                ['id', document]
+              ]))
+            );
 
             await component.ngOnInit();
-            expect(routerSpy).toHaveBeenCalledWith(['/register', { email, document }]);
+            expect(handleSpy).toHaveBeenCalledWith({
+              email, document, userExist: true
+            });
           });
 
         });
@@ -212,6 +197,7 @@ describe('DocumentContentComponent', () => {
 
     it('should set value to false if it is not a child document', () => {
       component.isChildDoc = true;
+      component['documentId'] = uuid;
       router.url = `/document/${uuid}`;
       component['checkIsChildDocument']();
       expect(component.isChildDoc).toBe(false);
@@ -811,23 +797,33 @@ describe('DocumentContentComponent', () => {
   });
 
   describe('backToParent()', () => {
-    let locationSpy;
+    let routerSpy: jasmine.Spy;
+
     beforeEach(() => {
-      locationSpy = spyOn(component['location'], 'back').and.callFake(() => {
-        return;
-      });
+      const mockRoute: any = {
+        snapshot: {
+          parent: {
+            url: [
+              { path: 'value1' },
+              { path: 'value2' }
+            ]
+          }
+        }
+      }
+      component['route'] = mockRoute;
+      routerSpy = spyOn(component['router'], 'navigate');
     });
 
     it('should navigate to the previous url when it is a child document', () => {
       component.isChildDoc = true;
       component.backToParent();
-      expect(locationSpy).toHaveBeenCalled();
+      expect(routerSpy).toHaveBeenCalledWith(['/value1/value2']);
     });
 
     it('should not navigate to the previous url when it is not a child document', () => {
       component.isChildDoc = false;
       component.backToParent();
-      expect(locationSpy).not.toHaveBeenCalled();
+      expect(routerSpy).not.toHaveBeenCalled();
     });
   });
 
