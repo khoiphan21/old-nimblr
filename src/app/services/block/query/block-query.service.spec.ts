@@ -140,7 +140,7 @@ describe('BlockQueryService', () => {
         }
       };
       // Setup code to test subscription
-      service.pipe(take(1)).subscribeToUpdate(documentId);
+      service.subscribeToUpdate(documentId);
       service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
         // time out is needed to make sure the first notification is received
         setTimeout(() => {
@@ -281,8 +281,8 @@ describe('BlockQueryService', () => {
   describe('subscribeToUpdate()', () => {
 
     it('should not subscribe to backend again if done once', () => {
-      service.pipe(take(1)).subscribeToUpdate(documentId);
-      service.pipe(take(1)).subscribeToUpdate(documentId);
+      service.subscribeToUpdate(documentId);
+      service.subscribeToUpdate(documentId);
       expect(subscriptionSpy.calls.count()).toBe(1);
     });
 
@@ -296,7 +296,7 @@ describe('BlockQueryService', () => {
         }
       };
       // Setup code to test subscription
-      service.pipe(take(1)).subscribeToUpdate(documentId);
+      service.subscribeToUpdate(documentId);
       // Now flush the response
       backendSubject.next(response);
       expect(service['blocksMap'].has(id)).toBe(true);
@@ -305,7 +305,7 @@ describe('BlockQueryService', () => {
     it('should throw an error if API returns one', done => {
       // setup subscription spy to throw an error
       const message = 'test message';
-      service.pipe(take(1)).subscribeToUpdate(documentId).subscribe(() => {}, error => {
+      service.subscribeToUpdate(documentId).subscribe(() => {}, error => {
         expect(error).toEqual(message);
         done();
       });
