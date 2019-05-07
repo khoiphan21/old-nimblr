@@ -2,11 +2,11 @@
     <div class="block" [ngClass]="{'child-document': isChildDoc, 'header-block': blockStyle === 'HEADER', 'input-block': block.type === 'INPUT'}">
         <ng-content></ng-content>
         <ng-container *ngSwitchCase="'TEXT'">
-            <app-block-text [block]="block" [isOwner]="isOwner" [isEditable]="isEditable" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
+            <app-block-text [block]="block" [isEditable]="isEditable" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
         </ng-container>
         <ng-container *ngSwitchCase="'INPUT'">
             <ng-container *responsive="{sizes:{min:576, max:2000}}">
-                <app-input-block [inputBlock]="block" class="desktop" [focusBlockId]="focusBlockId"></app-input-block>
+                <app-input-block [inputBlock]="block" class="desktop" [isEditable]="isEditable" [focusBlockId]="focusBlockId"></app-input-block>
             </ng-container>
             <ng-container *responsive="{sizes:{min:0,max:575}}">
                 <app-mobile-input-block [inputBlock]="block" class="mobile"></app-mobile-input-block>

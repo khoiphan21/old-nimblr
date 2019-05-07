@@ -14,7 +14,6 @@ export class BlockSectionContentComponent implements OnInit {
   isSelectedOptionShown = false;
   mouseFocusingBlock = '';
 
-  @Input() isOwner: boolean;
   @Input() isChildDoc: boolean;
   @Input() blockIds: Array<string>;
   @Input() isEditable: boolean;

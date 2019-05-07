@@ -28,8 +28,7 @@ export class InputBlockComponent implements OnInit, OnChanges {
 
   constructor(
     private blockFactoryService: BlockFactoryService,
-    private blockCommandService: BlockCommandService,
-    private changeDetector: ChangeDetectorRef
+    private blockCommandService: BlockCommandService
   ) { }
 
   ngOnInit(): void {

@@ -35,13 +35,17 @@ const uuidv4 = require('uuid/v4');
 })
 export class DocumentContentComponent implements OnInit {
   @Output() navigateToChildDocEvent = new EventEmitter<object>();
+
+  // control flags
   isChildDoc = false;
   isOwner: boolean;
+  isUserLoggedIn: boolean;
   isEditable: boolean;
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
   currentSharingStatus: SharingStatus;
-  // currentTab = 'template';
+
+  // data
   private document$: Observable<Document>;
   private currentUser: User;
   private timeout: any;
@@ -76,15 +80,16 @@ export class DocumentContentComponent implements OnInit {
 
     try {
       this.currentUser = await this.checkUser();
-      this.isEditable = true;
+      this.isUserLoggedIn = true;
     } catch {
-      this.isEditable = false;
+      this.isUserLoggedIn = false;
     }
     try {
       await this.retrieveDocumentData();
+      this.checkEditable();
       this.checkIsChildDocument();
     } catch (error) {
-      if (this.isEditable) {
+      if (this.isUserLoggedIn) {
         this.router.navigate(['/dashboard']);
       } else {
         const paramMap: ParamMap = await this.getParamMap();
@@ -109,12 +114,17 @@ export class DocumentContentComponent implements OnInit {
     });
   }
 
+  private checkEditable() {
+    // editable when either the user is logged in or is the owner
+    this.isEditable = this.isOwner;
+  }
+
   private async retrieveDocumentData() {
     return new Promise((resolve, reject) => {
       // get the id from the route and then retrieve the document observable
       this.document$ = this.route.paramMap.pipe(
-        switchMap((params: ParamMap) => 
-        this.documentQueryService.getDocument$(params.get('id')))
+        switchMap((params: ParamMap) =>
+          this.documentQueryService.getDocument$(params.get('id')))
       );
       // subscribe to and process the document from the observable
       this.document$.subscribe((document: Document) => {
@@ -150,18 +160,10 @@ export class DocumentContentComponent implements OnInit {
     this.blockIds = document.blockIds;
     this.docTitle = document.title;
     this.currentSharingStatus = document.sharingStatus;
-    this.isOwner = this.checkIsOwner(document.ownerId);
+    this.isOwner = this.currentUser.id === document.ownerId;
     // For submission documents
     const template = document as TemplateDocument;
     this.submissionDocIds = template.submissionDocIds ? template.submissionDocIds : [];
-  }
-
-  private checkIsOwner(documentOwnerId: UUID) {
-    if (this.currentUser.id === documentOwnerId) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   private checkIsChildDocument() {

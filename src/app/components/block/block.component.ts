@@ -20,7 +20,7 @@ export class BlockComponent implements OnInit {
   block: Block;
   myVersions: Set<UUID> = new Set();
   blockStyle: BlockStyle;
-  @Input() isOwner: boolean;
+
   @Input() blockId: string;
   @Input() isChildDoc: boolean;
   @Input() isEditable: boolean;

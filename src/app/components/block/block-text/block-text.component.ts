@@ -21,7 +21,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
   private timeout: any;
 
   // To control whether it's editable or not
-  @Input() isOwner: boolean;
   @Input() isEditable: boolean;
   @Input() block: TextBlock;
   @Input() focusBlockId: string;

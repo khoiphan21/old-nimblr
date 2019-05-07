@@ -1,8 +1,8 @@
 <div cdkDropList (cdkDropListDropped)="drop($event)">
     <ng-container *ngFor="let id of blockIds">
-        <app-block cdkDrag [cdkDragDisabled]="isSelectedOptionShown" [isChildDoc]="isChildDoc" [isOwner]="isOwner" [isEditable]="isEditable" [focusBlockId]="focusBlockId" (mouseover)="updateOnHoverBlock(id)" (mouseleave)="clearOnHoverBlock()" [blockId]="id"
+        <app-block cdkDrag [cdkDragDisabled]="isSelectedOptionShown || !isEditable" [isChildDoc]="isChildDoc" [isEditable]="isEditable" [focusBlockId]="focusBlockId" (mouseover)="updateOnHoverBlock(id)" (mouseleave)="clearOnHoverBlock()" [blockId]="id"
             (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)">
-            <app-block-option cdkDragHandle *ngIf="isOwner" [blockId]="id" [isChildDoc]="isChildDoc" [mouseFocusingBlock]="mouseFocusingBlock" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
+            <app-block-option cdkDragHandle *ngIf="isEditable" [blockId]="id" [isChildDoc]="isChildDoc" [mouseFocusingBlock]="mouseFocusingBlock" (createBlock)="addNewBlock($event)" (deleteEvent)="deleteBlock($event)" (isSelectedOptionShown)=toggleSelectedOptionStatus($event)
                 (switchBlockOptionsOff)=clearOnHoverBlock()>
             </app-block-option>
             <div *cdkDragPlaceholder class="drag-placeholder" [ngClass]="{'child-document': isChildDoc}">
@@ -11,4 +11,4 @@
         </app-block>
     </ng-container>
 </div>
-<app-add-information *ngIf="isOwner && blockIds.length === 0" (click)="addFirstBlock()" style="width: 100%"></app-add-information>
+<app-add-information *ngIf="isEditable && blockIds.length === 0" (click)="addFirstBlock()" style="width: 100%"></app-add-information>
