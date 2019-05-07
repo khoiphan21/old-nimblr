@@ -164,8 +164,6 @@ export class DocumentContentComponent implements OnInit {
     const url = this.router.url;
     const parts = url.split('/');
     const firstDocId = parts[2];
-    console.log('first: ', firstDocId);
-    console.log('my id: ', this.documentId);
     if (firstDocId === this.documentId) {
       this.isChildDoc = false;
     } else {
@@ -213,7 +211,7 @@ export class DocumentContentComponent implements OnInit {
 
       // Update the block to be focused on
       this.focusBlockId = block.id;
-      
+
       // update the list of block IDs to be displayed
       if (after && this.blockIds.indexOf(after) !== -1) {
         const index = this.blockIds.indexOf(after) + 1;

@@ -55,22 +55,17 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  signIn(): Promise<any> {
+  async signIn() {
     this.signingIn = true;
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
-    return this.accountService.login(email, password).then((data) => {
-      if (data === null) {
-        return Promise.reject(`[loginPage]: 'Null' received from successful login`);
-      } else {
-        // const id = data.id;
-        this.router.navigate(['dashboard']);
-      }
-    }).catch(error => {
+    try {
+      await this.accountService.login(email, password);
+      this.router.navigate(['/document']);
+    } catch (error) {
       this.signingIn = false;
       this.handleLoginError(error);
-      return Promise.reject();
-    });
+    }
   }
 
   private handleLoginError(error) {
@@ -82,6 +77,7 @@ export class LoginPageComponent implements OnInit {
     } else if (error.code === 'UserNotFoundException') {
       this.errorMessage = LoginError.USER_NOT_FOUND;
     } else if (error.code === 'NotAuthorizedException') {
+      this.loginForm.get('password').setValue('');
       this.errorMessage = LoginError.INCORRECT_PASSWORD;
     } else {
       console.error('Unknown error in signIn(): ', error);
