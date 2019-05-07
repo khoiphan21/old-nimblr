@@ -11,6 +11,7 @@ import { updateUser } from 'src/graphql/mutations';
 import { getUser } from 'src/graphql/queries';
 import { UserFactoryService } from '../user/user-factory.service';
 import { skip } from 'rxjs/operators';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -26,6 +27,7 @@ export class MockAccountService {
   }
   setUnverifiedUser(_, __) { }
   getUnverifiedUser() { }
+  async doesUserExist() { return true; }
 }
 
 describe('AccountImplService', () => {
@@ -36,7 +38,7 @@ describe('AccountImplService', () => {
     await Auth.signOut();
   });
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [AccountServiceImpl],
       imports: [
@@ -44,6 +46,9 @@ describe('AccountImplService', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
   });
@@ -101,14 +106,17 @@ describe('AccountImplService', () => {
 
   /* tslint:disable:no-string-literal */
   describe('registerAppUser', () => {
+    let testUser: CognitoSignUpUser;
+
     let spyAuth: jasmine.Spy;
     let spyQuery: jasmine.Spy;
-    let testUser: CognitoSignUpUser;
+    let sessionSpy: jasmine.Spy;
 
     beforeEach(() => {
       spyAuth = spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
       spyQuery = spyOn(service['graphQLService'], 'query');
       spyQuery.and.returnValue(Promise.resolve());
+      sessionSpy = spyOn<any>(service, 'restoreSession');
 
       const testAttr = {
         email: 'test',
@@ -123,22 +131,15 @@ describe('AccountImplService', () => {
       };
     });
 
-    it('should always return a promise', () => {
-      const data = service.registerAppUser(testUser, '');
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
-    it('should send user details correctly to aws', done => {
+    it('should send user details correctly to aws', async () => {
       const testId = 'testID';
-      service.registerAppUser(testUser, testId).then(() => {
-        const userInput = spyQuery.calls.mostRecent().args[1].input;
-        expect(userInput.id).toEqual(testId);
-        expect(userInput.username).toEqual(testUser.username);
-        expect(userInput.email).toEqual(testUser.attributes.email);
-        expect(userInput.firstName).toEqual(testUser.attributes.given_name);
-        expect(userInput.lastName).toEqual(testUser.attributes.family_name);
-        done();
-      });
+      await service.registerAppUser(testUser, testId);
+      const userInput = spyQuery.calls.mostRecent().args[1].input;
+      expect(userInput.id).toEqual(testId);
+      expect(userInput.username).toEqual(testUser.username);
+      expect(userInput.email).toEqual(testUser.attributes.email);
+      expect(userInput.firstName).toEqual(testUser.attributes.given_name);
+      expect(userInput.lastName).toEqual(testUser.attributes.family_name);
     });
 
     it('should return api error message when singIn failed', done => {
@@ -155,10 +156,15 @@ describe('AccountImplService', () => {
       const errMsg = 'testing';
       spyQuery.and.returnValue(Promise.reject(new Error(errMsg)));
 
-      const r = service.registerAppUser(testUser, '').catch(err => {
+      service.registerAppUser(testUser, '').catch(err => {
         expect(err.message).toEqual(errMsg);
         done();
       });
+    });
+
+    it('should call to restoreSession()', async () => {
+      await service.registerAppUser(testUser, 'id');
+      expect(sessionSpy).toHaveBeenCalled();
     });
 
   });
@@ -214,11 +220,6 @@ describe('AccountImplService', () => {
       spyGetAppUser.and.returnValue(Promise.resolve(mockUserData));
     });
 
-    it('should always return a promise', () => {
-      const data = service.login('', '');
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
     it('should call signIn api', async () => {
       await service.login('', '');
       expect(spyAuth.calls.count()).toBe(1);
@@ -271,6 +272,7 @@ describe('AccountImplService', () => {
 
     it('should resolve when signout successfully', async () => {
       await service.logout();
+      expect().nothing();
       // should be okay if control reaches here
     });
 
@@ -282,11 +284,12 @@ describe('AccountImplService', () => {
       expect(spy).toHaveBeenCalledWith(null);
     });
 
-    it('should reject with error emitted by signout if failed', () => {
+    it('should reject with error emitted by signout if failed', done => {
       const message = 'test err';
       signOutSpy.and.returnValue(Promise.reject(message));
       service.logout().catch(error => {
         expect(error).toBe(message);
+        done();
       });
     });
   });
@@ -365,14 +368,9 @@ describe('AccountImplService', () => {
       spyAPI = spyOn(API, 'graphql').and.returnValue(Promise.resolve(mockUser));
     });
 
-    it('should return promise', () => {
-      const data = service.update(mockUser);
-      expect(data instanceof Promise).toBeTruthy();
-    });
-
     it('should call currentAuthenticatedUser first', async () => {
-      service.update(mockUser);
-      expect(spyCurrentAuthUser.calls.count()).toBe(1);
+      await service.update(mockUser);
+      expect(spyCurrentAuthUser).toHaveBeenCalled();
     });
 
     it('should call updateUserAttributes with the right args', async () => {

@@ -1,12 +1,16 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Block, BlockId } from '../../classes/block/block';
 import { BlockQueryService } from '../../services/block/query/block-query.service';
-import { BlockType } from 'src/API';
-import { UUID } from 'src/app/services/document/command/document-command.service';
+import { BlockType, TextBlockType } from 'src/API';
 import { VersionService } from 'src/app/services/version/version.service';
-import { TextBlockType } from '../../../API';
-import { CreateBlockEvent } from './createBlockEvent';
+import { CreateBlockEvent, BlockTypeAndSubType } from './createBlockEvent';
+import { UUID } from '../../services/document/command/document-command.service';
+import { TextBlock } from '../../classes/block/textBlock';
 
+export enum BlockStyle {
+  HEADER = 'HEADER',
+  INPUT = 'INPUT'
+}
 @Component({
   selector: 'app-block',
   templateUrl: './block.component.html',
@@ -15,6 +19,8 @@ import { CreateBlockEvent } from './createBlockEvent';
 export class BlockComponent implements OnInit {
   block: Block;
   myVersions: Set<UUID> = new Set();
+  blockStyle: BlockStyle;
+  @Input() isOwner: boolean;
   @Input() blockId: string;
   @Input() isChildDoc: boolean;
   @Input() isUserLoggedIn: boolean;
@@ -35,6 +41,7 @@ export class BlockComponent implements OnInit {
           // blocks)
           this.versionService.registerVersion(block.version);
           this.block = block;
+          this.styleBlock();
         }
       }
     }, error => {
@@ -44,10 +51,20 @@ export class BlockComponent implements OnInit {
     });
   }
 
-  addBlock(type: BlockType) {
+  private styleBlock() {
+    if (this.block.type === BlockType.TEXT) {
+      const block = this.block as TextBlock;
+      if (block.textBlockType === TextBlockType.HEADER) {
+        this.blockStyle = BlockStyle.HEADER;
+      }
+    }
+  }
+
+  addBlock(type: BlockTypeAndSubType) {
     this.createBlock.emit({
       id: this.blockId,
-      type
+      type: type.type,
+      textBlockType: type.textBlockType,
     });
   }
 

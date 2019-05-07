@@ -83,12 +83,39 @@ section.mobile.navigation-bar {
     section.tabs {
         margin-top: 33px;
         .title {
+            margin-bottom: 5px;
             padding: 0 25px;
             color: #97A0BF;
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 500;
+            @include row-center;
+            justify-content: space-between;
+            i {
+                font-size: 20px;
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
+        }
+    }
+    section.tabs.document-outline {
+        border-top: 1px solid $color-dark-steel-blue;
+        background: #EEF2FF;
+        height: stretch;
+        .title {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .document-title {
+            padding: 0 25px;
+            font-size: 13px;
+            font-weight: 500;
+            color: $color-grey-2;
+            height: 27px;
+            @include row-center;
+            justify-content: flex-start;
         }
     }
 }

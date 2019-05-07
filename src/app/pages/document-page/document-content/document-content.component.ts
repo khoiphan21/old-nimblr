@@ -6,7 +6,11 @@ import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DocumentQueryService } from 'src/app/services/document/query/document-query.service';
 import { BlockFactoryService, CreateNewBlockInput } from '../../../services/block/factory/block-factory.service';
-import { BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,  } from 'src/API';
+import {
+  BlockType, SharingStatus, UpdateDocumentInput, DeleteBlockInput, TextBlockType, DocumentType,
+  DeleteDocumentInput,
+} from 'src/API';
+
 import { AccountService } from '../../../services/account/account.service';
 import { BlockQueryService } from '../../../services/block/query/block-query.service';
 import { BlockCommandService } from '../../../services/block/command/block-command.service';
@@ -14,13 +18,12 @@ import { DocumentCommandService, UUID } from '../../../services/document/command
 import { BlockId, Block } from 'src/app/classes/block/block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { fadeInOutAnimation } from 'src/app/animation';
-import { Location } from '@angular/common';
 import { VersionService } from 'src/app/services/version/version.service';
-import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
-import { DocumentFactoryService } from 'src/app/services/document/factory/document-factory.service';
-import { EmailService } from 'src/app/services/email/email.service';
 import { TemplateDocument } from '../../../classes/document/templateDocument';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { CommandService } from 'src/app/services/command/command.service';
+import { CommandType } from '../../../classes/command/commandType';
+import { SendDocumentCommand } from '../../../classes/command/sendDocument/sendDocumentCommand';
 
 const uuidv4 = require('uuid/v4');
 
@@ -33,6 +36,7 @@ const uuidv4 = require('uuid/v4');
 export class DocumentContentComponent implements OnInit {
   @Output() navigateToChildDocEvent = new EventEmitter<object>();
   isChildDoc = false;
+  isOwner: boolean;
   isUserLoggedIn: boolean;
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
@@ -57,20 +61,19 @@ export class DocumentContentComponent implements OnInit {
   constructor(
     private documentQueryService: DocumentQueryService,
     private documentCommandService: DocumentCommandService,
-    private docFactoryService: DocumentFactoryService,
     private blockCommandService: BlockCommandService,
     private blockQueryService: BlockQueryService,
     private blockFactoryService: BlockFactoryService,
     private versionService: VersionService,
-    private emailService: EmailService,
     private accountService: AccountService,
     private route: ActivatedRoute,
-    private location: Location,
-    private router: Router
+    private router: Router,
+    private commandService: CommandService
   ) {
   }
 
   async ngOnInit() {
+
     try {
       this.currentUser = await this.checkUser();
       this.isUserLoggedIn = true;
@@ -78,10 +81,19 @@ export class DocumentContentComponent implements OnInit {
       this.isUserLoggedIn = false;
     }
     try {
-      this.retrieveDocumentData();
+      await this.retrieveDocumentData();
+      this.checkIsChildDocument();
     } catch (error) {
-      const message = `DocumentPage failed to load: ${error.message}`;
-      throw new Error(message);
+      if (this.isUserLoggedIn) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        const paramMap: ParamMap = await this.getParamMap();
+        const email = paramMap.get('email');
+        const document = paramMap.get('id');
+        const userExist = await this.accountService.doesUserExist(email);
+
+        this.handleRouting({ email, document, userExist });
+      }
     }
     // Initialize internal values
     this.docTitle = '';
@@ -100,30 +112,38 @@ export class DocumentContentComponent implements OnInit {
     });
   }
 
-  private retrieveDocumentData() {
-    // get the id from the route and then retrieve the document observable
-    this.document$ = this.route.paramMap.pipe(
-      switchMap((params: ParamMap) =>
-        this.documentQueryService.getDocument$(params.get('id'))
-      )
-    );
-    // subscribe to and process the document from the observable
-    this.document$.subscribe((document: Document) => {
-      if (document === null) { return; }
-      this.checkIsChildDocument();
+  private async retrieveDocumentData() {
+    return new Promise((resolve, reject) => {
+      // get the id from the route and then retrieve the document observable
+      this.document$ = this.route.paramMap.pipe(
+        switchMap((params: ParamMap) => 
+        this.documentQueryService.getDocument$(params.get('id')))
+      );
+      // subscribe to and process the document from the observable
+      this.document$.subscribe((document: Document) => {
+        if (document === null) { return; }
 
-      if (!this.versionService.isRegistered(document.version)) {
-        this.updateStoredProperties(document);
-      }
+        if (!this.versionService.isRegistered(document.version)) {
+          this.updateStoredProperties(document);
+        }
 
-      // now set the flag for document ready to be true for rendering
-      this.isDocumentReady = true;
+        // now set the flag for document ready to be true for rendering
+        this.isDocumentReady = true;
+        resolve();
 
-      this.setupBlockUpdateSubscription();
-    }, error => {
-      console.error(`DocumentPage failed to get document: ${error.message}`);
+        this.setupBlockUpdateSubscription();
+      }, error => {
+        reject(`DocumentPage failed to get document: ${error}`);
+      });
+
     });
 
+  }
+
+  private async getParamMap(): Promise<ParamMap> {
+    return new Promise((resolve, reject) => {
+      this.route.paramMap.pipe(take(1)).subscribe(resolve, reject);
+    });
   }
 
   private updateStoredProperties(document: Document) {
@@ -133,19 +153,38 @@ export class DocumentContentComponent implements OnInit {
     this.blockIds = document.blockIds;
     this.docTitle = document.title;
     this.currentSharingStatus = document.sharingStatus;
+    this.isOwner = this.checkIsOwner(document.ownerId);
     // For submission documents
     const template = document as TemplateDocument;
     this.submissionDocIds = template.submissionDocIds ? template.submissionDocIds : [];
   }
 
+  private checkIsOwner(documentOwnerId: UUID) {
+    if (this.currentUser.id === documentOwnerId) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   private checkIsChildDocument() {
     const url = this.router.url;
-    const trimmedUrl = url.substring(0, url.length - 37);
-    const toBeValidateUrl = trimmedUrl.substr(-8, 8);
-    if (toBeValidateUrl === 'document') {
+    const parts = url.split('/');
+    const firstDocIdRoute: string = parts[2];
+    if (firstDocIdRoute.indexOf(this.documentId) !== -1) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
+    }
+  }
+
+  private handleRouting({ email, document, userExist }) {
+    const route = userExist ? '/login' : '/register';
+
+    if (email) {
+      this.router.navigate([route, { email, document }]);
+    } else {
+      this.router.navigate([route, { document }]);
     }
   }
 
@@ -153,7 +192,6 @@ export class DocumentContentComponent implements OnInit {
     // The return result can be ignored (maybe)
     this.blockQueryService.subscribeToUpdate(this.documentId);
   }
-
 
   /**
    * Create a new block and add it to the list of blocks in the document
@@ -177,8 +215,8 @@ export class DocumentContentComponent implements OnInit {
         case BlockType.TEXT:
           block = this.createAndSelectTextBlock(event.textBlockType, input);
           break;
-        case BlockType.QUESTION:
-          block = this.blockFactoryService.createNewQuestionBlock(input);
+        case BlockType.INPUT:
+          block = this.blockFactoryService.createNewInputBlock(input);
           break;
         default:
           throw Error(`BlockType "${event.type}" is not supported`);
@@ -187,9 +225,9 @@ export class DocumentContentComponent implements OnInit {
       // register it to the BlockQueryService so that the backend notification
       // will be ignored
       this.blockQueryService.registerBlockCreatedByUI(block);
-
       // Update the block to be focused on
       this.focusBlockId = block.id;
+
       // update the list of block IDs to be displayed
       if (after && this.blockIds.indexOf(after) !== -1) {
         const index = this.blockIds.indexOf(after) + 1;
@@ -213,10 +251,11 @@ export class DocumentContentComponent implements OnInit {
   }
 
   private createAndSelectTextBlock(textBlockType: TextBlockType, input) {
-    // TODO: @bruno tbt
     switch (textBlockType) {
       case TextBlockType.HEADER:
         return this.blockFactoryService.createNewHeaderBlock(input);
+      case TextBlockType.BULLET:
+        return this.blockFactoryService.createNewBulletBlock(input);
       default:
         return this.blockFactoryService.createNewTextBlock(input);
     }
@@ -287,7 +326,10 @@ export class DocumentContentComponent implements OnInit {
 
   backToParent() {
     if (this.isChildDoc === true) {
-      this.location.back();
+      const parentRoute = this.route.snapshot.parent;
+      const parentSegments = parentRoute.url.map(s => s.path);
+      const parentUrl = '/' + parentSegments.join('/');
+      this.router.navigate([parentUrl]);
     }
   }
 
@@ -338,49 +380,23 @@ export class DocumentContentComponent implements OnInit {
     await this.documentCommandService.updateDocument(input);
   }
 
-  async sendDocument(email: string) {
-    // First duplicate all blocks
-    const blocks: Array<Block> = await Promise.all(
-      this.blockIds.map(id => this.getCurrentBlock(id))
-    );
-    const duplicatedBlocks = await this.blockCommandService.duplicateBlocks(blocks);
-    const duplicatedIds = duplicatedBlocks.map(block => block.id);
-
-    // create a new SubmissionDocument, passing in the info + blocks
-    const submission: SubmissionDocument = this.docFactoryService.createNewSubmission({
-      ownerId: this.currentUser.id,
-      recipientEmail: email,
-      blockIds: duplicatedIds,
-      title: this.docTitle
-    });
-
-    // call createDocument for the new document
-    await this.documentCommandService.createDocument(submission);
-
-    // update the list of submissionDocIds
-    this.submissionDocIds.push(submission.id);
-
-    // call to updateDocument for current document
-    await this.documentCommandService.updateDocument({
-      id: this.documentId,
-      submissionDocIds: this.submissionDocIds,
-      lastUpdatedBy: this.currentUser.id
-    });
-
-    // if all good, then send the email
-    await this.emailService.sendInvitationEmail({
-      email,
-      documentId: submission.id,
-      sender: this.currentUser
-    });
+  async sendDocument(emails: Array<string>) {
+    for (const email of emails) {
+      const command = this.commandService.getCommand(CommandType.SEND_DOCUMENT) as SendDocumentCommand;
+      const submissionId = await command.execute(this.documentId, email);
+      this.submissionDocIds.push(submissionId);
+    }
   }
 
-  private async getCurrentBlock(id: BlockId): Promise<Block> {
-    return new Promise(resolve => {
-      this.blockQueryService.getBlock$(id).pipe(take(1)).subscribe(value => {
-        resolve(value);
-      });
-    });
+  async deleteThisDocument() {
+    try {
+      // send query to delete document
+      const input: DeleteDocumentInput = { id: this.documentId };
+      return await this.documentCommandService.deleteDocument(input);
+
+    } catch (error) {
+      throw new Error('Failed to delete document: ' + error.message);
+    }
   }
 
 }

@@ -1,57 +1,88 @@
 <section class="block-option desktop" *ngIf="showBlock" [ngClass]="{'child-document': isChildDoc}" [@fadeInOutAnimation]>
     <div class="add-button-container">
-        <div class="add-button" (click)="showAddBlockContainer()">
-            <img src="./assets/icons/add-block.png" alt="plus icon">
+        <div class="add-button" (click)="showAddBlockContainer()" tooltip="&nbsp;Add new block&nbsp;" placement="top" hide-delay="0">
+            <img src="./assets/icons/block-add.svg" alt="plus icon">
         </div>
         <div class="blocker" *ngIf="isAddBlockContainerShown" (click)="hideAddBlockContainer()"></div>
         <div class="add-basic-blocks  options-block" *ngIf="isAddBlockContainerShown">
             <div class="title basic">BASIC BLOCKS</div>
-
-            <div class="block-type" (click) ="addHeaderBlock()">
-                <div class="block-image text">
-                    
-                </div>
-                <div class="block-text">
-                    <div class="type">Header</div>
-                    <div class="description">Is a Header</div>
-                </div>
-            </div>
-
             <div class="block-type" (click)="addTextBlock()">
-                <div class="block-image text">
-                    <!-- <img class="text" src="./assets/icons/text-block.png" alt=""> -->
-                </div>
+                <img src="./assets/icons/block-new-text.svg">
                 <div class="block-text">
                     <div class="type">Text</div>
                     <div class="description">Just plain text</div>
                 </div>
             </div>
-
-            <div class="title form">FORM BLOCKS</div>
-            <div class="block-type" (click)="addQuestionBlock()">
-                <div class="block-image text">
-                </div>
+            <div class="block-type" (click)="addHeaderBlock()">
+                <img src="./assets/icons/block-new-header.svg">
                 <div class="block-text">
-                    <div class="type">Question block</div>
-                    <div class="description">Question and input fields</div>
+                    <div class="type">Header</div>
+                    <div class="description">A large Header</div>
+                </div>
+            </div>
+            <div class="block-type" (click)="addBulletBlock()">
+                <img src="./assets/icons/block-new-bullet.svg">
+                <div class="block-text">
+                    <div class="type">Bullet List</div>
+                    <div class="description">Create a bulleted list</div>
+                </div>
+            </div>
+            <div class="title form">COLLABORATIVE BLOCKS</div>
+            <div class="block-type" (click)="addInputBlock()">
+                <img src="./assets/icons/block-new-input.svg">
+                <div class="block-text">
+                    <div class="type">Input block</div>
+                    <div class="description">An editable field for recipients</div>
                 </div>
             </div>
         </div>
 
     </div>
     <div class="menu-drag-container">
-        <div class="menu-drag" (click)="showMenuSelectionContainer()">
-            <img src="./assets/icons/menu-drag.png" alt="menu icon">
+        <div class="menu-drag" (click)="showMenuSelectionContainer()" tooltip="&nbsp;Drag to move <br> Click to open menu&nbsp;" placement="right" hide-delay="0">
+            <img src="./assets/icons/block-option.svg" alt="menu icon">
         </div>
         <div class="blocker" *ngIf="isMenuSelectionContainerShown" (click)="hideMenuSelectionContainer()"></div>
-        <div class="menu-blocks  options-block" *ngIf="isMenuSelectionContainerShown">
+        <div class="menu-blocks options-block" *ngIf="isMenuSelectionContainerShown">
             <div class="menu-selection" (click)="deleteHandler()">
-                <div class="selection-image">
-                    <img class="delete-item" src="./assets/icons/delete-item.png" alt="">
-                </div>
+                <img class="selection-image" src="./assets/icons/block-delete.svg">
                 <div class="selection-text">
                     <div class="type">Delete</div>
                 </div>
+            </div>
+            <div class="menu-selection" (mouseover)="isConverterShown = true">
+                <img class="selection-image" src="./assets/icons/block-convert.svg">
+                <div class="selection-text">
+                    <div class="type">Turn Into</div>
+                </div>
+                <i class="fas fa-caret-right"></i>
+                <section class="convert-blocks menu-blocks options-block" *ngIf="isConverterShown">
+                    <div class="menu-selection" (click)="convertBlockInto('HEADER')">
+                        <div class="selection-image">
+                            <i class="fas fa-heading"></i>
+                        </div>
+                        <div class="selection-text">
+                            <div class="type">Header</div>
+                        </div>
+                    </div>
+                    <div class="menu-selection" (click)="convertBlockInto('TEXT')">
+                        <div class="selection-image">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div class="selection-text">
+                            <div class="type">Text</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-selection" (click)="convertBlockInto('BULLET')">
+                        <div class="selection-image">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div class="selection-text">
+                            <div class="type">Bullet Point</div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </div>

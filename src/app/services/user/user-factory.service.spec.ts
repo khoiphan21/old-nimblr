@@ -1,11 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { UserFactoryService } from './user-factory.service';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('UserFactoryService', () => {
   let factory: UserFactoryService;
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({});
+  });
+
+  beforeEach(() => {
     factory = TestBed.get(UserFactoryService);
   });
 

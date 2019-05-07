@@ -1,0 +1,47 @@
+<section class="mobile input-block" (click)="isPreviewMode = false" *ngIf="isPreviewMode">
+    <app-input-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isMobilePreview]=true [isPreviewMode]="isPreviewMode" [options]="previewOptions" [answers]="previewAnswers" style="width: 100%;"></app-input-option>
+</section>
+<section class="mobile edit-input" [@slideBottomToTopAnimationDOM]="isPreviewMode">
+    <div class="row no-pad header">
+        <div class="col-2" style="text-align: left" (click)="isPreviewMode = true"><i class="fas fa-times"></i></div>
+    </div>
+    <div class="row no-pad options" [ngSwitch]=currentType>
+        <label>Options</label>
+        <app-input-option [isInputLocked]="isInputLocked" [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
+    </div>
+    <div class="row no-pad footer" [ngSwitch]=currentType>
+        <div class="dropdown col-6" (clickOutside)="isInputOptionShown = false">
+            <div class="selected-option" (click)="toggleOptions()" [ngSwitch]=currentType>
+                <div *ngSwitchCase="'TEXT'">
+                    <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
+                </div>
+                <div *ngSwitchCase="'CHECKBOX'">
+                    <i class="fas fa-check-square"></i><span>Checkbox</span>
+                </div>
+                <div *ngSwitchCase="'MULTIPLE_CHOICE'">
+                    <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
+                </div>
+                <i class="fas fa-chevron-down" [ngClass]="{'flip-arrow': isInputOptionShown === true}"></i>
+            </div>
+            <section class="container options-block" *ngIf="isInputOptionShown === true">
+                <div class="title">
+                    Response TYPES
+                </div>
+                <section class="document-options">
+                    <div class="option" (click)="selectType('TEXT')">
+                        <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
+                    </div>
+                    <div class="option" (click)="selectType('CHECKBOX')">
+                        <i class="fas fa-check-square"></i><span>Checkbox</span>
+                    </div>
+                    <div class="option" (click)="selectType('MULTIPLE_CHOICE')">
+                        <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
+                    </div>
+                </section>
+            </section>
+        </div>
+        <div class="delete">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+    </div>
+</section>

@@ -1,14 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BlockComponent } from './block.component';
+import { BlockComponent, BlockStyle } from './block.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { BlockType } from 'src/API';
+import { BlockType, TextBlockType } from 'src/API';
 import { Block } from 'src/app/classes/block/block';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CreateBlockEvent } from './createBlockEvent';
+import { CreateBlockEvent, BlockTypeAndSubType } from './createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
+import { ResponsiveModule } from 'ngx-responsive';
+import { take } from 'rxjs/operators';
 
 const uuidv4 = require('uuid/v4');
 
@@ -25,8 +28,10 @@ describe('BlockComponent', () => {
     value: 'test',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    textBlockType: TextBlockType.TEXT
   };
-  beforeEach(async(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         BlockComponent,
@@ -34,12 +39,13 @@ describe('BlockComponent', () => {
       imports: [
         ReactiveFormsModule,
         FormsModule,
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule.withRoutes([]),
+        ResponsiveModule.forRoot()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockComponent);
@@ -102,7 +108,7 @@ describe('BlockComponent', () => {
 
   describe('addBlock()', () => {
 
-    let mockBlockInfo: CreateBlockEvent;
+    let mockBlockInfo: BlockTypeAndSubType;
 
     beforeEach(() => {
       mockBlockInfo = {
@@ -111,21 +117,21 @@ describe('BlockComponent', () => {
     });
 
     it('should emit the right type', done => {
-      const type = BlockType.QUESTION;
-      mockBlockInfo.type = BlockType.QUESTION;
-      component.createBlock.subscribe((value: CreateBlockEvent) => {
+      const type = BlockType.INPUT;
+      mockBlockInfo.type = BlockType.INPUT;
+      component.createBlock.pipe(take(1)).subscribe((value: CreateBlockEvent) => {
         expect(value.type).toEqual(type);
         done();
       });
-      component.addBlock(mockBlockInfo.type);
+      component.addBlock(mockBlockInfo);
     });
     it('should emit the right id', done => {
       component.blockId = uuidv4();
-      component.createBlock.subscribe((value: CreateBlockEvent) => {
+      component.createBlock.pipe(take(1)).subscribe((value: CreateBlockEvent) => {
         expect(value.id).toEqual(component.blockId);
         done();
       });
-      component.addBlock(mockBlockInfo.type);
+      component.addBlock(mockBlockInfo);
     });
   });
 
@@ -133,11 +139,36 @@ describe('BlockComponent', () => {
     const id = 'test';
 
     it('should emit the given blockId', done => {
-      component.deleteEvent.subscribe(value => {
+      component.deleteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(id);
         done();
       });
       component.deleteTransmitter(id);
+    });
+  });
+
+  describe('styleBlock()', () => {
+    let mockBlock: any;
+
+    beforeEach(() => {
+      mockBlock = {
+        type: BlockType.TEXT,
+        textBlockType: TextBlockType.TEXT
+      };
+    });
+
+    it('should not set the style if it is TEXT type', () => {
+      component.block = mockBlock;
+      component.blockStyle = undefined;
+      component['styleBlock']();
+      expect(component.blockStyle).toEqual(undefined);
+    });
+
+    it('should set the style if it is HEADER type', () => {
+      mockBlock.textBlockType = TextBlockType.HEADER;
+      component.block = mockBlock;
+      component['styleBlock']();
+      expect(component.blockStyle).toEqual(BlockStyle.HEADER);
     });
   });
 });

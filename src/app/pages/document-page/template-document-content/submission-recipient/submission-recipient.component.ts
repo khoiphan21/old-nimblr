@@ -18,15 +18,23 @@ export class SubmissionRecipientComponent implements OnInit {
   @Input() documentId: UUID; // The id of the submission document
 
   @Output() navigateToEvent = new EventEmitter<UUID>();
+  @Output() documentNotFound = new EventEmitter<UUID>();
 
   constructor(
     private queryService: DocumentQueryService
   ) { }
 
   ngOnInit() {
-    this.queryService.getDocument$(this.documentId).subscribe((document: SubmissionDocument) => {
-      this.storeDocumentContent(document);
-    });
+    this.queryService.getDocument$(this.documentId).subscribe(
+      (document: SubmissionDocument) => {
+        // document found - process it
+        this.storeDocumentContent(document);
+      }, () => {
+        // Document with the given id does not exist - possibly deleted.
+        // Remove document from the submissionIds
+        this.documentNotFound.emit(this.documentId);
+      }
+    );
   }
 
   storeDocumentContent(document: SubmissionDocument) {

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderComponent } from './header.component';
 import { AccountService } from '../../services/account/account.service';
@@ -8,6 +8,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { configureTestSuite } from 'ng-bullet';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharingStatus } from 'src/API';
+import { ResponsiveModule } from 'ngx-responsive';
+import { take } from 'rxjs/operators';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -18,7 +20,8 @@ describe('HeaderComponent', () => {
         HeaderComponent
       ],
       imports: [
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule.withRoutes([]),
+        ResponsiveModule.forRoot()
       ],
       providers: [
         DocumentService,
@@ -51,7 +54,7 @@ describe('HeaderComponent', () => {
 
   describe('showInvite()', () => {
     it('should emit the event value as true', done => {
-      component.showInviteEvent.subscribe(value => {
+      component.showInviteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toBe(true);
         done();
       });
@@ -73,7 +76,7 @@ describe('HeaderComponent', () => {
 
   describe('changeSharingStatus()', () => {
     it('should emit the new status', done => {
-      component.sharingChange.subscribe(status => {
+      component.sharingChange.pipe(take(1)).subscribe(status => {
         expect(status).toEqual(SharingStatus.PUBLIC);
         done();
       });
@@ -83,8 +86,32 @@ describe('HeaderComponent', () => {
 
   describe('saveAsTemplate()', () => {
     it('should emit the event', done => {
-      component.saveAsTemplateEvent.subscribe(() => done());
+      component.saveAsTemplateEvent.pipe(take(1)).subscribe(() => {
+        expect().nothing();
+        done();
+      });
       component.saveAsTemplate();
+    });
+  });
+
+  describe('deleteThisDocument()', () => {
+    let navigationSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      navigationSpy = spyOn(component['router'], 'navigate');
+    });
+
+    it('should emit deleteDocumentEvent', done => {
+      component.deleteDocumentEvent.pipe(take(1)).subscribe(() => {
+        expect().nothing();
+        done();
+      });
+      component.deleteThisDocument();
+    });
+
+    it('should trigger page redirection', () => {
+      component.deleteThisDocument();
+      expect(navigationSpy.calls.count()).toBe(1);
     });
   });
 

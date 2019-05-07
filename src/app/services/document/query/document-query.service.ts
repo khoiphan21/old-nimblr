@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Document } from 'src/app/classes/document/document';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
-import { getDocument } from '../../../../graphql/queries';
+import { getDocumentLambda } from '../../../../graphql/queries';
 import { DocumentFactoryService } from '../factory/document-factory.service';
 import { onSpecificDocumentUpdate } from '../../../../graphql/subscriptions';
+import { UUID } from '../command/document-command.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,33 +27,35 @@ export class DocumentQueryService {
    * @param id the id of the document
    */
   getDocument$(id: string): Observable<Document> {
-    if (!this.documentMap.has(id)) {
-      this.documentMap.set(id, new BehaviorSubject<Document>(null));
+    if (this.documentMap.has(id)) {
+      return this.documentMap.get(id);
     }
-    const document$ = this.documentMap.get(id);
+    const document$ = new BehaviorSubject<Document>(null);
+    this.documentMap.set(id, document$);
 
     // setup subscription if not yet done
     if (!this.subscriptionMap.has(id)) {
       this.subscribeToUpdate(id);
     }
-    this.graphQlService.query(getDocument, { id }).then(response => {
 
+    this.graphQlService.query(getDocumentLambda, { id }).then(response => {
       try {
         const document: Document = this.parseDocument(response, id);
         document$.next(document);
       } catch (error) {
-        document$.error(error);
+        return Promise.reject(error);
       }
 
-    }).catch(error =>
-      document$.error(Error(`[DocumentQueryService] Unable to send query: ${error.message}`))
-    );
+    }).catch(error => {
+      document$.error(Error(`[DocumentQueryService] Unable to send query: ${error.message}`));
+      this.resetDocument$(id);
+    });
 
     return document$;
   }
 
   /**
-   * Parse the raw response from getDocument query
+   * Parse the raw response from getDocumentLambda query
    *
    * @param response the raw response from the backend
    * @param id The id of the document, for error message formatting
@@ -61,7 +64,7 @@ export class DocumentQueryService {
     let data: any;
 
     try {
-      data = response.data.getDocument;
+      data = response.data.getDocumentLambda;
     } catch (error) {
       throw new Error(`Unable to parse response: ${error.message}`);
     }
@@ -94,12 +97,14 @@ export class DocumentQueryService {
         document$.next(document);
       } catch (error) {
         document$.error(error);
+        this.resetDocument$(documentId);
       }
     }, error => {
       // Note: need to delete the subscription from the map first
       this.subscriptionMap.delete(documentId);
       // and then emit the error
       document$.error(Error(`Error from notification: ${error.message}`));
+      this.resetDocument$(documentId);
     });
 
     this.subscriptionMap.set(documentId, subscription);
@@ -129,6 +134,10 @@ export class DocumentQueryService {
     }
 
     return document;
+  }
+
+  resetDocument$(id: UUID) {
+    this.documentMap.delete(id);
   }
 
 }

@@ -26,9 +26,20 @@ export class DashboardPageComponent implements OnInit {
 
   // TODO: handle error
   async ngOnInit() {
+    try {
+      await this.accountService.isUserReady();
+      await this.getDocuments();
+    } catch (error) {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  async getDocuments() {
     return new Promise((resolve, reject) => {
       this.documentService.getUserDocuments$().subscribe(documents => {
-        this.userDocuments = documents;
+        this.userDocuments = documents.filter(document => {
+          return document.type !== DocumentType.SUBMISSION;
+        });
         resolve();
       }, error => {
         const message = `DashboardPage failed to get user documents: ${error.message}`;
@@ -41,7 +52,7 @@ export class DashboardPageComponent implements OnInit {
     const user = await this.accountService.isUserReady();
     const input: CreateDocumentInput = {
       version: uuidv4(),
-      type: DocumentType.GENERIC,
+      type: DocumentType.TEMPLATE,
       ownerId: user.id,
       lastUpdatedBy: user.id,
       sharingStatus: SharingStatus.PRIVATE

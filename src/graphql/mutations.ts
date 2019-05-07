@@ -11,11 +11,11 @@ export const createTextBlock = `mutation CreateTextBlock($input: CreateTextBlock
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -29,16 +29,16 @@ export const updateTextBlock = `mutation UpdateTextBlock($input: UpdateTextBlock
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
-export const createQuestionBlock = `mutation CreateQuestionBlock($input: CreateQuestionBlockInput!) {
-  createQuestionBlock(input: $input) {
+export const createInputBlock = `mutation CreateInputBlock($input: CreateInputBlockInput!) {
+  createInputBlock(input: $input) {
     id
     version
     type
@@ -47,16 +47,16 @@ export const createQuestionBlock = `mutation CreateQuestionBlock($input: CreateQ
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
-export const updateQuestionBlock = `mutation UpdateQuestionBlock($input: UpdateQuestionBlockInput!) {
-  updateQuestionBlock(input: $input) {
+export const updateInputBlock = `mutation UpdateInputBlock($input: UpdateInputBlockInput!) {
+  updateInputBlock(input: $input) {
     id
     version
     type
@@ -65,11 +65,11 @@ export const updateQuestionBlock = `mutation UpdateQuestionBlock($input: UpdateQ
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -179,11 +179,11 @@ export const createBlock = `mutation CreateBlock($input: CreateBlockInput!) {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -197,11 +197,11 @@ export const updateBlock = `mutation UpdateBlock($input: UpdateBlockInput!) {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -215,11 +215,11 @@ export const deleteBlock = `mutation DeleteBlock($input: DeleteBlockInput!) {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;

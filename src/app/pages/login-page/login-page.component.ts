@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account/account.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 export enum LoginError {
   NONE = 'NONE',
@@ -16,17 +16,45 @@ export enum LoginError {
 })
 
 export class LoginPageComponent implements OnInit {
+  // Params from route
+  routeDocumentId: string;
+
   loginForm: FormGroup;
   passwordType = 'password';
   errorMessage = LoginError.NONE;
+
+  // control flags
+  isReady = false;
+  signingIn = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private accountService: AccountService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-    this.buildForm();
+  async ngOnInit() {
+    try {
+      await this.accountService.isUserReady();
+      this.router.navigate(['/document']);
+    } catch {
+      this.buildForm();
+      this.checkRouteParams(); // should be done after the form is built
+      this.isReady = true;
+    }
+  }
+
+  private checkRouteParams() {
+    this.route.paramMap.subscribe(params => {
+      const email = params.get('email');
+      this.routeDocumentId = params.get('document');
+
+      // now check to see if the email given is valid
+      if (typeof email === 'string') {
+        this.loginForm.get('email').setValue(email);
+      }
+    });
   }
 
   buildForm() {
@@ -44,20 +72,17 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  signIn(): Promise<any> {
+  async signIn() {
+    this.signingIn = true;
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
-    return this.accountService.login(email, password).then((data) => {
-      if (data === null) {
-        return Promise.reject(`[loginPage]: 'Null' received from successful login`);
-      } else {
-        // const id = data.id;
-        this.router.navigate(['dashboard']);
-      }
-    }).catch(error => {
+    try {
+      await this.accountService.login(email, password);
+      this.router.navigate([`/document/${this.routeDocumentId}`]);
+    } catch (error) {
+      this.signingIn = false;
       this.handleLoginError(error);
-      return Promise.reject(  );
-    });
+    }
   }
 
   private handleLoginError(error) {
@@ -69,6 +94,7 @@ export class LoginPageComponent implements OnInit {
     } else if (error.code === 'UserNotFoundException') {
       this.errorMessage = LoginError.USER_NOT_FOUND;
     } else if (error.code === 'NotAuthorizedException') {
+      this.loginForm.get('password').setValue('');
       this.errorMessage = LoginError.INCORRECT_PASSWORD;
     } else {
       console.error('Unknown error in signIn(): ', error);

@@ -11,11 +11,11 @@ export const onUpdateBlockInDocument = `subscription OnUpdateBlockInDocument($do
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -146,11 +146,11 @@ export const onCreateBlock = `subscription OnCreateBlock {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -164,11 +164,11 @@ export const onUpdateBlock = `subscription OnUpdateBlock {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;
@@ -182,11 +182,11 @@ export const onDeleteBlock = `subscription OnDeleteBlock {
     createdAt
     updatedAt
     value
-    question
-    answers
-    questionType
-    options
     textBlockType
+    answers
+    inputType
+    options
+    isLocked
   }
 }
 `;

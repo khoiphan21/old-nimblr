@@ -3,19 +3,38 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { AccountService, UnverifiedUser } from '../../services/account/account.service';
 import { CognitoSignUpUser } from '../../classes/user';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from 'aws-amplify';
+import { fadeInOutAnimation } from '../../animation';
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.scss']
+  styleUrls: ['./register-page.component.scss'],
+  animations: [
+    fadeInOutAnimation
+  ]
 })
 export class RegisterPageComponent implements OnInit {
+  // Params from route
+  routeDocumentId: string;
+
   registerForm: FormGroup;
   verificationForm: FormGroup;
   steps = 'one';
+
+  // For password input
   passwordType = 'password';
+  password = '';
+  isPasswordFocused = false;
+  hasUpperCase = false;
+  hasLowerCase = false;
+  hasNumber = false;
+  hasLength = false;
+
+  // control flags
+  isFormReady = false;
+
   uuid: string;
   newCognitoUser: CognitoSignUpUser = {
     username: '',
@@ -26,12 +45,33 @@ export class RegisterPageComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private accountService: AccountService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-    this.checkUserVerification();
-    this.buildForm();
+  async ngOnInit() {
+    try {
+      await this.accountService.isUserReady();
+      this.router.navigate(['/document']);
+    } catch {
+      this.checkUserVerification();
+      this.buildForm();
+      this.checkRouteParams(); // should be done after the form is built
+      this.isFormReady = true;
+    }
+  }
+
+  private checkRouteParams() {
+    this.route.paramMap.subscribe(params => {
+      const email = params.get('email');
+      this.routeDocumentId = params.get('document');
+
+      // now check to see if the email given is valid
+      if (typeof email === 'string') {
+        this.steps = 'two';
+        this.registerForm.get('email').setValue(email);
+      }
+    });
   }
 
   private checkUserVerification() {
@@ -49,11 +89,13 @@ export class RegisterPageComponent implements OnInit {
   }
 
   private buildForm() {
+    const emailPattern = '^.+@[^\.].*\.[a-z]{2,}$';
     this.registerForm = this.formBuilder.group({
-      email: this.formBuilder.control('', [Validators.required, Validators.email, Validators.minLength(6)]),
-      firstName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
-      lastName: this.formBuilder.control('', [Validators.required, Validators.minLength(4)]),
-      password: this.formBuilder.control('', [Validators.required, Validators.minLength(6)]),
+      email: this.formBuilder.control('', [Validators.required, Validators.email,
+         Validators.pattern(emailPattern), Validators.minLength(6)]),
+      firstName: this.formBuilder.control('', [Validators.required]),
+      lastName: this.formBuilder.control('', [Validators.required]),
+      password: this.formBuilder.control('', [Validators.required, Validators.minLength(8)]),
     });
     this.verificationForm = this.formBuilder.group({
       verificationCode: this.formBuilder.control('', [Validators.required, Validators.minLength(6)])
@@ -68,7 +110,7 @@ export class RegisterPageComponent implements OnInit {
     }
   }
 
-  registerAccountInAws(): Promise<any> {
+  async registerAccountInAws() {
     const email = this.registerForm.get('email').value;
     const firstName = this.registerForm.get('firstName').value;
     const lastName = this.registerForm.get('lastName').value;
@@ -83,52 +125,46 @@ export class RegisterPageComponent implements OnInit {
         family_name: `${lastName}`
       }
     };
-    return this.accountService.registerCognitoUser(this.newCognitoUser).then((data) => {
-      this.uuid = data.userSub;
-      this.steps = 'three';
-      return Promise.resolve();
-    });
+    const data = await this.accountService.registerCognitoUser(this.newCognitoUser);
+    this.uuid = data.userSub;
+    this.steps = 'three';
   }
 
-  verifyAccount(): Promise<any> {
+  async verifyAccount(): Promise<any> {
     const verificationcode = this.verificationForm.get('verificationCode').value;
     const email = this.newCognitoUser.username;
-    return this.accountService.awsConfirmAccount(email, verificationcode).then(() => {
-      this.createAccountInDatabase();
-      return Promise.resolve();
-    }).catch(error => {
-      return Promise.reject();
-    });
+
+    await this.accountService.awsConfirmAccount(email, verificationcode);
+
+    await this.createAccountInDatabase();
   }
 
-  async createAccountInDatabase(): Promise<any> {
-    try {
-      if (this.newCognitoUser.attributes === null) {
-        this.getCognitoUserDetails();
+  async createAccountInDatabase() {
+    if (this.newCognitoUser.attributes === null) {
+      await this.getCognitoUserDetails();
+    } else {
+      await this.accountService.registerAppUser(this.newCognitoUser, this.uuid);
+      if (this.routeDocumentId) {
+        this.router.navigate([`/document/${this.routeDocumentId}`]);
       } else {
-        await this.accountService.registerAppUser(this.newCognitoUser, this.uuid);
         this.router.navigate([`/dashboard`]);
-        return Promise.resolve();
       }
-    } catch (error) {
-      return Promise.reject(error);
+
     }
   }
 
-  getCognitoUserDetails(): Promise<any> {
+  async getCognitoUserDetails() {
     const username = this.newCognitoUser.username;
     const password = this.newCognitoUser.password;
-    return Auth.signIn(username, password).then(() => {
-      return Auth.currentAuthenticatedUser({ bypassCache: false });
-    }).catch(error => {
-      return Promise.reject();
-    }).then(user => {
-      const details = user.attributes;
-      this.setNewCognitoUser(details);
-      return this.createAccountInDatabase();
-    }).catch(error => {
-      return Promise.reject();
-    });
+
+    await Auth.signIn(username, password);
+
+    const user = await Auth.currentAuthenticatedUser({ bypassCache: false });
+
+    const details = user.attributes;
+    this.setNewCognitoUser(details);
+
+    await this.createAccountInDatabase();
   }
 
   private setNewCognitoUser(value: any) {
@@ -138,6 +174,34 @@ export class RegisterPageComponent implements OnInit {
       given_name: `${value.firstName}`,
       family_name: `${value.lastName}`
     };
+  }
+
+  /* tslint:disable:no-string-literal */
+  validatePassword() {
+    this.registerForm.controls['password'].valueChanges.subscribe(value => {
+      this.hasLowerCase = this.checkLowerCase(value);
+      this.hasUpperCase = this.checkUpperCase(value);
+      this.hasNumber = this.checkNumber(value);
+      this.hasLength = this.checkLength(value);
+    });
+  }
+
+  private checkLowerCase(value) {
+    const match = value.match(/[a-z]/);
+    return match !== null;
+  }
+
+  private checkUpperCase(value) {
+    const match = value.match(/[A-Z]/);
+    return match !== null;
+  }
+
+  private checkNumber(value) {
+    const match = value.match(/\d/);
+    return match !== null;
+  }
+  private checkLength(value) {
+    return value.length > 7;
   }
 
 }

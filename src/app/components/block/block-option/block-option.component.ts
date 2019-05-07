@@ -1,7 +1,12 @@
-import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { fadeInOutAnimation } from '../../../animation';
 import { BlockType, TextBlockType } from 'src/API';
 import { CreateBlockEvent } from '../createBlockEvent';
+import { BlockQueryService } from '../../../services/block/query/block-query.service';
+import { Block } from 'src/app/classes/block/block';
+import { BlockCommandService } from '../../../services/block/command/block-command.service';
+import { TextBlock } from '../../../classes/block/textBlock';
+import { BlockFactoryService } from '../../../services/block/factory/block-factory.service';
 
 @Component({
   selector: 'app-block-option',
@@ -10,21 +15,31 @@ import { CreateBlockEvent } from '../createBlockEvent';
   animations: [fadeInOutAnimation]
 })
 
-export class BlockOptionComponent implements OnChanges {
+export class BlockOptionComponent implements OnChanges, OnInit {
   showBlock = false;
+  isConverterShown = false;
+  block: Block;
   @Input() blockId: string;
   @Input() mouseFocusingBlock: string;
   @Input() isChildDoc: boolean;
   @Output() isSelectedOptionShown = new EventEmitter<boolean>();
   @Output() switchBlockOptionsOff = new EventEmitter<boolean>();
+
   @Output() createBlock = new EventEmitter<CreateBlockEvent>();
+  @Output() deleteEvent = new EventEmitter<string>();
+
+  // @Output() convertToBullet = new EventEmitter<BlockType>();
+  // @Output() deleteBullet = new EventEmitter<BlockType>();
 
   isAddBlockContainerShown: boolean;
   isMenuSelectionContainerShown: boolean;
 
-  @Output() deleteEvent = new EventEmitter<string>();
 
-  constructor() { }
+  constructor(
+    private blockCommandService: BlockCommandService,
+    private factoryService: BlockFactoryService,
+    private blockQueryService: BlockQueryService
+  ) { }
 
   ngOnChanges() {
     this.isAddBlockContainerShown = false;
@@ -34,6 +49,17 @@ export class BlockOptionComponent implements OnChanges {
     } else {
       this.showBlock = false;
     }
+  }
+
+  ngOnInit() {
+    this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
+      if (block !== null) {
+        this.block = block;
+      }
+    }, error => {
+      const newError = new Error(`BlockOption failed to get block: ${error.message}`);
+      console.error(newError, this.blockId);
+    });
   }
 
   showAddBlockContainer() {
@@ -46,6 +72,7 @@ export class BlockOptionComponent implements OnChanges {
       this.isAddBlockContainerShown = false;
       this.toggleSelectedOptionsStatus(false);
       this.switchBlockOptionsOff.emit(false);
+      this.isConverterShown = false;
     }
   }
 
@@ -59,6 +86,7 @@ export class BlockOptionComponent implements OnChanges {
       this.isMenuSelectionContainerShown = false;
       this.toggleSelectedOptionsStatus(false);
       this.switchBlockOptionsOff.emit(false);
+      this.isConverterShown = false;
     }
   }
 
@@ -75,9 +103,10 @@ export class BlockOptionComponent implements OnChanges {
     this.hideAddBlockContainer();
   }
 
-  addQuestionBlock() {
+  addInputBlock() {
     const input: CreateBlockEvent = {
-      type: BlockType.QUESTION,
+      type: BlockType.INPUT,
+      id: this.blockId
     };
     this.createBlock.emit(input);
     this.hideAddBlockContainer();
@@ -93,9 +122,43 @@ export class BlockOptionComponent implements OnChanges {
     this.hideAddBlockContainer();
   }
 
+  addBulletBlock() {
+    // TODO: @bruo not impl
+    const input: CreateBlockEvent = {
+      type: BlockType.TEXT,
+      id: this.blockId,
+      textBlockType: TextBlockType.BULLET
+    };
+    this.createBlock.emit(input);
+    this.hideAddBlockContainer();
+  }
+
   deleteHandler() {
     this.toggleSelectedOptionsStatus(false);
     this.deleteEvent.emit(this.blockId);
   }
+
+  convertBlockInto(type: TextBlockType) {
+    const textBlock = this.block as TextBlock;
+    const updatedBlock: Block = this.factoryService.createAppBlock({
+      id: textBlock.id,
+      type: textBlock.type,
+      documentId: textBlock.documentId,
+      lastUpdatedBy: textBlock.lastUpdatedBy,
+      value: textBlock.value,
+      createdAt: textBlock.createdAt,
+      textBlockType: type
+    });
+    this.hideMenuSelectionContainer();
+    // update the UI
+    this.blockQueryService.updateBlockUI(updatedBlock);
+    // update the backend
+    return new Promise(resolve => {
+      this.blockCommandService.updateBlock(updatedBlock).then(() => {
+        resolve();
+      });
+    });
+  }
+
 
 }

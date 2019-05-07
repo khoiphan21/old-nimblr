@@ -4,6 +4,7 @@ import { HeaderOptionsComponent } from './header-options.component';
 import { configureTestSuite } from 'ng-bullet';
 import { ResponsiveModule } from 'ngx-responsive';
 import { take } from 'rxjs/operators';
+
 describe('HeaderOptionsComponent', () => {
   let component: HeaderOptionsComponent;
   let fixture: ComponentFixture<HeaderOptionsComponent>;
@@ -27,24 +28,28 @@ describe('HeaderOptionsComponent', () => {
   });
 
   it('hideOption() - should emit the event for hiding to option', done => {
-    component.hideOptionEvent.subscribe((value) => {
+    component.hideOptionEvent.pipe(take(1)).subscribe((value) => {
       expect(value).toEqual(false);
       done();
     });
     component.hideOption();
   });
 
-  describe('saveAsTemplate()', () => {
-    it('should emit the saveAsTemplateEvent', done => {
-      component.saveAsTemplateEvent.pipe(take(1)).subscribe(() => done());
-      component.saveAsTemplate();
-    });
-    it('should emit the event for hiding to option', done => {
-      component.hideOptionEvent.subscribe((value) => {
-        expect(value).toEqual(false);
+  describe('deleteDocument()', () => {
+    it('should emit deleteDocumentEvent fucntion', done => {
+      component.deleteDocumentEvent.pipe(take(1)).subscribe(() => {
         done();
+        expect().nothing();
       });
-      component.saveAsTemplate();
+      component.deleteDocument();
+    });
+
+    it('should emit the event to hide option', done => {
+      component.hideOptionEvent.pipe(take(1)).subscribe(() => {
+        done();
+        expect().nothing();
+      });
+      component.deleteDocument();
     });
   });
 });

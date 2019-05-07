@@ -2,29 +2,37 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 .content {
-  z-index: 1;
-  .text-input {
-    padding: 7.5px 0;
-  }
+    z-index: 1;
+    .text-input {
+        padding: 7.5px 0;
+    }
+    .placeholder {
+        z-index: -1;
+    }
+    .text-input.header {
+        color: #4A4A4A;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: normal;
+        line-height: 24px;
+    }
+    .placeholder.header {
+        color: #a0a0a0;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: normal;
+        line-height: 24px;
+    }
 
-  .placeholder {
-    z-index: -1;
-  }
-
-  .text-input.header {
-    color: #4A4A4A;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: normal;
-    line-height: 24px;
-  }
-
-  .placeholder.header {
-    color: #4A4A4A;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: normal;
-    line-height: 24px;
-  }
-
+    .placeholder.bullet {
+        padding-left: 10px;
+    }
+    .text-input.bullet {
+        // TODO: Fix this css its not standard
+        padding-left: 10px;
+        text-indent: -20px;
+        display: list-item;
+        list-style-type: circle;
+        list-style-position: inside;
+    }
 }

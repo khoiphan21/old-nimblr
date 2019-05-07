@@ -5,6 +5,7 @@ import { DocumentOptionsComponent } from './document-options/document-options.co
 import { RouterTestingModule } from '@angular/router/testing';
 import { DocumentFactoryService } from '../../services/document/factory/document-factory.service';
 import { DocumentImpl } from 'src/app/classes/document/document-impl';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -14,7 +15,8 @@ describe('DocumentCardComponent', () => {
   let documentFactory: DocumentFactoryService;
   let routerSpy;
   const documentId = uuidv4();
-  beforeEach(async(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         DocumentCardComponent,
@@ -25,7 +27,7 @@ describe('DocumentCardComponent', () => {
        ]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DocumentCardComponent);

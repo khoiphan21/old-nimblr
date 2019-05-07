@@ -1,0 +1,23 @@
+<section class="input-block" (click)="isPreviewMode = false" (clickOutside)="isPreviewMode = true" (clickOutside)="isInputOptionShown = false" [ngClass]="{'edit-mode': isPreviewMode === false}">
+    <div *ngIf="isPreviewMode === false" class="dropdown col-3">
+        <div class="type-dropdown" (click)="toggleOptions()">
+            Response type
+        </div>
+        <section class="container options-block" *ngIf="isInputOptionShown === true">
+            <section class="document-options">
+                <div class="option" (click)="selectType('TEXT', $event)">
+                    <img src="./assets/icons/input-option-text.svg"><span>Text Answer</span>
+                </div>
+                <div class="option" (click)="selectType('CHECKBOX', $event)">
+                    <i class="fas fa-check-square"></i><span>Checkbox</span>
+                </div>
+                <div class="option" (click)="selectType('MULTIPLE_CHOICE', $event)">
+                    <i class="far fa-dot-circle"></i><span>Multiple Choice</span>
+                </div>
+            </section>
+        </section>
+    </div>
+    <app-input-option [isInputLocked]="isInputLocked" [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
+    <img *ngIf="isInputLocked === true" class="lock" src="./assets/icons/lock.svg" tooltip="&nbsp;Restrict recipients<br> from editing this block&nbsp;" placement="right" hide-delay="0" (click)="isInputLocked = false" (click)="triggerUpdateValue()">
+    <img *ngIf="isInputLocked === false" class="lock" src="./assets/icons/unlock.svg" tooltip="&nbsp;Allow recipients<br> to edit this block&nbsp;" placement="right" hide-delay="0" (click)="isInputLocked = true" (click)="triggerUpdateValue()">
+</section>

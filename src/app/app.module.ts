@@ -5,7 +5,6 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './modules/app-routing.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ContenteditableModule } from '@ng-stack/contenteditable';
-import { ClickOutsideModule } from 'ng4-click-outside';
 import { AppComponent } from './app.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -19,13 +18,12 @@ import { BlockComponent } from './components/block/block.component';
 import { BlockOptionComponent } from './components/block/block-option/block-option.component';
 import { BlockTextComponent } from './components/block/block-text/block-text.component';
 import { DocumentOptionsComponent } from './components/document-card/document-options/document-options.component';
-import { QuestionBlockComponent } from './components/block/question-block/question-block.component';
+import { InputBlockComponent } from './components/block/input-block/input-block.component';
 import { NavigationTabComponent } from './components/navigation-bar/navigation-tab/navigation-tab.component';
 import { HeaderOptionsComponent } from './components/header/header-options/header-options.component';
 import { ForgetPasswordPageComponent } from './pages/forget-password-page/forget-password-page.component';
 import { AddInformationComponent } from './components/block/add-information/add-information.component';
-import { MobileQuestionBlockComponent } from './components/block/mobile-question-block/mobile-question-block.component';
-import { QuestionOptionComponent } from './components/block/question-block/question-option/question-option.component';
+import { MobileInputBlockComponent } from './components/block/mobile-input-block/mobile-input-block.component';
 import { HeaderSharingComponent } from './components/header/header-sharing/header-sharing.component';
 import { SendFormComponent } from './components/send-form/send-form.component';
 import { InviteCollaboratorComponent } from './components/invite-collaborator/invite-collaborator.component';
@@ -38,6 +36,11 @@ import { BlockSectionContentComponent } from './pages/document-page/block-sectio
 import { SubmissionDocumentContentComponent } from './pages/document-page/submission-document-content/submission-document-content.component';
 import { SubmissionRecipientComponent } from './pages/document-page/template-document-content/submission-recipient/submission-recipient.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
+import { DocumentOutlineTabComponent } from './components/navigation-bar/document-outline-tab/document-outline-tab.component';
+import { ClickOutsideModule } from 'ng-click-outside';
+import { TooltipModule } from 'ng2-tooltip-directive';
+import { InputOptionComponent } from './components/block/input-block/input-option/input-option.component';
 
 @NgModule({
   declarations: [
@@ -53,13 +56,13 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     BlockOptionComponent,
     BlockTextComponent,
     DocumentOptionsComponent,
-    QuestionBlockComponent,
+    InputBlockComponent,
     NavigationTabComponent,
     HeaderOptionsComponent,
     ForgetPasswordPageComponent,
     AddInformationComponent,
-    MobileQuestionBlockComponent,
-    QuestionOptionComponent,
+    MobileInputBlockComponent,
+    InputOptionComponent,
     HeaderSharingComponent,
     SendFormComponent,
     InviteCollaboratorComponent,
@@ -70,19 +73,22 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     BlockSectionContentComponent,
     SubmissionDocumentContentComponent,
     SubmissionRecipientComponent,
+    PageNotFoundComponent,
+    DocumentOutlineTabComponent,
   ],
   imports: [
     BrowserModule,
+    ClickOutsideModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MDBBootstrapModule.forRoot(),
     ServicesModule,
-    ClickOutsideModule,
     BrowserAnimationsModule,
     ContenteditableModule,
     ResponsiveModule.forRoot(),
-    DragDropModule
+    DragDropModule,
+    TooltipModule
   ],
 
   bootstrap: [AppComponent]

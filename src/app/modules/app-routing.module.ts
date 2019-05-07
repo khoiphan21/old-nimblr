@@ -6,6 +6,7 @@ import { DashboardPageComponent } from '../pages/dashboard-page/dashboard-page.c
 import { DocumentPageComponent } from '../pages/document-page/document-page.component';
 import { ForgetPasswordPageComponent } from '../pages/forget-password-page/forget-password-page.component';
 import { DocumentContentComponent } from '../pages/document-page/document-content/document-content.component';
+import { PageNotFoundComponent } from '../pages/page-not-found/page-not-found.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full' },
@@ -18,7 +19,8 @@ const routes: Routes = [
     children: [
       {path: ':id', component: DocumentContentComponent}
     ]
-  }
+  },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({

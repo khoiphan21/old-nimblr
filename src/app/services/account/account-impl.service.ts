@@ -6,11 +6,10 @@ import { User, CognitoSignUpUser } from '../../classes/user';
 import { Auth, API, graphqlOperation } from 'aws-amplify';
 import { take } from 'rxjs/operators';
 import { UserFactoryService } from '../user/user-factory.service';
-import { Router } from '@angular/router';
 
 import { createUser, updateUser } from '../../../graphql/mutations';
 import { GraphQLService } from '../graphQL/graph-ql.service';
-import { getUser } from '../../../graphql/queries';
+import { getUser, checkIfAccountExist } from '../../../graphql/queries';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +20,7 @@ export class AccountServiceImpl implements AccountService {
 
   constructor(
     private userFactory: UserFactoryService,
-    private graphQLService: GraphQLService,
-    private router: Router
+    private graphQLService: GraphQLService
   ) {
   }
 
@@ -53,7 +51,11 @@ export class AccountServiceImpl implements AccountService {
       }
     };
     // query GraphQL to create a new user
-    return await this.graphQLService.query(createUser, userDetails);
+    const createdUser = await this.graphQLService.query(createUser, userDetails);
+
+    await this.restoreSession();
+
+    return createdUser;
   }
 
   async awsConfirmAccount(email: string, code: string): Promise<any> {
@@ -70,7 +72,7 @@ export class AccountServiceImpl implements AccountService {
     const userId = cognitoUser.signInUserSession.idToken.payload.sub;
 
     const appUser = await this.getAppUser(userId);
-    this.user$.next(appUser);
+    this.user$ = new BehaviorSubject<User>(appUser);
 
     return appUser;
   }
@@ -118,6 +120,7 @@ export class AccountServiceImpl implements AccountService {
           this.user$.next(loggedInUser);
         }).catch(() => {
           this.user$.error('User is not logged in');
+          this.user$ = new BehaviorSubject<User>(null);
         });
       }
     });
@@ -142,6 +145,11 @@ export class AccountServiceImpl implements AccountService {
           reject(error);
         });
     });
+  }
+
+  async doesUserExist(email: string): Promise<boolean> {
+    const response: any = await this.graphQLService.query(checkIfAccountExist, { email });
+    return response.data.checkIfAccountExist;
   }
 
 }

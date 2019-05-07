@@ -3,12 +3,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SendFormComponent } from './send-form.component';
 import { ResponsiveModule } from 'ngx-responsive';
 import { FormsModule } from '@angular/forms';
+import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
 describe('SendFormComponent', () => {
   let component: SendFormComponent;
   let fixture: ComponentFixture<SendFormComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [SendFormComponent],
       imports: [
@@ -17,7 +19,7 @@ describe('SendFormComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SendFormComponent);
@@ -31,7 +33,7 @@ describe('SendFormComponent', () => {
   });
 
   it('hideContainer() - should change the value to false', () => {
-    component.hideSendFormEvent.subscribe(data => {
+    component.hideSendFormEvent.pipe(take(1)).subscribe(data => {
       expect(data).toBe(false);
     });
     component.hideContainer();
@@ -39,9 +41,9 @@ describe('SendFormComponent', () => {
 
   describe('send()', () => {
     it('should emit the input', done => {
-      component.recipientInput = 'abcd';
-      component.sendEmailEvent.subscribe(value => {
-        expect(value).toEqual(component.recipientInput);
+      component.recipientList = ['abcd'];
+      component.sendEmailEvent.pipe(take(1)).subscribe(value => {
+        expect(value).toEqual(component.recipientList);
         done();
       });
       component.send();
@@ -52,9 +54,9 @@ describe('SendFormComponent', () => {
       expect(component.hideContainer).toHaveBeenCalled();
     });
     it('should call to clear the input', () => {
-      spyOn(component, 'clearInput');
+      spyOn(component, 'clearList');
       component.send();
-      expect(component.clearInput).toHaveBeenCalled();
+      expect(component.clearList).toHaveBeenCalled();
     });
   });
 
@@ -64,6 +66,47 @@ describe('SendFormComponent', () => {
       component.clearInput();
       expect(component.recipientInput).toEqual('');
     });
+  });
+
+  it('should add the selected recipient into the list', () => {
+    const recipient = 'test@gmail.com';
+    component.recipientInput = recipient;
+    component['addRecipient']();
+    expect(component.recipientList[0]).toBe(recipient);
+  });
+
+  describe('deleteRecipient()', () => {
+    let removeRecipientSpy: jasmine.Spy;
+    beforeEach(() => {
+      removeRecipientSpy = spyOn(component, 'removeRecipientFromList');
+    });
+
+    it('should not call removeRecipientFromList() if the string is not empty', () => {
+      component.recipientList = ['test'];
+      component.recipientInput = 'test';
+      component['deleteRecipient']();
+      expect(removeRecipientSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not call removeRecipientFromList() if the recipientList is empty', () => {
+      component.recipientList = [];
+      component.recipientInput = '';
+      component['deleteRecipient']();
+      expect(removeRecipientSpy).not.toHaveBeenCalled();
+    });
+
+    it('should remove the last recipient in the list', () => {
+      component.recipientList = ['test'];
+      component.recipientInput = '';
+      component['deleteRecipient']();
+      expect(removeRecipientSpy).toHaveBeenCalledWith(0);
+    });
+  });
+
+  it('removeRecipientFromList() - should remove the right recipient in the list', () => {
+    component.recipientList = ['test 1', 'test 2'];
+    component.removeRecipientFromList(0);
+    expect(component.recipientList[0]).toEqual('test 2');
   });
 
 });

@@ -7,11 +7,13 @@ import { Router, NavigationEnd } from '@angular/router';
 import { NavigationTabDocument, CreateNavigationTabInput } from 'src/app/classes/navigation-tab';
 import { BehaviorSubject } from 'rxjs';
 import { DocumentType } from 'src/API';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuid = '8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
 const falseUuid = '7d232med-4be2-4d84-bcaa-37ebc8c3e24a';
 const navigationEnd = new NavigationEnd(0, '', '/document');
 const routerEvent = new BehaviorSubject(navigationEnd);
+
 describe('NavigationTabComponent', () => {
   let component: NavigationTabComponent;
   let fixture: ComponentFixture<NavigationTabComponent>;
@@ -20,7 +22,7 @@ describe('NavigationTabComponent', () => {
 
   let input: CreateNavigationTabInput;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
         NavigationTabComponent
@@ -41,7 +43,7 @@ describe('NavigationTabComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
-  }));
+  });
 
   /* tslint:disable:no-string-literal */
   beforeEach(() => {
@@ -54,7 +56,7 @@ describe('NavigationTabComponent', () => {
       type: DocumentType.GENERIC,
       children: []
     };
-    component.navigationTab = new NavigationTabDocument(input);
+    component.documentId = 'test1234';
     fixture.detectChanges();
   });
 
@@ -67,13 +69,14 @@ describe('NavigationTabComponent', () => {
       spyOn(router.events, 'subscribe').and.callFake(() => {
         return;
       });
+      component.documentId = '8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
       component.ngOnInit();
       expect(component.isCurrentDocument).toBe(true);
     });
 
     it('should set value to false if it is the same document', () => {
       input.id = falseUuid;
-      component.navigationTab = new NavigationTabDocument(input);
+      component.documentId = 'test1234';
       component.ngOnInit();
       expect(component.isCurrentDocument).toBe(false);
     });

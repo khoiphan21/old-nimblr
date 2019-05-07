@@ -1,33 +1,36 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BlockCommandService } from './block-command.service';
-import { BlockType, QuestionType, DeleteBlockInput, TextBlockType, UpdateTextBlockInput } from 'src/API';
-import { createTextBlock, updateTextBlock, createQuestionBlock, updateQuestionBlock } from '../../../../graphql/mutations';
+import { BlockType, InputType, DeleteBlockInput, TextBlockType, UpdateTextBlockInput } from 'src/API';
+import { createTextBlock, updateTextBlock, createInputBlock, updateInputBlock } from '../../../../graphql/mutations';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { isValidDateString } from 'src/app/classes/isValidDateString';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BlockFactoryService } from '../factory/block-factory.service';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
-
 
 describe('BlockCommandService', () => {
   let service: BlockCommandService;
   let textInput: any;
-  let questionInput: any;
+  let inputInput: any;
   let headerInput: any;
 
   // variables to use with the spy
   let graphQlSpy: jasmine.Spy;
   let textBlockBackendResponse: any;
-  let questionBlockBackendResponse: any;
+  let inputBlockBackendResponse: any;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
 
     // Setup the input to be used in the tests
     textInput = {
@@ -50,16 +53,16 @@ describe('BlockCommandService', () => {
       textBlockType: TextBlockType.HEADER,
     };
 
-    questionInput = {
+    inputInput = {
       id: uuidv4(),
       version: uuidv4(),
-      type: BlockType.QUESTION,
+      type: BlockType.INPUT,
       documentId: uuidv4(),
       lastUpdatedBy: uuidv4(),
-      question: 'QuestionBlock test',
       answers: [],
-      questionType: QuestionType.PARAGRAPH,
-      options: null
+      inputType: InputType.TEXT,
+      options: null,
+      isLocked: false
     };
 
     // Get the service
@@ -68,7 +71,7 @@ describe('BlockCommandService', () => {
     /* tslint:disable:no-string-literal */
     graphQlSpy = spyOn(service['graphQLService'], 'query');
     textBlockBackendResponse = { value: 'test' };
-    questionBlockBackendResponse = { question: 'test question', answers: [], questionType: QuestionType.PARAGRAPH, options: null };
+    inputBlockBackendResponse = { answers: [], inputType: InputType.TEXT, options: null };
   });
 
   it('should be created', () => {
@@ -92,10 +95,10 @@ describe('BlockCommandService', () => {
       await service.updateBlock(textInput);
       let version = graphQlSpy.calls.mostRecent().args[1].input.version;
       expect(version).not.toEqual(textInput.version);
-      // Updating question block
-      await service.updateBlock(questionInput);
+      // Updating input block
+      await service.updateBlock(inputInput);
       version = graphQlSpy.calls.mostRecent().args[1].input.version;
-      expect(version).not.toEqual(questionInput.version);
+      expect(version).not.toEqual(inputInput.version);
     });
 
     it('should register the version to the VersionService', () => {
@@ -167,62 +170,53 @@ describe('BlockCommandService', () => {
       });
     });
 
-    describe('QuestionBlock -', () => {
+    describe('InputBlock -', () => {
       beforeEach(() => {
-        graphQlSpy.and.returnValue(Promise.resolve(questionBlockBackendResponse));
+        graphQlSpy.and.returnValue(Promise.resolve(inputBlockBackendResponse));
       });
 
       it('should resolve with the response from backend', done => {
-        service.updateBlock(questionInput).then(value => {
+        service.updateBlock(inputInput).then(value => {
           // The value resolved must be the value returned by graphql
-          expect(value).toEqual(questionBlockBackendResponse);
+          expect(value).toEqual(inputBlockBackendResponse);
           done();
         });
       });
 
       it('should call graphQlService with the right query', done => {
-        service.updateBlock(questionInput).then(() => {
+        service.updateBlock(inputInput).then(() => {
           // graphQlService must be called with the right arguments
           const spyArgs = graphQlSpy.calls.mostRecent().args;
-          expect(spyArgs[0]).toEqual(updateQuestionBlock);
+          expect(spyArgs[0]).toEqual(updateInputBlock);
           done();
         });
       });
 
       it('should call graphQlService with the right argument', done => {
-        service.updateBlock(questionInput).then(() => {
+        service.updateBlock(inputInput).then(() => {
           // graphQlService must be called with the right arguments
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
           // the queryArg should have a valid 'updatedAt' date string
           expect(queryArg.input.updatedAt).toBeTruthy();
           expect(isValidDateString(queryArg.input.updatedAt)).toBe(true);
           // delete 'type' from input as it should be ignored
-          delete questionInput.type;
+          delete inputInput.type;
           // delete 'updatedAt' from queryArg as it's auto-generated
           delete queryArg.input.updatedAt;
           // delete version as it will be reset
           delete queryArg.input.version;
-          delete questionInput.version;
+          delete inputInput.version;
           // now check all other args
-          expect(queryArg.input).toEqual(questionInput);
+          expect(queryArg.input).toEqual(inputInput);
           done();
         }).catch(error =>
           processTestError('unable to update block', error, done)
         );
       });
 
-      it('should change the value to null if is an empty string', async () => {
-        questionInput.question = '';
-        await service.updateBlock(questionInput);
-        // graphQlService must be called with the right arguments
-        const queryArg = graphQlSpy.calls.mostRecent().args[1];
-        // the queryArg should have a valid 'updatedAt' date string
-        expect(queryArg.input.question).toBe(null);
-      });
-
       it('should change the value to null if is undefined', async () => {
-        questionInput.options = undefined;
-        await service.updateBlock(questionInput);
+        inputInput.options = undefined;
+        await service.updateBlock(inputInput);
         // graphQlService must be called with the right arguments
         const queryArg = graphQlSpy.calls.mostRecent().args[1];
         // the queryArg should have a valid 'updatedAt' date string
@@ -231,10 +225,10 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = [
-          'id', 'documentId', 'lastUpdatedBy', 'answers', 'questionType'
+          'id', 'documentId', 'lastUpdatedBy', 'answers', 'inputType'
         ];
-        runTestForQuestionMissingParams(
-          requiredParams, 'updateBlock', 'UpdateQuestionBlockInput'
+        runTestForInputMissingParams(
+          requiredParams, 'updateBlock', 'UpdateInputBlockInput'
         );
       });
     });
@@ -331,7 +325,7 @@ describe('BlockCommandService', () => {
           // graphQlService must be called with the right arguments
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
           // the queryArg must have the same values
-          expect(queryArg.input.value).toBe(null);
+          expect(queryArg.input.value).toEqual(null);
           done();
         });
       });
@@ -357,57 +351,44 @@ describe('BlockCommandService', () => {
       });
     });
 
-    describe('QuestionBlock -', () => {
+    describe('InputBlock -', () => {
       beforeEach(() => {
-        graphQlSpy.and.returnValue(Promise.resolve(questionBlockBackendResponse));
+        graphQlSpy.and.returnValue(Promise.resolve(inputBlockBackendResponse));
       });
 
       it('should resolve with the response from backend', done => {
-        service.createBlock(questionInput).then(value => {
+        service.createBlock(inputInput).then(value => {
           // The value resolved must be the value returned by graphql
-          expect(value).toEqual(questionBlockBackendResponse);
+          expect(value).toEqual(inputBlockBackendResponse);
           done();
         });
       });
 
       it('should call graphQlService with the right query', done => {
-        service.createBlock(questionInput).then(() => {
+        service.createBlock(inputInput).then(() => {
           // graphQlService must be called with the right arguments
           const spyArgs = graphQlSpy.calls.mostRecent().args;
-          expect(spyArgs[0]).toEqual(createQuestionBlock);
+          expect(spyArgs[0]).toEqual(createInputBlock);
           done();
         });
       });
 
       it('should call graphQlService with the right argument', done => {
-        service.createBlock(questionInput).then(() => {
+        service.createBlock(inputInput).then(() => {
           // graphQlService must be called with the right arguments
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
           // the queryArg must have the same values
-          expect(queryArg.input).toEqual(questionInput);
+          expect(queryArg.input).toEqual(inputInput);
           done();
         });
       });
 
-      it('should change "value" to be null if given an empty string', done => {
-        // set 'value' to be an empty string
-        questionInput.question = '';
-        // Now call the service
-        service.createBlock(questionInput).then(() => {
-          // graphQlService must be called with the right arguments
-          const queryArg = graphQlSpy.calls.mostRecent().args[1];
-          // the queryArg must have the same values
-          expect(queryArg.input.question).toBe(null);
-          done();
-        });
-      });
-
-      describe('cleanQuestionOptions()', () => {
+      describe('cleanInputOptions()', () => {
 
         it('should change "options" to be null if given undefined', done => {
-          questionInput.options = undefined;
+          inputInput.options = undefined;
           // Now call the service
-          service.createBlock(questionInput).then(() => {
+          service.createBlock(inputInput).then(() => {
             // graphQlService must be called with the right arguments
             const queryArg = graphQlSpy.calls.mostRecent().args[1];
             // the queryArg must have the same values
@@ -418,7 +399,7 @@ describe('BlockCommandService', () => {
 
         it('should convert items that consists empty string to null', () => {
           const dirtyOptions = [''];
-          const cleanedOptions = service['cleanQuestionOptions'](dirtyOptions);
+          const cleanedOptions = service['cleanInputOptions'](dirtyOptions);
           expect(cleanedOptions[0]).toBe(null);
         });
       });
@@ -431,7 +412,7 @@ describe('BlockCommandService', () => {
           throw new Error(mockError);
         });
         // now call the service
-        service.createBlock(questionInput).then(() => {
+        service.createBlock(inputInput).then(() => {
           fail('error should be thrown'); done();
         }).catch(() => {
           expect(service.createBlock).toThrowError();
@@ -441,35 +422,34 @@ describe('BlockCommandService', () => {
 
       describe('(error pathways)', () => {
         const requiredParams = ['id', 'documentId', 'lastUpdatedBy'];
-        runTestForQuestionMissingParams(
-          requiredParams, 'createBlock', 'CreateQuestionBlockInput'
+        runTestForInputMissingParams(
+          requiredParams, 'createBlock', 'createInputBlockInput'
         );
       });
     });
 
     describe('HeaderBlock', () => {
       beforeEach(() => {
-        graphQlSpy.and.returnValue(Promise.resolve(questionBlockBackendResponse));
+        graphQlSpy.and.returnValue(Promise.resolve(inputBlockBackendResponse));
       });
 
       describe('execution in createTextBlock()', () => {
-        it('should resolve response from backend', () => {
-          service.createBlock(headerInput).then(data => {
-            expect(data).toEqual(questionBlockBackendResponse);
-          });
+        it('should resolve response from backend', async () => {
+          const data = await service.createBlock(headerInput);
+          expect(data).toEqual(inputBlockBackendResponse);
         });
 
-        it('should call query method', () => {
-          service.createBlock(headerInput).then(() => {
-            expect(graphQlSpy.calls.count()).toBe(1);
-          });
+        it('should call query method', async () => {
+          await service.createBlock(headerInput);
+          expect(graphQlSpy.calls.count()).toBe(1);
         });
 
-        it('should reject promise when query method failed', () => {
+        it('should reject promise when query method failed', done => {
           const expectedError = 'test err';
           graphQlSpy.and.returnValue(Promise.reject(new Error(expectedError)));
           service.createBlock(headerInput).catch(err => {
             expect(err.message).toEqual(expectedError);
+            done();
           });
         });
       });
@@ -537,7 +517,7 @@ describe('BlockCommandService', () => {
     });
   }
 
-  function runTestForQuestionMissingParams(
+  function runTestForInputMissingParams(
     params: Array<string>, functionName: string, context: string
   ) {
     params.forEach(param => {
@@ -546,12 +526,12 @@ describe('BlockCommandService', () => {
         it(`should throw an error if ${param} is ${errorType}`, done => {
           // edit the input based on what type of error is being checked
           if (errorType === 'undefined') {
-            delete questionInput[param];
+            delete inputInput[param];
           } else {
-            questionInput[param] = null;
+            inputInput[param] = null;
           }
           // call the service
-          service[functionName](questionInput).then(() => {
+          service[functionName](inputInput).then(() => {
             fail('error should occur'); done();
           }).catch(error => {
             expect(error.message).toEqual(
@@ -607,7 +587,7 @@ describe('BlockCommandService', () => {
       createSpy.and.returnValue(Promise.resolve({
         data: {
           createTextBlock: testValue,
-          createQuestionBlock: testValue
+          createInputBlock: testValue
         }
       }));
       blockFactory = TestBed.get(BlockFactoryService);
@@ -631,8 +611,8 @@ describe('BlockCommandService', () => {
       expect(value).toEqual(testValue);
     });
 
-    it('should resolve with the return value for QUESTION', async () => {
-      block = blockFactory.createNewQuestionBlock({
+    it('should resolve with the return value for INPUT', async () => {
+      block = blockFactory.createNewInputBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       });
@@ -650,8 +630,8 @@ describe('BlockCommandService', () => {
       checkSpy();
     });
 
-    it('should call createBlock() with the right args for QUESTION', async () => {
-      block = blockFactory.createNewQuestionBlock({
+    it('should call createBlock() with the right args for INPUT', async () => {
+      block = blockFactory.createNewInputBlock({
         documentId: uuidv4(),
         lastUpdatedBy: uuidv4()
       });
@@ -668,10 +648,10 @@ describe('BlockCommandService', () => {
         documentId: block.documentId,
         lastUpdatedBy: block.lastUpdatedBy,
         value: block.value,
-        question: block.question,
         answers: block.answers,
-        questionType: block.questionType,
-        options: block.options
+        inputType: block.inputType,
+        options: block.options,
+        textBlockType: block.textBlockType
       };
       expect(createSpy).toHaveBeenCalledWith(arg);
     }

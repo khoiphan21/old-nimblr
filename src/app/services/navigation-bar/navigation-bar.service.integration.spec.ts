@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment';
 import { DocumentCommandService } from '../document/command/document-command.service';
 import { CreateDocumentInput, SharingStatus, DocumentType } from 'src/API';
 import { TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
@@ -20,13 +21,16 @@ describe('(Integration) NavigationBarService', () => {
   let documentCommandService: DocumentCommandService;
   let service: NavigationBarService;
   let documentFactory: DocumentFactoryService;
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [
         ServicesModule,
         RouterTestingModule.withRoutes([])
       ]
     });
+  });
+
+  beforeEach(() => {
     accountService = TestBed.get(AccountService);
     documentService = TestBed.get(DocumentService);
     documentFactory = TestBed.get(DocumentFactoryService);
@@ -46,7 +50,7 @@ describe('(Integration) NavigationBarService', () => {
           const navigationSubscription = service.getNavigationBar$();
 
           // now check if the navigation tabs count are corrent
-          navigationSubscription.pipe(skip(1)).pipe(take(1)).subscribe((navigationTabs) => {
+          navigationSubscription.pipe(take(1)).subscribe((navigationTabs) => {
             navigationTabCount = navigationTabs.length;
             expect(navigationTabCount).toBe(documentCount);
             done();
@@ -66,7 +70,7 @@ describe('(Integration) NavigationBarService', () => {
           lastUpdatedBy: user.id,
           sharingStatus: SharingStatus.PRIVATE
         };
-        service.getNavigationBar$().pipe(skip(2)).pipe(take(2)).subscribe(navigationTabs => {
+        service.getNavigationBar$().pipe(skip(1)).pipe(take(2)).subscribe(navigationTabs => {
           navigationTabCount = navigationTabs.length;
           if (originalCount === undefined) {
             originalCount = navigationTabCount;
@@ -80,6 +84,7 @@ describe('(Integration) NavigationBarService', () => {
             case originalCount + 1:
               const docId = navigationTabs[0].id;
               documentService.deleteDocument(docId).then(() => {
+                expect().nothing();
                 done();
               });
               break;

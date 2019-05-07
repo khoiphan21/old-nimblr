@@ -9,12 +9,19 @@ import { AccountServiceImpl } from '../../services/account/account-impl.service'
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { Auth } from 'aws-amplify';
 import { configureTestSuite } from 'ng-bullet';
+import { BehaviorSubject } from 'rxjs';
+
 const uuidv4 = require('uuid/v4');
 
+/* tslint:disable:no-string-literal */
 describe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
+
+  // spies
+  let registerAppUserSpy: jasmine.Spy;
+
   configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -32,13 +39,17 @@ describe('RegisterPageComponent', () => {
         }
       ]
     });
-});
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterPageComponent);
     accountService = TestBed.get(AccountService);
     component = fixture.componentInstance;
-    spyOn(accountService, 'registerAppUser').and.returnValue(Promise.resolve());
+
+    // setup spies
+    registerAppUserSpy = spyOn(accountService, 'registerAppUser');
+    registerAppUserSpy.and.returnValue(Promise.resolve());
+    component['buildForm']();
     fixture.detectChanges();
   });
 
@@ -54,21 +65,74 @@ describe('RegisterPageComponent', () => {
     expect(component.passwordType).toBe('password');
   });
 
-  describe('ngOnInit() - check account verification', () => {
+  describe('ngOnInit()', () => {
+    let routeParamSpy: jasmine.Spy;
 
-    it(`should go straight to register step 3 (verification) if user's account is unverified`, () => {
-      const email = 'test@email.com';
-      const password = 'Password1234';
-      accountService.setUnverifiedUser(email, password);
-      component.ngOnInit();
-      expect(component.steps).toBe('three');
-      expect(component.newCognitoUser.username).toEqual(email);
-      expect(component.newCognitoUser.password).toEqual(password);
-      expect(component.newCognitoUser.attributes).toEqual(null);
+    beforeEach(() => {
+      routeParamSpy = spyOn<any>(component, 'checkRouteParams');
     });
 
-    it(`should go straight to register step 1 (fill in email) if user have not sign up yet`, () => {
-      expect(component.steps).toBe('one');
+    describe('check account verification', () => {
+      it(`should go straight to register step 3 (verification) if user's account is unverified`, async () => {
+        const email = 'test@email.com';
+        const password = 'Password1234';
+        accountService.setUnverifiedUser(email, password);
+        await component.ngOnInit();
+        expect(component.steps).toBe('three');
+        expect(component.newCognitoUser.username).toEqual(email);
+        expect(component.newCognitoUser.password).toEqual(password);
+        expect(component.newCognitoUser.attributes).toEqual(null);
+      });
+
+      it(`should go straight to register step 1 (fill in email) if user have not sign up yet`, () => {
+        expect(component.steps).toBe('one');
+      });
+    });
+
+    it('should call to check route params', async () => {
+      await component.ngOnInit();
+      expect(routeParamSpy).toHaveBeenCalled();
+    });
+
+  });
+
+  describe('checkRouteParams()', () => {
+    let mockRoute: any;
+    const mockEmail = 'test@email.com';
+    const mockDocId = uuidv4();
+
+    describe('when given email and docId', () => {
+      beforeEach(() => {
+        mockRoute = {
+          paramMap: new BehaviorSubject(new Map([
+            ['email', mockEmail],
+            ['document', mockDocId]
+          ]))
+        };
+        component['route'] = mockRoute;
+        component['checkRouteParams']();
+      });
+
+      it('should store the documentId if given', () => {
+        expect(component.routeDocumentId).toEqual(mockDocId);
+      });
+      it('should set the step to "two"', () => {
+        expect(component.steps).toEqual('two');
+      });
+      it('should set the registerForm email', () => {
+        expect(component.registerForm.get('email').value).toEqual(mockEmail);
+      });
+    });
+
+    describe('when no params are available', () => {
+      it('should NOT set the step to "two"', () => {
+        mockRoute = {
+          paramMap: new BehaviorSubject(new Map())
+        };
+        component['route'] = mockRoute;
+        component['checkRouteParams']();
+        expect(component.steps).toEqual('one');
+      });
     });
 
   });
@@ -118,48 +182,63 @@ describe('RegisterPageComponent', () => {
 
   describe('createAccountInDatabase() - ', () => {
     let routerSpy: jasmine.Spy;
+    let getCognitoSpy: jasmine.Spy;
 
     beforeEach(() => {
+      // setup mock data
+      component.uuid = uuidv4();
+
+      // setup spies
       routerSpy = spyOn(component['router'], 'navigate');
+      // getCognitoUserDetails()
+      getCognitoSpy = spyOn(component, 'getCognitoUserDetails');
+      getCognitoSpy.and.returnValue(Promise.resolve());
     });
 
-    it('should call getCognitoUserDetails() if the current user detail is empty', () => {
-      spyOn(component, 'getCognitoUserDetails');
-      component.uuid = 'bla';
+    it('should call getCognitoUserDetails() if the current user detail is empty', async () => {
       component.newCognitoUser = {
         username: 'khoi-test',
         password: `Khoi1234`,
         attributes: null
       };
-      component.createAccountInDatabase();
-      expect(component.getCognitoUserDetails).toHaveBeenCalled();
+      await component.createAccountInDatabase();
+      expect(getCognitoSpy).toHaveBeenCalled();
     });
 
-    /* tslint:disable:no-string-literal */
-    it('should register the app user if the user details are available', done => {
-      spyOn(component, 'getCognitoUserDetails');
-      component.uuid = 'bla';
-      component.newCognitoUser = {
-        username: 'test@email.com',
-        password: `Password1234`,
-        attributes: {
-          email: `test@email.com`,
-          given_name: `test`,
-          family_name: `name`
-        }
-      };
-      component.createAccountInDatabase().then(() => {
-        expect(routerSpy.calls.count()).toBe(1);
+    describe('if user details are available', () => {
+      beforeEach(async () => {
+        component.newCognitoUser = {
+          username: 'test@email.com',
+          password: `Password1234`,
+          attributes: {
+            email: `test@email.com`,
+            given_name: `test`,
+            family_name: `name`
+          }
+        };
+        await component.createAccountInDatabase();
+      });
+
+      it('should not call getCognitoUserDetails()', () => {
         expect(component.getCognitoUserDetails).not.toHaveBeenCalled();
-        expect(accountService.registerAppUser).toHaveBeenCalled();
-        done();
-      }).catch(error => processTestError(
-        'unable to create account in database', error, done)
-      );
+      });
+      it('should call registerAppUser() with the right args', () => {
+        expect(registerAppUserSpy).toHaveBeenCalledWith(
+          component.newCognitoUser, component.uuid
+        );
+      });
+      it('should call router to route to dashboard', () => {
+        expect(routerSpy.calls.mostRecent().args[0]).toEqual(['/dashboard']);
+      });
+      it('should navigate to the documentId if available', async () => {
+        component.routeDocumentId = uuidv4();
+        await component.createAccountInDatabase();
+        expect(routerSpy.calls.mostRecent().args[0]).toEqual([`/document/${component.routeDocumentId}`]);
+      });
     });
 
     it('should stop creating an account into database when theres error in the process', done => {
-      spyOn(component, 'getCognitoUserDetails').and.callFake(() => {
+      getCognitoSpy.and.callFake(() => {
         throw new Error('Failed to get Cognito User');
       });
       component.uuid = 'bla';
@@ -170,12 +249,13 @@ describe('RegisterPageComponent', () => {
       };
       component.createAccountInDatabase().then(() => {
         processTestError('should not create account', '', done);
-      }).catch(error => {
+      }).catch(() => {
+        expect().nothing();
         done();
       });
     });
-  });
 
+  });
 
   describe('verifyAccount(', () => {
     beforeEach(() => {
@@ -248,21 +328,23 @@ describe('RegisterPageComponent', () => {
       });
     });
 
-    it('should not should create a user if there is any error in the process - (Auth.signIn)', done => {
+    it('should not create a user if there is any error in the process - (Auth.signIn)', done => {
       spyOn(Auth, 'signIn').and.returnValue(Promise.reject());
       component.getCognitoUserDetails().then(() => {
         processTestError('should not create account', 'Failed in Auth.signIn()', done);
-      }).catch(error => {
+      }).catch(() => {
+        expect().nothing();
         done();
       });
     });
 
-    it('should not should create a user if there is any error in the process - (Auth.currentAuthenticatedUser)', done => {
+    it('should not create a user if there is any error in the process - (Auth.currentAuthenticatedUser)', done => {
       spyOn(Auth, 'signIn').and.returnValue(Promise.resolve());
       spyOn(Auth, 'currentAuthenticatedUser').and.returnValue(Promise.reject());
       component.getCognitoUserDetails().then(() => {
         processTestError('should not create account', 'Failed in Auth.currentAuthenticatedUser()', done);
-      }).catch(error => {
+      }).catch(() => {
+        expect().nothing();
         done();
       });
     });
@@ -285,5 +367,56 @@ describe('RegisterPageComponent', () => {
     expect(component.newCognitoUser.attributes.given_name).toBe(firstName);
     expect(component.newCognitoUser.attributes.family_name).toBe(lastName);
     expect(component.uuid).toBe(id);
+  });
+
+  describe('validatePassword()', () => {
+    let formControlSpy: jasmine.Spy;
+    let callbackFn;
+    beforeEach(() => {
+      formControlSpy = spyOn(component.registerForm.controls['password'].valueChanges, 'subscribe');
+      component.validatePassword();
+      callbackFn = formControlSpy.calls.mostRecent().args[0];
+    });
+
+    it('should set value to true if there is any lower case', () => {
+      callbackFn('test');
+      expect(component.hasLowerCase).toBe(true);
+    });
+
+    it('should set value to false if there is no lower case', () => {
+      callbackFn('TEST');
+      expect(component.hasLowerCase).toBe(false);
+    });
+
+    it('should set value to true if there is any upper case', () => {
+      callbackFn('Test');
+      expect(component.hasUpperCase).toBe(true);
+    });
+
+    it('should set value to false if there is no upper case', () => {
+      callbackFn('test');
+      expect(component.hasUpperCase).toBe(false);
+    });
+
+    it('should set value to true if there is any number', () => {
+      callbackFn('test1');
+      expect(component.hasNumber).toBe(true);
+    });
+
+    it('should set value to false if there is no number', () => {
+      callbackFn('test');
+      expect(component.hasNumber).toBe(false);
+    });
+
+    it('should set value to true if there is more than 8 characters', () => {
+      callbackFn('test1234');
+      expect(component.hasLength).toBe(true);
+    });
+
+    it('should set value to false if there is less than 8 characters', () => {
+      callbackFn('test14');
+      expect(component.hasLength).toBe(false);
+    });
+
   });
 });

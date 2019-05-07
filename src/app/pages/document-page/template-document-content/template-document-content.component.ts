@@ -19,6 +19,7 @@ export class TemplateDocumentContentComponent implements OnInit {
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();
   @Output() navigateToChildEvent = new EventEmitter<UUID>();
+  @Output() showInviteEvent = new EventEmitter<boolean>();
   @Output() updateDocumentEvent = new EventEmitter<Array<string>>();
 
   currentTab = 'template';
@@ -36,10 +37,19 @@ export class TemplateDocumentContentComponent implements OnInit {
     this.deleteBlockEvent.emit(blockId);
   }
 
+  showInvite() {
+    this.showInviteEvent.emit(true);
+  }
+
   navigateToChild(id: UUID) {
     this.navigateToChildEvent.emit(id);
   }
+
   updateDocument(blockIds: Array<string>) {
     this.updateDocumentEvent.emit(blockIds);
+  }
+
+  deleteItem(id: UUID) {
+    // TODO @khoiphan21: REMOVE ID FROM SUBMISSION IDS AND UPDATE DOCUMENT
   }
 }

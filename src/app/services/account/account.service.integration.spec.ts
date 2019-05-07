@@ -14,17 +14,17 @@ import { environment } from '../../../environments/environment';
 import { getUser } from '../../../graphql/queries';
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { deleteAppUser, adminDeleteCognitoUser, adminConfirmUser, TEST_USERNAME, TEST_PASSWORD } from '../loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 const uuidv4 = require('uuid/v4');
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const AWS = require('aws-sdk');
 
 describe('(Integration) AccountImplService', () => {
   let service: AccountServiceImpl;
   let router: Router;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       providers: [AccountServiceImpl],
       imports: [
@@ -33,6 +33,9 @@ describe('(Integration) AccountImplService', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
+  });
+
+  beforeEach(() => {
     service = TestBed.get(AccountServiceImpl);
     router = TestBed.get(Router);
   });
@@ -120,6 +123,7 @@ describe('(Integration) AccountImplService', () => {
     it('should login if the credentials are correct', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // should resolve
+        expect().nothing();
         done();
       }).catch(error => processTestError('failed to login', error, done));
     });
@@ -130,15 +134,16 @@ describe('(Integration) AccountImplService', () => {
 
       service.login(TEST_USERNAME, password).then(() =>
         processTestError(errorMessage, errorMessage, done)
-      ).catch(() => done());
+      ).catch(() => {
+        expect().nothing();
+        done();
+      });
     }, environment.TIMEOUT_FOR_UPDATE_TEST);
 
     it('should emit a new user object if successfully logged in', done => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // Setup subscription for assertion
         service.getUser$().subscribe(user => {
-          if (user === null) { return; }
-          // should be called here
           expect(user).toBeTruthy();
           done();
         }, error => processTestError('unable to get user', error, done));
@@ -147,7 +152,7 @@ describe('(Integration) AccountImplService', () => {
 
   });
 
-  describe('Logout()', () => {
+  describe('logout()', () => {
     const user: User = {
       id: 'abc123',
       firstName: 'tester',
@@ -236,11 +241,23 @@ describe('(Integration) AccountImplService', () => {
         service.isUserReady().then(() => {
           fail('error must occur');
         }).catch(() => {
+          expect().nothing();
           done();
         });
       }).catch(error => processTestError('unable to sign out', error, done));
     });
 
+  });
+
+  describe('doesUserExist()', () => {
+    it('should resolve true if the email exists', async () => {
+      const result = await service.doesUserExist(TEST_USERNAME);
+      expect(result).toBe(true);
+    });
+    it('should resolve true if the email does NOT exist', async () => {
+      const result = await service.doesUserExist('abcd@mail.impossible');
+      expect(result).toBe(false);
+    });
   });
 
 });

@@ -15,13 +15,13 @@ import { SharingStatus, BlockType, DocumentType, TextBlockType } from 'src/API';
 import { DocumentContentComponent } from './document-content.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { AccountService } from 'src/app/services/account/account.service';
-import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { InputBlock } from 'src/app/classes/block/input-block';
 import { TextBlock } from 'src/app/classes/block/textBlock';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
-import { SubmissionDocument } from 'src/app/classes/document/submissionDocument';
-import { InvitationEmailDetails } from 'src/app/services/email/email.service';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { CommandType } from '../../../classes/command/commandType';
+import { take } from 'rxjs/operators';
 
 const uuidv4 = require('uuid/v4');
 
@@ -68,7 +68,8 @@ describe('DocumentContentComponent', () => {
         {
           provide: Router,
           useValue: {
-            url: '/document'
+            url: '/document',
+            navigate: () => { }
           }
         }
       ],
@@ -91,6 +92,7 @@ describe('DocumentContentComponent', () => {
   /* tslint:disable:no-string-literal */
   describe('ngOnInit()', () => {
     let checkUserSpy: jasmine.Spy;
+    let handleSpy: jasmine.Spy;
     let retrieveDocumentSpy: jasmine.Spy;
 
     beforeEach(() => {
@@ -98,13 +100,15 @@ describe('DocumentContentComponent', () => {
       checkUserSpy = spyOn(component, 'checkUser');
       retrieveDocumentSpy = spyOn<any>(component, 'retrieveDocumentData');
       checkUserSpy.and.returnValue(Promise.resolve(testUser));
+      spyOn<any>(component, 'checkIsChildDocument');
+      handleSpy = spyOn<any>(component, 'handleRouting');
     });
 
     it('should call to check the user', () => {
       checkUserSpy.and.returnValue(new Promise(() => { }));
       // now call ngOnInit
       component.ngOnInit();
-      expect(checkUserSpy.calls.count()).toBe(1);
+      expect(checkUserSpy).toHaveBeenCalled();
     });
 
     describe('[SUCCESS]', () => {
@@ -131,21 +135,54 @@ describe('DocumentContentComponent', () => {
 
     describe('[ERROR]', () => {
 
+      let routerSpy: jasmine.Spy;
+
+      beforeEach(() => {
+        routerSpy = spyOn(component['router'], 'navigate');
+      });
+
       it('should set isUserLoggedIn to false if not logged in', async () => {
         checkUserSpy.and.returnValue(Promise.reject());
         await component.ngOnInit();
         expect(component.isUserLoggedIn).toBe(false);
       });
 
-      it('should throw an error if failed to retrieve document data', done => {
-        const errorMessage = 'test';
-        retrieveDocumentSpy.and.throwError(errorMessage);
-        component.ngOnInit().catch(error => {
-          const message = `DocumentPage failed to load: ${errorMessage}`;
-          expect(error.message).toEqual(message);
-          done();
+      describe('when failed to retrieve document data', () => {
+
+        beforeEach(() => {
+          retrieveDocumentSpy.and.throwError('test');
+        });
+
+        describe('if user is not logged in', () => {
+
+          it('should call handleRouting with the right arg', async () => {
+            checkUserSpy.and.returnValue(Promise.reject());
+            const email = 'testEmail';
+            const document = 'testId';
+
+            spyOn<any>(component, 'getParamMap').and.returnValue(
+              Promise.resolve(new Map([
+                ['email', email],
+                ['id', document]
+              ]))
+            );
+
+            await component.ngOnInit();
+            expect(handleSpy).toHaveBeenCalledWith({
+              email, document, userExist: true
+            });
+          });
+
+        });
+
+        describe('if user is logged in', () => {
+          it('should navigate to "dashboard"', async () => {
+            await component.ngOnInit();
+            expect(routerSpy).toHaveBeenCalledWith(['/dashboard']);
+          });
         });
       });
+
     });
   });
 
@@ -161,9 +198,36 @@ describe('DocumentContentComponent', () => {
 
     it('should set value to false if it is not a child document', () => {
       component.isChildDoc = true;
+      component['documentId'] = uuid;
       router.url = `/document/${uuid}`;
       component['checkIsChildDocument']();
       expect(component.isChildDoc).toBe(false);
+    });
+  });
+
+  describe('handleRouting', () => {
+    let email: string;
+    let document: string;
+    let userExist: boolean;
+
+    let routerSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      email = 'test@email.com';
+      document = 'abcdef';
+      userExist = true;
+      routerSpy = spyOn(component['router'], 'navigate');
+    });
+
+    it('should route to /login if user exists', () => {
+      component['handleRouting']({ email, document, userExist });
+      expect(routerSpy).toHaveBeenCalledWith(['/login', { email, document }]);
+    });
+
+    it('should route to /register if user does NOT exist', () => {
+      userExist = false;
+      component['handleRouting']({ email, document, userExist });
+      expect(routerSpy).toHaveBeenCalledWith(['/register', { email, document }]);
     });
   });
 
@@ -175,6 +239,10 @@ describe('DocumentContentComponent', () => {
       userObservable = new BehaviorSubject(null);
       accountServiceSpy = spyOn(component['accountService'], 'getUser$');
       accountServiceSpy.and.returnValue(userObservable);
+    });
+
+    afterEach(() => {
+      userObservable.complete();
     });
 
     it('should resolve with the user retrieved from account service', done => {
@@ -198,87 +266,100 @@ describe('DocumentContentComponent', () => {
   });
 
   describe('retrieveDocumentData()', () => {
-    const getDocument$ = new Subject();
+    let getDocument$: Subject<any>;
     let document: Document;
     let getDocumentSpy: jasmine.Spy;
     let setupSubscriptionSpy: jasmine.Spy;
 
-    beforeEach(() => {
-      // spy on the blockQueryService so that setup subscription won't be called
-      spyOn(component['blockQueryService'], 'subscribeToUpdate');
+    beforeEach(async () => {
       // setup mock data for testing
       document = documentFactory.convertRawDocument({ id, ownerId: uuidv4() });
+
       // setup spies
+      // GetDocument$ spy
+      getDocument$ = new Subject();
       getDocumentSpy = spyOn(component['documentQueryService'], 'getDocument$');
       getDocumentSpy.and.returnValue(getDocument$);
+      // Subscription spy
       setupSubscriptionSpy = spyOn<any>(component, 'setupBlockUpdateSubscription');
-      component['retrieveDocumentData']();
     });
 
-    it('should call getDocument$() with the id from route', () => {
-      expect(getDocumentSpy.calls.mostRecent().args[0]).toBe(id);
+    describe('before any notification', () => {
+      it('should call getDocument$() with the id from route', () => {
+        component['retrieveDocumentData']();
+        expect(getDocumentSpy.calls.mostRecent().args[0]).toBe(id);
+      });
     });
 
-    it('should not update the properties if the version is stored', () => {
-      spyOn<any>(component['versionService'], 'subscribeToRouter');
-      component['versionService'].registerVersion(document.version);
-      spyOn<any>(component, 'updateStoredProperties');
-      // now emit and check
-      getDocument$.next(document);
-      expect(component['updateStoredProperties']).not.toHaveBeenCalled();
-    });
+    describe('when a valid document is notified', () => {
 
-    it('should call setupBlockUpdateSubscription() when notified', () => {
-      getDocument$.next(document);
-      expect(setupSubscriptionSpy.calls.count()).toBe(1);
-    });
+      beforeEach(async () => {
+        // setup spies
+        getDocument$ = new BehaviorSubject(document);
+        getDocumentSpy.and.returnValue(getDocument$);
 
-    describe('(storing values)', () => {
-
-      it('should store into documentId', () => {
-        getDocument$.next(document);
-        expect(component.documentId).toEqual(document.id);
+        // Now call the method
+        await component['retrieveDocumentData']();
       });
 
-      it('should store into documentType', () => {
+      it('should not update the properties if the version is stored', () => {
+        spyOn<any>(component['versionService'], 'subscribeToRouter');
+        component['versionService'].registerVersion(document.version);
+        spyOn<any>(component, 'updateStoredProperties').and.callThrough();
+        // now emit and check
         getDocument$.next(document);
-        expect(component.documentType).toEqual(document.type);
+        expect(component['updateStoredProperties']).not.toHaveBeenCalled();
       });
 
-      it('should store into blockIds', () => {
-        getDocument$.next(document);
-        expect(component.blockIds).toEqual(document.blockIds);
+      it('should call setupBlockUpdateSubscription()', () => {
+        expect(setupSubscriptionSpy.calls.count()).toBe(1);
       });
 
-      it('should store into docTitle', () => {
-        getDocument$.next(document);
-        expect(component.docTitle).toEqual(document.title);
-      });
-      it('should store into currentSharingStatus', () => {
-        getDocument$.next(document);
-        expect(component.currentSharingStatus).toEqual(document.sharingStatus);
+      describe('(storing values)', () => {
+
+        it('should store into documentId', () => {
+          expect(component.documentId).toEqual(document.id);
+        });
+
+        it('should store into documentType', () => {
+          expect(component.documentType).toEqual(document.type);
+        });
+
+        it('should store into blockIds', () => {
+          expect(component.blockIds).toEqual(document.blockIds);
+        });
+
+        it('should store into docTitle', () => {
+          expect(component.docTitle).toEqual(document.title);
+        });
+        it('should store into currentSharingStatus', () => {
+          expect(component.currentSharingStatus).toEqual(document.sharingStatus);
+        });
+
       });
 
-    });
-
-    it('should set isDocumentReady to be true', () => {
-      getDocument$.next(document);
-      expect(component.isDocumentReady).toBe(true);
+      it('should set isDocumentReady to be true', () => {
+        expect(component.isDocumentReady).toBe(true);
+      });
     });
 
     it('should not do anything if document returned is null', () => {
+      component['retrieveDocumentData']();
       getDocument$.next(null);
       expect(setupSubscriptionSpy.calls.count()).toBe(0);
     });
 
-    it('should log the error received', () => {
-      // Setup the spy on console
-      const consoleSpy = spyOn(console, 'error');
+    it('should log the error received', done => {
       // setup the document to throw an error
       const mockError = new Error('test');
+      // Call to prepare for error
+      component['retrieveDocumentData']().catch(error => {
+        const expected = `DocumentPage failed to get document: ${mockError}`;
+        expect(error).toEqual(expected);
+        done();
+      });
+      // Setup the spy on console
       getDocument$.error(mockError);
-      const message = `DocumentPage failed to get document: ${mockError.message}`;
-      expect(consoleSpy).toHaveBeenCalledWith(message);
     });
   });
 
@@ -299,6 +380,24 @@ describe('DocumentContentComponent', () => {
       component['updateStoredProperties'](input);
       expect(component.submissionDocIds).toEqual(input.submissionDocIds);
     });
+
+    it('should set isOwner to true if it is the same id', () => {
+      component['currentUser'].id = 'test123';
+      const input: any = {
+        ownerId: 'test123'
+      };
+      component['updateStoredProperties'](input);
+      expect(component.isOwner).toBe(true);
+    });
+
+    it('should set isOwner to false if it is the same id', () => {
+      component['currentUser'].id = 'dan321';
+      const input: any = {
+        ownerId: 'test123'
+      };
+      component['updateStoredProperties'](input);
+      expect(component.isOwner).toBe(false);
+    });
   });
 
   describe('addNewBlock()', () => {
@@ -309,9 +408,7 @@ describe('DocumentContentComponent', () => {
     let blockQuerySpy: jasmine.Spy;
     let documentCommandSpy: jasmine.Spy;
 
-    const mockBlockInfo: CreateBlockEvent = {
-      type: BlockType.TEXT,
-    };
+    let mockBlockInfo: CreateBlockEvent;
 
     beforeEach(() => {
 
@@ -323,6 +420,9 @@ describe('DocumentContentComponent', () => {
       user = userFactory.createUser(
         uuidv4(), 'first', 'last', 'email'
       );
+      mockBlockInfo = {
+        type: BlockType.TEXT,
+      };
 
       // Set the component's data to the mock data
       component['currentUser'] = user;
@@ -398,6 +498,29 @@ describe('DocumentContentComponent', () => {
       });
     }
 
+    describe('adding new BulletBlock', () => {
+      beforeEach(() => {
+        mockBlockInfo = {
+          type: BlockType.TEXT,
+          textBlockType: TextBlockType.BULLET
+        };
+      });
+
+      it('should call createNewBulletBlock when textBlockType is bullet', async () => {
+        const spyCreateNewBlock = spyOn<any>(component, 'createAndSelectTextBlock').and.callThrough();
+        block = await component.addNewBlock(mockBlockInfo);
+        expect(spyCreateNewBlock.calls.count()).toBe(1);
+      });
+
+      it('should catch error when creation failed', done => {
+        spyOn<any>(component, 'createAndSelectTextBlock').and.throwError('testerr');
+        component.addNewBlock(mockBlockInfo).catch(err => {
+          expect(err.message.includes('testerr')).toBeTruthy();
+          done();
+        });
+      });
+    });
+
     describe('adding new TextBlock', () => {
 
       beforeEach(async () => {
@@ -405,7 +528,7 @@ describe('DocumentContentComponent', () => {
       });
 
       describe('[HAPPY PATH]', () => {
-        it('should resolve a TextBlock if successful', () => {
+        it('should resolve a TextBlock if successful', async () => {
           expect(block instanceof TextBlock).toBe(true);
           // No need to check for any other values, as they are checked in the
           // TextBlock class and the factory already
@@ -431,16 +554,16 @@ describe('DocumentContentComponent', () => {
 
     });
 
-    describe('adding new QuestionBlock', () => {
+    describe('adding new InputBlock', () => {
 
       beforeEach(async () => {
-        mockBlockInfo.type = BlockType.QUESTION;
+        mockBlockInfo.type = BlockType.INPUT;
         block = await component.addNewBlock(mockBlockInfo);
       });
 
       describe('[HAPPY PATH]', () => {
-        it('should resolve a QuestionBlock if successful', () => {
-          expect(block instanceof QuestionBlock).toBe(true);
+        it('should resolve a InputBlock if successful', () => {
+          expect(block instanceof InputBlock).toBe(true);
           // No need to check for any other values, as they are checked in the
           // TextBlock class and the factory already
         });
@@ -450,7 +573,7 @@ describe('DocumentContentComponent', () => {
       describe('[ERROR PATHS]', () => {
         it('should throw the error from factory', async () => {
           const error = Error('test');
-          spyOn(component['blockFactoryService'], 'createNewQuestionBlock')
+          spyOn(component['blockFactoryService'], 'createNewInputBlock')
             .and.throwError(error.message);
           try {
             await component.addNewBlock(mockBlockInfo);
@@ -664,7 +787,7 @@ describe('DocumentContentComponent', () => {
     component.documentId = uuidv4();
 
     const uuid = uuidv4();
-    component.navigateToChildDocEvent.subscribe(data => {
+    component.navigateToChildDocEvent.pipe(take(1)).subscribe(data => {
       expect(data).toEqual({
         parent: component.documentId,
         child: uuid
@@ -675,23 +798,33 @@ describe('DocumentContentComponent', () => {
   });
 
   describe('backToParent()', () => {
-    let locationSpy;
+    let routerSpy: jasmine.Spy;
+
     beforeEach(() => {
-      locationSpy = spyOn(component['location'], 'back').and.callFake(() => {
-        return;
-      });
+      const mockRoute: any = {
+        snapshot: {
+          parent: {
+            url: [
+              { path: 'value1' },
+              { path: 'value2' }
+            ]
+          }
+        }
+      }
+      component['route'] = mockRoute;
+      routerSpy = spyOn(component['router'], 'navigate');
     });
 
     it('should navigate to the previous url when it is a child document', () => {
       component.isChildDoc = true;
       component.backToParent();
-      expect(locationSpy).toHaveBeenCalled();
+      expect(routerSpy).toHaveBeenCalledWith(['/value1/value2']);
     });
 
     it('should not navigate to the previous url when it is not a child document', () => {
       component.isChildDoc = false;
       component.backToParent();
-      expect(locationSpy).not.toHaveBeenCalled();
+      expect(routerSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -792,90 +925,66 @@ describe('DocumentContentComponent', () => {
   });
 
   describe('sendDocument()', () => {
-    let submission: SubmissionDocument;
-
-    let block$: BehaviorSubject<any>;
-    let querySpy: jasmine.Spy;
-    let duplicateSpy: jasmine.Spy;
-    let factorySpy: jasmine.Spy;
-    let createDocumentSpy: jasmine.Spy;
-    let updateDocumentSpy: jasmine.Spy;
-    let emailSpy: jasmine.Spy;
-
+    const documentId = 'doc-1234';
+    const submissionId = 'sub-1234';
     const email = 'test@email.com';
-    const id1 = uuidv4();
-    const id2 = uuidv4();
+    const mockCommand = {
+      execute: () => { }
+    };
+    let commandSpy: jasmine.Spy;
 
     beforeEach(async () => {
-      querySpy = spyOn(component['blockQueryService'], 'getBlock$');
-      block$ = new BehaviorSubject(null);
-      querySpy.and.returnValue(block$);
+      // mock component data
+      component['documentId'] = documentId;
+      component['submissionDocIds'] = [];
 
-      duplicateSpy = spyOn(component['blockCommandService'], 'duplicateBlocks');
-      duplicateSpy.and.returnValue([{ id: id1 }, { id: id2 }]);
+      commandSpy = spyOn(component['commandService'], 'getCommand');
+      commandSpy.and.returnValue(mockCommand);
+      spyOn(mockCommand, 'execute').and.returnValue(Promise.resolve(submissionId));
 
-      factorySpy = spyOn(component['docFactoryService'], 'createNewSubmission');
-      factorySpy.and.callThrough();
-
-      createDocumentSpy = spyOn(component['documentCommandService'], 'createDocument');
-      createDocumentSpy.and.returnValue(Promise.resolve());
-
-      updateDocumentSpy = spyOn(component['documentCommandService'], 'updateDocument');
-      updateDocumentSpy.and.returnValue(Promise.resolve());
-
-      emailSpy = spyOn(component['emailService'], 'sendInvitationEmail');
-      emailSpy.and.returnValue(Promise.resolve());
-
-      component.docTitle = 'test';
-      component.blockIds = [id1, id2];
-
-      await component.sendDocument(email);
-      submission = factorySpy.calls.mostRecent().returnValue;
+      await component.sendDocument([email]);
     });
 
-    it('should call blockQueryService with the ids from blockIds', () => {
-      expect(querySpy.calls.count()).toBe(2);
-      querySpy.calls.all().forEach(call => {
-        expect([id1, id2].includes(call.args[0])).toBe(true);
+    it('should call commandService with the right arg', () => {
+      expect(commandSpy).toHaveBeenCalledWith(CommandType.SEND_DOCUMENT);
+    });
+    it('should call to execute the command with the right args', () => {
+      expect(mockCommand.execute).toHaveBeenCalledWith(documentId, email);
+    });
+    it('should update the array of submissionDocIds', () => {
+      expect(component.submissionDocIds).toEqual([submissionId]);
+    });
+  });
+
+  describe('deleteThisDocument()', () => {
+    let spyDeleteDocument: jasmine.Spy;
+    const testId = 't123';
+
+    beforeEach(() => {
+      spyDeleteDocument = spyOn(component['documentCommandService'], 'deleteDocument');
+      component['documentId'] = testId;
+
+    });
+
+    it('should call the command service', async () => {
+      spyDeleteDocument.and.returnValue(Promise.resolve('test delete'));
+      await component.deleteThisDocument();
+      expect(spyDeleteDocument.calls.count()).toBe(1);
+    });
+
+    it('should call the command service with expected parameters', async () => {
+      spyDeleteDocument.and.returnValue(Promise.resolve('test delete'));
+      await component.deleteThisDocument();
+      expect(spyDeleteDocument).toHaveBeenCalledWith({ id: testId });
+    });
+
+    it('should throw expected error when query failed', done => {
+      spyDeleteDocument.and.returnValue(Promise.reject(new Error('del failed')));
+      component.deleteThisDocument().catch(err => {
+        expect(err.message.includes('Failed to delete document:')).toBeTruthy();
+        expect(err.message.includes('del failed')).toBeTruthy();
+        done();
       });
-    });
-
-    it('should call to duplicate the blocks with the ids from blockIds', () => {
-      expect(duplicateSpy).toHaveBeenCalled();
-    });
-
-    it('should call factory with the right arguments', () => {
-      expect(factorySpy).toHaveBeenCalledWith({
-        ownerId: testUser.id,
-        recipientEmail: email,
-        blockIds: [id1, id2],
-        title: component.docTitle
-      });
-    });
-
-    it('should call command service with the document', () => {
-      expect(createDocumentSpy).toHaveBeenCalledWith(submission);
-    });
-
-    it('should update the submission doc IDs array', () => {
-      expect(component.submissionDocIds.includes(submission.id)).toBe(true);
-    });
-
-    it('should call to update document to backend', () => {
-      expect(updateDocumentSpy).toHaveBeenCalledWith({
-        id,
-        submissionDocIds: component.submissionDocIds,
-        lastUpdatedBy: testUser.id
-      });
-    });
-
-    it('should call EmailService with the right args', () => {
-      const expectedArgs: InvitationEmailDetails = {
-        email,
-        documentId: submission.id,
-        sender: testUser,
-      };
-      expect(emailSpy).toHaveBeenCalledWith(expectedArgs);
     });
   });
 

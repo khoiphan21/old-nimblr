@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Block } from '../../../classes/block/block';
 import { TextBlock, CreateAppTextBlockInput } from '../../../classes/block/textBlock';
 import { isUuid } from 'src/app/classes/helpers';
-import { BlockType, QuestionType, TextBlockType } from '../../../../API';
-import { QuestionBlock } from 'src/app/classes/block/question-block';
+import { BlockType, InputType, TextBlockType } from '../../../../API';
 import { UUID } from '../../document/command/document-command.service';
 import { HeaderBlock } from 'src/app/classes/block/textBox/header-block';
+import { BulletBlock } from 'src/app/classes/block/textBox/bullet-block';
+import { InputBlock } from '../../../classes/block/input-block';
 
 const uuidv4 = require('uuid/v4');
 
@@ -50,28 +51,43 @@ export class BlockFactoryService {
     return new HeaderBlock(newInput);
   }
 
-  /**
-   * Create a new QuestionBlock object. The parameters specified
-   * are the minimum number of parameters required to create this
-   * type of block.
-   *
-   * @returns a valid QuestionBlock object
-   */
-  createNewQuestionBlock(input: CreateNewBlockInput): QuestionBlock {
-    const newInput = {
+  createNewBulletBlock(input: CreateNewBlockInput): BulletBlock {
+    const newInput: CreateAppTextBlockInput = {
       id: uuidv4(),
       version: uuidv4(),
-      type: BlockType.QUESTION,
       documentId: input.documentId,
       lastUpdatedBy: input.lastUpdatedBy,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      question: '',
-      answers: [],
-      questionType: QuestionType.SHORT_ANSWER,
-      options: []
+      value: '',
+      textBlockType: TextBlockType.BULLET,
     };
-    return new QuestionBlock(newInput);
+
+    return new BulletBlock(newInput);
+  }
+
+  /**
+   * Create a new InputBlock object. The parameters specified
+   * are the minimum number of parameters required to create this
+   * type of block.
+   *
+   * @returns a valid InputBlock object
+   */
+  createNewInputBlock(input: CreateNewBlockInput): InputBlock {
+    const newInput = {
+      id: uuidv4(),
+      version: uuidv4(),
+      type: BlockType.INPUT,
+      documentId: input.documentId,
+      lastUpdatedBy: input.lastUpdatedBy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      answers: [],
+      inputType: InputType.TEXT,
+      options: [],
+      isLocked: false
+    };
+    return new InputBlock(newInput);
   }
 
   /**
@@ -90,18 +106,17 @@ export class BlockFactoryService {
     value = '',
     createdAt = new Date().toISOString(),
     updatedAt = new Date().toISOString(),
-    question = '',
     answers = [],
-    questionType = QuestionType.SHORT_ANSWER,
+    inputType = InputType.TEXT,
     options = [],
     textBlockType = TextBlockType.TEXT,
+    isLocked = false
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
-      value, updatedAt, createdAt, question, answers, questionType, options,
-      textBlockType
+      value, updatedAt, createdAt, answers, inputType, options,
+      textBlockType, isLocked
     };
-
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
       'updatedAt'
     ].forEach(paramName =>
@@ -121,8 +136,8 @@ export class BlockFactoryService {
     switch (type) {
       case BlockType.TEXT:
         return this.selectTextBlock(input);
-      case BlockType.QUESTION:
-        return new QuestionBlock(input);
+      case BlockType.INPUT:
+        return new InputBlock(input);
       default:
         throw new Error('BlockType not supported');
     }

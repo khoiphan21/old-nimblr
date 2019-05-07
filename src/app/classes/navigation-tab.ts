@@ -11,6 +11,7 @@ export interface CreateNavigationTabInput {
     type: DocumentType;
     children: Array<NavigationTabHeader>;
 }
+
 export class NavigationTabDocument implements NavigationTab {
     id: UUID;
     title: string;

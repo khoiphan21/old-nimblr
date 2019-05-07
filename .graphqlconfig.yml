@@ -2,14 +2,14 @@ projects:
   irisa:
     schemaPath: src\graphql\schema.json
     includes:
-      - src\graphql\**\*.ts
+      - src/graphql/**/*.ts
     excludes:
       - ./amplify/**
     extensions:
       amplify:
         codeGenTarget: typescript
-        generatedFileName: src\API.ts
-        docsFilePath: src\graphql
+        generatedFileName: src/API.ts
+        docsFilePath: src/graphql
         graphQLApiId: 7ojdef6dhjfg7fwfhv4q5nc5a4
       endpoints:
         prod: >-

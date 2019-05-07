@@ -9,14 +9,16 @@ import { AccountServiceImpl } from '../../services/account/account-impl.service'
 import { processTestError } from 'src/app/classes/test-helpers.spec';
 import { environment } from 'src/environments/environment';
 import { TEST_USERNAME, TEST_PASSWORD } from '../../services/loginHelper';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('(Integration) RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let accountService: AccountService;
-  beforeEach(async(() => {
+
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         RegisterPageComponent
       ],
       imports: [
@@ -32,14 +34,13 @@ describe('(Integration) RegisterPageComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterPageComponent);
     accountService = TestBed.get(AccountService);
     component = fixture.componentInstance;
     spyOn(accountService, 'registerAppUser').and.returnValue(Promise.resolve());
-    fixture.detectChanges();
   });
 
   /* tslint:disable:no-string-literal */

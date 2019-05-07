@@ -5,8 +5,7 @@ import { NavigationBarComponent } from './navigation-bar.component';
 import { NavigationTabComponent } from './navigation-tab/navigation-tab.component';
 import { ServicesModule } from 'src/app/modules/services.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -54,6 +53,8 @@ describe('(UI) NavigationBarComponent', () => {
     // tslint:disable:no-string-literal
     navigationBar$ = new BehaviorSubject([]);
     spyOn(component['navigationBarService'], 'getNavigationBarStatus$').and.returnValue(new BehaviorSubject(true));
+    spyOn<any>(component, 'setupDocumentStructure');
+    spyOn<any>(component, 'setupUser').and.returnValue(Promise.resolve());
     spyOn(component['navigationBarService'], 'getNavigationBar$').and.returnValue(navigationBar$);
     spyOn(component['accountService'], 'getUser$').and.returnValue(new BehaviorSubject(null));
 
@@ -62,7 +63,6 @@ describe('(UI) NavigationBarComponent', () => {
     component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
     component.navigationTabs = [];
 
-    fixture.detectChanges();
   });
 
   it('should not show the navigation tab if the type is SUBMISSION', () => {

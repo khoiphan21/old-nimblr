@@ -5,18 +5,19 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BlockType } from '../../../../API';
 import { take } from 'rxjs/operators';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('SubmissionDocumentContentComponent', () => {
   let component: SubmissionDocumentContentComponent;
   let fixture: ComponentFixture<SubmissionDocumentContentComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       declarations: [ SubmissionDocumentContentComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SubmissionDocumentContentComponent);

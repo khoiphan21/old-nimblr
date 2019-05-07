@@ -61,88 +61,52 @@ describe('LoginPageComponent', () => {
     beforeEach(() => {
       navigationSpy = spyOn(component['router'], 'navigate');
       spyOn(console, 'error');
+      component.buildForm();
       component.loginForm.controls.email.setValue(email);
       component.loginForm.controls.password.setValue(password);
     });
 
-    it('should stop the function if the data returned is empty', done => {
-      spyOn(component['accountService'], 'login').and.returnValue(Promise.resolve(null));
-      component.signIn().then(() => {
-        fail('should not proceed signIn()');
-        done();
-      }).catch(() => {
-        const navigationCalls = navigationSpy.calls.count.length;
-        expect(navigationCalls).toBe(0);
-        done();
-      });
-    });
-
-    it('should navigate to register page if the account is not verified', done => {
+    it('should navigate to register page if the account is not verified', async () => {
       spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
         code: 'UserNotConfirmedException'
       }));
-      component.signIn().then(() => {
-        fail('should not sign in successfully');
-        done();
-      }).catch(() => {
-        const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
-        expect(navigatedPath).toBe('register');
-        done();
-      });
+      await component.signIn();
+      const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
+      expect(navigatedPath).toBe('register');
     });
 
-    it('should set the loginError to USER_NOT_FOUND', done => {
+    it('should set the loginError to USER_NOT_FOUND', async () => {
       spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
         code: 'UserNotFoundException'
       }));
-      component.signIn().then(() => {
-        fail('should not sign in successfully');
-        done();
-      }).catch(() => {
-        expect(component.errorMessage).toBe(LoginError.USER_NOT_FOUND);
-        done();
-      });
+      await component.signIn();
+      expect(component.errorMessage).toBe(LoginError.USER_NOT_FOUND);
     });
 
 
-    it('should set the loginError to INCORRECT_PASSWORD', done => {
+    it('should set the loginError to INCORRECT_PASSWORD', async () => {
       spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
         code: 'NotAuthorizedException'
       }));
-      component.signIn().then(() => {
-        fail('should not sign in successfully');
-        done();
-      }).catch(() => {
-        expect(component.errorMessage).toBe(LoginError.INCORRECT_PASSWORD);
-        done();
-      });
+      await component.signIn();
+      expect(component.errorMessage).toBe(LoginError.INCORRECT_PASSWORD);
     });
 
-    it('should console the error if the error is not specified yet', done => {
+    it('should console the error if the error is not specified yet', async () => {
       spyOn(component['accountService'], 'login').and.returnValue(Promise.reject({
         code: 'IncorrectPasswordException'
       }));
-      component.signIn().then(() => {
-        fail('should not sign in successfully');
-        done();
-      }).catch(() => {
-        expect(console.error).toHaveBeenCalled();
-        done();
-      });
+      await component.signIn();
+      expect(console.error).toHaveBeenCalled();
     });
 
-    it('should navigate to dashboard page if the user have verified the account', done => {
+    it('should navigate to the wildcard page if the user have verified the account', async () => {
       const accountServiceSpy = spyOn(component['accountService'], 'login')
         .and.returnValues(Promise.resolve({ id: 'abcd' }));
-      component.signIn().then(() => {
-        expect(accountServiceSpy.calls.count()).toBe(1);
-        const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
-        expect(navigatedPath).toBe('dashboard');
-        done();
-      }).catch(error => {
-        fail('should not fail to sign in');
-        done();
-      });
+      await component.signIn();
+      expect(accountServiceSpy.calls.count()).toBe(1);
+      const navigatedPath = navigationSpy.calls.mostRecent().args[0][0];
+      expect(navigatedPath).toBe('/document/undefined');
     });
   });
 });

@@ -19,22 +19,27 @@ div.fluid-container {
 @include media(lg) {
     div.fluid-container {
         width: 100%;
+        height: 100vh;
         font-family: $font-roboto;
         @include column-center;
         justify-content: flex-start;
         color: $color-grey-1;
         div.row {
             width: 100%;
-            flex-direction: row;
+            height: auto;
             section.navigation-bar {
-                width: $navigation-width;
                 position: relative;
+                width: $navigation-width;
+                height: 100%;
             }
             section.document-content {
                 position: relative;
                 width: -webkit-calc(100vw - #{$navigation-width});
                 width: -moz-calc(100vw - #{$navigation-width});
                 width: calc(100vw - #{$navigation-width});
+                height: 100%;
+                padding-bottom: 100px;
+                overflow: auto;
             }
         }
     }

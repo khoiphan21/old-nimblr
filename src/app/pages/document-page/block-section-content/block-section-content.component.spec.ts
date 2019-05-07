@@ -6,18 +6,19 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { BlockType } from 'src/API';
 import { take } from 'rxjs/operators';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('BlockSectionContentComponent', () => {
   let component: BlockSectionContentComponent;
   let fixture: ComponentFixture<BlockSectionContentComponent>;
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlockSectionContentComponent ],
+      declarations: [BlockSectionContentComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
-  }));
+      .compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BlockSectionContentComponent);
@@ -30,12 +31,12 @@ describe('BlockSectionContentComponent', () => {
   });
 
   it('andNewBlock() - should emit the right value', done => {
-    const type = BlockType.QUESTION;
-    component.addNewBlockEvent.subscribe(value => {
+    const type = BlockType.INPUT;
+    component.addNewBlockEvent.pipe(take(1)).subscribe(value => {
       expect(value.type).toEqual(type);
       done();
     });
-    component.addNewBlock({type});
+    component.addNewBlock({ type });
   });
 
   it('addFirstBlock() - should emit the right event', done => {
@@ -51,7 +52,7 @@ describe('BlockSectionContentComponent', () => {
 
   it('deleteBlock() - should emit the right value', done => {
     const blockId = 'id123';
-    component.deleteBlockEvent.subscribe(value => {
+    component.deleteBlockEvent.pipe(take(1)).subscribe(value => {
       expect(value).toEqual(blockId);
       done();
     });
@@ -99,6 +100,7 @@ describe('BlockSectionContentComponent', () => {
 
   describe('drop()', () => {
     let dragEvent;
+
     beforeEach(() => {
       component.blockIds = ['id1', 'id2'];
       dragEvent = {
@@ -115,7 +117,7 @@ describe('BlockSectionContentComponent', () => {
 
     it('should emit the new position', done => {
       const newBlocksPosition = ['id2', 'id1'];
-      component.updateDocumentEvent.subscribe(value => {
+      component.updateDocumentEvent.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(newBlocksPosition);
         done();
       });

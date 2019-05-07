@@ -5,18 +5,24 @@ import { Document } from '../../classes/document/document';
 import { NavigationTabDocument } from '../../classes/navigation-tab';
 import { DocumentQueryService } from '../document/query/document-query.service';
 import { AccountService } from '../account/account.service';
+import { UUID } from '../document/command/document-command.service';
+import { TextBlockType } from '../../../API';
+import { Block } from '../../classes/block/block';
+import { BlockQueryService } from '../block/query/block-query.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavigationBarService {
   private navigationBar$: BehaviorSubject<Array<NavigationTabDocument>>;
+  private documentStructure$: BehaviorSubject<Array<string>>;
   private navigationBarStatus$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private documentService: DocumentService,
     private documentQueryService: DocumentQueryService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private blockQueryService: BlockQueryService
   ) { }
 
   getNavigationBarStatus$(): Observable<boolean> {
@@ -35,15 +41,10 @@ export class NavigationBarService {
    *
    * @param documentId the document id to fall back to if user is not logged in
    */
-  getNavigationBar$(documentId?: string): Observable<Array<NavigationTabDocument>> {
+  getNavigationBar$(): Observable<Array<NavigationTabDocument>> {
     if (!this.navigationBar$) {
       this.navigationBar$ = new BehaviorSubject([]);
-
-      this.accountService.isUserReady().then(() => {
-        this.getAllUserDocuments();
-      }).catch(() => {
-        this.getForDocument(documentId);
-      });
+      this.getAllUserDocuments();
     }
     return this.navigationBar$;
   }
@@ -65,11 +66,12 @@ export class NavigationBarService {
     this.navigationBar$.next(navigationTabs);
   }
 
-  private async getForDocument(documentId: string) {
+  async getForDocument(documentId: string) {
     return new Promise((resolve, reject) => {
       this.documentQueryService.getDocument$(documentId).subscribe(document => {
+        if (document === null) { return; }
         this.processDocuments([document]);
-        resolve();
+        resolve(document);
       }, error => {
         this.navigationBar$.error(error);
         reject();
@@ -84,8 +86,6 @@ export class NavigationBarService {
       const title = document.title;
       const type = document.type;
       const children = [];
-      // currently no header tab implementation
-      // const children = this.processChildrenTab();
       const navigationTab = new NavigationTabDocument({id, title, type, children});
       navigationTabs.push(navigationTab);
     }

@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavigationBarComponent } from './navigation-bar.component';
 import { NavigationTabComponent } from './navigation-tab/navigation-tab.component';
 import { ServicesModule } from 'src/app/modules/services.module';
-import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NavigationTabDocument } from 'src/app/classes/navigation-tab';
 import { configureTestSuite } from 'ng-bullet';
@@ -12,20 +11,26 @@ import { MockAccountService } from 'src/app/services/account/account-impl.servic
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { ResponsiveModule } from 'ngx-responsive';
-import { DocumentType } from '../../../API';
+import { DocumentType, CreateDocumentInput, SharingStatus } from '../../../API';
+import { isUuid } from '../../classes/helpers';
+import { UUID } from '../../services/document/command/document-command.service';
+import { NavigationEnd, ActivatedRoute, Router } from '@angular/router';
+
+const uuidv4 = require('uuid/v4');
 
 // tslint:disable:no-string-literal
 describe('NavigationBarComponent', () => {
   let component: NavigationBarComponent;
   let fixture: ComponentFixture<NavigationBarComponent>;
   let userFactory: UserFactoryService;
-
+  let userId: UUID;
+  let routerSpy: jasmine.Spy;
+  const documentId = 'test123';
   // spies
   let getStatusSpy: jasmine.Spy;
   let getNavBarSpy: jasmine.Spy;
+  let navBar$: Subject<any>;
   let accountSpy: jasmine.Spy;
-
-  let navigationBar$: BehaviorSubject<any>;
 
   configureTestSuite(() => {
     TestBed.configureTestingModule({
@@ -35,13 +40,29 @@ describe('NavigationBarComponent', () => {
       ],
       imports: [
         ServicesModule,
-        RouterTestingModule.withRoutes([]),
         ResponsiveModule.forRoot()
       ],
       providers: [
         {
           provide: AccountService,
           useClass: MockAccountService
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => documentId
+              }
+            }
+          }
+        },
+        {
+          provide: Router,
+          useValue: {
+            events: new Subject(),
+            navigate: () => { }
+          }
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -54,29 +75,78 @@ describe('NavigationBarComponent', () => {
     component = fixture.componentInstance;
 
     // Setup spies
-    navigationBar$ = new BehaviorSubject([]);
+    routerSpy = spyOn(component['router'], 'navigate');
     getStatusSpy = spyOn(component['navigationBarService'], 'getNavigationBarStatus$');
     getStatusSpy.and.returnValue(new BehaviorSubject(true));
-
     getNavBarSpy = spyOn(component['navigationBarService'], 'getNavigationBar$');
-    getNavBarSpy.and.returnValue(navigationBar$);
-
+    navBar$ = new Subject();
+    getNavBarSpy.and.returnValue(navBar$);
     accountSpy = spyOn(component['accountService'], 'getUser$');
     accountSpy.and.returnValue(new BehaviorSubject(null));
 
     // Setup component
     component.currentUser = userFactory.createUser('id', 'firstName', 'lastName', 'email');
     component.navigationTabs = [];
-
-    // call to render
-    fixture.detectChanges();
+    userId = uuidv4();
+    spyOn(component['accountService'], 'isUserReady').and.returnValue(
+      Promise.resolve({ id: userId })
+    );
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
+  describe('ngOnInit()', () => {
+    let navigationStatusSpy: jasmine.Spy;
+    let userSpy: jasmine.Spy;
+    let navigationBarSpy: jasmine.Spy;
+    let documentStrucutureSpy: jasmine.Spy;
+
+    beforeEach(async () => {
+      navigationStatusSpy = spyOn<any>(component, 'setupNavigationStatus');
+      userSpy = spyOn<any>(component, 'setupUser');
+      userSpy.and.returnValue(Promise.resolve());
+      navigationBarSpy = spyOn<any>(component, 'setupNavigationBar');
+      documentStrucutureSpy = spyOn<any>(component, 'setupDocumentStructure');
+      navigationBarSpy.and.returnValue(Promise.resolve());
+      await component.ngOnInit();
+    });
+
+    it('should call setupNavigationStatus()', async () => {
+      expect(navigationStatusSpy).toHaveBeenCalled();
+    });
+
+    it('should call setupUser()', async () => {
+      expect(userSpy).toHaveBeenCalled();
+    });
+
+    it('should call setupNavigationBar()', async () => {
+      expect(navigationBarSpy).toHaveBeenCalled();
+    });
+
+    it('should call setupDocumentStructure()', async () => {
+      expect(documentStrucutureSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('setupNavigationStatus()', () => {
+    it('should change the status', () => {
+      component.isNavigationTabShown = false;
+
+      getStatusSpy.and.returnValue(new BehaviorSubject(true));
+
+      component['setupNavigationStatus']();
+      expect(component.isNavigationTabShown).toBe(true);
+    });
+  });
+
+  it('processInitialName() - should process user`s first name when there is value', () => {
+    component['processInitialName']('John');
+    expect(component.initialName).toEqual('J');
+  });
+
+  describe('setupUser()', () => {
     let user;
 
     beforeEach(() => {
@@ -86,14 +156,15 @@ describe('NavigationBarComponent', () => {
     });
 
     it('should set the user to the returned value', () => {
-      component.ngOnInit();
+      component['setupUser']();
       expect(component.currentUser).toEqual(user);
     });
 
-    it('should process user`s first name when there is value', () => {
-      component.ngOnInit();
+    it('should call processInitialName()', () => {
+      component['setupUser']();
       expect(component['processInitialName']).toHaveBeenCalled();
     });
+
   });
 
   /* tslint:disable:no-string-literal */
@@ -103,24 +174,103 @@ describe('NavigationBarComponent', () => {
     expect(component.initialName).toBe(firstName.charAt(0));
   });
 
-  it('should receive get the right value for the navigation bar status', () => {
-    const expectedResult = false;
-    getStatusSpy.and.returnValue(new BehaviorSubject(expectedResult));
-    getNavBarSpy.and.returnValue(new Subject());
-    component.ngOnInit();
-    expect(component.isNavigationTabShown).toEqual(expectedResult);
+  describe('setupNavigationBar()', () => {
+    it('should receive the right value for the documentIds while setup', () => {
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      const expectedResult = [id1, id2];
+
+      const getUserDocumentSpy = spyOn(component['documentService'], 'getUserDocuments$');
+      getUserDocumentSpy.and.returnValue(new BehaviorSubject([
+        {id: id1}, {id: id2}
+      ]));
+      component['setupNavigationBar']();
+      expect(component.documentIds).toEqual(expectedResult);
+    });
   });
 
-  it('should receive get the right value for the navigationTabs when the data comes in', () => {
-    const tab1 = new NavigationTabDocument({
-      id: 'tab1', title: 'nav tab 1', type: DocumentType.GENERIC, children: []
+  describe('createNewDocument()', () => {
+    let commandService: jasmine.Spy;
+    const id = 'abcde';
+
+    beforeEach(() => {
+      commandService = spyOn(component['documentCommandService'], 'createDocument');
+      commandService.and.returnValue({ id });
     });
-    const tab2 = new NavigationTabDocument({
-      id: 'tab2', title: 'nav tab 2', type: DocumentType.GENERIC, children: []
+
+    describe('calls to createDocument()', () => {
+      let args: CreateDocumentInput;
+      beforeEach(async () => {
+        await component.createNewDocument();
+        args = commandService.calls.mostRecent().args[0];
+      });
+      it('should call createDocument() from Document Service', async () => {
+        expect(commandService).toHaveBeenCalled();
+      });
+      it('should call with a uuid version', async () => {
+        expect(isUuid(args.version)).toBe(true);
+      });
+      it('should call with a GENERIC type', async () => {
+        expect(args.type).toBe(DocumentType.TEMPLATE);
+      });
+      it('should call with the right ownerId', async () => {
+        expect(args.ownerId).toBe(userId);
+      });
+      it('should call with the right lastUpdatedBy', async () => {
+        expect(args.lastUpdatedBy).toBe(userId);
+      });
+      it('should call with PRIVATE sharing status', async () => {
+        expect(args.sharingStatus).toBe(SharingStatus.PRIVATE);
+      });
     });
-    const expectedResult = [tab1, tab2];
-    getNavBarSpy.and.returnValue(new BehaviorSubject(expectedResult));
-    component.ngOnInit();
-    expect(component.navigationTabs).toEqual(expectedResult);
+
+    it('should navigate to the right "document" page when done', async () => {
+      await component.createNewDocument();
+      expect(routerSpy).toHaveBeenCalledWith([`/document/abcde`]);
+    });
   });
+
+  describe('setupDocumentStructure()', () => {
+    let getStructureSpy: jasmine.Spy;
+    beforeEach(() => {
+      getStructureSpy = spyOn<any>(component, 'getStructure');
+      const mockRouter: any = {
+        events: new Subject()
+      };
+      component['router'] = mockRouter;
+    });
+
+    it('should call getStructure() once', () => {
+      component['setupDocumentStructure']();
+      expect(getStructureSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call getStructure() twice', () => {
+      const navigationEnd = new NavigationEnd(0, '', '/document');
+      const mockRouter: any = {
+        events: new BehaviorSubject(navigationEnd)
+      };
+      component['router'] = mockRouter;
+      component['setupDocumentStructure']();
+      expect(getStructureSpy).toHaveBeenCalledTimes(2);
+    });
+
+  });
+
+  describe('getStructure()', () => {
+    let getDocumentSpy: jasmine.Spy;
+    const blockIds = ['test123'];
+    const mockDocument = {
+      blockIds
+    };
+    beforeEach(() => {
+      getDocumentSpy = spyOn(component['documentQueryService'], 'getDocument$').and.returnValue(new BehaviorSubject(mockDocument));
+    });
+
+    it('should update into the latest value when respond', async () => {
+      component['getStructure']();
+      expect(component.blockIds).toEqual(blockIds);
+    });
+  });
+
 });

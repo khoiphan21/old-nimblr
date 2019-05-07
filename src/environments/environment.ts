@@ -4,12 +4,13 @@
 
 export const environment = {
   production: false,
+  DOMAIN: 'localhost:4200',
   AWS_ACCESS_KEY_ID: 'AKIAIU5JQXYYOIHRYZTQ',
   AWS_SECRET_ACCESS_KEY: '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',
 
   // How long should a test wait before calling an update query.
   // This variable is normally used when it's a test for subscription,// and should be modified depending on the internet speed
-  WAIT_TIME_BEFORE_UPDATE: 2000,
+  WAIT_TIME_BEFORE_UPDATE: 4000,
   // Complementary timeout for tests with block update
   TIMEOUT_FOR_UPDATE_TEST: 15000
 };

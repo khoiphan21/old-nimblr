@@ -2,6 +2,7 @@
 @import '../../../_sass/variables';
 @import '../../../_sass/base';
 $input-gap: 7.5px;
+$menu-block-width: 140px;
 section.block-option.child-document {
     left: 12.5%;
 }
@@ -78,7 +79,7 @@ section.block-option {
             position: absolute;
             top: 0;
             left: 0;
-            width: 200px;
+            width: 225px;
             height: auto;
             z-index: 1;
             .title {
@@ -104,20 +105,8 @@ section.block-option {
                 &:hover {
                     background: #F2F2F2;
                 }
-                .block-image.text {
-                    background: {
-                        image: url('/assets/icons/text-block.png');
-                        size: contain;
-                        repeat: no-repeat;
-                        position: center;
-                    }
-                }
-                .block-image {
-                    width: 39px;
-                    height: 39px;
-                    border: 0.5px solid transparentize($color: #7E7E7E, $amount: 0.5);
-                    border-radius: 2px;
-                    margin-right: 0.5vw;
+                img {
+                    margin-right: 10px;
                 }
                 .block-text {
                     width: 80%;
@@ -158,13 +147,13 @@ section.block-option {
             }
         }
         .menu-blocks {
-            $menu-block-width: 135px;
             position: absolute;
             top: -3px;
             left: -$menu-block-width - 10px;
             width: $menu-block-width;
             height: auto;
             z-index: 1;
+            padding: 7.5px 0;
             .menu-selection {
                 width: 100%;
                 @include row-center;
@@ -174,17 +163,16 @@ section.block-option {
                 transition: 0.3s;
                 background: white;
                 &:hover {
-                    background: #F2F2F2;
+                    background: $color-light-blue;
+                }
+                section.convert-blocks {
+                    position: absolute;
+                    left: $menu-block-width;
+                    top: 30px;
+                    width: 135px;
                 }
                 .selection-image {
-                    width: auto;
-                    height: auto;
-                    margin-right: 1vw;
-                    display: flex;
-                    img.delete-item {
-                        width: 12px;
-                        height: 14px;
-                    }
+                    margin-right: 10px;
                 }
                 .selection-text {
                     width: 85%;
@@ -194,10 +182,6 @@ section.block-option {
                     .type {
                         font-size: 13px;
                         color: #767676;
-                    }
-                    .key {
-                        font-size: 10px;
-                        color: #BEBEBE;
                     }
                 }
                 &:nth-child(1) {
