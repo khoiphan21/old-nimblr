@@ -72,7 +72,7 @@ export class AccountServiceImpl implements AccountService {
     const userId = cognitoUser.signInUserSession.idToken.payload.sub;
 
     const appUser = await this.getAppUser(userId);
-    this.user$.next(appUser);
+    this.user$ = new BehaviorSubject<User>(appUser);
 
     return appUser;
   }

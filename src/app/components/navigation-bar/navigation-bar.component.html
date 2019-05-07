@@ -5,7 +5,7 @@
             <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
         </section>
         <section class="tabs private">
-            <div class="title"><span>my documents</span> <img src="./assets/icons/document-add.svg" class="clickable" (click)="createNewDocument()" tooltip="&nbsp; Add new page &nbsp;" placement="right" hide-delay="0"></div>
+            <div class="title"><span>my templates</span> <img src="./assets/icons/document-add.svg" class="clickable" (click)="createNewDocument()" tooltip="&nbsp; Add new page &nbsp;" placement="right" hide-delay="0"></div>
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section>
         <!-- <section class="tabs shared">
@@ -13,7 +13,7 @@
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section> -->
         <section class="tabs document-outline" *ngIf="blockIds">
-            <div class="title">Document Outline</div>
+            <div class="title">Page Outline</div>
             <ng-container *ngFor="let id of blockIds">
                 <app-document-outline-tab [id]="id"></app-document-outline-tab>
             </ng-container>
@@ -30,7 +30,7 @@
             <div class="user-name">{{currentUser.firstName}} {{currentUser.lastName}}</div>
         </section>
         <section class="tabs private">
-            <div class="title">my documents</div>
+            <div class="title">my templates</div>
             <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
         </section>
         <!-- <section class="tabs shared">

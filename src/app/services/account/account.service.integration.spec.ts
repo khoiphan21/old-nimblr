@@ -145,8 +145,6 @@ describe('(Integration) AccountImplService', () => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // Setup subscription for assertion
         service.getUser$().subscribe(user => {
-          if (user === null) { return; }
-          // should be called here
           expect(user).toBeTruthy();
           done();
         }, error => processTestError('unable to get user', error, done));

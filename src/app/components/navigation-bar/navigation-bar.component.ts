@@ -92,7 +92,7 @@ export class NavigationBarComponent implements OnInit {
     const user = await this.accountService.isUserReady();
     const input: CreateDocumentInput = {
       version: uuidv4(),
-      type: DocumentType.GENERIC,
+      type: DocumentType.TEMPLATE,
       ownerId: user.id,
       lastUpdatedBy: user.id,
       sharingStatus: SharingStatus.PRIVATE
