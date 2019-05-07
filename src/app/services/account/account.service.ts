@@ -16,4 +16,5 @@ export abstract class AccountService {
     abstract update(user: User): Promise<any>;
     abstract getUser$(): Observable<User>;
     abstract isUserReady(): Promise<User>;
+    abstract doesUserExist(email: string): Promise<boolean>;
 }

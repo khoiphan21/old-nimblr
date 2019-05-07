@@ -19,7 +19,6 @@ import { configureTestSuite } from 'ng-bullet';
 const uuidv4 = require('uuid/v4');
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const AWS = require('aws-sdk');
 
 describe('(Integration) AccountImplService', () => {
   let service: AccountServiceImpl;
@@ -145,8 +144,6 @@ describe('(Integration) AccountImplService', () => {
       service.login(TEST_USERNAME, TEST_PASSWORD).then(() => {
         // Setup subscription for assertion
         service.getUser$().subscribe(user => {
-          if (user === null) { return; }
-          // should be called here
           expect(user).toBeTruthy();
           done();
         }, error => processTestError('unable to get user', error, done));
@@ -250,6 +247,17 @@ describe('(Integration) AccountImplService', () => {
       }).catch(error => processTestError('unable to sign out', error, done));
     });
 
+  });
+
+  describe('doesUserExist()', () => {
+    it('should resolve true if the email exists', async () => {
+      const result = await service.doesUserExist(TEST_USERNAME);
+      expect(result).toBe(true);
+    });
+    it('should resolve true if the email does NOT exist', async () => {
+      const result = await service.doesUserExist('abcd@mail.impossible');
+      expect(result).toBe(false);
+    });
   });
 
 });

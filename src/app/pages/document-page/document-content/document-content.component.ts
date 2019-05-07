@@ -68,13 +68,13 @@ export class DocumentContentComponent implements OnInit {
     private versionService: VersionService,
     private accountService: AccountService,
     private route: ActivatedRoute,
-    private location: Location,
     private router: Router,
     private commandService: CommandService
   ) {
   }
 
   async ngOnInit() {
+
     try {
       this.currentUser = await this.checkUser();
       this.isUserLoggedIn = true;
@@ -83,6 +83,7 @@ export class DocumentContentComponent implements OnInit {
     }
     try {
       await this.retrieveDocumentData();
+      this.checkIsChildDocument();
     } catch (error) {
       if (this.isUserLoggedIn) {
         this.router.navigate(['/dashboard']);
@@ -90,11 +91,9 @@ export class DocumentContentComponent implements OnInit {
         const paramMap: ParamMap = await this.getParamMap();
         const email = paramMap.get('email');
         const document = paramMap.get('id');
-        if (email) {
-          this.router.navigate(['/register', { email, document }]);
-        } else {
-          this.router.navigate(['/register', { document }]);
-        }
+        const userExist = await this.accountService.doesUserExist(email);
+
+        this.handleRouting({ email, document, userExist });
       }
     }
     // Initialize internal values
@@ -118,14 +117,12 @@ export class DocumentContentComponent implements OnInit {
     return new Promise((resolve, reject) => {
       // get the id from the route and then retrieve the document observable
       this.document$ = this.route.paramMap.pipe(
-        switchMap((params: ParamMap) =>
-          this.documentQueryService.getDocument$(params.get('id'))
-        )
+        switchMap((params: ParamMap) => 
+        this.documentQueryService.getDocument$(params.get('id')))
       );
       // subscribe to and process the document from the observable
       this.document$.subscribe((document: Document) => {
         if (document === null) { return; }
-        this.checkIsChildDocument();
 
         if (!this.versionService.isRegistered(document.version)) {
           this.updateStoredProperties(document);
@@ -174,10 +171,21 @@ export class DocumentContentComponent implements OnInit {
   private checkIsChildDocument() {
     const url = this.router.url;
     const parts = url.split('/');
-    if (parts.length === 3) {
+    const firstDocId = parts[2];
+    if (firstDocId === this.documentId) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
+    }
+  }
+
+  private handleRouting({ email, document, userExist }) {
+    const route = userExist ? '/login' : '/register';
+
+    if (email) {
+      this.router.navigate([route, { email, document }]);
+    } else {
+      this.router.navigate([route, { document }]);
     }
   }
 
@@ -220,6 +228,7 @@ export class DocumentContentComponent implements OnInit {
       this.blockQueryService.registerBlockCreatedByUI(block);
       // Update the block to be focused on
       this.focusBlockId = block.id;
+
       // update the list of block IDs to be displayed
       if (after && this.blockIds.indexOf(after) !== -1) {
         const index = this.blockIds.indexOf(after) + 1;
@@ -318,7 +327,10 @@ export class DocumentContentComponent implements OnInit {
 
   backToParent() {
     if (this.isChildDoc === true) {
-      this.location.back();
+      const parentRoute = this.route.snapshot.parent;
+      const parentSegments = parentRoute.url.map(s => s.path);
+      const parentUrl = '/' + parentSegments.join('/');
+      this.router.navigate([parentUrl]);
     }
   }
 

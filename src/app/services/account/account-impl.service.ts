@@ -9,7 +9,7 @@ import { UserFactoryService } from '../user/user-factory.service';
 
 import { createUser, updateUser } from '../../../graphql/mutations';
 import { GraphQLService } from '../graphQL/graph-ql.service';
-import { getUser } from '../../../graphql/queries';
+import { getUser, checkIfAccountExist } from '../../../graphql/queries';
 
 @Injectable({
   providedIn: 'root'
@@ -72,7 +72,7 @@ export class AccountServiceImpl implements AccountService {
     const userId = cognitoUser.signInUserSession.idToken.payload.sub;
 
     const appUser = await this.getAppUser(userId);
-    this.user$.next(appUser);
+    this.user$ = new BehaviorSubject<User>(appUser);
 
     return appUser;
   }
@@ -120,6 +120,7 @@ export class AccountServiceImpl implements AccountService {
           this.user$.next(loggedInUser);
         }).catch(() => {
           this.user$.error('User is not logged in');
+          this.user$ = new BehaviorSubject<User>(null);
         });
       }
     });
@@ -144,6 +145,11 @@ export class AccountServiceImpl implements AccountService {
           reject(error);
         });
     });
+  }
+
+  async doesUserExist(email: string): Promise<boolean> {
+    const response: any = await this.graphQLService.query(checkIfAccountExist, { email });
+    return response.data.checkIfAccountExist;
   }
 
 }

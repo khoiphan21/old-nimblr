@@ -41,7 +41,6 @@ describe('(Integration) RegisterPageComponent', () => {
     accountService = TestBed.get(AccountService);
     component = fixture.componentInstance;
     spyOn(accountService, 'registerAppUser').and.returnValue(Promise.resolve());
-    fixture.detectChanges();
   });
 
   /* tslint:disable:no-string-literal */

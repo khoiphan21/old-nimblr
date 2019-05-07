@@ -32,6 +32,9 @@ export class RegisterPageComponent implements OnInit {
   hasNumber = false;
   hasLength = false;
 
+  // control flags
+  isFormReady = false;
+
   uuid: string;
   newCognitoUser: CognitoSignUpUser = {
     username: '',
@@ -46,10 +49,16 @@ export class RegisterPageComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-    this.checkUserVerification();
-    this.buildForm();
-    this.checkRouteParams();
+  async ngOnInit() {
+    try {
+      await this.accountService.isUserReady();
+      this.router.navigate(['/document']);
+    } catch {
+      this.checkUserVerification();
+      this.buildForm();
+      this.checkRouteParams(); // should be done after the form is built
+      this.isFormReady = true;
+    }
   }
 
   private checkRouteParams() {

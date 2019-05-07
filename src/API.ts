@@ -615,6 +615,14 @@ export type GetDocumentLambdaQuery = {
   } | null,
 };
 
+export type CheckIfAccountExistQueryVariables = {
+  email: string,
+};
+
+export type CheckIfAccountExistQuery = {
+  checkIfAccountExist: boolean | null,
+};
+
 export type GetUserQueryVariables = {
   id: string,
 };

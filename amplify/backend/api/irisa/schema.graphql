@@ -84,6 +84,7 @@ enum TextBlockType{
 
 type Query {
   getDocumentLambda(id: ID!): Document
+  checkIfAccountExist(email: String!): Boolean
 }
 
 type Mutation {

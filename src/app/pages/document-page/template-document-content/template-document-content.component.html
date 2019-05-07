@@ -21,7 +21,7 @@
             </section>
         </div>
         <ng-container *ngFor="let id of submissionDocIds">
-            <app-submission-recipient [documentId]="id" (navigateToEvent)="navigateToChild($event)"></app-submission-recipient>
+            <app-submission-recipient [documentId]="id" (navigateToEvent)="navigateToChild($event)" (documentNotFound)="deleteItem($event)"></app-submission-recipient>
         </ng-container>
 
     </table>

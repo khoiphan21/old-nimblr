@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginPageComponent } from 'src/app/pages/login-page/login-page.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-document-login',
@@ -15,12 +15,10 @@ export class DocumentLoginComponent extends LoginPageComponent implements OnInit
   constructor(
     formBuilder: FormBuilder,
     accountService: AccountService,
-    router: Router
+    router: Router,
+    route: ActivatedRoute
   ) {
-    super(formBuilder, accountService, router);
+    super(formBuilder, accountService, router, route);
   }
 
-  ngOnInit() {
-    this.buildForm();
-  }
 }

@@ -98,6 +98,8 @@ describe('DocumentContentComponent', () => {
       checkUserSpy = spyOn(component, 'checkUser');
       retrieveDocumentSpy = spyOn<any>(component, 'retrieveDocumentData');
       checkUserSpy.and.returnValue(Promise.resolve(testUser));
+      spyOn<any>(component, 'checkIsChildDocument');
+      spyOn<any>(component, 'handleRouting');
     });
 
     it('should call to check the user', () => {
@@ -213,6 +215,32 @@ describe('DocumentContentComponent', () => {
       router.url = `/document/${uuid}`;
       component['checkIsChildDocument']();
       expect(component.isChildDoc).toBe(false);
+    });
+  });
+
+  describe('handleRouting', () => {
+    let email: string;
+    let document: string;
+    let userExist: boolean;
+
+    let routerSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      email = 'test@email.com';
+      document = 'abcdef';
+      userExist = true;
+      routerSpy = spyOn(component['router'], 'navigate');
+    });
+
+    it('should route to /login if user exists', () => {
+      component['handleRouting']({ email, document, userExist });
+      expect(routerSpy).toHaveBeenCalledWith(['/login', { email, document }]);
+    });
+
+    it('should route to /register if user does NOT exist', () => {
+      userExist = false;
+      component['handleRouting']({ email, document, userExist });
+      expect(routerSpy).toHaveBeenCalledWith(['/register', { email, document }]);
     });
   });
 

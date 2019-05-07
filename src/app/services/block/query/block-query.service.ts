@@ -17,8 +17,7 @@ export class BlockQueryService {
 
   constructor(
     private graphQlService: GraphQLService,
-    private blockFactoryService: BlockFactoryService,
-    private versionService: VersionService
+    private blockFactoryService: BlockFactoryService
   ) { }
 
   getBlock$(id: string): Observable<Block> {
