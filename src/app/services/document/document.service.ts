@@ -9,6 +9,7 @@ import { listDocuments } from 'src/graphql/queries';
 import { deleteDocument } from 'src/graphql/mutations';
 import { onCreateDocument } from 'src/graphql/subscriptions';
 import { GraphQLError } from '../graphQL/error';
+import { onDeleteDocument } from '../../../graphql/subscriptions';
 
 
 @Injectable({
@@ -98,6 +99,17 @@ export class DocumentService {
       throw new Error('Unable to setup subscription for user documents');
     }
     this.graphQlService.getSubscription(onCreateDocument).subscribe(() => {
+      this.getDocumentsForUserId(user.id).then(
+        documents => {
+          this.userDocuments$.next(documents);
+        }
+      );
+    }, () => { // error pathway
+      const message = `Unable to setup subscription for user documents: failed to call graphQl`;
+      this.userDocuments$.error(message);
+    });
+    // TODO: @jeremy remove the duplication
+    this.graphQlService.getSubscription(onDeleteDocument).subscribe(() => {
       this.getDocumentsForUserId(user.id).then(
         documents => {
           this.userDocuments$.next(documents);
