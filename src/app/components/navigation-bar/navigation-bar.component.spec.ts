@@ -175,17 +175,17 @@ describe('NavigationBarComponent', () => {
   });
 
   describe('setupNavigationBar()', () => {
-    it('should receive the right value for the navigationTabs when the data comes in', () => {
-      const tab1 = new NavigationTabDocument({
-        id: 'tab1', title: 'nav tab 1', type: DocumentType.GENERIC, children: []
-      });
-      const tab2 = new NavigationTabDocument({
-        id: 'tab2', title: 'nav tab 2', type: DocumentType.GENERIC, children: []
-      });
-      const expectedResult = [tab1, tab2];
-      getNavBarSpy.and.returnValue(new BehaviorSubject(expectedResult));
+    it('should receive the right value for the documentIds while setup', () => {
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      const expectedResult = [id1, id2];
+
+      const getUserDocumentSpy = spyOn(component['documentService'], 'getUserDocuments$');
+      getUserDocumentSpy.and.returnValue(new BehaviorSubject([
+        {id: id1}, {id: id2}
+      ]));
       component['setupNavigationBar']();
-      expect(component.navigationTabs).toEqual(expectedResult);
+      expect(component.documentIds).toEqual(expectedResult);
     });
   });
 
@@ -211,7 +211,7 @@ describe('NavigationBarComponent', () => {
         expect(isUuid(args.version)).toBe(true);
       });
       it('should call with a GENERIC type', async () => {
-        expect(args.type).toBe(DocumentType.GENERIC);
+        expect(args.type).toBe(DocumentType.TEMPLATE);
       });
       it('should call with the right ownerId', async () => {
         expect(args.ownerId).toBe(userId);
