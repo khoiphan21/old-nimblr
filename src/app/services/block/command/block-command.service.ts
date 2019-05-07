@@ -52,7 +52,8 @@ export class BlockCommandService {
           updatedAt: new Date().toISOString(),
           inputType: inputInput.inputType,
           answers: inputInput.answers,
-          options: inputInput.options
+          options: inputInput.options,
+          isLocked: inputInput.isLocked
         });
       default:
         return Promise.reject('BlockType not supported');
@@ -158,6 +159,7 @@ export class BlockCommandService {
       answers: originalInput.answers,
       inputType: originalInput.inputType,
       options: originalInput.options,
+      isLocked: originalInput.isLocked
     };
     const requiredParams = [
       'id', 'version', 'type', 'documentId', 'lastUpdatedBy'

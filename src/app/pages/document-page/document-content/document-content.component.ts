@@ -208,7 +208,6 @@ export class DocumentContentComponent implements OnInit {
       // register it to the BlockQueryService so that the backend notification
       // will be ignored
       this.blockQueryService.registerBlockCreatedByUI(block);
-
       // Update the block to be focused on
       this.focusBlockId = block.id;
       // update the list of block IDs to be displayed

@@ -84,7 +84,8 @@ export class BlockFactoryService {
       updatedAt: new Date().toISOString(),
       answers: [],
       inputType: InputType.TEXT,
-      options: []
+      options: [],
+      isLocked: false
     };
     return new InputBlock(newInput);
   }
@@ -109,11 +110,12 @@ export class BlockFactoryService {
     inputType = InputType.TEXT,
     options = [],
     textBlockType = TextBlockType.TEXT,
+    isLocked = false
   }): Block {
     const input = {
       id, type, version, documentId, lastUpdatedBy,
       value, updatedAt, createdAt, answers, inputType, options,
-      textBlockType
+      textBlockType, isLocked
     };
     ['id', 'type', 'version', 'documentId', 'lastUpdatedBy', 'createdAt',
       'updatedAt'

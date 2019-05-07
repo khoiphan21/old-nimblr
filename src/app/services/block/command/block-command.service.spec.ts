@@ -61,7 +61,8 @@ describe('BlockCommandService', () => {
       lastUpdatedBy: uuidv4(),
       answers: [],
       inputType: InputType.TEXT,
-      options: null
+      options: null,
+      isLocked: false
     };
 
     // Get the service

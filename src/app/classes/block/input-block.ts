@@ -26,6 +26,7 @@ export class InputBlock extends BlockImpl implements Block {
   private immutableAnswers: Array<string>;
   readonly inputType: InputType;
   private immutableOptions?: Array<string>;
+  readonly isLocked: boolean;
 
   constructor({
     id,
@@ -36,7 +37,8 @@ export class InputBlock extends BlockImpl implements Block {
     updatedAt,
     answers,
     inputType,
-    options
+    options,
+    isLocked
   }) {
     super({
       id,
@@ -57,6 +59,7 @@ export class InputBlock extends BlockImpl implements Block {
     this.immutableAnswers = newAnswers;
     this.inputType = inputType;
     this.immutableOptions = newOptions;
+    this.isLocked = isLocked;
   }
 
   private checkinputType(inputType: any) {

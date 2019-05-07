@@ -23,6 +23,7 @@ export class InputBlockComponent implements OnInit, OnChanges {
   answers = [];
   options = [];
   currentType: InputType;
+  isInputLocked: boolean;
   protected timeout: any;
 
   constructor(
@@ -38,6 +39,8 @@ export class InputBlockComponent implements OnInit, OnChanges {
   private setInputValues() {
     this.answers = this.inputBlock.answers;
     this.options = this.inputBlock.options;
+    this.isInputLocked = this.inputBlock.isLocked;
+    console.log(this.isInputLocked);
     this.currentType = this.inputBlock.inputType;
   }
 
