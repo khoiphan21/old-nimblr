@@ -171,8 +171,8 @@ export class DocumentContentComponent implements OnInit {
   private checkIsChildDocument() {
     const url = this.router.url;
     const parts = url.split('/');
-    const firstDocId = parts[2];
-    if (firstDocId === this.documentId) {
+    const firstDocIdRoute: string = parts[2];
+    if (firstDocIdRoute.indexOf(this.documentId) !== -1) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
