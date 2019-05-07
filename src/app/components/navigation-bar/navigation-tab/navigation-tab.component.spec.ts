@@ -56,7 +56,7 @@ describe('NavigationTabComponent', () => {
       type: DocumentType.GENERIC,
       children: []
     };
-    component.navigationTab = new NavigationTabDocument(input);
+    component.documentId = 'test1234';
     fixture.detectChanges();
   });
 
@@ -75,7 +75,7 @@ describe('NavigationTabComponent', () => {
 
     it('should set value to false if it is the same document', () => {
       input.id = falseUuid;
-      component.navigationTab = new NavigationTabDocument(input);
+      component.documentId = 'test1234';
       component.ngOnInit();
       expect(component.isCurrentDocument).toBe(false);
     });
