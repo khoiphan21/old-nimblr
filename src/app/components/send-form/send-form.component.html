@@ -18,10 +18,15 @@
                         {{recipient}}
                         <i class="fas fa-times clickable" (click)="removeRecipientFromList(i)"></i>
                     </div>
-                    <input id="recipient-input" [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address" [ngClass]="{'hide-placeholder': recipientList.length > 0}" (keydown.enter)="addRecipient()" (keydown.backspace)="deleteRecipient()">
+
+                    <!-- reactor the keys-->
+                    <input id="recipient-input" [(ngModel)]="recipientInput" type="text"
+                        placeholder="Search a person or type an email address"
+                        [ngClass]="{'hide-placeholder': recipientList.length > 0}" (keydown)="selectKeyAction($event)">
                 </div>
                 <div class="right-container">
-                    <button class="filled-button-primary" (click)="send()" [disabled]="!(recipientList.length > 0)">send</button>
+                    <button class="filled-button-primary" (click)="send()"
+                        [disabled]="!(recipientList.length > 0)">send</button>
                 </div>
             </div>
             <div class="title">
@@ -48,10 +53,13 @@
                     {{recipient}}
                     <i class="fas fa-times clickable" (click)="removeRecipientFromList(i)"></i>
                 </div>
-                <input id="recipient-input" [(ngModel)]="recipientInput" type="text" placeholder="Search a person or type an email address" [ngClass]="{'hide-placeholder': recipientList.length > 0}" (keydown.enter)="addRecipient()" (keydown.backspace)="deleteRecipient()">
+                <input id="recipient-input" [(ngModel)]="recipientInput" type="text"
+                    placeholder="Search a person or type an email address"
+                    [ngClass]="{'hide-placeholder': recipientList.length > 0}" (keydown)="selectKeyAction($event)">
             </div>
             <div class="right-container">
-                <button class="filled-button-primary" (click)="send()" [disabled]="!(recipientList.length > 0)">send</button>
+                <button class="filled-button-primary" (click)="send()"
+                    [disabled]="!(recipientList.length > 0)">send</button>
             </div>
         </div>
         <div class="title">

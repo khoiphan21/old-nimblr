@@ -213,6 +213,7 @@ export class DocumentContentComponent implements OnInit {
 
       // Update the block to be focused on
       this.focusBlockId = block.id;
+      
       // update the list of block IDs to be displayed
       if (after && this.blockIds.indexOf(after) !== -1) {
         const index = this.blockIds.indexOf(after) + 1;

@@ -39,12 +39,23 @@ export class SendFormComponent implements OnInit {
     this.recipientInput = '';
   }
 
-  addRecipient() {
+  // TODO: @bruno tbt
+  selectKeyAction(event: KeyboardEvent) {
+    switch (event.code) {
+      case "Enter": this.addRecipient(); event.preventDefault(); break;
+      case "Space": this.addRecipient(); event.preventDefault(); break;
+      case "Comma": this.addRecipient(); event.preventDefault(); break;
+      case "Backspace": this.deleteRecipient(); break;
+      default: break;
+    }
+  }
+
+  private addRecipient() {
     this.recipientList.push(this.recipientInput);
     this.clearInput();
   }
 
-  deleteRecipient() {
+  private deleteRecipient() {
     if (this.recipientInput === '' && this.recipientList.length > 0) {
       const index = this.recipientList.length - 1;
       this.removeRecipientFromList(index);

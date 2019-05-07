@@ -201,9 +201,10 @@ describe('BlockOptionComponent', () => {
     });
 
     describe('addQuestionBlock()', () => {
-      it('should emit a CreateBlockInfo event', done => {
+      it('should emit a CreateBlockInfo event with expected parameters', done => {
         component.createBlock.pipe(take(1)).subscribe(value => {
           expect(value.type).toEqual(BlockType.QUESTION);
+          expect(value.id).toEqual(component.blockId);
           done();
         });
         component.addQuestionBlock();
