@@ -67,7 +67,6 @@ export class DocumentContentComponent implements OnInit {
     private versionService: VersionService,
     private accountService: AccountService,
     private route: ActivatedRoute,
-    private location: Location,
     private router: Router,
     private commandService: CommandService
   ) {
@@ -81,8 +80,8 @@ export class DocumentContentComponent implements OnInit {
       this.isUserLoggedIn = false;
     }
     try {
-      this.checkIsChildDocument();
       await this.retrieveDocumentData();
+      this.checkIsChildDocument();
     } catch (error) {
       if (this.isUserLoggedIn) {
         this.router.navigate(['/dashboard']);
@@ -164,7 +163,10 @@ export class DocumentContentComponent implements OnInit {
   private checkIsChildDocument() {
     const url = this.router.url;
     const parts = url.split('/');
-    if (parts.length === 3) {
+    const firstDocId = parts[2];
+    console.log('first: ', firstDocId);
+    console.log('my id: ', this.documentId);
+    if (firstDocId === this.documentId) {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
@@ -309,7 +311,10 @@ export class DocumentContentComponent implements OnInit {
 
   backToParent() {
     if (this.isChildDoc === true) {
-      this.location.back();
+      const parentRoute = this.route.snapshot.parent;
+      const parentSegments = parentRoute.url.map(s => s.path);
+      const parentUrl = '/' + parentSegments.join('/');
+      this.router.navigate([parentUrl]);
     }
   }
 
