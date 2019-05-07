@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationBarService } from '../../services/navigation-bar/navigation-bar.service';
-import { NavigationTabDocument } from '../../classes/navigation-tab';
+import { NavigationTabDocument, CreateNavigationTabInput } from '../../classes/navigation-tab';
 import { slideLeftToRightAnimation, fadeInOutAnimation } from 'src/app/animation';
 import { User } from 'src/app/classes/user';
 import { AccountService } from 'src/app/services/account/account.service';
 import { DocumentType } from 'src/API';
 import { CreateDocumentInput, SharingStatus } from '../../../API';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { DocumentCommandService } from '../../services/document/command/document-command.service';
+import { DocumentCommandService, UUID } from '../../services/document/command/document-command.service';
 import { DocumentQueryService } from '../../services/document/query/document-query.service';
+import { DocumentService } from 'src/app/services/document/document.service';
 const uuidv4 = require('uuid/v4');
 
 @Component({
@@ -24,9 +25,12 @@ export class NavigationBarComponent implements OnInit {
   blockIds: Array<string> = [];
   navigationTabs: NavigationTabDocument[] = [];
 
+  documentIds: Array<UUID>;
+
   constructor(
     private documentCommandService: DocumentCommandService,
     private documentQueryService: DocumentQueryService,
+    private documentService: DocumentService,
     private navigationBarService: NavigationBarService,
     private accountService: AccountService,
     private router: Router,
@@ -64,10 +68,12 @@ export class NavigationBarComponent implements OnInit {
   }
 
   private setupNavigationBar() {
-    this.navigationBarService.getNavigationBar$().subscribe((navigationTabs: NavigationTabDocument[]) => {
-      this.navigationTabs = navigationTabs.filter(tab => {
-        return tab.type !== DocumentType.SUBMISSION;
+    this.documentService.getUserDocuments$().subscribe(documents => {
+      const myDocuments = documents.filter(document => {
+        return document.type !== DocumentType.SUBMISSION;
       });
+
+      this.documentIds = myDocuments.map(document => document.id);
     });
   }
 
