@@ -49,7 +49,7 @@ export class DocumentContentComponent implements OnInit {
   // Properties needed from the readonly Document received
   documentId: string;
   documentType: DocumentType;
-  docTitle: string;
+  docTitle = '';
   blockIds: Array<string> = [];
   isDocumentReady = false; // should be switched to true when document is loaded
   submissionDocIds: Array<UUID> = [];
@@ -95,9 +95,6 @@ export class DocumentContentComponent implements OnInit {
         this.handleRouting({ email, document, userExist });
       }
     }
-    // Initialize internal values
-    this.docTitle = '';
-    this.blockIds = [];
   }
 
   async checkUser(): Promise<User> {
