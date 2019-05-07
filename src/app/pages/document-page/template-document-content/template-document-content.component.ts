@@ -44,7 +44,12 @@ export class TemplateDocumentContentComponent implements OnInit {
   navigateToChild(id: UUID) {
     this.navigateToChildEvent.emit(id);
   }
+
   updateDocument(blockIds: Array<string>) {
     this.updateDocumentEvent.emit(blockIds);
+  }
+
+  deleteItem(id: UUID) {
+    // TODO @khoiphan21: REMOVE ID FROM SUBMISSION IDS AND UPDATE DOCUMENT
   }
 }
