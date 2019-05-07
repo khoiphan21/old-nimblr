@@ -33,7 +33,6 @@ export class BlockComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.isChildDoc);
     this.blockQueryService.getBlock$(this.blockId).subscribe(block => {
       if (block !== null) {
         // Check if the version is stored
