@@ -56,7 +56,7 @@ export class RegisterPageComponent implements OnInit {
     } catch {
       this.checkUserVerification();
       this.buildForm();
-      this.checkRouteParams();
+      this.checkRouteParams(); // should be done after the form is built
       this.isFormReady = true;
     }
   }

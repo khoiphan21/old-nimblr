@@ -73,6 +73,7 @@ export class DocumentContentComponent implements OnInit {
   }
 
   async ngOnInit() {
+
     try {
       this.currentUser = await this.checkUser();
       this.isUserLoggedIn = true;
@@ -89,11 +90,9 @@ export class DocumentContentComponent implements OnInit {
         const paramMap: ParamMap = await this.getParamMap();
         const email = paramMap.get('email');
         const document = paramMap.get('id');
-        if (email) {
-          this.router.navigate(['/register', { email, document }]);
-        } else {
-          this.router.navigate(['/register', { document }]);
-        }
+        const userExist = await this.accountService.doesUserExist(email);
+
+        this.handleRouting({ email, document, userExist });
       }
     }
     // Initialize internal values
@@ -117,9 +116,8 @@ export class DocumentContentComponent implements OnInit {
     return new Promise((resolve, reject) => {
       // get the id from the route and then retrieve the document observable
       this.document$ = this.route.paramMap.pipe(
-        switchMap((params: ParamMap) =>
-          this.documentQueryService.getDocument$(params.get('id'))
-        )
+        switchMap((params: ParamMap) => 
+        this.documentQueryService.getDocument$(params.get('id')))
       );
       // subscribe to and process the document from the observable
       this.document$.subscribe((document: Document) => {
@@ -168,6 +166,16 @@ export class DocumentContentComponent implements OnInit {
       this.isChildDoc = false;
     } else {
       this.isChildDoc = true;
+    }
+  }
+
+  private handleRouting({ email, document, userExist }) {
+    const route = userExist ? '/login' : '/register';
+
+    if (email) {
+      this.router.navigate([route, { email, document }]);
+    } else {
+      this.router.navigate([route, { document }]);
     }
   }
 

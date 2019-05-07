@@ -120,6 +120,7 @@ export class AccountServiceImpl implements AccountService {
           this.user$.next(loggedInUser);
         }).catch(() => {
           this.user$.error('User is not logged in');
+          this.user$ = new BehaviorSubject<User>(null);
         });
       }
     });
