@@ -5,7 +5,7 @@ import { ResponsiveModule } from 'ngx-responsive';
 import { FormsModule } from '@angular/forms';
 import { configureTestSuite } from 'ng-bullet';
 
-fdescribe('SendFormComponent', () => {
+describe('SendFormComponent', () => {
   let component: SendFormComponent;
   let fixture: ComponentFixture<SendFormComponent>;
 
