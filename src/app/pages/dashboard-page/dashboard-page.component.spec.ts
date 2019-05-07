@@ -72,17 +72,15 @@ describe('DashboardPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  /* tslint:disable:no-string-literal */
-  describe('ngOnInit()', () => {
+  describe('getDocuments', () => {
     let document$: Subject<Array<Document>>;
-
     beforeEach(() => {
       document$ = new Subject();
       spyOn(component['documentService'], 'getUserDocuments$').and.returnValue(document$);
     });
 
     it('should receive get the list of documents when notified', done => {
-      component.ngOnInit().then(() => {
+      component.getDocuments().then(() => {
         expect(component.userDocuments).toEqual([document]);
         done();
       });
@@ -91,7 +89,7 @@ describe('DashboardPageComponent', () => {
 
     it('should throw an error if received', done => {
       const mockError = new Error('test');
-      component.ngOnInit().catch(error => {
+      component.getDocuments().catch(error => {
         const message = 'DashboardPage failed to get user documents: '
           + mockError.message;
         expect(error.message).toEqual(message);
@@ -126,8 +124,8 @@ describe('DashboardPageComponent', () => {
       it('should call with a uuid version', async () => {
         expect(isUuid(args.version)).toBe(true);
       });
-      it('should call with a GENERIC type', async () => {
-        expect(args.type).toBe(DocumentType.GENERIC);
+      it('should call with a TEMPLATE type', async () => {
+        expect(args.type).toBe(DocumentType.TEMPLATE);
       });
       it('should call with the right ownerId', async () => {
         expect(args.ownerId).toBe(userId);
