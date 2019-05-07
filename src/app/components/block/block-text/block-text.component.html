@@ -13,8 +13,13 @@
         </div>
 
         <!-- Placeholder -->
-        <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'"
-            [class.bullet]="block.textBlockType === 'BULLET'" *ngIf="isPlaceholderShown && isUserLoggedIn && !value">
+        <div class="placeholder" [class.bullet]="block.textBlockType === 'BULLET'"
+            *ngIf="isPlaceholderShown && isUserLoggedIn && !value && block.textBlockType !== 'HEADER'">
             Type something here...</div>
+
+        <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'"
+            *ngIf="isUserLoggedIn && !value && block.textBlockType === 'HEADER'">
+            Header</div>
+
     </ng-container>
 </div>
