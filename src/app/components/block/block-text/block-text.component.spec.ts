@@ -10,6 +10,7 @@ import { TextBlock } from 'src/app/classes/block/textBlock';
 import { SimpleChange } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TextBlockType } from '../../../../API';
+import { take } from 'rxjs/operators';
 
 const uuidv4 = require('uuid/v4');
 
@@ -322,7 +323,7 @@ describe('BlockTextComponent', () => {
       describe('when TextBlockType === TEXT', () => {
         it('should emit the id only if the value is empty and is not a special block', done => {
           component.value = '';
-          component.deleteEvent.subscribe(response => {
+          component.deleteEvent.pipe(take(1)).subscribe(response => {
             expect(response).toEqual(component.block.id);
             done();
           });
@@ -372,7 +373,7 @@ describe('BlockTextComponent', () => {
       describe('when TEXT', () => {
         it('should emit the correct blockType', done => {
           mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-          component.createBlock.subscribe(type => {
+          component.createBlock.pipe(take(1)).subscribe(type => {
             expect(type).toEqual({ type: BlockType.TEXT });
             done();
           });
@@ -389,7 +390,7 @@ describe('BlockTextComponent', () => {
           };
           component['block'] = mockBlock;
 
-          component.createBlock.subscribe(type => {
+          component.createBlock.pipe(take(1)).subscribe(type => {
             expect(type).toEqual({
               type: BlockType.TEXT,
               textBlockType: TextBlockType.BULLET

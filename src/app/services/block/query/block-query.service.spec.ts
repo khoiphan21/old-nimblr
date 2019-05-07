@@ -97,7 +97,7 @@ describe('BlockQueryService', () => {
     it('should store the retrieved block in the internal map', done => {
       service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
         const observable = service['blocksMap'].get(id);
-        expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
+        expect(observable.pipe(take(1)).subscribe).toBeTruthy(); // Make sure it's an observable
         // Now when called the observable should return a block first
         observable.pipe(take(1)).subscribe(block => {
           checkBlock({
@@ -241,7 +241,7 @@ describe('BlockQueryService', () => {
       return new Promise((resolve, reject) => {
         // Write the expect() statements here
         expect(observable instanceof BehaviorSubject).toBe(true);
-        observable.subscribe(block => {
+        observable.pipe(take(1)).subscribe(block => {
           if (block === null) { return; }
           expect(block.documentId).toEqual(documentId);
           resolve();

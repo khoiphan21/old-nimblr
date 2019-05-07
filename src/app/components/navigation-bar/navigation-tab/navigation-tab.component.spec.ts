@@ -69,6 +69,7 @@ describe('NavigationTabComponent', () => {
       spyOn(router.events, 'subscribe').and.callFake(() => {
         return;
       });
+      component.documentId = '8c027cae-4be2-4d84-bcaa-37ebc8c3e24a';
       component.ngOnInit();
       expect(component.isCurrentDocument).toBe(true);
     });

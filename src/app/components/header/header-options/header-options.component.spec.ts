@@ -28,7 +28,7 @@ describe('HeaderOptionsComponent', () => {
   });
 
   it('hideOption() - should emit the event for hiding to option', done => {
-    component.hideOptionEvent.subscribe((value) => {
+    component.hideOptionEvent.pipe(take(1)).subscribe((value) => {
       expect(value).toEqual(false);
       done();
     });

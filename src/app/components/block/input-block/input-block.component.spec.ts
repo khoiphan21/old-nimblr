@@ -24,6 +24,7 @@ describe('InputBlockComponent', () => {
     updatedAt: new Date().toISOString(),
     answers: [''],
     inputType: InputType.TEXT,
+    isLocked: false
   };
 
   configureTestSuite(() => {
@@ -186,7 +187,8 @@ describe('InputBlockComponent', () => {
         lastUpdatedBy: component.inputBlock.lastUpdatedBy,
         answers: [],
         inputType: component.inputBlock.inputType,
-        options: undefined
+        options: undefined,
+        isLocked: component.isInputLocked
       });
     });
 
