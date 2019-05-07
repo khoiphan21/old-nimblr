@@ -15,6 +15,7 @@ export class InputOptionComponent implements OnChanges {
   @Input() currentType: InputType;
   @Input() isPreviewMode: boolean;
   @Input() isMobilePreview = false;
+  @Input() isInputLocked: boolean;
   @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
   private timeout: any;

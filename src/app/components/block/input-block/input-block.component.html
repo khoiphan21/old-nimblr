@@ -17,7 +17,7 @@
             </section>
         </section>
     </div>
-    <app-input-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
-    <!-- <img class="lock" src="./assets/icons/lock.svg" tooltip="&nbsp;Restrict recipients<br> from editing this block&nbsp;" placement="right" hide-delay="0"> -->
-    <img class="lock" src="./assets/icons/unlock.svg" tooltip="&nbsp;Allow recipients<br> to edit this block&nbsp;" placement="right" hide-delay="0">
+    <app-input-option [isInputLocked]="isInputLocked" [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
+    <img *ngIf="isInputLocked === true" class="lock" src="./assets/icons/lock.svg" tooltip="&nbsp;Restrict recipients<br> from editing this block&nbsp;" placement="right" hide-delay="0" (click)="isInputLocked = false" (click)="triggerUpdateValue()">
+    <img *ngIf="isInputLocked === false" class="lock" src="./assets/icons/unlock.svg" tooltip="&nbsp;Allow recipients<br> to edit this block&nbsp;" placement="right" hide-delay="0" (click)="isInputLocked = true" (click)="triggerUpdateValue()">
 </section>

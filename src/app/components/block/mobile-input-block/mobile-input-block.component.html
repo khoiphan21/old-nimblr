@@ -7,7 +7,7 @@
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-input-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
+        <app-input-option [isInputLocked]="isInputLocked" [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-6" (clickOutside)="isInputOptionShown = false">

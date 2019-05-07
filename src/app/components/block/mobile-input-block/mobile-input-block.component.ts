@@ -20,6 +20,7 @@ export class MobileInputBlockComponent extends InputBlockComponent implements On
     this.previewAnswers = this.inputBlock.answers;
     this.previewOptions = this.inputBlock.options;
     this.currentType = this.inputBlock.inputType;
+    this.isInputLocked = this.inputBlock.isLocked;
   }
 
   selectType(type: InputType) {

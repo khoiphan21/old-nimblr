@@ -40,7 +40,6 @@ export class InputBlockComponent implements OnInit, OnChanges {
     this.answers = this.inputBlock.answers;
     this.options = this.inputBlock.options;
     this.isInputLocked = this.inputBlock.isLocked;
-    console.log(this.isInputLocked);
     this.currentType = this.inputBlock.inputType;
   }
 
@@ -67,7 +66,7 @@ export class InputBlockComponent implements OnInit, OnChanges {
       this.timeout = setTimeout(() => {
         this.valueUpdated = false;
         resolve();
-      }, 500);
+      }, 1);
     });
   }
 
@@ -81,7 +80,8 @@ export class InputBlockComponent implements OnInit, OnChanges {
         createdAt: this.inputBlock.createdAt,
         answers: event.answers,
         inputType: this.currentType,
-        options: event.options
+        options: event.options,
+        isLocked: this.isInputLocked
       });
       this.blockCommandService.updateBlock(updatedBlock).then(() => {
         this.valueUpdated = true;
