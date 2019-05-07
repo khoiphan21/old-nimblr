@@ -8,7 +8,7 @@
             <form [formGroup]="loginForm">
                 <div class="form-input mb-4">
                     <div class="input-label">Email</div>
-                    <input formControlName="email" placeholder="Your email address" type="text" required>
+                    <input tabindex = "1" formControlName="email" placeholder="Your email address" type="text" required>
                     <div class="error" *ngIf="errorMessage === 'USER_NOT_FOUND'">
                         <i class="fas fa-exclamation-circle"></i> That email does not exist. Enter a different email or&nbsp;<span routerLink="/register">get a new one</span>
                     </div>
@@ -18,7 +18,7 @@
                         <div class="input-label">Password</div>
                         <div class="forgot-password" routerLink="/forgot-password">Forgot Password?</div>
                     </div>
-                    <input formControlName="password" placeholder="Enter your password" type="{{passwordType}}" required>
+                    <input tabindex = "2" formControlName="password" placeholder="Enter your password" type="{{passwordType}}" required>
                     <i *ngIf="passwordType === 'password'" class="fas fa-eye password-toggle" (click)="togglePassword()"></i>
                     <i *ngIf="passwordType === 'text'" class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
                     <div class="error" *ngIf="errorMessage === 'INCORRECT_PASSWORD'">
