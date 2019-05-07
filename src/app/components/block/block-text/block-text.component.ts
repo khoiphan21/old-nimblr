@@ -36,7 +36,6 @@ export class BlockTextComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    console.log(this.isOwner);
     this.setValue(this.block.value);
     this.awaitKeyAction = [];
   }

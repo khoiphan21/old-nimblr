@@ -43,6 +43,6 @@ xdescribe('PageNotFoundComponent', () => {
     localStorage.setItem('lastVisited', documentId);
     component.ngOnInit();
     const navigatedPath = routerSpy.calls.mostRecent().args[0];
-    expect(navigatedPath).toEqual([ '/document', documentId ]);
+    expect(navigatedPath).toEqual([ '/dashboard' ]);
   });
 });
