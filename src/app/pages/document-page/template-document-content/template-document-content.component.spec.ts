@@ -4,6 +4,7 @@ import { TemplateDocumentContentComponent } from './template-document-content.co
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BlockType } from 'src/API';
 import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
 describe('TemplateDocumentContentComponent', () => {
   let component: TemplateDocumentContentComponent;
@@ -29,7 +30,7 @@ describe('TemplateDocumentContentComponent', () => {
 
   it('andNewBlock() - should emit the right value', done => {
     const type = BlockType.INPUT;
-    component.addNewBlockEvent.subscribe(value => {
+    component.addNewBlockEvent.pipe(take(1)).subscribe(value => {
       expect(value.type).toEqual(type);
       done();
     });
@@ -38,7 +39,7 @@ describe('TemplateDocumentContentComponent', () => {
 
   it('deleteBlock() - should emit the right value', done => {
     const blockId = 'id123';
-    component.deleteBlockEvent.subscribe(value => {
+    component.deleteBlockEvent.pipe(take(1)).subscribe(value => {
       expect(value).toEqual(blockId);
       done();
     });
@@ -47,7 +48,7 @@ describe('TemplateDocumentContentComponent', () => {
 
   describe('showInvite()', () => {
     it('should emit the event value as true', done => {
-      component.showInviteEvent.subscribe(value => {
+      component.showInviteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toBe(true);
         done();
       });
@@ -57,7 +58,7 @@ describe('TemplateDocumentContentComponent', () => {
 
   it('should emit the new position', done => {
     const newBlocksPosition = ['id2', 'id1'];
-    component.updateDocumentEvent.subscribe(value => {
+    component.updateDocumentEvent.pipe(take(1)).subscribe(value => {
       expect(value).toEqual(newBlocksPosition);
       done();
     });
@@ -66,7 +67,7 @@ describe('TemplateDocumentContentComponent', () => {
 
   it('navigateToChild() - should emit the event', done => {
     const event = 'test';
-    component.navigateToChildEvent.subscribe(value => {
+    component.navigateToChildEvent.pipe(take(1)).subscribe(value => {
       expect(value).toEqual(event);
       done();
     });

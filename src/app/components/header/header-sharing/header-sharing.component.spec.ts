@@ -4,6 +4,7 @@ import { HeaderSharingComponent } from './header-sharing.component';
 import { SharingStatus } from 'src/API';
 import { ResponsiveModule } from 'ngx-responsive';
 import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
 
 describe('HeaderSharingComponent', () => {
@@ -51,7 +52,7 @@ describe('HeaderSharingComponent', () => {
 
   describe('hideSharing()', () => {
     it('should emit the event value as false', done => {
-      component.hideSharingEvent.subscribe(value => {
+      component.hideSharingEvent.pipe(take(1)).subscribe(value => {
         expect(value).toBe(false);
         done();
       });
@@ -61,7 +62,7 @@ describe('HeaderSharingComponent', () => {
 
   describe('showInvite()', () => {
     it('should emit the event value as true', done => {
-      component.showInviteEvent.subscribe(value => {
+      component.showInviteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toBe(true);
         done();
       });
@@ -87,7 +88,7 @@ describe('HeaderSharingComponent', () => {
     });
     it('should emit PRIVATE if public is being toggled off', done => {
       component.isPublic = true;
-      component.changeSharingStatus.subscribe(value => {
+      component.changeSharingStatus.pipe(take(1)).subscribe(value => {
         expect(value).toBe(SharingStatus.PRIVATE);
         done();
       });
@@ -95,7 +96,7 @@ describe('HeaderSharingComponent', () => {
     });
     it('should emit PUBLIC if public is being toggled on', done => {
       component.isPublic = false;
-      component.changeSharingStatus.subscribe(value => {
+      component.changeSharingStatus.pipe(take(1)).subscribe(value => {
         expect(value).toBe(SharingStatus.PUBLIC);
         done();
       });

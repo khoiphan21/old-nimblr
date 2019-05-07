@@ -11,6 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CreateBlockEvent, BlockTypeAndSubType } from './createBlockEvent';
 import { configureTestSuite } from 'ng-bullet';
 import { ResponsiveModule } from 'ngx-responsive';
+import { take } from 'rxjs/operators';
 
 const uuidv4 = require('uuid/v4');
 
@@ -118,7 +119,7 @@ describe('BlockComponent', () => {
     it('should emit the right type', done => {
       const type = BlockType.INPUT;
       mockBlockInfo.type = BlockType.INPUT;
-      component.createBlock.subscribe((value: CreateBlockEvent) => {
+      component.createBlock.pipe(take(1)).subscribe((value: CreateBlockEvent) => {
         expect(value.type).toEqual(type);
         done();
       });
@@ -126,7 +127,7 @@ describe('BlockComponent', () => {
     });
     it('should emit the right id', done => {
       component.blockId = uuidv4();
-      component.createBlock.subscribe((value: CreateBlockEvent) => {
+      component.createBlock.pipe(take(1)).subscribe((value: CreateBlockEvent) => {
         expect(value.id).toEqual(component.blockId);
         done();
       });
@@ -138,7 +139,7 @@ describe('BlockComponent', () => {
     const id = 'test';
 
     it('should emit the given blockId', done => {
-      component.deleteEvent.subscribe(value => {
+      component.deleteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(id);
         done();
       });

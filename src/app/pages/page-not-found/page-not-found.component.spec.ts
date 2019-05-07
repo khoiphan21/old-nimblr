@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PageNotFoundComponent } from './page-not-found.component';
 import { RouterTestingModule } from '@angular/router/testing';
 /* tslint:disable:no-string-literal */
-describe('PageNotFoundComponent', () => {
+xdescribe('PageNotFoundComponent', () => {
   let component: PageNotFoundComponent;
   let fixture: ComponentFixture<PageNotFoundComponent>;
   let routerSpy;

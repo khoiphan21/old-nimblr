@@ -260,7 +260,7 @@ describe('BlockOptionComponent', () => {
 
   describe('deleteHandler()', () => {
     it('should emit the block id', done => {
-      component.deleteEvent.subscribe(value => {
+      component.deleteEvent.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(component.blockId);
         done();
       });

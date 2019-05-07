@@ -97,7 +97,7 @@ describe('BlockQueryService', () => {
     it('should store the retrieved block in the internal map', done => {
       service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
         const observable = service['blocksMap'].get(id);
-        expect(observable.subscribe).toBeTruthy(); // Make sure it's an observable
+        expect(observable.pipe(take(1)).subscribe).toBeTruthy(); // Make sure it's an observable
         // Now when called the observable should return a block first
         observable.pipe(take(1)).subscribe(block => {
           checkBlock({
@@ -140,7 +140,7 @@ describe('BlockQueryService', () => {
         }
       };
       // Setup code to test subscription
-      service.subscribeToUpdate(documentId);
+      service.pipe(take(1)).subscribeToUpdate(documentId);
       service.getBlock$(id).pipe(skip(1)).pipe(take(1)).subscribe(() => {
         // time out is needed to make sure the first notification is received
         setTimeout(() => {
@@ -241,7 +241,7 @@ describe('BlockQueryService', () => {
       return new Promise((resolve, reject) => {
         // Write the expect() statements here
         expect(observable instanceof BehaviorSubject).toBe(true);
-        observable.subscribe(block => {
+        observable.pipe(take(1)).subscribe(block => {
           if (block === null) { return; }
           expect(block.documentId).toEqual(documentId);
           resolve();
@@ -281,8 +281,8 @@ describe('BlockQueryService', () => {
   describe('subscribeToUpdate()', () => {
 
     it('should not subscribe to backend again if done once', () => {
-      service.subscribeToUpdate(documentId);
-      service.subscribeToUpdate(documentId);
+      service.pipe(take(1)).subscribeToUpdate(documentId);
+      service.pipe(take(1)).subscribeToUpdate(documentId);
       expect(subscriptionSpy.calls.count()).toBe(1);
     });
 
@@ -296,7 +296,7 @@ describe('BlockQueryService', () => {
         }
       };
       // Setup code to test subscription
-      service.subscribeToUpdate(documentId);
+      service.pipe(take(1)).subscribeToUpdate(documentId);
       // Now flush the response
       backendSubject.next(response);
       expect(service['blocksMap'].has(id)).toBe(true);
@@ -305,7 +305,7 @@ describe('BlockQueryService', () => {
     it('should throw an error if API returns one', done => {
       // setup subscription spy to throw an error
       const message = 'test message';
-      service.subscribeToUpdate(documentId).subscribe(() => {}, error => {
+      service.pipe(take(1)).subscribeToUpdate(documentId).subscribe(() => {}, error => {
         expect(error).toEqual(message);
         done();
       });

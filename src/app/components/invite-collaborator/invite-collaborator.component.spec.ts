@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { InviteCollaboratorComponent } from './invite-collaborator.component';
 import { ResponsiveModule } from 'ngx-responsive';
 import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
 describe('InviteCollaboratorComponent', () => {
   let component: InviteCollaboratorComponent;
@@ -30,7 +31,7 @@ describe('InviteCollaboratorComponent', () => {
   });
 
   it('hideContainer() - should change the value to false', () => {
-      component.hideInviteCollaborateEvent.subscribe(data => {
+      component.hideInviteCollaborateEvent.pipe(take(1)).subscribe(data => {
         expect(data).toBe(false);
       });
       component.hideContainer();

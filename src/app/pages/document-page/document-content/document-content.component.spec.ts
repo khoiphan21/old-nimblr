@@ -21,6 +21,7 @@ import { UserFactoryService } from 'src/app/services/user/user-factory.service';
 import { VersionService } from 'src/app/services/version/version.service';
 import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 import { CommandType } from '../../../classes/command/commandType';
+import { take } from 'rxjs/operators';
 
 const uuidv4 = require('uuid/v4');
 
@@ -786,7 +787,7 @@ describe('DocumentContentComponent', () => {
     component.documentId = uuidv4();
 
     const uuid = uuidv4();
-    component.navigateToChildDocEvent.subscribe(data => {
+    component.navigateToChildDocEvent.pipe(take(1)).subscribe(data => {
       expect(data).toEqual({
         parent: component.documentId,
         child: uuid

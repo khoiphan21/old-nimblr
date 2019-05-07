@@ -4,6 +4,7 @@ import { SendFormComponent } from './send-form.component';
 import { ResponsiveModule } from 'ngx-responsive';
 import { FormsModule } from '@angular/forms';
 import { configureTestSuite } from 'ng-bullet';
+import { take } from 'rxjs/operators';
 
 describe('SendFormComponent', () => {
   let component: SendFormComponent;
@@ -32,7 +33,7 @@ describe('SendFormComponent', () => {
   });
 
   it('hideContainer() - should change the value to false', () => {
-    component.hideSendFormEvent.subscribe(data => {
+    component.hideSendFormEvent.pipe(take(1)).subscribe(data => {
       expect(data).toBe(false);
     });
     component.hideContainer();
@@ -41,7 +42,7 @@ describe('SendFormComponent', () => {
   describe('send()', () => {
     it('should emit the input', done => {
       component.recipientList = ['abcd'];
-      component.sendEmailEvent.subscribe(value => {
+      component.sendEmailEvent.pipe(take(1)).subscribe(value => {
         expect(value).toEqual(component.recipientList);
         done();
       });
