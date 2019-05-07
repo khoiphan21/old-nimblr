@@ -22,7 +22,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
 
   // To control whether it's editable or not
   @Input() isOwner: boolean;
-  @Input() isUserLoggedIn: boolean;
+  @Input() isEditable: boolean;
   @Input() block: TextBlock;
   @Input() focusBlockId: string;
 

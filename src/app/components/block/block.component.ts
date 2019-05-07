@@ -23,7 +23,7 @@ export class BlockComponent implements OnInit {
   @Input() isOwner: boolean;
   @Input() blockId: string;
   @Input() isChildDoc: boolean;
-  @Input() isUserLoggedIn: boolean;
+  @Input() isEditable: boolean;
   @Input() focusBlockId: BlockId; // To check if it should be focused
   @Output() createBlock = new EventEmitter<CreateBlockEvent>();
   @Output() deleteEvent = new EventEmitter<string>();

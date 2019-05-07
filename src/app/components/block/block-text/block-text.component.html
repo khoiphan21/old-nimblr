@@ -2,23 +2,23 @@
     <ng-container>
         <!-- When the user is logged in -->
         <div [id]="block.id" [class.header]="block.textBlockType === 'HEADER'"
-            [class.bullet]="block.textBlockType === 'BULLET'" class="text-input" *ngIf="isUserLoggedIn"
+            [class.bullet]="block.textBlockType === 'BULLET'" class="text-input" *ngIf="isEditable"
             contenteditable="true" (blur)="togglePlaceholder(false)" (focus)="togglePlaceholder(true)" [name]="block.id"
             ngDefaultControl [(ngModel)]="value" (ngModelChange)="updateValue()" (paste)="onPaste($event)"
             (keydown)="eventSelect($event)"></div>
 
         <!-- When the user is not logged in -->
         <div class="text-input" [class.header]="block.textBlockType === 'HEADER'"
-            [class.bullet]="block.textBlockType === 'BULLET'" *ngIf="!isUserLoggedIn">{{value}}
+            [class.bullet]="block.textBlockType === 'BULLET'" *ngIf="!isEditable">{{value}}
         </div>
 
         <!-- Placeholder -->
         <div class="placeholder" [class.bullet]="block.textBlockType === 'BULLET'"
-            *ngIf="isPlaceholderShown && isUserLoggedIn && !value && block.textBlockType !== 'HEADER'">
+            *ngIf="isPlaceholderShown && isEditable && !value && block.textBlockType !== 'HEADER'">
             Type something here...</div>
 
         <div class="placeholder" [class.header]="block.textBlockType === 'HEADER'"
-            *ngIf="isUserLoggedIn && !value && block.textBlockType === 'HEADER'">
+            *ngIf="isEditable && !value && block.textBlockType === 'HEADER'">
             Header</div>
 
     </ng-container>

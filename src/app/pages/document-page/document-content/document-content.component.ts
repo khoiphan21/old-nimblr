@@ -37,7 +37,7 @@ export class DocumentContentComponent implements OnInit {
   @Output() navigateToChildDocEvent = new EventEmitter<object>();
   isChildDoc = false;
   isOwner: boolean;
-  isUserLoggedIn: boolean;
+  isEditable: boolean;
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
   currentSharingStatus: SharingStatus;
@@ -76,15 +76,15 @@ export class DocumentContentComponent implements OnInit {
 
     try {
       this.currentUser = await this.checkUser();
-      this.isUserLoggedIn = true;
+      this.isEditable = true;
     } catch {
-      this.isUserLoggedIn = false;
+      this.isEditable = false;
     }
     try {
       await this.retrieveDocumentData();
       this.checkIsChildDocument();
     } catch (error) {
-      if (this.isUserLoggedIn) {
+      if (this.isEditable) {
         this.router.navigate(['/dashboard']);
       } else {
         const paramMap: ParamMap = await this.getParamMap();

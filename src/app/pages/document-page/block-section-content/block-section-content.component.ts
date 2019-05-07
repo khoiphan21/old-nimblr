@@ -17,7 +17,7 @@ export class BlockSectionContentComponent implements OnInit {
   @Input() isOwner: boolean;
   @Input() isChildDoc: boolean;
   @Input() blockIds: Array<string>;
-  @Input() isUserLoggedIn: boolean;
+  @Input() isEditable: boolean;
   @Input() focusBlockId: BlockId;
   @Output() addNewBlockEvent = new EventEmitter<CreateBlockEvent>();
   @Output() deleteBlockEvent = new EventEmitter<string>();

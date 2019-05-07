@@ -122,7 +122,7 @@ describe('DocumentContentComponent', () => {
 
       it('should set user to be logged in', async () => {
         await component.ngOnInit();
-        expect(component.isUserLoggedIn).toBe(true);
+        expect(component.isEditable).toBe(true);
       });
 
       it('should call retrieveDocumentData', done => {
@@ -141,10 +141,10 @@ describe('DocumentContentComponent', () => {
         routerSpy = spyOn(component['router'], 'navigate');
       });
 
-      it('should set isUserLoggedIn to false if not logged in', async () => {
+      it('should set isEditable to false if not logged in', async () => {
         checkUserSpy.and.returnValue(Promise.reject());
         await component.ngOnInit();
-        expect(component.isUserLoggedIn).toBe(false);
+        expect(component.isEditable).toBe(false);
       });
 
       describe('when failed to retrieve document data', () => {

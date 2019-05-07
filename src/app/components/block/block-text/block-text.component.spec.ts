@@ -70,7 +70,7 @@ describe('BlockTextComponent', () => {
       fixture = TestBed.createComponent(BlockTextComponent);
       component = fixture.componentInstance;
       component.block = block;
-      component.isUserLoggedIn = true;
+      component.isEditable = true;
       fixture.detectChanges();
     });
 

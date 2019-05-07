@@ -13,7 +13,7 @@ import { InputBlock } from '../../../classes/block/input-block';
 export class InputBlockComponent implements OnInit, OnChanges {
   // TODO IMPLEMENT CONTROL OF WHETHER IT'S DEITABLE OR NOT
   // To control whether it's editable or not
-  @Input() isUserLoggedIn: boolean;
+  @Input() isEditable: boolean;
   @Input() inputBlock: InputBlock;
   @Input() focusBlockId: string;
 

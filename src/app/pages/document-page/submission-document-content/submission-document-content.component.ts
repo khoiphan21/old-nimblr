@@ -11,7 +11,7 @@ import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 export class SubmissionDocumentContentComponent implements OnInit {
 
   @Input() blockIds: Array<string>;
-  @Input() isUserLoggedIn: boolean;
+  @Input() isEditable: boolean;
   @Input() focusBlockId: BlockId;
   @Input() submissionDocIds: Array<UUID>;
 

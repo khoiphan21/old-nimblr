@@ -7,7 +7,7 @@
     </section>
 
     <section class="template" *ngIf="currentTab === 'template'">
-        <app-block-section-content [blockIds]="blockIds" [isUserLoggedIn]="isUserLoggedIn" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
+        <app-block-section-content [blockIds]="blockIds" [isEditable]="isEditable" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
     </section>
 
     <table class="submissions" *ngIf="currentTab === 'submissions'">
