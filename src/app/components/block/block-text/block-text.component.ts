@@ -21,6 +21,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   private timeout: any;
 
   // To control whether it's editable or not
+  @Input() isOwner: boolean;
   @Input() isUserLoggedIn: boolean;
   @Input() block: TextBlock;
   @Input() focusBlockId: string;
@@ -35,6 +36,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
+    console.log(this.isOwner);
     this.setValue(this.block.value);
     this.awaitKeyAction = [];
   }

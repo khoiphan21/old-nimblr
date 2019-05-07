@@ -2,7 +2,7 @@
     <div class="block" [ngClass]="{'child-document': isChildDoc, 'header-block': blockStyle === 'HEADER', 'input-block': block.type === 'INPUT'}">
         <ng-content></ng-content>
         <ng-container *ngSwitchCase="'TEXT'">
-            <app-block-text [block]="block" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
+            <app-block-text [block]="block" [isOwner]="isOwner" [isUserLoggedIn]="isUserLoggedIn" [focusBlockId]="focusBlockId" (deleteEvent)="deleteTransmitter($event)" (createBlock)="addBlock($event)"></app-block-text>
         </ng-container>
         <ng-container *ngSwitchCase="'INPUT'">
             <ng-container *responsive="{sizes:{min:576, max:2000}}">

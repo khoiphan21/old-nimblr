@@ -37,6 +37,7 @@ const uuidv4 = require('uuid/v4');
 export class DocumentContentComponent implements OnInit {
   @Output() navigateToChildDocEvent = new EventEmitter<object>();
   isChildDoc = false;
+  isOwner: boolean;
   isUserLoggedIn: boolean;
   isSendFormShown = false;
   isInviteCollaboratorShown = false;
@@ -156,9 +157,18 @@ export class DocumentContentComponent implements OnInit {
     this.blockIds = document.blockIds;
     this.docTitle = document.title;
     this.currentSharingStatus = document.sharingStatus;
+    this.isOwner = this.checkIsOwner(document.ownerId);
     // For submission documents
     const template = document as TemplateDocument;
     this.submissionDocIds = template.submissionDocIds ? template.submissionDocIds : [];
+  }
+
+  private checkIsOwner(documentOwnerId: UUID) {
+    if (this.currentUser.id === documentOwnerId) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private checkIsChildDocument() {

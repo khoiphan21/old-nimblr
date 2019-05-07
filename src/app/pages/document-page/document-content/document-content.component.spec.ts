@@ -365,6 +365,24 @@ describe('DocumentContentComponent', () => {
       component['updateStoredProperties'](input);
       expect(component.submissionDocIds).toEqual(input.submissionDocIds);
     });
+
+    it('should set isOwner to true if it is the same id', () => {
+      component['currentUser'].id = 'test123';
+      const input: any = {
+        ownerId: 'test123'
+      };
+      component['updateStoredProperties'](input);
+      expect(component.isOwner).toBe(true);
+    });
+
+    it('should set isOwner to false if it is the same id', () => {
+      component['currentUser'].id = 'dan321';
+      const input: any = {
+        ownerId: 'test123'
+      };
+      component['updateStoredProperties'](input);
+      expect(component.isOwner).toBe(false);
+    });
   });
 
   describe('addNewBlock()', () => {
