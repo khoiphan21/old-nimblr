@@ -41,7 +41,6 @@ describe('(Integration) RegisterPageComponent', () => {
     accountService = TestBed.get(AccountService);
     component = fixture.componentInstance;
     spyOn(accountService, 'registerAppUser').and.returnValue(Promise.resolve());
-    fixture.detectChanges();
   });
 
   /* tslint:disable:no-string-literal */
@@ -57,6 +56,7 @@ describe('(Integration) RegisterPageComponent', () => {
     };
     component.getCognitoUserDetails().then(() => {
       // TODO: REFACTOR THE TEST FOR ROUTERSPY INTO ITS OWN TEST
+      console.log(routerSpy.calls.allArgs());
       expect(routerSpy.calls.count()).toBe(1);
       expect(component.newCognitoUser.attributes).not.toBe(null);
       done();
