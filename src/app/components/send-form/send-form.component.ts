@@ -42,14 +42,12 @@ export class SendFormComponent implements OnInit {
   // TODO: @bruno tbt
   selectKeyAction(event: KeyboardEvent) {
     switch (event.code) {
-      case "Enter": this.addRecipient(); break;
-      case "Space": this.addRecipient(); break;
-      case "Comma": this.addRecipient(); break;
+      case "Enter": this.addRecipient(); event.preventDefault(); break;
+      case "Space": this.addRecipient(); event.preventDefault(); break;
+      case "Comma": this.addRecipient(); event.preventDefault(); break;
       case "Backspace": this.deleteRecipient(); break;
       default: break;
     }
-
-    event.preventDefault();
   }
 
   private addRecipient() {
