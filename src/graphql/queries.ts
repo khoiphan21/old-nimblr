@@ -22,6 +22,10 @@ export const getDocumentLambda = `query GetDocumentLambda($id: ID!) {
   }
 }
 `;
+export const checkIfAccountExist = `query CheckIfAccountExist($email: String!) {
+  checkIfAccountExist(email: $email)
+}
+`;
 export const getUser = `query GetUser($id: ID!) {
   getUser(id: $id) {
     id

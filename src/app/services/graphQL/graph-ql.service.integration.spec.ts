@@ -161,7 +161,7 @@ describe('(Integration) GraphQLService', () => {
               }
             }
           },
-          limit: 2, // to get only 1 at a time for pagination testing
+          limit: 100, // to get only some at a time
           listAll: true
         });
       }).then(response => {
