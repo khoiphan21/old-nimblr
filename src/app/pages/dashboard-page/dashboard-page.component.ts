@@ -37,7 +37,9 @@ export class DashboardPageComponent implements OnInit {
   async getDocuments() {
     return new Promise((resolve, reject) => {
       this.documentService.getUserDocuments$().subscribe(documents => {
-        this.userDocuments = documents;
+        this.userDocuments = documents.filter(document => {
+          return document.type !== DocumentType.SUBMISSION;
+        });
         resolve();
       }, error => {
         const message = `DashboardPage failed to get user documents: ${error.message}`;
