@@ -10,6 +10,7 @@ import { CreateBlockEvent } from '../../../components/block/createBlockEvent';
 })
 export class SubmissionDocumentContentComponent implements OnInit {
 
+  @Input() isChildDoc: boolean;
   @Input() blockIds: Array<string>;
   @Input() isEditable: boolean;
   @Input() focusBlockId: BlockId;
