@@ -6,7 +6,7 @@
         </section>
         <section class="tabs private">
             <div class="title"><span>my templates</span> <img src="./assets/icons/document-add.svg" class="clickable" (click)="createNewDocument()" tooltip="&nbsp; Add new page &nbsp;" placement="right" hide-delay="0"></div>
-            <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+            <app-navigation-tab [documentId]="id" *ngFor="let id of documentIds"></app-navigation-tab>
         </section>
         <!-- <section class="tabs shared">
             <div class="title">shared</div>
@@ -31,7 +31,7 @@
         </section>
         <section class="tabs private">
             <div class="title">my templates</div>
-            <app-navigation-tab [navigationTab]="navigationTab" *ngFor="let navigationTab of navigationTabs"></app-navigation-tab>
+            <app-navigation-tab [documentId]="id" *ngFor="let id of documentIds"></app-navigation-tab>
         </section>
         <!-- <section class="tabs shared">
             <div class="title">shared</div>
