@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { InputType } from 'src/API';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -9,6 +9,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./input-option.component.scss']
 })
 export class InputOptionComponent implements OnChanges {
+  private currentAnswers: Array<string>;
+  private currentOptions: Array<string>;
+
   @Input() valueUpdated: boolean;
   @Input() answers: Array<string>;
   @Input() options: Array<string>;
@@ -25,13 +28,17 @@ export class InputOptionComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const type = changes.currentType;
-    const valueUpdated = changes.valueUpdated;
+
+    if (changes.answers) {
+      this.currentAnswers = changes.answers.currentValue.map(a => a);
+    }
+    if (changes.options) {
+      this.currentOptions = changes.options.currentValue.map(o => o);
+    }
     if (type) {
       this.manageinputTypeChange(type.previousValue, type.currentValue);
     }
-    if (valueUpdated && valueUpdated.currentValue === false) {
-      this.emitInputValues();
-    }
+
     this.setupForm();
   }
 
@@ -51,7 +58,6 @@ export class InputOptionComponent implements OnChanges {
         }
         break;
     }
-    this.setupForm();
     this.emitInputValues();
   }
 
@@ -63,11 +69,11 @@ export class InputOptionComponent implements OnChanges {
   }
 
   private clearOptions() {
-    this.options = [];
+    this.currentOptions = [];
   }
 
   private clearAnswers() {
-    this.answers = [];
+    this.currentAnswers = [];
   }
 
   setupForm() {
@@ -87,37 +93,37 @@ export class InputOptionComponent implements OnChanges {
         option: ''
       })
     );
-    this.options.push('');
+    this.currentOptions.push('');
     this.emitInputValues();
   }
 
   deleteOption(index) {
     const control = this.formGroup.controls.options as FormArray;
     control.removeAt(index);
-    this.options.splice(index);
+    this.currentOptions.splice(index);
     this.emitInputValues();
   }
 
   setOptions() {
     const control = this.formGroup.controls.options as FormArray;
-    if (this.options.length > 0) {
-      for (const option of this.options) {
+    if (this.currentOptions.length > 0) {
+      for (const option of this.currentOptions) {
         control.push(this.formBuilder.group({
           option
         }));
       }
     } else {
-      this.options = [];
+      this.currentOptions = [];
       this.addNewOption();
     }
   }
 
   toggleAnswers(value: string) {
-    if (this.answers.includes(value)) {
-      const index = this.answers.indexOf(value);
-      this.answers.splice(index, 1);
+    if (this.currentAnswers.includes(value)) {
+      const index = this.currentAnswers.indexOf(value);
+      this.currentAnswers.splice(index, 1);
     } else {
-      this.answers.push(value);
+      this.currentAnswers.push(value);
     }
     this.setupForm();
     this.emitInputValues();
@@ -125,25 +131,25 @@ export class InputOptionComponent implements OnChanges {
 
   switchAnswer(value: string) {
     this.clearAnswers();
-    this.answers.push(value);
+    this.currentAnswers.push(value);
     this.setupForm();
     this.emitInputValues();
   }
 
-  async triggerUpdateValue(waitTime = 500) {
-    return new Promise((resolve) => {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.emitInputValues();
-        resolve();
-      }, waitTime);
-    });
+  triggerUpdateValue(waitTime = 500) {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.emitInputValues();
+      // resolve();
+    }, waitTime);
+    // return new Promise((resolve) => {
+    // });
   }
 
   /* tslint:disable:no-string-literal */
   emitInputValues() {
     const value = {};
-    value['answers'] = this.answers;
+    value['answers'] = this.currentAnswers;
     if (this.currentType === InputType.MULTIPLE_CHOICE || this.currentType === InputType.CHECKBOX) {
       value['options'] = this.getOptionsValue();
     }
@@ -156,14 +162,14 @@ export class InputOptionComponent implements OnChanges {
     let index = 0;
     for (const control of controls) {
       const formGroup = control as FormGroup;
-      this.options[index] = formGroup.value.option;
+      this.currentOptions[index] = formGroup.value.option;
       index++;
     }
-    return this.options;
+    return this.currentOptions;
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.options, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.currentOptions, event.previousIndex, event.currentIndex);
     this.setupForm();
     this.emitInputValues();
   }

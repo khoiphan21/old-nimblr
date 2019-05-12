@@ -4,6 +4,7 @@ import { BlockFactoryService } from 'src/app/services/block/factory/block-factor
 import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
 import { Block } from 'src/app/classes/block/block';
 import { InputBlock } from '../../../classes/block/input-block';
+import { UpdateInputBlockInput } from '../../../../API';
 
 @Component({
   selector: 'app-input-block',
@@ -59,33 +60,39 @@ export class InputBlockComponent implements OnInit, OnChanges {
     event.stopImmediatePropagation();
   }
 
-  async triggerUpdateValue() {
-    return new Promise((resolve) => {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.valueUpdated = false;
-        resolve();
-      }, 1);
+  async changeLockStatus() {
+    this.isInputLocked = !this.isInputLocked;
+
+    this.updateBlock({
+      id: this.inputBlock.id,
+      type: this.inputBlock.type,
+      version: 'temp',
+      lastUpdatedBy: this.inputBlock.lastUpdatedBy,
+      isLocked: this.isInputLocked
     });
   }
 
-  updateInputValue(event: any): Promise<Block> {
-    return new Promise(resolve => {
-      const updatedBlock: Block = this.blockFactoryService.createAppBlock({
-        id: this.inputBlock.id,
-        type: this.inputBlock.type,
-        documentId: this.inputBlock.documentId,
-        lastUpdatedBy: this.inputBlock.lastUpdatedBy,
-        createdAt: this.inputBlock.createdAt,
-        answers: event.answers,
-        inputType: this.currentType,
-        options: event.options,
-        isLocked: this.isInputLocked
-      });
-      this.blockCommandService.updateBlock(updatedBlock).then(() => {
-        this.valueUpdated = true;
-        resolve(updatedBlock);
-      });
+  updateInputValue(event: any) {
+    const updatedBlock: Block = this.blockFactoryService.createAppBlock({
+      id: this.inputBlock.id,
+      type: this.inputBlock.type,
+      documentId: this.inputBlock.documentId,
+      lastUpdatedBy: this.inputBlock.lastUpdatedBy,
+      createdAt: this.inputBlock.createdAt,
+      answers: event.answers,
+      inputType: this.currentType,
+      options: event.options,
+      isLocked: this.isInputLocked
     });
+    this.updateBlock(updatedBlock);
+  }
+
+  updateBlock(params: UpdateInputBlockInput) {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(async () => {
+      // this.valueUpdated = false;
+      await this.blockCommandService.updateBlock(params);
+      // this.valueUpdated = true;
+    }, 500);
   }
 }

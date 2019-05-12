@@ -78,7 +78,7 @@ export class BlockCommandService {
 
   private async updateInputBlock(input: UpdateInputBlockInput): Promise<any> {
     const requiredParams = [
-      'id', 'documentId', 'version', 'lastUpdatedBy', 'answers', 'inputType'
+      'id', 'version', 'lastUpdatedBy'
     ];
     try {
       this.checkForNullOrUndefined(input, requiredParams, 'UpdateInputBlockInput');
