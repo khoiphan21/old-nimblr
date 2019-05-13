@@ -58,7 +58,7 @@ describe('(Integration) BlockCommandService', () => {
       textInput.value = 'UPDATED VALUE (updateBlock test)';
 
       // Update the block
-      response = await service.updateBlock(textInput);
+      response = await service.updateBlockLegacy(textInput);
       const updatedBlock = response.data.updateTextBlock;
       const id = updatedBlock.id;
       expect(updatedBlock.value).toEqual(textInput.value);
@@ -85,7 +85,7 @@ describe('(Integration) BlockCommandService', () => {
       // Update the block with new details
       inputInput.inputType = InputType.CHECKBOX;
       inputInput.options = ['option 1'];
-      response = await service.updateBlock(inputInput);
+      response = await service.updateBlockLegacy(inputInput);
 
       // Check that the response is correct
       const updatedBlock = response.data.updateInputBlock;

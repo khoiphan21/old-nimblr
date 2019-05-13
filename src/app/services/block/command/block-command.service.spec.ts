@@ -82,7 +82,7 @@ describe('BlockCommandService', () => {
 
     it('should return an error if the type is not supported', done => {
       textInput.type = 'ABCD';
-      service.updateBlock(textInput).then(() => {
+      service.updateBlockLegacy(textInput).then(() => {
         fail('error should be thrown'); done();
       }).catch(error => {
         expect(error).toEqual('BlockType not supported');
@@ -92,17 +92,17 @@ describe('BlockCommandService', () => {
 
     it('should set a new version', async () => {
       // Updating text block
-      await service.updateBlock(textInput);
+      await service.updateBlockLegacy(textInput);
       let version = graphQlSpy.calls.mostRecent().args[1].input.version;
       expect(version).not.toEqual(textInput.version);
       // Updating input block
-      await service.updateBlock(inputInput);
+      await service.updateBlockLegacy(inputInput);
       version = graphQlSpy.calls.mostRecent().args[1].input.version;
       expect(version).not.toEqual(inputInput.version);
     });
 
     it('should register the version to the VersionService', () => {
-      service.updateBlock(textInput);
+      service.updateBlockLegacy(textInput);
       const version = graphQlSpy.calls.mostRecent().args[1].input.version;
       expect(service['versionService'].isRegistered(version)).toBe(true);
     });
@@ -113,7 +113,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should resolve with the response from backend', done => {
-        service.updateBlock(textInput).then(value => {
+        service.updateBlockLegacy(textInput).then(value => {
           // The value resolved must be the value returned by graphql
           expect(value).toEqual(textBlockBackendResponse);
           done();
@@ -121,7 +121,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should call graphQlService with the right query', done => {
-        service.updateBlock(textInput).then(() => {
+        service.updateBlockLegacy(textInput).then(() => {
           // graphQlService must be called with the right arguments
           const spyArgs = graphQlSpy.calls.mostRecent().args;
           expect(spyArgs[0]).toEqual(updateTextBlock);
@@ -130,7 +130,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should call graphQlService with the right argument', done => {
-        service.updateBlock(textInput).then(() => {
+        service.updateBlockLegacy(textInput).then(() => {
           // graphQlService must be called with the right arguments
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
           // the queryArg should have a valid 'updatedAt' date string
@@ -153,7 +153,7 @@ describe('BlockCommandService', () => {
 
       it('should change the value to null if is an empty string', async () => {
         textInput.value = '';
-        await service.updateBlock(textInput);
+        await service.updateBlockLegacy(textInput);
         // graphQlService must be called with the right arguments
         const queryArg = graphQlSpy.calls.mostRecent().args[1];
         // the queryArg should have a valid 'updatedAt' date string
@@ -176,7 +176,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should resolve with the response from backend', done => {
-        service.updateBlock(inputInput).then(value => {
+        service.updateBlockLegacy(inputInput).then(value => {
           // The value resolved must be the value returned by graphql
           expect(value).toEqual(inputBlockBackendResponse);
           done();
@@ -184,7 +184,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should call graphQlService with the right query', done => {
-        service.updateBlock(inputInput).then(() => {
+        service.updateBlockLegacy(inputInput).then(() => {
           // graphQlService must be called with the right arguments
           const spyArgs = graphQlSpy.calls.mostRecent().args;
           expect(spyArgs[0]).toEqual(updateInputBlock);
@@ -193,7 +193,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should call graphQlService with the right argument', done => {
-        service.updateBlock(inputInput).then(() => {
+        service.updateBlockLegacy(inputInput).then(() => {
           // graphQlService must be called with the right arguments
           const queryArg = graphQlSpy.calls.mostRecent().args[1];
           // the queryArg should have a valid 'updatedAt' date string
@@ -216,7 +216,7 @@ describe('BlockCommandService', () => {
 
       it('should change the value to null if is undefined', async () => {
         inputInput.options = undefined;
-        await service.updateBlock(inputInput);
+        await service.updateBlockLegacy(inputInput);
         // graphQlService must be called with the right arguments
         const queryArg = graphQlSpy.calls.mostRecent().args[1];
         // the queryArg should have a valid 'updatedAt' date string
@@ -239,7 +239,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should resolve with the response from backend', done => {
-        service.updateBlock(headerInput).then(value => {
+        service.updateBlockLegacy(headerInput).then(value => {
           // The value resolved must be the value returned by graphql
           expect(value).toEqual(textBlockBackendResponse);
           done();
@@ -247,7 +247,7 @@ describe('BlockCommandService', () => {
       });
 
       it('should call graphQlService with the right query', done => {
-        service.updateBlock(headerInput).then(value => {
+        service.updateBlockLegacy(headerInput).then(value => {
           // The value resolved must be the value returned by graphql
           expect(graphQlSpy.calls.mostRecent().args[0]).toEqual(updateTextBlock);
           done();
@@ -256,7 +256,7 @@ describe('BlockCommandService', () => {
 
       it('should change the value to null if is an empty string', done => {
         headerInput.value = '';
-        service.updateBlock(headerInput).then(value => {
+        service.updateBlockLegacy(headerInput).then(value => {
           const actualInput = graphQlSpy.calls.mostRecent().args[1].input;
           expect(actualInput.value).toBe(null);
           done();

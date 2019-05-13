@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '../../graphQL/graph-ql.service';
 import { BlockQueryService } from '../query/block-query.service';
 /* tslint:disable:max-line-length */
-import { CreateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateInputBlockInput, UpdateInputBlockInput, DeleteBlockInput } from '../../../../API';
+import { CreateBlockInput, CreateTextBlockInput, BlockType, UpdateTextBlockInput, CreateInputBlockInput, UpdateInputBlockInput, DeleteBlockInput, UpdateBlockInput } from '../../../../API';
 import { createTextBlock, updateTextBlock, createInputBlock, updateInputBlock, deleteBlock } from '../../../../graphql/mutations';
 import { VersionService } from '../../version/version.service';
 
 const uuidv4 = require('uuid/v4');
+
+export type UpdateBlockServiceInput = UpdateTextBlockInput | UpdateInputBlockInput;
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +20,27 @@ export class BlockCommandService {
     private versionService: VersionService
   ) { }
 
+  async updateBlock(input: UpdateBlockServiceInput) {
+    switch (input.type) {
+      case BlockType.TEXT:
+        await this.graphQLService.query(updateTextBlock, { input });
+        break;
+
+      case BlockType.INPUT:
+        await this.graphQLService.query(updateInputBlock, { input });
+        break;
+
+      default:
+        throw new Error(`BlockCommandService.updateBlock() failed: BlockType "${input.type}" is not supported`);
+    }
+  }
+
   /**
    * Update a block in the database given the input.
    * This will also notify BlockQueryService of the updated block's version
    * @param input the input to the update query
    */
-  updateBlock(input: UpdateTextBlockInput | UpdateInputBlockInput): Promise<any> {
+  updateBlockLegacy(input: UpdateTextBlockInput | UpdateInputBlockInput): Promise<any> {
     // The version that this query will use, to prevent misuse of the version
     const version = uuidv4();
     // Register the version to the service

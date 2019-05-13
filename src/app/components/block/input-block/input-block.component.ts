@@ -91,7 +91,7 @@ export class InputBlockComponent implements OnInit, OnChanges {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(async () => {
       // this.valueUpdated = false;
-      await this.blockCommandService.updateBlock(params);
+      await this.blockCommandService.updateBlockLegacy(params);
       // this.valueUpdated = true;
     }, 500);
   }

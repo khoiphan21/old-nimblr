@@ -95,7 +95,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
           createdAt: this.block.createdAt,
           textBlockType: this.block.textBlockType
         });
-        this.blockCommandService.updateBlock(updatedBlock).then(() => {
+        this.blockCommandService.updateBlockLegacy(updatedBlock).then(() => {
           resolve(updatedBlock);
         });
       }, 500);
@@ -211,7 +211,7 @@ export class BlockTextComponent implements OnInit, OnChanges {
     // update the UI
     this.blockQueryService.updateBlockUI(updatedBlock);
     // update the backend
-    return this.blockCommandService.updateBlock(updatedBlock);
+    return this.blockCommandService.updateBlockLegacy(updatedBlock);
   }
 
   private resetAwaitAction() {
