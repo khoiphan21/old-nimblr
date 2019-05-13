@@ -1,56 +1,45 @@
-import { Component, Input, OnChanges, ChangeDetectorRef, SimpleChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { InputType } from 'src/API';
-import { BlockFactoryService } from 'src/app/services/block/factory/block-factory.service';
-import { BlockCommandService } from 'src/app/services/block/command/block-command.service';
-import { Block } from 'src/app/classes/block/block';
 import { InputBlock } from '../../../classes/block/input-block';
-import { UpdateInputBlockInput } from '../../../../API';
+import { CommandType } from '../../../classes/command/commandType';
+import { UpdateBlockCommand } from '../../../classes/command/updateBlock/updateBlockCommand';
+import { CommandService } from '../../../services/command/command.service';
+import { InputBlockController } from './controller/input-block-controller';
 
 @Component({
   selector: 'app-input-block',
   templateUrl: './input-block.component.html',
   styleUrls: ['./input-block.component.scss']
 })
-export class InputBlockComponent implements OnInit, OnChanges {
-  // TODO IMPLEMENT CONTROL OF WHETHER IT'S DEITABLE OR NOT
+export class InputBlockComponent implements OnChanges {
+  // TODO IMPLEMENT CONTROL OF WHETHER IT'S EDITABLE OR NOT
   // To control whether it's editable or not
   @Input() isEditable: boolean;
   @Input() inputBlock: InputBlock;
   @Input() focusBlockId: string;
 
-  valueUpdated = true;
+  controller: InputBlockController;
+
   isPreviewMode = true;
   isInputOptionShown = false;
-  answers = [];
-  options = [];
   currentType: InputType;
-  isInputLocked: boolean;
+  isLocked: boolean;
   protected timeout: any;
 
   constructor(
-    private blockFactoryService: BlockFactoryService,
-    private blockCommandService: BlockCommandService
-  ) { }
-
-  ngOnInit(): void {
-    this.setInputValues();
-  }
-
-  private setInputValues() {
-    this.answers = this.inputBlock.answers;
-    this.options = this.inputBlock.options;
-    this.isInputLocked = this.inputBlock.isLocked;
-    this.currentType = this.inputBlock.inputType;
+    private commandService: CommandService
+  ) {
+    this.controller = new InputBlockController(this.commandService);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.inputBlock) {
-      this.setInputValues();
-    }
-  }
+      const block = changes.inputBlock.currentValue as InputBlock;
 
-  toggleOptions() {
-    this.isInputOptionShown = this.isInputOptionShown ? false : true;
+      this.controller.setInputBlock(block);
+      this.isLocked = block.isLocked;
+      this.currentType = block.inputType;
+    }
   }
 
   selectType(type: InputType, event: Event) {
@@ -60,39 +49,20 @@ export class InputBlockComponent implements OnInit, OnChanges {
     event.stopImmediatePropagation();
   }
 
+  toggleOptions() {
+    this.isInputOptionShown = this.isInputOptionShown ? false : true;
+  }
+
   async changeLockStatus() {
-    this.isInputLocked = !this.isInputLocked;
+    this.isLocked = !this.isLocked;
 
-    this.updateBlock({
+    let command: UpdateBlockCommand;
+    command = this.commandService.getCommand(CommandType.UPDATE_BLOCK) as UpdateBlockCommand;
+    await command.update({
       id: this.inputBlock.id,
       type: this.inputBlock.type,
-      version: 'temp',
-      lastUpdatedBy: this.inputBlock.lastUpdatedBy,
-      isLocked: this.isInputLocked
+      isLocked: this.isLocked
     });
   }
 
-  updateInputValue(event: any) {
-    const updatedBlock: Block = this.blockFactoryService.createAppBlock({
-      id: this.inputBlock.id,
-      type: this.inputBlock.type,
-      documentId: this.inputBlock.documentId,
-      lastUpdatedBy: this.inputBlock.lastUpdatedBy,
-      createdAt: this.inputBlock.createdAt,
-      answers: event.answers,
-      inputType: this.currentType,
-      options: event.options,
-      isLocked: this.isInputLocked
-    });
-    this.updateBlock(updatedBlock);
-  }
-
-  updateBlock(params: UpdateInputBlockInput) {
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(async () => {
-      // this.valueUpdated = false;
-      await this.blockCommandService.updateBlockLegacy(params);
-      // this.valueUpdated = true;
-    }, 500);
-  }
 }

@@ -188,7 +188,7 @@ describe('InputBlockComponent', () => {
         answers: [],
         inputType: component.inputBlock.inputType,
         options: undefined,
-        isLocked: component.isInputLocked
+        isLocked: component.isLocked
       });
     });
 

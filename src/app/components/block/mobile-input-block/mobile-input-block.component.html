@@ -1,5 +1,5 @@
 <section class="mobile input-block" (click)="isPreviewMode = false" *ngIf="isPreviewMode">
-    <app-input-option [currentType]="currentType" [valueUpdated]="valueUpdated" [isMobilePreview]=true [isPreviewMode]="isPreviewMode" [options]="previewOptions" [answers]="previewAnswers" style="width: 100%;"></app-input-option>
+    <app-input-option *ngIf="controller" [controller]="controller" [isPreviewMode]="isPreviewMode" style="width: 100%;"></app-input-option>
 </section>
 <section class="mobile edit-input" [@slideBottomToTopAnimationDOM]="isPreviewMode">
     <div class="row no-pad header">
@@ -7,7 +7,7 @@
     </div>
     <div class="row no-pad options" [ngSwitch]=currentType>
         <label>Options</label>
-        <app-input-option [isInputLocked]="isInputLocked" [currentType]="currentType" [valueUpdated]="valueUpdated" [isPreviewMode]="isPreviewMode" [options]="options" [answers]="answers" (valueToBeSaved)="updateInputValue($event)" style="width: 100%;"></app-input-option>
+        <app-input-option *ngIf="controller" [controller]="controller" [isPreviewMode]="isPreviewMode" style="width: 100%;"></app-input-option>
     </div>
     <div class="row no-pad footer" [ngSwitch]=currentType>
         <div class="dropdown col-6" (clickOutside)="isInputOptionShown = false">
@@ -25,7 +25,7 @@
             </div>
             <section class="container options-block" *ngIf="isInputOptionShown === true">
                 <div class="title">
-                    Response TYPES
+                    Response Types
                 </div>
                 <section class="document-options">
                     <div class="option" (click)="selectType('TEXT')">
