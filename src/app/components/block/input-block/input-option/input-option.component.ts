@@ -24,7 +24,9 @@ export class InputOptionComponent implements OnInit, OnChanges {
 
   @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
+
   private timeout: any;
+  private optionUpdateTimeout: any;
 
   constructor(private formBuilder: FormBuilder) {
   }
@@ -45,13 +47,11 @@ export class InputOptionComponent implements OnInit, OnChanges {
 
   ngOnChanges(change: SimpleChanges) {
     if (change.inputType && this.currentBlock) {
-      console.log('handling inputType changes from BlockComp');
       this.currentType = change.inputType.currentValue;
       this.manageinputTypeChange(
         change.inputType.previousValue,
         change.inputType.currentValue
       );
-      this.setupForm();
       this.controller.update({
         answers: this.currentAnswers,
         options: this.currentOptions,
@@ -71,6 +71,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
         }
         break;
     }
+    this.setupForm();
   }
 
   changeToSingleOptionType(previousType: InputType) {
@@ -93,6 +94,15 @@ export class InputOptionComponent implements OnInit, OnChanges {
       options: this.formBuilder.array([])
     });
     this.setOptions();
+    this.formGroup.valueChanges.subscribe(() => this.triggerUpdateValue());
+  }
+
+  updateCurrentOptions() {
+    const formArray = this.formGroup.controls.options as FormArray;
+    const controls = formArray.controls;
+
+    const options = controls.map(v => v.value.option);
+    this.currentOptions = options;
   }
 
   setOptions() {
@@ -116,13 +126,13 @@ export class InputOptionComponent implements OnInit, OnChanges {
         option: ''
       })
     );
-    this.currentOptions.push('');
+    this.triggerUpdateValue();
   }
 
   deleteOption(index) {
     const control = this.formGroup.controls.options as FormArray;
     control.removeAt(index);
-    this.currentOptions.splice(index);
+    this.triggerUpdateValue();
   }
 
   toggleAnswers(value: string) {
@@ -145,24 +155,16 @@ export class InputOptionComponent implements OnInit, OnChanges {
   }
 
   triggerUpdateValue(waitTime = 300) {
+    this.updateCurrentOptions();
+
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.controller.update({
-        answers: this.currentAnswers
+        answers: this.currentAnswers,
+        options: this.currentOptions,
+        inputType: this.currentType
       });
     }, waitTime);
-  }
-
-  getOptionsValue() {
-    const formArray = this.formGroup.controls.options as FormArray;
-    const controls = formArray.controls;
-    let index = 0;
-    for (const control of controls) {
-      const formGroup = control as FormGroup;
-      this.currentOptions[index] = formGroup.value.option;
-      index++;
-    }
-    return this.currentOptions;
   }
 
   drop(event: CdkDragDrop<string[]>) {
