@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { uuidv4 } from '../../classes/uuidv4';
 import { CommandType } from '../../classes/command/commandType';
 import { SendDocumentCommand } from 'src/app/classes/command/sendDocument/sendDocumentCommand';
+import { UpdateBlockCommand } from '../../classes/command/updateBlock/updateBlockCommand';
 
 // tslint:disable:no-string-literal
 describe('CommandService', () => {
@@ -77,13 +78,16 @@ describe('CommandService', () => {
   });
 
   describe('createCommand()', () => {
-    describe('SEND_DOCUMENT', () => {
+    it('SEND_DOCUMENT - should create a valid SendDocumentCommand', () => {
       const type = CommandType.SEND_DOCUMENT;
+      service['createCommand'](CommandType.SEND_DOCUMENT);
+      expect(service.getCommand(type) instanceof SendDocumentCommand).toBeTruthy();
+    });
 
-      it('should create a valid SendDocumentCommand', () => {
-        service['createCommand'](type);
-        expect(service.getCommand(type) instanceof SendDocumentCommand).toBeTruthy();
-      });
+    it('UPDATE_BLOCK - should create a valid UpdateBlockCommand', () => {
+      const type = CommandType.UPDATE_BLOCK;
+      service['createCommand'](CommandType.UPDATE_BLOCK);
+      expect(service.getCommand(type) instanceof UpdateBlockCommand).toBeTruthy();
     });
 
     describe('unknown CommandType', () => {

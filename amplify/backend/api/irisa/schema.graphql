@@ -122,11 +122,11 @@ input CreateTextBlockInput {
 
 input UpdateTextBlockInput {
   id: ID!
-  version: String!
+  version: String
   type: BlockType
   documentId: String
-  lastUpdatedBy: String!
-  updatedAt: String!
+  lastUpdatedBy: String
+  updatedAt: String
   value: String
   textBlockType: TextBlockType
 }
@@ -145,10 +145,10 @@ input CreateInputBlockInput {
 
 input UpdateInputBlockInput {
   id: ID!
-  version: String!
+  version: String
   type: BlockType
   documentId: String
-  lastUpdatedBy: String!
+  lastUpdatedBy: String
   updatedAt: String
   answers: [String]
   inputType: InputType
@@ -158,9 +158,9 @@ input UpdateInputBlockInput {
 
 input UpdateInputBlockAnswerInput {
   id: ID!
-  version: String!
+  version: String
   type: BlockType
   documentId: String
-  lastUpdatedBy: String!
-  answers: [String]!
+  lastUpdatedBy: String
+  answers: [String]
 }

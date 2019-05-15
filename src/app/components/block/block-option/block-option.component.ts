@@ -154,7 +154,7 @@ export class BlockOptionComponent implements OnChanges, OnInit {
     this.blockQueryService.updateBlockUI(updatedBlock);
     // update the backend
     return new Promise(resolve => {
-      this.blockCommandService.updateBlock(updatedBlock).then(() => {
+      this.blockCommandService.updateBlockLegacy(updatedBlock).then(() => {
         resolve();
       });
     });

@@ -188,7 +188,7 @@ describe('InputBlockComponent', () => {
         answers: [],
         inputType: component.inputBlock.inputType,
         options: undefined,
-        isLocked: component.isInputLocked
+        isLocked: component.isLocked
       });
     });
 
@@ -198,9 +198,4 @@ describe('InputBlockComponent', () => {
     });
   });
 
-  /* tslint:disable:no-string-literal */
-  it('should have set `valueUpdated` to be false`', async () => {
-    await component.triggerUpdateValue();
-    expect(component.valueUpdated).toBe(false);
-  });
 });

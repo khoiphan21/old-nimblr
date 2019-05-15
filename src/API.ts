@@ -34,11 +34,11 @@ export enum InputType {
 
 export type UpdateTextBlockInput = {
   id: string,
-  version: string,
+  version?: string | null,
   type?: BlockType | null,
   documentId?: string | null,
-  lastUpdatedBy: string,
-  updatedAt: string,
+  lastUpdatedBy?: string | null,
+  updatedAt?: string | null,
   value?: string | null,
   textBlockType?: TextBlockType | null,
 };
@@ -57,10 +57,10 @@ export type CreateInputBlockInput = {
 
 export type UpdateInputBlockInput = {
   id: string,
-  version: string,
+  version?: string | null,
   type?: BlockType | null,
   documentId?: string | null,
-  lastUpdatedBy: string,
+  lastUpdatedBy?: string | null,
   updatedAt?: string | null,
   answers?: Array< string | null > | null,
   inputType?: InputType | null,

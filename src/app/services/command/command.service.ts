@@ -9,6 +9,8 @@ import { DocumentQueryService } from '../document/query/document-query.service';
 import { DocumentFactoryService } from '../document/factory/document-factory.service';
 import { EmailService } from '../email/email.service';
 import { SendDocumentCommand } from 'src/app/classes/command/sendDocument/sendDocumentCommand';
+import { UpdateBlockCommand } from 'src/app/classes/command/updateBlock/updateBlockCommand';
+import { VersionService } from '../version/version.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +26,8 @@ export class CommandService {
     private documentCommandService: DocumentCommandService,
     private documentQueryService: DocumentQueryService,
     private documentFactoryService: DocumentFactoryService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private versionService: VersionService
   ) {
     this.commandMap = new Map();
   }
@@ -49,6 +52,14 @@ export class CommandService {
           documentQueryService: this.documentQueryService,
           documentFactoryService: this.documentFactoryService,
           emailService: this.emailService,
+        });
+        break;
+
+      case CommandType.UPDATE_BLOCK:
+        command = new UpdateBlockCommand({
+          blockCommandService: this.blockCommandService,
+          accountService: this.accountService,
+          versionService: this.versionService
         });
         break;
       default:

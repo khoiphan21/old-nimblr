@@ -1,38 +1,57 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { InputType } from 'src/API';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { InputBlockController } from '../controller/input-block-controller';
+import { InputBlock } from 'src/app/classes/block/input-block';
 
 @Component({
   selector: 'app-input-option',
   templateUrl: './input-option.component.html',
   styleUrls: ['./input-option.component.scss']
 })
-export class InputOptionComponent implements OnChanges {
-  @Input() valueUpdated: boolean;
-  @Input() answers: Array<string>;
-  @Input() options: Array<string>;
-  @Input() currentType: InputType;
+export class InputOptionComponent implements OnInit, OnChanges {
+  currentBlock: InputBlock;
+  currentAnswers: Array<string>;
+  currentOptions: Array<string>;
+  currentType: InputType;
+
+  @Input() controller: InputBlockController;
+  @Input() inputType: InputType;
   @Input() isPreviewMode: boolean;
   @Input() isMobilePreview = false;
-  @Input() isInputLocked: boolean;
+  @Input() isEditable = true;
+
   @Output() valueToBeSaved = new EventEmitter<object>();
   formGroup: FormGroup;
+
   private timeout: any;
 
   constructor(private formBuilder: FormBuilder) {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    const type = changes.currentType;
-    const valueUpdated = changes.valueUpdated;
-    if (type) {
-      this.manageinputTypeChange(type.previousValue, type.currentValue);
+  ngOnInit() {
+    this.controller.getInputBlock$().subscribe(block => {
+      if (block !== null) {
+        console.log('Block update: ', block);
+        this.currentBlock = block;
+        this.currentAnswers = block.answers;
+        this.currentOptions = block.options;
+        this.currentType = block.inputType;
+        this.setupForm();
+      }
+    });
+  }
+
+  ngOnChanges(change: SimpleChanges) {
+    if (change.inputType && this.currentBlock) {
+      this.currentType = change.inputType.currentValue;
+      this.manageinputTypeChange(
+        change.inputType.previousValue,
+        change.inputType.currentValue
+      );
+      this.triggerUpdateValue();
     }
-    if (valueUpdated && valueUpdated.currentValue === false) {
-      this.emitInputValues();
-    }
-    this.setupForm();
   }
 
   manageinputTypeChange(previousType: InputType, currentType: InputType) {
@@ -40,19 +59,13 @@ export class InputOptionComponent implements OnChanges {
       case InputType.TEXT:
         this.changeToSingleOptionType(previousType);
         break;
-      case InputType.MULTIPLE_CHOICE:
-        if (previousType !== undefined) {
-          this.clearAnswers();
-        }
-        break;
-      case InputType.CHECKBOX:
+      default:
         if (previousType !== undefined) {
           this.clearAnswers();
         }
         break;
     }
     this.setupForm();
-    this.emitInputValues();
   }
 
   changeToSingleOptionType(previousType: InputType) {
@@ -63,11 +76,11 @@ export class InputOptionComponent implements OnChanges {
   }
 
   private clearOptions() {
-    this.options = [];
+    this.currentOptions = [];
   }
 
   private clearAnswers() {
-    this.answers = [];
+    this.currentAnswers = [];
   }
 
   setupForm() {
@@ -75,9 +88,29 @@ export class InputOptionComponent implements OnChanges {
       options: this.formBuilder.array([])
     });
     this.setOptions();
-    this.formGroup.valueChanges.subscribe((data) => {
-      this.triggerUpdateValue();
-    });
+    this.formGroup.valueChanges.subscribe(() => this.triggerUpdateValue());
+  }
+
+  updateCurrentOptions() {
+    const formArray = this.formGroup.controls.options as FormArray;
+    const controls = formArray.controls;
+
+    const options = controls.map(v => v.value.option);
+    this.currentOptions = options;
+  }
+
+  setOptions() {
+    const control = this.formGroup.controls.options as FormArray;
+    if (this.currentOptions.length > 0) {
+      for (const option of this.currentOptions) {
+        control.push(this.formBuilder.group({
+          option
+        }));
+      }
+    } else {
+      this.currentOptions = [];
+      this.addNewOption();
+    }
   }
 
   addNewOption() {
@@ -87,84 +120,48 @@ export class InputOptionComponent implements OnChanges {
         option: ''
       })
     );
-    this.options.push('');
-    this.emitInputValues();
+    this.triggerUpdateValue();
   }
 
   deleteOption(index) {
     const control = this.formGroup.controls.options as FormArray;
     control.removeAt(index);
-    this.options.splice(index);
-    this.emitInputValues();
-  }
-
-  setOptions() {
-    const control = this.formGroup.controls.options as FormArray;
-    if (this.options.length > 0) {
-      for (const option of this.options) {
-        control.push(this.formBuilder.group({
-          option
-        }));
-      }
-    } else {
-      this.options = [];
-      this.addNewOption();
-    }
+    this.triggerUpdateValue();
   }
 
   toggleAnswers(value: string) {
-    if (this.answers.includes(value)) {
-      const index = this.answers.indexOf(value);
-      this.answers.splice(index, 1);
+    if (this.currentAnswers.includes(value)) {
+      const index = this.currentAnswers.indexOf(value);
+      this.currentAnswers.splice(index, 1);
     } else {
-      this.answers.push(value);
+      this.currentAnswers.push(value);
     }
     this.setupForm();
-    this.emitInputValues();
+    this.triggerUpdateValue();
   }
 
   switchAnswer(value: string) {
     this.clearAnswers();
-    this.answers.push(value);
+    this.currentAnswers.push(value);
     this.setupForm();
-    this.emitInputValues();
+    this.triggerUpdateValue();
   }
 
-  async triggerUpdateValue(waitTime = 500) {
-    return new Promise((resolve) => {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.emitInputValues();
-        resolve();
-      }, waitTime);
-    });
-  }
+  triggerUpdateValue(waitTime = 300) {
+    this.updateCurrentOptions();
 
-  /* tslint:disable:no-string-literal */
-  emitInputValues() {
-    const value = {};
-    value['answers'] = this.answers;
-    if (this.currentType === InputType.MULTIPLE_CHOICE || this.currentType === InputType.CHECKBOX) {
-      value['options'] = this.getOptionsValue();
-    }
-    this.valueToBeSaved.emit(value);
-  }
-
-  getOptionsValue() {
-    const formArray = this.formGroup.controls.options as FormArray;
-    const controls = formArray.controls;
-    let index = 0;
-    for (const control of controls) {
-      const formGroup = control as FormGroup;
-      this.options[index] = formGroup.value.option;
-      index++;
-    }
-    return this.options;
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.controller.update({
+        answers: this.currentAnswers,
+        options: this.currentOptions,
+        inputType: this.currentType
+      });
+    }, waitTime);
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.options, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.currentOptions, event.previousIndex, event.currentIndex);
     this.setupForm();
-    this.emitInputValues();
   }
 }

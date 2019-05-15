@@ -29,7 +29,7 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     browserDisconnectTimeout: 15000,
     browserDisconnectTolerance: 3,
-    browserNoActivityTimeout: 20000,
+    browserNoActivityTimeout: 400000,
     flags: [
       '--disable-web-security',
       '--no-sandbox'
