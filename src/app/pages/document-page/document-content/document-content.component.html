@@ -18,14 +18,14 @@
             </h1>
         </div>
 
-        <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds" [isEditable]="isEditable" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
-            (deleteBlockEvent)="deleteBlock($event)" (navigateToChildEvent)="navigateToChildDocument($event)" (showInviteEvent)="showSendForm()" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
+        <app-template-document-content *ngIf="documentType === 'TEMPLATE'" [blockIds]="blockIds" [isEditable]="isEditable" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"
+            (navigateToChildEvent)="navigateToChildDocument($event)" (showInviteEvent)="showSendForm()" (updateDocumentEvent)="updateDocument($event)"></app-template-document-content>
 
 
-        <app-block-section-content *ngIf="documentType === 'GENERIC'" [isChildDoc]="isChildDoc" [blockIds]="blockIds" [isEditable]="isEditable" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"
-            (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
+        <app-block-section-content *ngIf="documentType === 'GENERIC'" [isChildDoc]="isChildDoc" [blockIds]="blockIds" [isEditable]="isEditable" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)" (updateDocumentEvent)="updateDocument($event)"></app-block-section-content>
 
-        <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [blockIds]="blockIds" [isEditable]="isEditable" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)">
+        <app-submission-document-content *ngIf="documentType === 'SUBMISSION'" [isChildDoc]="isChildDoc" [blockIds]="blockIds" [isEditable]="isEditable" [focusBlockId]="focusBlockId" [submissionDocIds]="submissionDocIds" (addNewBlockEvent)="addNewBlock($event)"
+            (deleteBlockEvent)="deleteBlock($event)">
         </app-submission-document-content>
 
     </section>

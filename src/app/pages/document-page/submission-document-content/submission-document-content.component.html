@@ -1,8 +1,5 @@
 <section class="content">
 
-    <app-block-section-content [blockIds]="blockIds"
-      [isEditable]="isEditable" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)"
-      (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
-  
-  </section>
-  
+    <app-block-section-content [blockIds]="blockIds" [isEditable]="isEditable" [isChildDoc]="isChildDoc" [focusBlockId]="focusBlockId" (addNewBlockEvent)="addNewBlock($event)" (deleteBlockEvent)="deleteBlock($event)"></app-block-section-content>
+
+</section>
