@@ -26,7 +26,6 @@ export class InputOptionComponent implements OnInit, OnChanges {
   formGroup: FormGroup;
 
   private timeout: any;
-  private optionUpdateTimeout: any;
 
   constructor(private formBuilder: FormBuilder) {
   }
@@ -39,7 +38,6 @@ export class InputOptionComponent implements OnInit, OnChanges {
         this.currentAnswers = block.answers;
         this.currentOptions = block.options;
         this.currentType = block.inputType;
-        // TODO HANDLE CHANGE OF TYPE
         this.setupForm();
       }
     });
@@ -52,11 +50,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
         change.inputType.previousValue,
         change.inputType.currentValue
       );
-      this.controller.update({
-        answers: this.currentAnswers,
-        options: this.currentOptions,
-        inputType: this.inputType,
-      });
+      this.triggerUpdateValue();
     }
   }
 
@@ -143,15 +137,14 @@ export class InputOptionComponent implements OnInit, OnChanges {
       this.currentAnswers.push(value);
     }
     this.setupForm();
+    this.triggerUpdateValue();
   }
 
   switchAnswer(value: string) {
     this.clearAnswers();
     this.currentAnswers.push(value);
     this.setupForm();
-    this.controller.update({
-      answers: this.currentAnswers
-    });
+    this.triggerUpdateValue();
   }
 
   triggerUpdateValue(waitTime = 300) {
