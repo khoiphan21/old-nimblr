@@ -145,7 +145,7 @@ describe('InputOptionComponent', () => {
       expect(element).toBeTruthy();
     });
 
-    it('should call to triggerUpdateValue() whenever there is input', () => {
+    it('should call to update value whenever there is input', async () => {
       const inputElement = fixture.debugElement.query(By.css('.text-input'));
       const nativeElement = inputElement.nativeElement;
 
@@ -154,7 +154,11 @@ describe('InputOptionComponent', () => {
       // now call the fixture to check the component
       fixture.detectChanges();
 
-      expect(triggerUpdateSpy).toHaveBeenCalled();
+      await checkUpdateArg({
+        answers: ['abcd'],
+        options: ['foo', 'bar'],
+        inputType: InputType.TEXT
+      });
     });
   });
 
@@ -203,8 +207,9 @@ describe('InputOptionComponent', () => {
         });
       });
 
-      it('should clear the answers array', () => {
+      it('should clear the answers and options array', () => {
         expect(component['currentAnswers']).toEqual([]);
+        expect(component['currentOptions']).toEqual([]);
       });
 
       it('should NOT clear the options array', () => {

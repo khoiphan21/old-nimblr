@@ -48,7 +48,10 @@ export class UpdateBlockCommand {
 
     this.versionService.registerVersion(input.version);
 
-    await this.blockCommandService.updateBlock(input);
+    console.log('UpdateBlockCommand updating: ', input);
+
+    const result = await this.blockCommandService.updateBlock(input);
+    console.log('UpdateBlockCommand - update result: ', result);
   }
 
   /**

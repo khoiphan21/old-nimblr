@@ -35,6 +35,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.controller.getInputBlock$().subscribe(block => {
       if (block !== null) {
+        console.log('InputBlock received: ', block);
         this.currentBlock = block;
         this.currentAnswers = block.answers.map(v => v);
         this.currentOptions = block.options.map(v => v).filter(v => v !== null);
@@ -145,6 +146,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
   }
 
   triggerUpdateValue(waitTime = this.WAIT_TIME) {
+    console.log('updating value');
     this.updateCurrentOptions();
 
     clearTimeout(this.timeout);

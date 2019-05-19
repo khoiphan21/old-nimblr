@@ -49,17 +49,18 @@ export class InputBlock extends BlockImpl implements Block {
       updatedAt,
       createdAt,
     });
-    // Parameter validation
+
+    // store basic values required for checking answers and options
     this.checkinputType(inputType);
+    this.inputType = inputType;
+    this.isLocked = isLocked;
+
+    // checking and storing answres and options
     const { newAnswers, newOptions } = this.processOptionsAndAnswers(
       { options, answers }
     );
-
-    // Storing values
     this.immutableAnswers = newAnswers;
-    this.inputType = inputType;
     this.immutableOptions = newOptions;
-    this.isLocked = isLocked;
   }
 
   private checkinputType(inputType: any) {
@@ -77,17 +78,17 @@ export class InputBlock extends BlockImpl implements Block {
 
     // convert 'null' values in options to empty strings
     const newOptions = options.map(v => v === null ? '' : v);
-    const newAnswers = [];
+    const newAnswers = answers;
 
-    for (const answer of answers) {
-      if (options.length > 0) {
-        if (options.includes(answer)) {
-          newAnswers.push(answer);
-        }
-      } else {
-        newAnswers.push(answer);
-      }
-    }
+    // for (const answer of answers) {
+    //   if (newOptions.length > 0) {
+    //     if (newOptions.includes(answer)) {
+    //       newAnswers.push(answer);
+    //     }
+    //   } else {
+    //     newAnswers.push(answer);
+    //   }
+    // }
     return { newAnswers, newOptions };
   }
 

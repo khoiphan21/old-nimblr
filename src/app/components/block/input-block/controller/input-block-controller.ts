@@ -43,6 +43,8 @@ export class InputBlockController {
     if (options) { input.options = this.cleanArray(options); }
     if (inputType) { input.inputType = inputType; }
 
+    console.log('InputBlockController updating with input: ', input);
+
     await command.update(input);
 
   }

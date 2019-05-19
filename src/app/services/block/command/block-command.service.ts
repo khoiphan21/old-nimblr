@@ -23,12 +23,10 @@ export class BlockCommandService {
   async updateBlock(input: UpdateBlockServiceInput) {
     switch (input.type) {
       case BlockType.TEXT:
-        await this.graphQLService.query(updateTextBlock, { input });
-        break;
+        return await this.graphQLService.query(updateTextBlock, { input });
 
       case BlockType.INPUT:
-        await this.graphQLService.query(updateInputBlock, { input });
-        break;
+        return await this.graphQLService.query(updateInputBlock, { input });
 
       default:
         throw new Error(`BlockCommandService.updateBlock() failed: BlockType "${input.type}" is not supported`);
