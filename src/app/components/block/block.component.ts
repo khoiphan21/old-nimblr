@@ -40,7 +40,6 @@ export class BlockComponent implements OnInit {
           // Try to register the received version (in the case of UI-created
           // blocks)
           this.versionService.registerVersion(block.version);
-          console.log('changing "block" variable');
           this.block = block;
           this.styleBlock();
         }

@@ -10,12 +10,13 @@ import { take } from 'rxjs/operators';
 
 
 // tslint:disable:no-string-literal
-fdescribe('InputOptionComponent', () => {
+describe('InputOptionComponent', () => {
   let component: InputOptionComponent;
   let fixture: ComponentFixture<InputOptionComponent>;
 
   let mockBlock: any;
   let block$: BehaviorSubject<any>;
+  let mockController: any;
 
   let triggerUpdateSpy: jasmine.Spy;
   let updateArg: Subject<any>;
@@ -34,6 +35,8 @@ fdescribe('InputOptionComponent', () => {
 
     setupMockData();
 
+    setupComponentData();
+
     setupSpies();
 
     fixture.detectChanges();
@@ -46,10 +49,14 @@ fdescribe('InputOptionComponent', () => {
       inputType: InputType.TEXT
     };
     block$ = new BehaviorSubject(mockBlock);
-    const mockController: any = {
+    mockController = {
       getInputBlock$: () => block$,
       update: () => { }
     };
+  }
+
+  function setupComponentData() {
+    component['WAIT_TIME'] = 10;
 
     // initialise inputs
     component['controller'] = mockController;
@@ -85,6 +92,19 @@ fdescribe('InputOptionComponent', () => {
     });
   }
 
+  it('triggerUpdateValue() - should update with the right value', done => {
+    spyOn<any>(component, 'updateCurrentOptions');
+    component['currentAnswers'] = ['foo'];
+    component['currentOptions'] = ['foo'];
+    component['currentType'] = InputType.CHECKBOX;
+    checkUpdateArg({
+      answers: ['foo'],
+      options: ['foo'],
+      inputType: InputType.CHECKBOX
+    }).then(done);
+    component.triggerUpdateValue(0);
+  });
+
   describe('handling block notification', () => {
 
     it('should generate an empty option when given empty array', async () => {
@@ -116,7 +136,6 @@ fdescribe('InputOptionComponent', () => {
     });
 
   });
-
 
 
   describe('when currentType is TEXT', () => {
@@ -224,8 +243,6 @@ fdescribe('InputOptionComponent', () => {
       };
       block$.next(mockBlock);
       fixture.detectChanges();
-
-      triggerUpdateSpy.and.callThrough();
     });
 
     it('should call to update when the text changes', async () => {
@@ -321,4 +338,63 @@ fdescribe('InputOptionComponent', () => {
   });
 
 
+  describe('drop()', () => {
+
+    beforeEach(() => {
+      mockBlock = {
+        answers: [],
+        options: ['foo', 'bar'],
+        inputType: InputType.CHECKBOX
+      };
+      block$.next(mockBlock);
+      fixture.detectChanges();
+    });
+
+    it('should swap location of items', async () => {
+      const event: any = {
+        previousIndex: 0,
+        currentIndex: 1
+      };
+      component.drop(event);
+      await checkUpdateArg({
+        answers: [],
+        options: ['bar', 'foo'], // <-- should have been updated to this
+        inputType: InputType.CHECKBOX
+      });
+    });
+  });
+
+
+  describe('clicking on the delete icon', () => {
+    let firstOption: HTMLInputElement;
+
+    beforeEach(() => {
+      // setup MULTIPLE_CHOICE type
+      mockBlock = {
+        answers: [],
+        options: ['foo', 'bar'],
+        inputType: InputType.CHECKBOX
+      };
+      block$.next(mockBlock);
+      fixture.detectChanges();
+
+      // click on the delete icon
+      firstOption = fixture.debugElement.queryAll(By.css('i.fas.fa-times'))[0].nativeElement;
+      firstOption.click();
+      fixture.detectChanges();
+    });
+
+    it('should remove the option', () => {
+      const options = fixture.debugElement.queryAll(By.css('input[type=checkbox]'));
+      expect(options.length).toEqual(1);
+    });
+
+    it('should call to update with the right value', async () => {
+      await checkUpdateArg({
+        answers: [],
+        options: ['bar'], // <-- should have been updated to this
+        inputType: InputType.CHECKBOX
+      });
+    });
+  });
 });

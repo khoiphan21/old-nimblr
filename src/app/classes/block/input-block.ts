@@ -75,7 +75,8 @@ export class InputBlock extends BlockImpl implements Block {
     this.validateStringArray(options, 'options');
     this.validateStringArray(answers, 'answers');
 
-    const newOptions = options;
+    // convert 'null' values in options to empty strings
+    const newOptions = options.map(v => v === null ? '' : v);
     const newAnswers = [];
 
     for (const answer of answers) {

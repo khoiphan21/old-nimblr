@@ -11,6 +11,8 @@ import { InputBlock } from 'src/app/classes/block/input-block';
   styleUrls: ['./input-option.component.scss']
 })
 export class InputOptionComponent implements OnInit, OnChanges {
+  private WAIT_TIME = 300; // in milliseconds
+
   currentBlock: InputBlock;
   currentAnswers: Array<string>;
   currentOptions: Array<string>;
@@ -83,6 +85,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
     });
     this.setOptions();
     this.formGroup.valueChanges.subscribe(() => this.triggerUpdateValue());
+
   }
 
   updateCurrentOptions() {
@@ -141,7 +144,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
     this.triggerUpdateValue();
   }
 
-  triggerUpdateValue(waitTime = 300) {
+  triggerUpdateValue(waitTime = this.WAIT_TIME) {
     this.updateCurrentOptions();
 
     clearTimeout(this.timeout);
@@ -157,5 +160,6 @@ export class InputOptionComponent implements OnInit, OnChanges {
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.currentOptions, event.previousIndex, event.currentIndex);
     this.setupForm();
+    this.triggerUpdateValue();
   }
 }
