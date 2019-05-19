@@ -18,7 +18,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
 
   @Input() controller: InputBlockController;
   @Input() inputType: InputType;
-  @Input() isPreviewMode: boolean;
+  @Input() isPreviewMode = false;
   @Input() isMobilePreview = false;
   @Input() isEditable = true;
 
@@ -33,20 +33,19 @@ export class InputOptionComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.controller.getInputBlock$().subscribe(block => {
       if (block !== null) {
-        console.log('Block update: ', block);
         this.currentBlock = block;
-        this.currentAnswers = block.answers;
-        this.currentOptions = block.options;
+        this.currentAnswers = block.answers.map(v => v);
+        this.currentOptions = block.options.map(v => v).filter(v => v !== null);
         this.currentType = block.inputType;
         this.setupForm();
       }
-    });
+    }, console.error);
   }
 
   ngOnChanges(change: SimpleChanges) {
     if (change.inputType && this.currentBlock) {
       this.currentType = change.inputType.currentValue;
-      this.manageinputTypeChange(
+      this.handleInputTypeChange(
         change.inputType.previousValue,
         change.inputType.currentValue
       );
@@ -54,7 +53,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
     }
   }
 
-  manageinputTypeChange(previousType: InputType, currentType: InputType) {
+  handleInputTypeChange(previousType: InputType, currentType: InputType) {
     switch (currentType) {
       case InputType.TEXT:
         this.changeToSingleOptionType(previousType);
@@ -70,13 +69,8 @@ export class InputOptionComponent implements OnInit, OnChanges {
 
   changeToSingleOptionType(previousType: InputType) {
     if (previousType === InputType.MULTIPLE_CHOICE || previousType === InputType.CHECKBOX) {
-      this.clearOptions();
       this.clearAnswers();
     }
-  }
-
-  private clearOptions() {
-    this.currentOptions = [];
   }
 
   private clearAnswers() {

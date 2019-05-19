@@ -163,39 +163,4 @@ describe('InputBlockComponent', () => {
     });
   });
 
-  /* tslint:disable:no-string-literal */
-  describe('updateInputValue', () => {
-    let blockCommandSpy: jasmine.Spy;
-    const emittedValue = {
-      answers: [],
-    };
-    beforeEach(() => {
-      // setup the spies
-      spyOn(component['blockFactoryService'], 'createAppBlock').and.callThrough();
-      blockCommandSpy = spyOn(component['blockCommandService'], 'updateBlock');
-      blockCommandSpy.and.returnValues(Promise.resolve());
-      component.currentType = InputType.TEXT;
-    });
-
-    it('should call `createAppBlock` with the right argument', async () => {
-      await component.updateInputValue(emittedValue);
-      expect(component['blockFactoryService'].createAppBlock).toHaveBeenCalledWith({
-        id: component.inputBlock.id,
-        type: component.inputBlock.type,
-        documentId: component.inputBlock.documentId,
-        createdAt: component.inputBlock.createdAt,
-        lastUpdatedBy: component.inputBlock.lastUpdatedBy,
-        answers: [],
-        inputType: component.inputBlock.inputType,
-        options: undefined,
-        isLocked: component.isLocked
-      });
-    });
-
-    it('should call block command service with the right argument', async () => {
-      const updatedBlock = await component.updateInputValue(emittedValue);
-      expect(blockCommandSpy).toHaveBeenCalledWith(updatedBlock);
-    });
-  });
-
 });

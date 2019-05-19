@@ -6,14 +6,27 @@ import { TestBed } from '@angular/core/testing';
 import { uuidv4 } from '../../../../classes/uuidv4';
 import { CommandService } from '../../../../services/command/command.service';
 
-fdescribe('InputBlockController', () => {
+describe('InputBlockController', () => {
   let controller: InputBlockController;
 
   let blockFactory: BlockFactoryService;
   let commandService: CommandService;
 
   configureTestSuite(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: CommandService,
+          useValue: {
+            getCommand: () => {
+              return {
+                update: () => {}
+              };
+            }
+          }
+        }
+      ]
+    });
   });
 
   beforeEach(() => {

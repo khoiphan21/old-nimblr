@@ -25,7 +25,7 @@
 
         </div>
     </form>
-    <div class="content text-block" *ngIf="currentType === 'TEXT' || currentType === 'PARAGRAPH'">
+    <div class="content text-block" *ngIf="currentType === 'TEXT'">
         <div class="text-input" contenteditable="true" ngDefaultControl [(ngModel)]="currentAnswers[0]" (ngModelChange)="triggerUpdateValue()"></div>
         <div class="placeholder" *ngIf="currentAnswers[0] === '' || currentAnswers[0] === undefined">Type your response here</div>
     </div>
