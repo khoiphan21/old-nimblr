@@ -24,8 +24,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
   @Input() isMobilePreview = false;
   @Input() isEditable = true;
 
-  @Output() valueToBeSaved = new EventEmitter<object>();
-  formGroup: FormGroup;
+  formGroup: FormGroup; 2;
 
   private timeout: any;
 
@@ -73,6 +72,7 @@ export class InputOptionComponent implements OnInit, OnChanges {
   changeToSingleOptionType(previousType: InputType) {
     if (previousType === InputType.MULTIPLE_CHOICE || previousType === InputType.CHECKBOX) {
       this.clearAnswers();
+      this.currentOptions = [];
     }
   }
 
