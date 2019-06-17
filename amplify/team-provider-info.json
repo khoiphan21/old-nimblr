@@ -1,87 +1,53 @@
 {
-    "master": {
-        "awscloudformation": {
-            "AuthRoleName": "irisa-20190324223858-authRole",
-            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190324223858-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190324223858-authRole",
-            "Region": "ap-southeast-2",
-            "DeploymentBucketName": "irisa-20190324223858-deployment",
-            "UnauthRoleName": "irisa-20190324223858-unauthRole",
-            "StackName": "irisa-20190324223858",
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190324223858/cbf62120-4e31-11e9-8d3f-0a9966e9c45e"
-        },
-        "categories": {
-            "auth": {
-                "irisa": {}
-            }
-        }
-    },
-    "question": {
-        "awscloudformation": {
-            "AuthRoleName": "irisa-20190328100242-authRole",
-            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328100242-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328100242-authRole",
-            "Region": "ap-southeast-2",
-            "DeploymentBucketName": "irisa-20190328100242-deployment",
-            "UnauthRoleName": "irisa-20190328100242-unauthRole",
-            "StackName": "irisa-20190328100242",
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190328100242/d57ddbd0-50ec-11e9-b5a2-06f34726440a"
-        },
-        "categories": {
-            "auth": {
-                "irisa": {}
-            }
-        }
-    },
-    "bruno": {
-        "awscloudformation": {
-            "AuthRoleName": "irisa-20190328120333-authRole",
-            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328120333-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328120333-authRole",
-            "Region": "ap-southeast-2",
-            "DeploymentBucketName": "irisa-20190328120333-deployment",
-            "UnauthRoleName": "irisa-20190328120333-unauthRole",
-            "StackName": "irisa-20190328120333",
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190328120333/b2143ed0-50fd-11e9-904a-06ec3aebdaac"
-        },
-        "categories": {
-            "auth": {
-                "irisa": {}
-            }
-        }
-    },
-    "khoi": {
-        "awscloudformation": {
-            "AuthRoleName": "irisa-20190408211746-authRole",
-            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190408211746-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190408211746-authRole",
-            "Region": "ap-southeast-2",
-            "DeploymentBucketName": "irisa-20190408211746-deployment",
-            "UnauthRoleName": "irisa-20190408211746-unauthRole",
-            "StackName": "irisa-20190408211746",
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190408211746/f0393e90-59ef-11e9-9fe4-0a17fa7d4b76"
-        },
-        "categories": {
-            "auth": {
-                "irisa": {}
-            }
-        }
-    },
-    "dev": {
-        "awscloudformation": {
-            "AuthRoleName": "irisa-20190416180837-authRole",
-            "UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190416180837-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190416180837-authRole",
-            "Region": "ap-southeast-2",
-            "DeploymentBucketName": "irisa-20190416180837-deployment",
-            "UnauthRoleName": "irisa-20190416180837-unauthRole",
-            "StackName": "irisa-20190416180837",
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190416180837/d8985ca0-601e-11e9-984c-02e3536ad1cc"
-        },
-        "categories": {
-            "auth": {
-                "irisa": {}
-            }
-        }
-    }
+	"master": {
+		"awscloudformation": {
+			"AuthRoleName": "irisa-20190324223858-authRole",
+			"UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190324223858-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190324223858-authRole",
+			"Region": "ap-southeast-2",
+			"DeploymentBucketName": "irisa-20190324223858-deployment",
+			"UnauthRoleName": "irisa-20190324223858-unauthRole",
+			"StackName": "irisa-20190324223858",
+			"StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190324223858/cbf62120-4e31-11e9-8d3f-0a9966e9c45e"
+		},
+		"categories": {
+			"auth": {
+				"irisa": {}
+			}
+		}
+	},
+	"bruno": {
+		"awscloudformation": {
+			"AuthRoleName": "irisa-20190328120333-authRole",
+			"UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328120333-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190328120333-authRole",
+			"Region": "ap-southeast-2",
+			"DeploymentBucketName": "irisa-20190328120333-deployment",
+			"UnauthRoleName": "irisa-20190328120333-unauthRole",
+			"StackName": "irisa-20190328120333",
+			"StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190328120333/b2143ed0-50fd-11e9-904a-06ec3aebdaac"
+		},
+		"categories": {
+			"auth": {
+				"irisa": {}
+			}
+		}
+	},
+	"khoi": {
+		"awscloudformation": {
+			"AuthRoleName": "irisa-20190408211746-authRole",
+			"UnauthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190408211746-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::981403287850:role/irisa-20190408211746-authRole",
+			"Region": "ap-southeast-2",
+			"DeploymentBucketName": "irisa-20190408211746-deployment",
+			"UnauthRoleName": "irisa-20190408211746-unauthRole",
+			"StackName": "irisa-20190408211746",
+			"StackId": "arn:aws:cloudformation:ap-southeast-2:981403287850:stack/irisa-20190408211746/f0393e90-59ef-11e9-9fe4-0a17fa7d4b76"
+		},
+		"categories": {
+			"auth": {
+				"irisa": {}
+			}
+		}
+	}
 }
